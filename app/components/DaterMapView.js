@@ -27,7 +27,7 @@ export default class DaterMapView extends Component {
           error: null,
         });
       },
-      (error) => log.error(error),
+      (error) => console.error(error),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
     );
   }
