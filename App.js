@@ -24,6 +24,9 @@ export default class App extends Component<Props> {
     firebase.analytics().logEvent('App_Started', {
       platform: Platform.OS
     })
+
+    console.log('Platform is: ' + Platform.OS);
+    
   }
 
   render() {

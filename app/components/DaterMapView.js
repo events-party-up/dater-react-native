@@ -9,8 +9,8 @@ export default class DaterMapView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      latitude: 0,
-      longitude: 0,
+      latitude: 55.751244,
+      longitude: 37.618423,
       error: null,
     };
   }
@@ -27,7 +27,7 @@ export default class DaterMapView extends Component {
           error: null,
         });
       },
-      (error) => console.error(error),
+      (error) => console.log(error),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
     );
   }

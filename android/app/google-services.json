@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "569828839948",
+    "firebase_url": "https://dater3-dev.firebaseio.com",
+    "project_id": "dater3-dev",
+    "storage_bucket": "dater3-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:569828839948:android:6c2286bb3b433ac2",
+        "android_client_info": {
+          "package_name": "com.daterreactnative"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "569828839948-remb1s74kdeq0lthcaahbtcpocd3ud1v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqJUGZ7QijQP3RwkkuHoMQ7nxth4sejB0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
