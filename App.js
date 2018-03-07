@@ -15,9 +15,17 @@ import {
 
 
 import DaterMapView from "./app/components/DaterMapView";
+import firebase from 'react-native-firebase';
 
 type Props = {};
 export default class App extends Component<Props> {
+
+  componentDidMount() {
+    firebase.analytics().logEvent('App_Started', {
+      platform: Platform.OS
+    })
+  }
+
   render() {
     return (
       <View style={styles.mainContainer}>

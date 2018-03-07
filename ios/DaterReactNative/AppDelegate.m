@@ -9,9 +9,10 @@
 
 #import "AppDelegate.h"
 
-#import <Firebase.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import <Firebase.h>
+
 @import GoogleMaps;
 
 @implementation AppDelegate
