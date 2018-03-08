@@ -11,6 +11,7 @@ target 'DaterReactNative' do
   pod 'Fabric', '~> 1.7.2'
   pod 'Crashlytics', '~> 3.9.3'
   pod 'Firebase/Firestore'
+  pod 'Firebase/RemoteConfig'
 
   pod 'yoga', path: "#{rn_path}/ReactCommon/yoga/yoga.podspec"
   pod 'React', path: rn_path, subspecs: [
