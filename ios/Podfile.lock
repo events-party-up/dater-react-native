@@ -1,4 +1,7 @@
 PODS:
+  - Crashlytics (3.9.3):
+    - Fabric (~> 1.7.2)
+  - Fabric (1.7.5)
   - Firebase/Auth (4.10.0):
     - Firebase/Core
     - FirebaseAuth (= 4.4.4)
@@ -77,6 +80,8 @@ PODS:
   - yoga (0.53.3.React)
 
 DEPENDENCIES:
+  - Crashlytics (~> 3.9.3)
+  - Fabric (~> 1.7.2)
   - Firebase/Auth
   - Firebase/Core
   - GoogleMaps
@@ -106,6 +111,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native/ReactCommon/yoga/yoga.podspec
 
 SPEC CHECKSUMS:
+  Crashlytics: dbb07d01876c171c5ccbdf7826410380189e452c
+  Fabric: ae7146a5f505ea370a1e44820b4b1dc8890e2890
   Firebase: c98c8b1fbcbdccd82539a36c2b17a9b1bb0ee798
   FirebaseAnalytics: 3dfae28d4a5e06f86c4fae830efc2ad3fadb19bc
   FirebaseAuth: d040bb7a9db6dfc29d0e7ec82d48be51352b2581
@@ -120,6 +127,6 @@ SPEC CHECKSUMS:
   react-native-maps: 066c2afcc89e18726377bcc685315f989ca22449
   yoga: 55da126afc384965b96bff46652464373b330add
 
-PODFILE CHECKSUM: bab1487e89156923eaa42b26f33624cee6637e6c
+PODFILE CHECKSUM: 44b84514746cb0f85829c3713a01fc1f87fe0a3a
 
 COCOAPODS: 1.4.0
