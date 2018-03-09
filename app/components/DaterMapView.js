@@ -1,31 +1,22 @@
 import React, { Component, PropTypes } from 'react'
 import { StyleSheet, } from 'react-native'
 import MapView, { Circle } from 'react-native-maps';
+import { connect } from 'react-redux'
 
-export default class DaterMapView extends Component {
-  latitude = 0;
-  longitude = 0;
+import { geoActionCreators } from '../redux'
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      latitude: 55.751244,
-      longitude: 37.618423,
-      error: null,
-    };
-  }
+const mapStateToProps = (state) => ({
+  coords: state.geo.coords,
+})
+
+class DaterMapView extends Component {
 
   componentDidMount() {
     //navigator.geolocation.requestAuthorization();
     this.watchId = navigator.geolocation.watchPosition(
       (position) => {
         console.log(position);
-
-        this.setState({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          error: null,
-        });
+        this.props.dispatch(geoActionCreators.geoUpdated(position.coords));
       },
       (error) => console.log(error),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
@@ -36,33 +27,32 @@ export default class DaterMapView extends Component {
     navigator.geolocation.clearWatch(this.watchId);
   }
 
-
   render() {
     return (
       <MapView style={styles.mapView}
         region={{
-          latitude: this.state.latitude,
-          longitude: this.state.longitude,
+          latitude: this.props.coords.latitude,
+          longitude: this.props.coords.longitude,
           latitudeDelta: 0.00922,
           longitudeDelta: 0.00421,
         }}
       >
         <MapView.Circle
           style={styles.circleBig}
-          key={'coord2' + this.state.latitude}
+          key={'coord2' + this.props.coords.latitude}
           center={{
-            latitude: this.state.latitude,
-            longitude: this.state.longitude,
+            latitude: this.props.coords.latitude,
+            longitude: this.props.coords.longitude,
           }}
           radius={30}
           strokeColor={'#b0e0e6'}
           fillColor={'rgba(30,144,255,0.2)'}
         />
         <MapView.Circle
-          key={'coord' + this.state.latitude}
+          key={'coord' + this.props.coords.latitude}
           center={{
-            latitude: this.state.latitude,
-            longitude: this.state.longitude,
+            latitude: this.props.coords.latitude,
+            longitude: this.props.coords.longitude,
           }}
           radius={7}
           strokeColor={'gray'}
@@ -82,3 +72,5 @@ const styles = StyleSheet.create({
   }
 
 })
+
+export default connect(mapStateToProps)(DaterMapView);

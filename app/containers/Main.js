@@ -5,12 +5,13 @@ import {
   Text,
   View,
 } from 'react-native';
+import { connect } from 'react-redux'
 import firebase from 'react-native-firebase';
 
 import { DaterMapView, FirebaseSetup } from "../components";
 
 type Props = {};
-export default class Main extends Component<Props> {
+class Main extends Component<Props> {
 
   render() {
     return (
@@ -30,3 +31,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default connect()(Main)

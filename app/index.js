@@ -2,9 +2,13 @@ import React, { Component } from 'react';
 import {
   Platform,
 } from 'react-native';
+import { Provider } from 'react-redux'
 import firebase from 'react-native-firebase';
 
+import configureStore from './config/configureStore'
 import { Main } from "./containers";
+
+const store = configureStore()
 
 export default class App extends Component {
 
@@ -16,7 +20,9 @@ export default class App extends Component {
 
   render() {
     return (
-      <Main />
+      <Provider store={store}>
+        <Main />
+      </Provider>  
     );
   }
 }
