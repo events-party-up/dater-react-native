@@ -15,10 +15,9 @@ class DaterMapView extends Component {
     //navigator.geolocation.requestAuthorization();
     this.watchId = navigator.geolocation.watchPosition(
       (position) => {
-        console.log(position);
         this.props.dispatch(geoActionCreators.geoUpdated(position.coords));
       },
-      (error) => console.log(error),
+      (error) => this.props.dispatch(geoActionCreators.geoDenied(error)),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
     );
   }

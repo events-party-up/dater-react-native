@@ -8,7 +8,7 @@ import Reactotron, {
 
 Reactotron
   .configure({
-    name: 'Uber Demo'
+    name: 'Dater React Native'
   })
   .use(trackGlobalErrors())
   .use(openInEditor())
