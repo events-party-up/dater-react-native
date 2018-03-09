@@ -1,3 +1,5 @@
+import firebase from 'react-native-firebase';
+
 const types = {
   GEO_UPDATED: 'GEO_UPDATED',
   GEO_PERMISSION_REQUESTED: 'GEO_PERMISSION_REQUESTED',
@@ -7,11 +9,19 @@ const types = {
 
 // implement actionCreators
 export const actionCreators = {
-  geoUpdated: (coords) => {
-    return {
+  geoUpdated: (coords) => async (dispatch, getState) =>
+  {
+    if (getState().auth.uid !== null) {
+      const uid = getState().auth.uid;
+      firebase.firestore().collection('users').doc(uid).update({
+        coords: coords,
+        geoPoint: new firebase.firestore.GeoPoint(coords.latitude, coords.longitude),
+      });
+    }
+    dispatch({
       type: types.GEO_UPDATED,
       payload: coords
-    }
+    });
   },
   geoRequest: () => {
     return {

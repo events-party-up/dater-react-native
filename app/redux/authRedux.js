@@ -13,7 +13,6 @@ const types = {
  * The inner function receives the functions dispatch and getState as parameters.
  */
 const startAuthentication = () => async (dispatch, getState) => {
-  const accessToken = await getToken();
   if (accessToken) {
     dispatch({
       type: types.AUTH_SUCCESS,
@@ -26,14 +25,10 @@ const startAuthentication = () => async (dispatch, getState) => {
   }
 }
 
-const authSuccess = (accessToken) => async (dispatch, getState) => {
-  const tokenExpired = await tokenHasExpired();
-  if (!await getToken() || tokenExpired) {
-    await setToken(accessToken);
-  }
+const authSuccess = (authResponse) => async (dispatch, getState) => {
   dispatch({
     type: types.AUTH_SUCCESS,
-    payload: accessToken,
+    payload: authResponse,
   });
 }
 
@@ -50,7 +45,12 @@ export const actionCreators = {
 
 const initialState = {
   isAuthenticating: false,
-  accessToken: null,
+  isAuthenticated: false,
+  isAnonymous: false,
+  uid: null,
+  isNewUser: false,
+  creationTime: null,
+  lastSignInTime: null,
 }
 
 export const reducer = (state = initialState, action) => {
@@ -64,10 +64,12 @@ export const reducer = (state = initialState, action) => {
       });
     }
     case types.AUTH_SUCCESS: {
-      return Object.assign({}, state, {
+      return {
+        ...state,
+        ...payload,
         isAuthenticating: false,
-        accessToken: payload,
-      });
+        isAuthenticated: true,
+      }
     }
     case types.AUTH_FAILED: {
       return Object.assign({}, state, {
