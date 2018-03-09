@@ -9,22 +9,28 @@ import { connect } from 'react-redux'
 import firebase from 'react-native-firebase';
 
 import { DaterMapView, FirebaseSetup } from "../components";
-import { signInAnonymously } from "../services/auth";
+import { initUserAuth } from "../services/auth";
 import { authActionCreators } from '../redux'
 
 const mapStateToProps = (state) => ({
   auth: state.auth
 })
 
-
-
 type Props = {};
 class Main extends Component<Props> {
+  constructor(props) {
+    super(props);
+    this.authUnsubscribe = initUserAuth(this.props.dispatch);
+  }
 
   componentWillMount() {
-    signInAnonymously()
-      .then(response => this.props.dispatch(authActionCreators.authSuccess(response)))
-      .catch(error => this.props.dispatch(authActionCreators.authError(error)));
+    // signInAnonymously()
+    //   .then(response => this.props.dispatch(authActionCreators.authSuccess(response)))
+    //   .catch(error => this.props.dispatch(authActionCreators.authError(error)));
+  }
+
+  componentWillUnmount() {
+    this.authUnsubscribe();
   }
 
   render() {

@@ -7,7 +7,6 @@ import firebase from 'react-native-firebase';
 
 import configureStore from './config/configureStore'
 import { Main } from "./containers";
-
 const store = configureStore()
 
 export default class App extends Component {
