@@ -5,10 +5,13 @@ import Reactotron, {
   asyncStorage,
   networking
 } from 'reactotron-react-native'
+import {
+  Platform,
+} from 'react-native';
 
 Reactotron
   .configure({
-    name: 'Dater React Native'
+    name: 'Dater React Native (' + Platform.OS + ')' 
   })
   .use(trackGlobalErrors())
   .use(openInEditor())
