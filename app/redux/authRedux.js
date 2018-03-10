@@ -1,10 +1,12 @@
 import firebase from 'react-native-firebase';
-import { geoActionCreators } from "../redux//geoRedux";
+import { geoActionCreators } from "../redux";
+
 const types = {
   AUTH_PENDING: 'AUTH_PENDING',
   AUTH_SUCCESS: 'AUTH_SUCCESS',
   AUTH_FAILED: 'AUTH_FAILED',
   AUTH_NEW_REGISTRATION: 'AUTH_NEW_REGISTRATION',
+  AUTH_SIGNOUT: 'AUTH_SIGNOUT',
 }
 
 /**
@@ -29,10 +31,12 @@ const startAuthentication = () => async (dispatch, getState) => {
 }
 
 const authSuccess = (user) => async (dispatch, getState) => {
-  await firebase.firestore().collection('users').doc(user.uid).set({
-    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-  }, { merge: true })
-  .catch(error => console.error(error));
+
+  await firebase.firestore()
+    .collection('users')
+    .doc(user.uid)
+    .set({}, { merge: true })
+    .catch(error => console.error(error));
 
   dispatch({
     type: types.AUTH_SUCCESS,
@@ -41,17 +45,19 @@ const authSuccess = (user) => async (dispatch, getState) => {
   dispatch(geoActionCreators.geoUpdated(getState().geo.coords))
 }
 
+const authSignOut = () => async (dispatch, getState) => {
+  dispatch({
+    type: types.AUTH_SIGNOUT,
+  });
+}
+
 const authNewRegistration = (user) => async (dispatch, getState) => {
   if (user.isNewUser) {
     console.log('Setting first collection value for new user: ', user.uid);
-    // await firebase.firestore().collection('users').doc(user.uid).set({
-    //   registered: firebase.firestore.FieldValue.serverTimestamp(),
-    // })
-    // .catch(error => console.error(error));
-    await new Promise((resolve) => {
-      resolve('Resolved OK')
+    await firebase.firestore().collection('users').doc(user.uid).set({
+      registered: firebase.firestore.FieldValue.serverTimestamp(),
     })
-      .then(msg => console.log(msg));
+    .catch(error => console.error(error));
   }
   console.log('After writing user');
   
@@ -65,6 +71,7 @@ export const authActionCreators = {
   startAuthentication,
   authSuccess,
   authNewRegistration,
+  authSignOut,
   authError: (error) => {
     return {
       type: types.AUTH_FAILED,
@@ -115,6 +122,12 @@ export const reducer = (state = initialState, action) => {
         accessToken: null,
         authError: payload,
       });
+    }
+    case types.AUTH_SIGNOUT: {
+      return {
+        ...state,
+        ...initialState,
+      }
     }
     default: {
       return state

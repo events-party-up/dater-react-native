@@ -17,8 +17,7 @@ const mapStateToProps = (state) => ({
   auth: state.auth
 })
 
-type Props = {};
-class Main extends Component<Props> {
+class Main extends Component {
   authUnsubscribe;
   
   constructor(props) {
@@ -27,9 +26,6 @@ class Main extends Component<Props> {
   }
 
   componentWillMount() {
-    // signInAnonymously()
-    //   .then(response => this.props.dispatch(authActionCreators.authSuccess(response)))
-    //   .catch(error => this.props.dispatch(authActionCreators.authError(error)));
   }
 
   componentWillUnmount() {
@@ -38,8 +34,7 @@ class Main extends Component<Props> {
 
   signOut = async () =>  {
     this.authUnsubscribe();
-    await signOutUser();
-    this.authUnsubscribe = initUserAuth(this.props.dispatch);
+    await signOutUser(this.props.dispatch);
   }
 
   render() {

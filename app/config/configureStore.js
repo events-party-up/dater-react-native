@@ -28,7 +28,6 @@ export default (initialState) => {
   const store = createStore(
     reducer,
     initialState,
-    //compose(applyMiddleware(...middleware)),
     applyMiddleware(...middleware),
     // autoRehydrate()
   )

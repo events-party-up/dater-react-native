@@ -7,42 +7,49 @@ const types = {
   GEO_PERMISSION_DENIED: 'GEO_PERMISSION_DENIED',
 }
 
+const geoUpdated = (coords) => async (dispatch, getState) => {
+  const uid = getState().auth.uid;
+
+  if (uid !== null) {
+    await firebase.firestore().collection('users').doc(uid).update({
+      coords: coords,
+      geoPoint: new firebase.firestore.GeoPoint(coords.latitude, coords.longitude),
+      geoTS: firebase.firestore.FieldValue.serverTimestamp(),
+    })
+      // .then(() => console.log('Successfully updated geo data'))
+      .catch(error => console.error(error));
+  }
+
+  dispatch({
+    type: types.GEO_UPDATED,
+    payload: coords
+  });
+}
+const geoRequest = () => {
+  return {
+    type: types.GEO_PERMISSION_REQUESTED,
+  }
+}
+
+const geoGranted = (coords) => {
+  return {
+    type: types.GEO_PERMISSION_GRANTED,
+    payload: coords,
+  }
+}
+
+const geoDenied= (error) => {
+  return {
+    type: types.GEO_PERMISSION_DENIED,
+    payload: error,
+  }
+}
+
 export const geoActionCreators = {
-  geoUpdated: (coords)  => async (dispatch, getState) => {
-    const uid = getState().auth.uid;
-
-    if (uid !== null) {
-      await firebase.firestore().collection('users').doc(uid).update({
-        coords: coords,
-        geoPoint: new firebase.firestore.GeoPoint(coords.latitude, coords.longitude),
-        geoTS: firebase.firestore.FieldValue.serverTimestamp(),
-      })
-        // .then(() => console.log('Successfully updated geo data'))
-        .catch(error => console.error(error));
-    }
-
-    dispatch({
-      type: types.GEO_UPDATED,
-      payload: coords
-    });
-  },
-  geoRequest: () => {
-    return {
-      type: types.GEO_PERMISSION_REQUESTED,
-    }
-  },
-  geoGranted: (coords) => {
-    return {
-      type: types.GEO_PERMISSION_GRANTED,
-      payload: coords,
-    }
-  },
-  geoDenied: (error) => {
-    return {
-      type: types.GEO_PERMISSION_DENIED,
-      payload: error,
-    }
-  },
+  geoUpdated,
+  geoRequest,
+  geoGranted,
+  geoDenied,
 }
 
 const initialState = {

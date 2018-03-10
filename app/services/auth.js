@@ -18,12 +18,6 @@ export const initUserAuth = (dispatch) => {
   const unsubscribe = firebase.auth().onAuthStateChanged(user => {
     if (user) {
       console.log('User already exist');
-      console.log(user);
-      
-      // await firebase.firestore().collection('users').doc(user.uid).set({
-      //   registered: firebase.firestore.FieldValue.serverTimestamp(),
-      // })
-
       dispatch(authActionCreators.authSuccess({
         isAnonymous: user.isAnonymous,
         uid: user.uid,
@@ -31,7 +25,7 @@ export const initUserAuth = (dispatch) => {
         lastSignInTime: user.metadata.lastSignInTime,
       }));
     } else {
-      console.log('User is logged out, log in anonymously');
+      console.log('User is logged out, register as anonymous');
       signInAnonymously(dispatch);
     }
   });
@@ -39,11 +33,11 @@ export const initUserAuth = (dispatch) => {
 }
 
 export const signOutUser = async (dispatch) => {
-  if (firebase.auth().currentUser.isAnonymous)
-  {
+  if (firebase.auth().currentUser.isAnonymous) {
     await firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).delete();
     await firebase.auth().currentUser.delete();
   } else {
     await firebase.auth().signOut();
   }
+  dispatch(authActionCreators.authSignOut());
 }
