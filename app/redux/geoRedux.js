@@ -7,17 +7,20 @@ const types = {
   GEO_PERMISSION_DENIED: 'GEO_PERMISSION_DENIED',
 }
 
-// implement actionCreators
-export const actionCreators = {
-  geoUpdated: (coords) => async (dispatch, getState) =>
-  {
-    if (getState().auth.uid !== null) {
-      const uid = getState().auth.uid;
-      firebase.firestore().collection('users').doc(uid).update({
+export const geoActionCreators = {
+  geoUpdated: (coords)  => async (dispatch, getState) => {
+    const uid = getState().auth.uid;
+
+    if (uid !== null) {
+      await firebase.firestore().collection('users').doc(uid).update({
         coords: coords,
         geoPoint: new firebase.firestore.GeoPoint(coords.latitude, coords.longitude),
-      });
+        geoTS: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+        // .then(() => console.log('Successfully updated geo data'))
+        .catch(error => console.error(error));
     }
+
     dispatch({
       type: types.GEO_UPDATED,
       payload: coords

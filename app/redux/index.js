@@ -8,5 +8,5 @@ export const reducer = combineReducers({
   geo: geoRedux.reducer
 })
 
-export const authActionCreators = authRedux.actionCreators
-export const geoActionCreators = geoRedux.actionCreators
+export const authActionCreators = authRedux.authActionCreators
+export const geoActionCreators = geoRedux.geoActionCreators

@@ -1,7 +1,10 @@
+import firebase from 'react-native-firebase';
+import { geoActionCreators } from "../redux//geoRedux";
 const types = {
   AUTH_PENDING: 'AUTH_PENDING',
   AUTH_SUCCESS: 'AUTH_SUCCESS',
   AUTH_FAILED: 'AUTH_FAILED',
+  AUTH_NEW_REGISTRATION: 'AUTH_NEW_REGISTRATION',
 }
 
 /**
@@ -25,16 +28,43 @@ const startAuthentication = () => async (dispatch, getState) => {
   }
 }
 
-const authSuccess = (authResponse) => async (dispatch, getState) => {
+const authSuccess = (user) => async (dispatch, getState) => {
+  await firebase.firestore().collection('users').doc(user.uid).set({
+    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+  }, { merge: true })
+  .catch(error => console.error(error));
+
   dispatch({
     type: types.AUTH_SUCCESS,
-    payload: authResponse,
+    payload: user,
+  });
+  dispatch(geoActionCreators.geoUpdated(getState().geo.coords))
+}
+
+const authNewRegistration = (user) => async (dispatch, getState) => {
+  if (user.isNewUser) {
+    console.log('Setting first collection value for new user: ', user.uid);
+    // await firebase.firestore().collection('users').doc(user.uid).set({
+    //   registered: firebase.firestore.FieldValue.serverTimestamp(),
+    // })
+    // .catch(error => console.error(error));
+    await new Promise((resolve) => {
+      resolve('Resolved OK')
+    })
+      .then(msg => console.log(msg));
+  }
+  console.log('After writing user');
+  
+  dispatch({
+    type: types.AUTH_NEW_REGISTRATION,
+    payload: user,
   });
 }
 
-export const actionCreators = {
+export const authActionCreators = {
   startAuthentication,
   authSuccess,
+  authNewRegistration,
   authError: (error) => {
     return {
       type: types.AUTH_FAILED,
@@ -64,6 +94,14 @@ export const reducer = (state = initialState, action) => {
       });
     }
     case types.AUTH_SUCCESS: {
+      return {
+        ...state,
+        ...payload,
+        isAuthenticating: false,
+        isAuthenticated: true,
+      }
+    }
+    case types.AUTH_NEW_REGISTRATION: {
       return {
         ...state,
         ...payload,
