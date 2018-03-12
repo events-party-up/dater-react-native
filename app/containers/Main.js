@@ -18,8 +18,6 @@ const mapStateToProps = (state) => ({
 })
 
 class Main extends Component {
-  authUnsubscribe;
-  
   constructor(props) {
     super(props);
     this.authUnsubscribe = initUserAuth(this.props.dispatch);
