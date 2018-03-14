@@ -19,36 +19,7 @@ const geoPointPath = 'geoPoint';
  * @return {Promise} a Promise that fulfills with an array of all the
  *    retrieved locations
  */
-export const getUsersAroundOnce = function (area) {
-  // calculate the SW and NE corners of the bounding box to query for
-  const box = boundingBoxCoordinates(area.center, area.radius);
-
-  // construct the GeoPoints
-  const lesserGeopoint = new firebase.firestore.GeoPoint(box.swCorner.latitude, box.swCorner.longitude);
-  const greaterGeopoint = new firebase.firestore.GeoPoint(box.neCorner.latitude, box.neCorner.longitude);
-
-  // construct the Firestore query
-  let query = firebase.firestore().collection(collectionPath).where(geoPointPath, '>', lesserGeopoint).where(geoPointPath, '<', greaterGeopoint);
-
-  // return a Promise that fulfills with the locations
-  return query.get()
-    .then((snapshot) => {
-      const allLocs = []; // used to hold all the loc data
-      snapshot.forEach((userSnapshot, userKey) => {
-        const userData = userSnapshot.data();
-        userData.distanceFromCenter = distance(area.center, userData[geoPointPath]);
-        userData.id = userSnapshot.id;
-        allLocs.push(userData);
-      });
-      return allLocs;
-    })
-    .catch((err) => {
-      console.error(err);
-      return new Error('Error while retrieving events');
-    });
-}
-
-export const listenForUsersAround = async(area, dispatch) => {
+export const listenForUsersAround = async (area, dispatch) => {
   // calculate the SW and NE corners of the bounding box to query for
   const box = boundingBoxCoordinates(area.center, area.radius);
   const lesserGeopoint = new firebase.firestore.GeoPoint(box.swCorner.latitude, box.swCorner.longitude);
