@@ -3,9 +3,12 @@ import firebase from 'react-native-firebase';
 const types = {
   USERS_AROUND_UPDATED: 'USERS_AROUND_UPDATED',
 }
+const updateUsersAround = (users) => async (dispatch, getState) => {
+  if (getState().auth.isAuthenticated === false) {
+    return;
+  }
 
-const updateUsersAround = function(users) {
-  return ({
+  dispatch({
     type: types.USERS_AROUND_UPDATED,
     payload: users
   });

@@ -38,6 +38,12 @@ const authSuccess = (user) => async (dispatch, getState) => {
     .set({}, { merge: true })
     .catch(error => console.error(error));
 
+  await firebase.firestore()
+    .collection('geoPoints')
+    .doc(user.uid)
+    .set({}, { merge: true })
+    .catch(error => console.error(error));
+
   dispatch({
     type: types.AUTH_SUCCESS,
     payload: user,

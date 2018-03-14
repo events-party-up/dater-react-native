@@ -1,7 +1,7 @@
 import firebase from 'react-native-firebase';
 import { usersAroundCreators } from '../redux'
 
-const collectionPath = 'users';
+const collectionPath = 'geoPoints';
 const geoPointPath = 'geoPoint';
 
 /**
@@ -57,16 +57,17 @@ export const listenForUsersAround = async(area, dispatch) => {
   let query = firebase.firestore().collection(collectionPath).where(geoPointPath, '>', lesserGeopoint).where(geoPointPath, '<', greaterGeopoint);
 
   const unsubscribe = query.onSnapshot(function (snapshot) {
-    console.log('Snapshot changed: ');
-
     const usersAround = []; // used to hold all the loc data
     snapshot.forEach((userSnapshot, userKey) => {
       const userData = userSnapshot.data();
-      userData.distanceFromCenter = distance(area.center, userData[geoPointPath]);
       userData.id = userSnapshot.id;
+
+      if (userData.id === firebase.auth().currentUser.uid) {
+        return;
+      }
+      userData.distanceFromCenter = distance(area.center, userData[geoPointPath]);
       usersAround.push(userData);
     });
-    console.log(usersAround);
     dispatch(usersAroundCreators.updateUsersAround(usersAround))
     
     // snapshot.docChanges.forEach(function (change) {

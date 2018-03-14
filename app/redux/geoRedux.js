@@ -11,10 +11,10 @@ const geoUpdated = (coords) => async (dispatch, getState) => {
   const uid = getState().auth.uid;
 
   if (uid !== null) {
-    await firebase.firestore().collection('users').doc(uid).update({
-      coords: coords,
+    await firebase.firestore().collection('geoPoints').doc(uid).update({
+      accuracy: coords.accuracy,
       geoPoint: new firebase.firestore.GeoPoint(coords.latitude, coords.longitude),
-      geoTS: firebase.firestore.FieldValue.serverTimestamp(),
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     })
       // .then(() => console.log('Successfully updated geo data'))
       .catch(error => console.error(error));

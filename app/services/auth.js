@@ -35,6 +35,7 @@ export const initUserAuth = (dispatch) => {
 export const signOutUser = async (dispatch) => {
   if (firebase.auth().currentUser.isAnonymous) {
     await firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).delete();
+    await firebase.firestore().collection('geoPoints').doc(firebase.auth().currentUser.uid).delete();
     await firebase.auth().currentUser.delete();
   } else {
     await firebase.auth().signOut();
