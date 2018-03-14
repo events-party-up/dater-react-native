@@ -1,9 +1,10 @@
-import React, { Component, PropTypes } from 'react'
-import { StyleSheet, } from 'react-native'
-import MapView, { Circle } from 'react-native-maps';
+import React, { Component } from 'react'
+import { StyleSheet, View, Text, Button } from 'react-native'
+import MapView, { Circle, Marker, Callout } from 'react-native-maps';
 import { connect } from 'react-redux'
 
 import { geoActionCreators } from '../redux'
+import PersonMaker from "./PersonMaker";
 
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
@@ -36,6 +37,17 @@ class DaterMapView extends Component {
           longitudeDelta: 0.00421,
         }}
       >
+        <Marker
+          coordinate={{
+            latitude: 55.807237,
+            longitude: 37.541678,
+          }}
+          style={styles.maker}
+          title={'Test Title'}
+          description={'Test Description'}
+        >
+          <PersonMaker title='test test test test'></PersonMaker>
+        </Marker>  
         <MapView.Circle
           style={styles.circleBig}
           key={'coord2' + this.props.coords.latitude}
@@ -43,7 +55,7 @@ class DaterMapView extends Component {
             latitude: this.props.coords.latitude,
             longitude: this.props.coords.longitude,
           }}
-          radius={30}
+          radius={this.props.coords.accuracy}
           strokeColor={'#b0e0e6'}
           fillColor={'rgba(30,144,255,0.2)'}
         />
@@ -68,6 +80,9 @@ const styles = StyleSheet.create({
   },
   circleBig: {
     opacity: 0.5,
+  },
+  maker: {
+
   }
 
 })

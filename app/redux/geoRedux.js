@@ -56,6 +56,7 @@ const initialState = {
   coords: {
     latitude: 55.751244,
     longitude: 37.618423,
+    accuracy: 800,
   },
   error: null,
   geoGranted: false,
