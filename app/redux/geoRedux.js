@@ -73,18 +73,6 @@ export const reducer = (state = initialState, action) => {
         coords: payload,
       }
     }
-    case types.POSTS_SUCCESS: {
-      return Object.assign({}, state, {
-        posts: payload,
-        postsRequestPending: false,
-      })
-    }
-    case types.POSTS_ERROR: {
-      return Object.assign({}, state, {
-        postsError: payload,
-        postsRequestPending: false,
-      })
-    }
     default: {
       return state
     }

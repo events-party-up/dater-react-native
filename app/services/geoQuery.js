@@ -1,3 +1,9 @@
+import firebase from 'react-native-firebase';
+import { usersAroundCreators } from '../redux'
+
+const collectionPath = 'users';
+const geoPointPath = 'geoPoint';
+
 /**
  * Get locations within a bounding box defined by a center point and distance from from the center point to the side of the box;
  *
@@ -13,34 +19,69 @@
  * @return {Promise} a Promise that fulfills with an array of all the
  *    retrieved locations
  */
-function getLocations(area) {
+export const getUsersAroundOnce = function (area) {
   // calculate the SW and NE corners of the bounding box to query for
-  const box = utils.boundingBoxCoordinates(area.center, area.radius);
+  const box = boundingBoxCoordinates(area.center, area.radius);
 
   // construct the GeoPoints
-  const lesserGeopoint = new GeoPoint(box.swCorner.latitude, box.swCorner.longitude);
-  const greaterGeopoint = new GeoPoint(box.neCorner.latitude, box.neCorner.longitude);
+  const lesserGeopoint = new firebase.firestore.GeoPoint(box.swCorner.latitude, box.swCorner.longitude);
+  const greaterGeopoint = new firebase.firestore.GeoPoint(box.neCorner.latitude, box.neCorner.longitude);
 
   // construct the Firestore query
-  let query = firebase.firestore().collection('users').where('geoPoint', '>', lesserGeopoint).where('geoPoint', '<', greaterGeopoint);
+  let query = firebase.firestore().collection(collectionPath).where(geoPointPath, '>', lesserGeopoint).where(geoPointPath, '<', greaterGeopoint);
 
   // return a Promise that fulfills with the locations
   return query.get()
     .then((snapshot) => {
       const allLocs = []; // used to hold all the loc data
-      snapshot.forEach((loc) => {
-        // get the data
-        const data = loc.data();
-        // calculate a distance from the center
-        data.distanceFromCenter = utils.distance(area.center, data.location);
-        // add to the array
-        allLocs.push(data);
+      snapshot.forEach((userSnapshot, userKey) => {
+        const userData = userSnapshot.data();
+        userData.distanceFromCenter = distance(area.center, userData[geoPointPath]);
+        userData.id = userSnapshot.id;
+        allLocs.push(userData);
       });
       return allLocs;
     })
     .catch((err) => {
+      console.error(err);
       return new Error('Error while retrieving events');
     });
+}
+
+export const listenForUsersAround = async(area, dispatch) => {
+  // calculate the SW and NE corners of the bounding box to query for
+  const box = boundingBoxCoordinates(area.center, area.radius);
+  const lesserGeopoint = new firebase.firestore.GeoPoint(box.swCorner.latitude, box.swCorner.longitude);
+  const greaterGeopoint = new firebase.firestore.GeoPoint(box.neCorner.latitude, box.neCorner.longitude);
+  // construct the Firestore query
+  let query = firebase.firestore().collection(collectionPath).where(geoPointPath, '>', lesserGeopoint).where(geoPointPath, '<', greaterGeopoint);
+
+  const unsubscribe = query.onSnapshot(function (snapshot) {
+    console.log('Snapshot changed: ');
+
+    const usersAround = []; // used to hold all the loc data
+    snapshot.forEach((userSnapshot, userKey) => {
+      const userData = userSnapshot.data();
+      userData.distanceFromCenter = distance(area.center, userData[geoPointPath]);
+      userData.id = userSnapshot.id;
+      usersAround.push(userData);
+    });
+    console.log(usersAround);
+    dispatch(usersAroundCreators.updateUsersAround(usersAround))
+    
+    // snapshot.docChanges.forEach(function (change) {
+    //   if (change.type === "added") {
+    //     console.log("New locaiton: ", change.doc.data());
+    //   }
+    //   if (change.type === "modified") {
+    //     console.log("Modified locaiton: ", change.doc.data());
+    //   }
+    //   if (change.type === "removed") {
+    //     console.log("Removed location: ", change.doc.data());
+    //   }
+    // });
+  });
+  return unsubscribe;
 }
 
 /**
@@ -52,7 +93,7 @@ function getLocations(area) {
  * @param {Object} location2 The second location given as .latitude and .longitude
  * @return {number} The distance, in kilometers, between the inputted locations.
  */
-function distance(location1, location2) {
+export const distance = function (location1, location2) {
   const radius = 6371; // Earth's radius in kilometers
   const latDelta = degreesToRadians(location2.latitude - location1.latitude);
   const lonDelta = degreesToRadians(location2.longitude - location1.longitude);
@@ -135,4 +176,6 @@ function wrapLongitude(longitude) {
   return 180 - (-adjusted % 360);
 }
 
-
+function degreesToRadians(degrees) {
+  return (degrees * Math.PI) / 180;
+}

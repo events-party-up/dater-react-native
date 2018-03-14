@@ -5,26 +5,38 @@ import { connect } from 'react-redux'
 
 import { geoActionCreators } from '../redux'
 import PersonMaker from "./PersonMaker";
+import { getUsersAroundOnce, listenForUsersAround } from "../services/geoQuery";
 
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
+  usersAround: state.usersAround,
 })
 
 class DaterMapView extends Component {
 
-  componentDidMount() {
+  async componentDidMount() {
     //navigator.geolocation.requestAuthorization();
     this.watchId = navigator.geolocation.watchPosition(
-      (position) => {
-        this.props.dispatch(geoActionCreators.geoUpdated(position.coords));
+      async (position) => {
+        await this.props.dispatch(geoActionCreators.geoUpdated(position.coords));
+        this.unsubscribeFromUsersAround = listenForUsersAround(queryArea, this.props.dispatch);
       },
       (error) => this.props.dispatch(geoActionCreators.geoDenied(error)),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
     );
+
+    const queryArea = {
+      center: {
+        latitude: 55.807237,
+        longitude: 37.541678,
+      },
+      radius: 2,
+    };
   }
 
   componentWillUnmount() {
     navigator.geolocation.clearWatch(this.watchId);
+    this.unsubscribeFromUsersAround();
   }
 
   render() {

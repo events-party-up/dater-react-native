@@ -39,9 +39,9 @@ class Main extends Component {
     return (
       <View style={styles.mainContainer}>
         {/* <FirebaseSetup /> */}
-        <View style={styles.button}>
+        {/* <View style={styles.button}>
           <Button title='Выйти' color='blue' onPress={this.signOut}/>
-        </View>
+        </View> */}
         <DaterMapView />
       </View>
     );
