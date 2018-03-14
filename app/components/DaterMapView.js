@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import { StyleSheet, View, Text, Button } from 'react-native'
 import MapView, { Circle, Marker, Callout } from 'react-native-maps';
 import { connect } from 'react-redux'
+import 'moment/locale/ru';
+
+import Moment from 'react-moment';
 
 import { geoActionCreators } from '../redux'
 import PersonMaker from "./PersonMaker";
@@ -13,25 +16,28 @@ const mapStateToProps = (state) => ({
 })
 
 class DaterMapView extends Component {
+  constructor(props) {
+    super(props);
+    this.routeTo = this.routeTo.bind(this);
+  }
 
   async componentDidMount() {
     //navigator.geolocation.requestAuthorization();
     this.watchId = navigator.geolocation.watchPosition(
       async (position) => {
         await this.props.dispatch(geoActionCreators.geoUpdated(position.coords));
+        const queryArea = {
+          center: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          },
+          radius: 2,
+        };
         this.unsubscribeFromUsersAround = listenForUsersAround(queryArea, this.props.dispatch);
       },
       (error) => this.props.dispatch(geoActionCreators.geoDenied(error)),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
     );
-
-    const queryArea = {
-      center: {
-        latitude: 55.807237,
-        longitude: 37.541678,
-      },
-      radius: 2,
-    };
   }
 
   componentWillUnmount() {
@@ -39,9 +45,39 @@ class DaterMapView extends Component {
     this.unsubscribeFromUsersAround();
   }
 
+  routeTo = async (user) => {
+    console.log('Creating route to user: ' + user.id);
+  }
+
+  renderUsersAround() {
+    return this.props.usersAround.map(user => {
+      return (
+        <Marker
+          coordinate={{
+            latitude: user.geoPoint.latitude,
+            longitude: user.geoPoint.longitude,
+          }}
+          style={styles.maker}
+          key={user.id}
+        >
+          <PersonMaker title={user.shortId}></PersonMaker>
+          <Callout style={styles.makerCallout}>
+            <Text>Расстояние: {user.distance} м</Text>
+            <Text>Обновлено:{' '}
+              <Moment locale="ru" element={Text} fromNow>{user.timestamp}</Moment>
+            </Text>
+            <Button title='Маршрут' onPress={() => this.routeTo(user)}>
+            </Button>
+          </Callout>
+        </Marker>
+      )
+    });
+  }
+
   render() {
     return (
       <MapView style={styles.mapView}
+        showsMyLocationButton={true}  
         region={{
           latitude: this.props.coords.latitude,
           longitude: this.props.coords.longitude,
@@ -49,19 +85,8 @@ class DaterMapView extends Component {
           longitudeDelta: 0.00421,
         }}
       >
-        <Marker
-          coordinate={{
-            latitude: 55.807237,
-            longitude: 37.541678,
-          }}
-          style={styles.maker}
-          title={'Test Title'}
-          description={'Test Description'}
-        >
-          <PersonMaker title='test test test test'></PersonMaker>
-        </Marker>  
         <MapView.Circle
-          style={styles.circleBig}
+          style={styles.circleAccuracy}
           key={'coord2' + this.props.coords.latitude}
           center={{
             latitude: this.props.coords.latitude,
@@ -72,6 +97,7 @@ class DaterMapView extends Component {
           fillColor={'rgba(30,144,255,0.2)'}
         />
         <MapView.Circle
+          style={styles.circleCenter}
           key={'coord' + this.props.coords.latitude}
           center={{
             latitude: this.props.coords.latitude,
@@ -80,7 +106,9 @@ class DaterMapView extends Component {
           radius={7}
           strokeColor={'gray'}
           fillColor={'#00bfff'}
-        />
+          zIndex={10}
+          />
+        {this.renderUsersAround()}
       </MapView>
     )
   }
@@ -90,13 +118,19 @@ const styles = StyleSheet.create({
   mapView: {
     flex: 1,
   },
-  circleBig: {
+  circleAccuracy: {
     opacity: 0.5,
+    zIndex: 4,
+  },
+  circleCenter: {
+    zIndex: 3,
   },
   maker: {
-
+    zIndex: 1,
+  },
+  makerCallout: {
+    width: 150,
   }
-
 })
 
 export default connect(mapStateToProps)(DaterMapView);

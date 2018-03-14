@@ -36,7 +36,8 @@ export const listenForUsersAround = async (area, dispatch) => {
       if (userData.id === firebase.auth().currentUser.uid) {
         return;
       }
-      userData.distanceFromCenter = distance(area.center, userData[geoPointPath]);
+      userData.shortId = userSnapshot.id.substring(0,4);
+      userData.distance = distance(area.center, userData[geoPointPath]);
       usersAround.push(userData);
     });
     dispatch(usersAroundCreators.updateUsersAround(usersAround))
@@ -57,7 +58,7 @@ export const listenForUsersAround = async (area, dispatch) => {
 }
 
 /**
- * Calculates the distance, in kilometers, between two locations, via the
+ * Calculates the distance, in meters, between two locations, via the
  * Haversine formula. Note that this is approximate due to the fact that
  * the Earth's radius varies between 6356.752 km and 6378.137 km.
  *
@@ -75,8 +76,9 @@ export const distance = function (location1, location2) {
       Math.sin(lonDelta / 2) * Math.sin(lonDelta / 2));
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-  return radius * c;
+  const distanceKm = radius * c;
+  const distanceM = distanceKm * 1000;
+  return Math.floor(distanceM);
 }
 
 /**

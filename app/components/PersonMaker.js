@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     alignSelf: 'flex-start',
+    zIndex: 1,
   },
   bubble: {
     flex: 0,
