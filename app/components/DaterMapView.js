@@ -94,7 +94,7 @@ class DaterMapView extends Component {
   render() {
     return (
       <MapView style={styles.mapView}
-        showsMyLocationButton={true}  
+        showsMyLocationButton={true}
         region={{
           latitude: this.props.coords.latitude,
           longitude: this.props.coords.longitude,
@@ -103,6 +103,12 @@ class DaterMapView extends Component {
         }}
         onRegionChangeComplete={this.onRegionChangeComplete}
         provider='google'
+        showsBuildings={true}
+        showsTraffic={false}
+        showsIndoors={true}
+        showsTraffic={false}
+        showsBuildings={false}
+        showsMyLocationButton={false}
       >
         <MapView.Circle
           style={styles.circleAccuracy}
