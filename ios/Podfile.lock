@@ -8,19 +8,19 @@ PODS:
   - Crashlytics (3.9.3):
     - Fabric (~> 1.7.2)
   - Fabric (1.7.5)
-  - Firebase/Auth (4.10.0):
+  - Firebase/Auth (4.10.1):
     - Firebase/Core
     - FirebaseAuth (= 4.4.4)
-  - Firebase/Core (4.10.0):
+  - Firebase/Core (4.10.1):
     - FirebaseAnalytics (= 4.1.0)
-    - FirebaseCore (= 4.0.16)
-  - Firebase/Firestore (4.10.0):
+    - FirebaseCore (= 4.0.17)
+  - Firebase/Firestore (4.10.1):
     - Firebase/Core
-    - FirebaseFirestore (= 0.10.2)
-  - Firebase/Performance (4.10.0):
+    - FirebaseFirestore (= 0.10.3)
+  - Firebase/Performance (4.10.1):
     - Firebase/Core
     - FirebasePerformance (= 1.1.2)
-  - Firebase/RemoteConfig (4.10.0):
+  - Firebase/RemoteConfig (4.10.1):
     - Firebase/Core
     - FirebaseRemoteConfig (= 2.1.2)
   - FirebaseABTesting (1.0.0):
@@ -35,9 +35,9 @@ PODS:
     - FirebaseAnalytics (~> 4.1)
     - GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)
     - GTMSessionFetcher/Core (~> 1.1)
-  - FirebaseCore (4.0.16):
+  - FirebaseCore (4.0.17):
     - GoogleToolboxForMac/NSData+zlib (~> 2.1)
-  - FirebaseFirestore (0.10.2):
+  - FirebaseFirestore (0.10.3):
     - FirebaseAnalytics (~> 4.1)
     - FirebaseCore (~> 4.0)
     - gRPC-ProtoRPC (~> 1.0)
@@ -140,6 +140,8 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
+  - RNDeviceInfo (0.21.0):
+    - React
   - yoga (0.53.3.React)
 
 DEPENDENCIES:
@@ -164,6 +166,7 @@ DEPENDENCIES:
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTVibration (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga/yoga.podspec`)
 
 EXTERNAL SOURCES:
@@ -173,6 +176,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-maps
   react-native-maps:
     :path: ../node_modules/react-native-maps
+  RNDeviceInfo:
+    :path: ../node_modules/react-native-device-info
   yoga:
     :path: ../node_modules/react-native/ReactCommon/yoga/yoga.podspec
 
@@ -180,12 +185,12 @@ SPEC CHECKSUMS:
   BoringSSL: 32764dbaf5f5888cf51fbaa172a010126b41bcd4
   Crashlytics: dbb07d01876c171c5ccbdf7826410380189e452c
   Fabric: ae7146a5f505ea370a1e44820b4b1dc8890e2890
-  Firebase: c98c8b1fbcbdccd82539a36c2b17a9b1bb0ee798
+  Firebase: 92c6ba593e32db0defde464a9adc981d5cb49f97
   FirebaseABTesting: d07d0ee833b842d5153549e4c7e2e2cb1c23a3f9
   FirebaseAnalytics: 3dfae28d4a5e06f86c4fae830efc2ad3fadb19bc
   FirebaseAuth: d040bb7a9db6dfc29d0e7ec82d48be51352b2581
-  FirebaseCore: eb9e1a56733ff1094ecf3e28af9069c344b25239
-  FirebaseFirestore: 9423ca756bbf77bfa3cd02fafc8027ae79da625a
+  FirebaseCore: 872307b001bbefda1dfa0dbfffa50a6919023d4a
+  FirebaseFirestore: 41d1ec1f37963b63f8bbbcdb94d8545d4c6c1b42
   FirebaseInstanceID: d2058a35e9bebda1b6dd42486b84917bde552a9d
   FirebasePerformance: 96c831a9eaf8d2ddf8bb37a4a6f6dd1b4bfe929f
   FirebaseRemoteConfig: df64ce784a45e9b9d4988030a59da6baede8bdb0
@@ -203,8 +208,9 @@ SPEC CHECKSUMS:
   React: af66244a7d630be2aef03b4ddfe3570e4eff39fc
   react-native-google-maps: 963fc78a5ac32dad3a726e4fa08b5307faa5cab2
   react-native-maps: 066c2afcc89e18726377bcc685315f989ca22449
+  RNDeviceInfo: 45f04a9c291b639308a8459a83fced0ec69f9367
   yoga: 55da126afc384965b96bff46652464373b330add
 
-PODFILE CHECKSUM: 75420da868839eaa33b27ac04070c433afb54d23
+PODFILE CHECKSUM: cf45d140256918644e498d4199c868fb8257a085
 
 COCOAPODS: 1.4.0

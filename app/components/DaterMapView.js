@@ -59,6 +59,7 @@ class DaterMapView extends Component {
           }}
           style={styles.maker}
           key={user.id}
+          zIndex={1}
         >
           <PersonMaker title={user.shortId}></PersonMaker>
           <Callout style={styles.makerCallout}>
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
     zIndex: 4,
   },
   circleCenter: {
-    zIndex: 3,
+    zIndex: 4,
   },
   maker: {
     zIndex: 1,

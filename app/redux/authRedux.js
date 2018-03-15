@@ -1,5 +1,7 @@
 import firebase from 'react-native-firebase';
+import DeviceInfo from 'react-native-device-info';
 import { geoActionCreators } from "../redux";
+import { Platform } from 'react-native';
 
 const types = {
   AUTH_PENDING: 'AUTH_PENDING',
@@ -42,6 +44,20 @@ const authSuccess = (user) => async (dispatch, getState) => {
     .collection('geoPoints')
     .doc(user.uid)
     .set({}, { merge: true })
+    .catch(error => console.error(error));
+
+  await firebase.firestore()
+    .collection('users')
+    .doc(user.uid)
+    .update({
+      device: {
+        isEmulator: DeviceInfo.isEmulator(),
+        osVersion: DeviceInfo.getSystemVersion(),
+        uuid: DeviceInfo.getUniqueID(),
+        platform: Platform.OS,
+        locale: DeviceInfo.getDeviceLocale(),
+      }
+    })
     .catch(error => console.error(error));
 
   dispatch({

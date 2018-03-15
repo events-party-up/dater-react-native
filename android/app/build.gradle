@@ -141,6 +141,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-device-info')
     compile 'com.android.support:multidex:1.0.0'
     compile ("com.google.android.gms:play-services-base:11.8.0") {
         force = true;
