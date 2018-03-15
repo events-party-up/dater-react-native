@@ -102,6 +102,7 @@ class DaterMapView extends Component {
           longitudeDelta: LONGITUDE_DELTA,
         }}
         onRegionChangeComplete={this.onRegionChangeComplete}
+        provider='google'
       >
         <MapView.Circle
           style={styles.circleAccuracy}
