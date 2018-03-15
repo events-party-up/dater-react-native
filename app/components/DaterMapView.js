@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, View, Text, Button } from 'react-native'
+import { StyleSheet, View, Text, Button, Dimensions } from 'react-native'
 import MapView, { Circle, Marker, Callout } from 'react-native-maps';
 import { connect } from 'react-redux'
 import 'moment/locale/ru';
@@ -8,12 +8,16 @@ import Moment from 'react-moment';
 
 import { geoActionCreators } from '../redux'
 import PersonMaker from "./PersonMaker";
-import { getUsersAroundOnce, listenForUsersAround } from "../services/geoQuery";
+import { getUsersAroundOnce, listenForUsersAround, distance } from "../services/geoQuery";
 
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
   usersAround: state.usersAround,
 })
+const { width, height } = Dimensions.get('window');
+const ASPECT_RATIO = width / height;
+const LATITUDE_DELTA = 0.00922;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 class DaterMapView extends Component {
   constructor(props) {
@@ -31,7 +35,7 @@ class DaterMapView extends Component {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           },
-          radius: 2,
+          radius: 25,
         };
         this.unsubscribeFromUsersAround = listenForUsersAround(queryArea, this.props.dispatch);
       },
@@ -47,6 +51,18 @@ class DaterMapView extends Component {
 
   routeTo = async (user) => {
     console.log('Creating route to user: ' + user.id);
+  }
+
+  onRegionChangeComplete (region) {
+    const center = {
+      latitude: region.latitude,
+      longitude: region.longitude,
+    };
+    const corner = {
+      latitude: center.latitude + region.latitudeDelta,
+      longitude: region.longitude + region.latitudeDelta,
+    }
+    console.log('Viewable approx radius in m: ', distance(center, corner) );
   }
 
   renderUsersAround() {
@@ -82,9 +98,10 @@ class DaterMapView extends Component {
         region={{
           latitude: this.props.coords.latitude,
           longitude: this.props.coords.longitude,
-          latitudeDelta: 0.00922,
-          longitudeDelta: 0.00421,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA,
         }}
+        onRegionChangeComplete={this.onRegionChangeComplete}
       >
         <MapView.Circle
           style={styles.circleAccuracy}
