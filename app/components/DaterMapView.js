@@ -15,8 +15,7 @@ const mapStateToProps = (state) => ({
   usersAround: state.usersAround,
   mapView: state.geo.mapView,
 })
-const { width, height } = Dimensions.get('window');
-const ASPECT_RATIO = width / height;
+const MY_LOCATION_CIRCLE_RATIO = 120;
 
 class DaterMapView extends Component {
   constructor(props) {
@@ -123,7 +122,7 @@ class DaterMapView extends Component {
             latitude: this.props.coords.latitude,
             longitude: this.props.coords.longitude,
           }}
-          radius={7}
+          radius={this.props.mapView.visibleRadiusInMeters / MY_LOCATION_CIRCLE_RATIO}
           strokeColor={'gray'}
           fillColor={'#00bfff'}
           zIndex={10}

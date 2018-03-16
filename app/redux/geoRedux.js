@@ -64,7 +64,6 @@ const geoMapViewUpdated = (region) => {
     longitude: region.longitude + region.latitudeDelta,
   }
   const visibleRadiusInMeters = distance(center, corner);
-  console.log('Viewable approx radius in m: ', visibleRadiusInMeters);
   region.visibleRadiusInMeters = visibleRadiusInMeters;
   return {
     type: types.GEO_MAPVIEW_UPDATED,
@@ -89,7 +88,7 @@ const initialState = {
   mapView: {
     latitudeDelta: DEFAULTLATITUDE_DELTA,
     longitudeDelta: DEFAULT_LONGITUDE_DELTA,
-    visibleRadiusInMeters: 2000,
+    visibleRadiusInMeters: 410,
   },
   error: null,
   geoGranted: false,
