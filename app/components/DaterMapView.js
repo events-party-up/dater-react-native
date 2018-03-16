@@ -109,6 +109,10 @@ class DaterMapView extends Component {
         showsTraffic={false}
         showsBuildings={false}
         showsMyLocationButton={false}
+        scrollEnabled={false}
+        toolbarEnabled={false}
+        moveOnMarkerPress={false}
+        mapType='standard'
       >
         <MapView.Circle
           style={styles.circleAccuracy}
