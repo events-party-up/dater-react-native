@@ -1,6 +1,8 @@
 import firebase from 'react-native-firebase';
 import { Dimensions } from 'react-native'
 
+import { getUsersAroundOnce, listenForUsersAround, distance } from "../services/geoQuery";
+
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const DEFAULTLATITUDE_DELTA = 0.00322;
@@ -8,6 +10,7 @@ const DEFAULT_LONGITUDE_DELTA = DEFAULTLATITUDE_DELTA * ASPECT_RATIO;
 
 const types = {
   GEO_UPDATED: 'GEO_UPDATED',
+  GEO_MAPVIEW_UPDATED: 'GEO_MAPVIEW_UPDATED',
   GEO_PERMISSION_REQUESTED: 'GEO_PERMISSION_REQUESTED',
   GEO_PERMISSION_GRANTED: 'GEO_PERMISSION_GRANTED',
   GEO_PERMISSION_DENIED: 'GEO_PERMISSION_DENIED',
@@ -51,11 +54,30 @@ const geoDenied= (error) => {
   }
 }
 
+const geoMapViewUpdated = (region) => {
+  const center = {
+    latitude: region.latitude,
+    longitude: region.longitude,
+  };
+  const corner = {
+    latitude: center.latitude + region.latitudeDelta,
+    longitude: region.longitude + region.latitudeDelta,
+  }
+  const visibleRadiusInMeters = distance(center, corner);
+  console.log('Viewable approx radius in m: ', visibleRadiusInMeters);
+  region.visibleRadiusInMeters = visibleRadiusInMeters;
+  return {
+    type: types.GEO_MAPVIEW_UPDATED,
+    payload: region,
+  }
+}
+
 export const geoActionCreators = {
   geoUpdated,
   geoRequest,
   geoGranted,
   geoDenied,
+  geoMapViewUpdated,
 }
 
 const initialState = {
@@ -67,6 +89,7 @@ const initialState = {
   mapView: {
     latitudeDelta: DEFAULTLATITUDE_DELTA,
     longitudeDelta: DEFAULT_LONGITUDE_DELTA,
+    visibleRadiusInMeters: 2000,
   },
   error: null,
   geoGranted: false,
@@ -81,6 +104,16 @@ export const reducer = (state = initialState, action) => {
       return {
         ...state,
         coords: payload,
+      }
+    }
+    case types.GEO_MAPVIEW_UPDATED: {
+      return {
+        ...state,
+        mapView: {
+          latitudeDelta: payload.latitudeDelta,
+          longitudeDelta: payload.longitudeDelta,
+          visibleRadiusInMeters: payload.visibleRadiusInMeters,
+        },
       }
     }
     default: {

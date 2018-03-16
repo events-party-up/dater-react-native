@@ -8,7 +8,7 @@ import Moment from 'react-moment';
 
 import { geoActionCreators } from '../redux'
 import PersonMaker from "./PersonMaker";
-import { getUsersAroundOnce, listenForUsersAround, distance } from "../services/geoQuery";
+import { getUsersAroundOnce, listenForUsersAround } from "../services/geoQuery";
 
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
@@ -52,16 +52,8 @@ class DaterMapView extends Component {
     console.log('Creating route to user: ' + user.id);
   }
 
-  onRegionChangeComplete (region) {
-    const center = {
-      latitude: region.latitude,
-      longitude: region.longitude,
-    };
-    const corner = {
-      latitude: center.latitude + region.latitudeDelta,
-      longitude: region.longitude + region.latitudeDelta,
-    }
-    console.log('Viewable approx radius in m: ', distance(center, corner) );
+  onRegionChangeComplete = (region) => {
+    this.props.dispatch(geoActionCreators.geoMapViewUpdated(region));
   }
 
   renderUsersAround() {
