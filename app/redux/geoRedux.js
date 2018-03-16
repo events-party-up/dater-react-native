@@ -5,8 +5,8 @@ import { getUsersAroundOnce, listenForUsersAround, distance } from "../services/
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
-const DEFAULTLATITUDE_DELTA = 0.00322;
-const DEFAULT_LONGITUDE_DELTA = DEFAULTLATITUDE_DELTA * ASPECT_RATIO;
+const DEFAULT_LATITUDE_DELTA = 0.00322;
+const DEFAULT_LONGITUDE_DELTA = DEFAULT_LATITUDE_DELTA * ASPECT_RATIO;
 
 const types = {
   GEO_UPDATED: 'GEO_UPDATED',
@@ -61,7 +61,7 @@ const geoMapViewUpdated = (region) => {
   };
   const corner = {
     latitude: center.latitude + region.latitudeDelta,
-    longitude: region.longitude + region.latitudeDelta,
+    longitude: region.longitude + region.longitudeDelta,
   }
   const visibleRadiusInMeters = distance(center, corner);
   region.visibleRadiusInMeters = visibleRadiusInMeters;
@@ -86,7 +86,7 @@ const initialState = {
     accuracy: 800,
   },
   mapView: {
-    latitudeDelta: DEFAULTLATITUDE_DELTA,
+    latitudeDelta: DEFAULT_LATITUDE_DELTA,
     longitudeDelta: DEFAULT_LONGITUDE_DELTA,
     visibleRadiusInMeters: 410,
   },

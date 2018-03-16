@@ -14,7 +14,8 @@ import { initUserAuth, signOutUser } from "../services/auth";
 import { authActionCreators } from '../redux'
 
 const mapStateToProps = (state) => ({
-  auth: state.auth
+  auth: state.auth,
+  coords: state.geo.coords,
 })
 
 class Main extends Component {
@@ -42,6 +43,10 @@ class Main extends Component {
         {/* <View style={styles.button}>
           <Button title='Выйти' color='blue' onPress={this.signOut}/>
         </View> */}
+        <Text style={styles.debugText}>Accuracy: {this.props.coords.accuracy}{'\n'}
+          Latitude: {this.props.coords.latitude}{'\n'}
+          Longitude: {this.props.coords.longitude}{'\n'}
+        </Text>
         <DaterMapView />
       </View>
     );
@@ -61,6 +66,13 @@ const styles = StyleSheet.create({
     bottom: 50,
     left: 0,
     right: 0,
+  },
+  debugText: {
+    position: 'absolute',
+    bottom: 0,
+    right: 20,
+    zIndex: 2,
+    opacity: 0.8
   }
 });
 

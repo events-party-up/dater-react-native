@@ -8,7 +8,12 @@ import Moment from 'react-moment';
 
 import { geoActionCreators } from '../redux'
 import PersonMaker from "./PersonMaker";
-import { getUsersAroundOnce, listenForUsersAround } from "../services/geoQuery";
+import { getUsersAroundOnce, listenForUsersAround, distance } from "../services/geoQuery";
+
+const { width, height } = Dimensions.get('window');
+const ASPECT_RATIO = width / height;
+const DEFAULT_LATITUDE_DELTA = 0.00322;
+const DEFAULT_LONGITUDE_DELTA = DEFAULT_LATITUDE_DELTA * ASPECT_RATIO;
 
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
@@ -20,6 +25,11 @@ const MY_LOCATION_CIRCLE_RATIO = 120;
 class DaterMapView extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      visibleRadiusInMeters: 5,
+      latitudeDelta: DEFAULT_LATITUDE_DELTA,
+      longitudeDelta: DEFAULT_LONGITUDE_DELTA,
+    };
     this.routeTo = this.routeTo.bind(this);
   }
 
@@ -35,7 +45,10 @@ class DaterMapView extends Component {
           },
           radius: 25,
         };
+        if (!this.unsubscribeFromUsersAround) {
+          console.log('Attach a listener for users around');
         this.unsubscribeFromUsersAround = listenForUsersAround(queryArea, this.props.dispatch);
+        }
       },
       (error) => this.props.dispatch(geoActionCreators.geoDenied(error)),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
@@ -53,6 +66,27 @@ class DaterMapView extends Component {
 
   onRegionChangeComplete = (region) => {
     this.props.dispatch(geoActionCreators.geoMapViewUpdated(region));
+  }
+
+  onRegionChange = (region) => {
+    console.log('Region updated');
+    console.log(region);
+    
+    const center = {
+      latitude: region.latitude,
+      longitude: region.longitude,
+    };
+    const corner = {
+      latitude: center.latitude + region.latitudeDelta,
+      longitude: region.longitude + region.longitudeDelta,
+    }
+    const visibleRadiusInMeters = distance(center, corner);
+
+    this.setState({
+      latitudeDelta: region.latitudeDelta,
+      longitudeDelta: region.longitudeDelta,
+      visibleRadiusInMeters: visibleRadiusInMeters
+    });
   }
 
   renderUsersAround() {
@@ -84,7 +118,6 @@ class DaterMapView extends Component {
   render() {
     return (
       <MapView style={styles.mapView}
-        showsMyLocationButton={true}
         region={{
           latitude: this.props.coords.latitude,
           longitude: this.props.coords.longitude,
@@ -92,6 +125,7 @@ class DaterMapView extends Component {
           longitudeDelta: this.props.mapView.longitudeDelta,
         }}
         onRegionChangeComplete={this.onRegionChangeComplete}
+        // onRegionChange={this.onRegionChange}
         provider='google'
         showsBuildings={true}
         showsTraffic={false}
