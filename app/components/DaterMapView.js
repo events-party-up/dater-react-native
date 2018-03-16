@@ -13,11 +13,10 @@ import { getUsersAroundOnce, listenForUsersAround, distance } from "../services/
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
   usersAround: state.usersAround,
+  mapView: state.geo.mapView,
 })
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
-const LATITUDE_DELTA = 0.00922;
-const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 class DaterMapView extends Component {
   constructor(props) {
@@ -98,8 +97,8 @@ class DaterMapView extends Component {
         region={{
           latitude: this.props.coords.latitude,
           longitude: this.props.coords.longitude,
-          latitudeDelta: LATITUDE_DELTA,
-          longitudeDelta: LONGITUDE_DELTA,
+          latitudeDelta: this.props.mapView.latitudeDelta,
+          longitudeDelta: this.props.mapView.longitudeDelta,
         }}
         onRegionChangeComplete={this.onRegionChangeComplete}
         provider='google'

@@ -1,4 +1,10 @@
 import firebase from 'react-native-firebase';
+import { Dimensions } from 'react-native'
+
+const { width, height } = Dimensions.get('window');
+const ASPECT_RATIO = width / height;
+const DEFAULTLATITUDE_DELTA = 0.00322;
+const DEFAULT_LONGITUDE_DELTA = DEFAULTLATITUDE_DELTA * ASPECT_RATIO;
 
 const types = {
   GEO_UPDATED: 'GEO_UPDATED',
@@ -57,6 +63,10 @@ const initialState = {
     latitude: 55.751244,
     longitude: 37.618423,
     accuracy: 800,
+  },
+  mapView: {
+    latitudeDelta: DEFAULTLATITUDE_DELTA,
+    longitudeDelta: DEFAULT_LONGITUDE_DELTA,
   },
   error: null,
   geoGranted: false,
