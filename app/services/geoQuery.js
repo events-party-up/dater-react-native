@@ -1,11 +1,12 @@
 import firebase from 'react-native-firebase';
-import { usersAroundCreators } from '../redux'
+import { usersAroundActionCreators } from '../redux';
 
 const collectionPath = 'geoPoints';
 const geoPointPath = 'geoPoint';
 
 /**
- * Get locations within a bounding box defined by a center point and distance from from the center point to the side of the box;
+ * Get locations within a bounding box defined by a center point a
+ * nd distance from from the center point to the side of the box;
  *
  * @param {Object} area an object that represents the bounding box
  *    around a point in which locations should be retrieved
@@ -22,26 +23,27 @@ const geoPointPath = 'geoPoint';
 export const listenForUsersAround = async (area, dispatch) => {
   // calculate the SW and NE corners of the bounding box to query for
   const box = boundingBoxCoordinates(area.center, area.radius);
-  const lesserGeopoint = new firebase.firestore.GeoPoint(box.swCorner.latitude, box.swCorner.longitude);
-  const greaterGeopoint = new firebase.firestore.GeoPoint(box.neCorner.latitude, box.neCorner.longitude);
+  const lesserGeopoint = new firebase.firestore
+    .GeoPoint(box.swCorner.latitude, box.swCorner.longitude);
+  const greaterGeopoint = new firebase.firestore
+    .GeoPoint(box.neCorner.latitude, box.neCorner.longitude);
   // construct the Firestore query
-  let query = firebase.firestore().collection(collectionPath).where(geoPointPath, '>', lesserGeopoint).where(geoPointPath, '<', greaterGeopoint);
-
-  const unsubscribe = query.onSnapshot(function (snapshot) {
+  const query = firebase.firestore().collection(collectionPath).where(geoPointPath, '>', lesserGeopoint).where(geoPointPath, '<', greaterGeopoint);
+  const unsubscribe = query.onSnapshot((snapshot) => {
     const usersAround = []; // used to hold all the loc data
-    snapshot.forEach((userSnapshot, userKey) => {
+    snapshot.forEach((userSnapshot) => {
       const userData = userSnapshot.data();
       userData.id = userSnapshot.id;
 
       if (userData.id === firebase.auth().currentUser.uid) {
         return;
       }
-      userData.shortId = userSnapshot.id.substring(0,4);
+      userData.shortId = userSnapshot.id.substring(0, 4);
       userData.distance = distance(area.center, userData[geoPointPath]);
       usersAround.push(userData);
     });
-    dispatch(usersAroundCreators.updateUsersAround(usersAround))
-    
+    dispatch(usersAroundActionCreators.updateUsersAround(usersAround));
+
     // snapshot.docChanges.forEach(function (change) {
     //   if (change.type === "added") {
     //     console.log("New locaiton: ", change.doc.data());
@@ -55,7 +57,7 @@ export const listenForUsersAround = async (area, dispatch) => {
     // });
   });
   return unsubscribe;
-}
+};
 
 /**
  * Calculates the distance, in meters, between two locations, via the
@@ -66,20 +68,21 @@ export const listenForUsersAround = async (area, dispatch) => {
  * @param {Object} location2 The second location given as .latitude and .longitude
  * @return {number} The distance, in kilometers, between the inputted locations.
  */
-export const distance = function (location1, location2) {
+export const distance = (location1, location2) => {
   const radius = 6371; // Earth's radius in kilometers
   const latDelta = degreesToRadians(location2.latitude - location1.latitude);
   const lonDelta = degreesToRadians(location2.longitude - location1.longitude);
 
   const a = (Math.sin(latDelta / 2) * Math.sin(latDelta / 2)) +
-    (Math.cos(degreesToRadians(location1.latitude)) * Math.cos(degreesToRadians(location2.latitude)) *
+    (Math.cos(degreesToRadians(location1.latitude)) *
+      Math.cos(degreesToRadians(location2.latitude)) *
       Math.sin(lonDelta / 2) * Math.sin(lonDelta / 2));
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distanceKm = radius * c;
   const distanceM = distanceKm * 1000;
   return Math.floor(distanceM);
-}
+};
 
 /**
  * Calculates the SW and NE corners of a bounding box around a center point for a given radius;
@@ -116,20 +119,20 @@ function boundingBoxCoordinates(center, radius) {
  * @param {number} latitude The latitude at which to calculate.
  * @return {number} The number of degrees the distance corresponds to.
  */
-function metersToLongitudeDegrees(distance, latitude) {
+function metersToLongitudeDegrees(distance1, latitude) {
   const EARTH_EQ_RADIUS = 6378137.0;
   // this is a super, fancy magic number that the GeoFire lib can explain (maybe)
   const E2 = 0.00669447819799;
   const EPSILON = 1e-12;
   const radians = degreesToRadians(latitude);
-  const num = Math.cos(radians) * EARTH_EQ_RADIUS * Math.PI / 180;
-  const denom = 1 / Math.sqrt(1 - E2 * Math.sin(radians) * Math.sin(radians));
+  const num = (Math.cos(radians) * EARTH_EQ_RADIUS * Math.PI) / 180;
+  const denom = 1 / Math.sqrt(1 - (E2 * Math.sin(radians) * Math.sin(radians)));
   const deltaDeg = num * denom;
   if (deltaDeg < EPSILON) {
-    return distance > 0 ? 360 : 0;
+    return distance1 > 0 ? 360 : 0;
   }
   // else
-  return Math.min(360, distance / deltaDeg);
+  return Math.min(360, distance1 / deltaDeg);
 }
 
 /**

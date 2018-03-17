@@ -1,7 +1,7 @@
 import firebase from 'react-native-firebase';
-import { Dimensions } from 'react-native'
+import { Dimensions } from 'react-native';
 
-import { getUsersAroundOnce, listenForUsersAround, distance } from "../services/geoQuery";
+import { distance } from '../services/geoQuery';
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -14,10 +14,10 @@ const types = {
   GEO_PERMISSION_REQUESTED: 'GEO_PERMISSION_REQUESTED',
   GEO_PERMISSION_GRANTED: 'GEO_PERMISSION_GRANTED',
   GEO_PERMISSION_DENIED: 'GEO_PERMISSION_DENIED',
-}
+};
 
 const geoUpdated = (coords) => async (dispatch, getState) => {
-  const uid = getState().auth.uid;
+  const { uid } = getState().auth;
 
   if (uid !== null) {
     await firebase.firestore().collection('geoPoints').doc(uid).update({
@@ -26,33 +26,28 @@ const geoUpdated = (coords) => async (dispatch, getState) => {
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     })
       // .then(() => console.log('Successfully updated geo data'))
-      .catch(error => console.error(error));
+      .catch((error) => console.error(error));
   }
 
   dispatch({
     type: types.GEO_UPDATED,
-    payload: coords
-  });
-}
-const geoRequest = () => {
-  return {
-    type: types.GEO_PERMISSION_REQUESTED,
-  }
-}
-
-const geoGranted = (coords) => {
-  return {
-    type: types.GEO_PERMISSION_GRANTED,
     payload: coords,
-  }
-}
+  });
+};
 
-const geoDenied= (error) => {
-  return {
-    type: types.GEO_PERMISSION_DENIED,
-    payload: error,
-  }
-}
+const geoRequest = () => ({
+  type: types.GEO_PERMISSION_REQUESTED,
+});
+
+const geoGranted = (coords) => ({
+  type: types.GEO_PERMISSION_GRANTED,
+  payload: coords,
+});
+
+const geoDenied = (error) => ({
+  type: types.GEO_PERMISSION_DENIED,
+  payload: error,
+});
 
 const geoMapViewUpdated = (region) => {
   const center = {
@@ -62,14 +57,17 @@ const geoMapViewUpdated = (region) => {
   const corner = {
     latitude: center.latitude + region.latitudeDelta,
     longitude: region.longitude + region.longitudeDelta,
-  }
+  };
   const visibleRadiusInMeters = distance(center, corner);
-  region.visibleRadiusInMeters = visibleRadiusInMeters;
+
   return {
     type: types.GEO_MAPVIEW_UPDATED,
-    payload: region,
-  }
-}
+    payload: {
+      ...region,
+      visibleRadiusInMeters,
+    },
+  };
+};
 
 export const geoActionCreators = {
   geoUpdated,
@@ -77,7 +75,7 @@ export const geoActionCreators = {
   geoGranted,
   geoDenied,
   geoMapViewUpdated,
-}
+};
 
 const initialState = {
   coords: {
@@ -92,18 +90,17 @@ const initialState = {
   },
   error: null,
   geoGranted: false,
-}
+};
 
-//implement your reducer
 export const reducer = (state = initialState, action) => {
-  const {type, payload} = action
+  const { type, payload } = action;
 
   switch (type) {
     case types.GEO_UPDATED: {
       return {
         ...state,
         coords: payload,
-      }
+      };
     }
     case types.GEO_MAPVIEW_UPDATED: {
       return {
@@ -113,10 +110,11 @@ export const reducer = (state = initialState, action) => {
           longitudeDelta: payload.longitudeDelta,
           visibleRadiusInMeters: payload.visibleRadiusInMeters,
         },
-      }
+      };
     }
     default: {
-      return state
+      return state;
     }
   }
-}
+};
+
