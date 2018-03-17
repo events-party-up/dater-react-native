@@ -28,7 +28,9 @@ export const listenForUsersAround = async (area, dispatch) => {
   const greaterGeopoint = new firebase.firestore
     .GeoPoint(box.neCorner.latitude, box.neCorner.longitude);
   // construct the Firestore query
-  const query = firebase.firestore().collection(collectionPath).where(geoPointPath, '>', lesserGeopoint).where(geoPointPath, '<', greaterGeopoint);
+  const query = firebase.firestore().collection(collectionPath)
+    .where(geoPointPath, '>', lesserGeopoint)
+    .where(geoPointPath, '<', greaterGeopoint);
   const unsubscribe = query.onSnapshot((snapshot) => {
     const usersAround = []; // used to hold all the loc data
     snapshot.forEach((userSnapshot) => {

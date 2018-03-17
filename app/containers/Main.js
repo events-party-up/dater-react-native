@@ -1,22 +1,18 @@
 import React, { Component } from 'react';
 import {
-  Platform,
   StyleSheet,
   Text,
   View,
-  Button
 } from 'react-native';
-import { connect } from 'react-redux'
-import firebase from 'react-native-firebase';
+import { connect } from 'react-redux';
 
-import { DaterMapView, FirebaseSetup } from "../components";
-import { initUserAuth, signOutUser } from "../services/auth";
-import { authActionCreators } from '../redux'
+import { DaterMapView } from '../components';
+import { initUserAuth, signOutUser } from '../services/auth';
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
   coords: state.geo.coords,
-})
+});
 
 class Main extends Component {
   constructor(props) {
@@ -31,7 +27,7 @@ class Main extends Component {
     this.authUnsubscribe();
   }
 
-  signOut = async () =>  {
+  signOut = async () => {
     this.authUnsubscribe();
     await signOutUser(this.props.dispatch);
   }
@@ -72,8 +68,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 20,
     zIndex: 2,
-    opacity: 0.8
-  }
+    opacity: 0.8,
+  },
 });
 
-export default connect(mapStateToProps)(Main)
+export default connect(mapStateToProps)(Main);

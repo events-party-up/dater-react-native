@@ -17,7 +17,11 @@
     "import/no-unresolved": [2, { "ignore": ["^react-native-maps"] }],
     "arrow-parens": [2, "always", {
         "requireForBlockBody": true
-      }]
+      }],
+    "max-len": [2, {
+      "code": 120,
+      "ignoreComments": true
+    }]
   },
   "globals": {
     "fetch": false,

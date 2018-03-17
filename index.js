@@ -1,4 +1,5 @@
 import { AppRegistry } from 'react-native';
-import App from './app/index.js'
+import App from './app/index';
 
-AppRegistry.registerComponent('DaterReactNative', () => App)
+AppRegistry.registerComponent('DaterReactNative', () => App);
+

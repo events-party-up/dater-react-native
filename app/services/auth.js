@@ -1,8 +1,9 @@
 import firebase from 'react-native-firebase';
-import { authActionCreators } from '../redux'
+import { authActionCreators } from '../redux';
 
-export const signInAnonymously = async (dispatch) => {
-  return firebase.auth().signInAnonymouslyAndRetrieveData()
+export const signInAnonymously = async (dispatch) => (
+  firebase.auth()
+    .signInAnonymouslyAndRetrieveData()
     .then(async (response) => {
       await dispatch(authActionCreators.authNewRegistration({
         isNewUser: response.additionalUserInfo.isNewUser,
@@ -11,11 +12,10 @@ export const signInAnonymously = async (dispatch) => {
         creationTime: response.user.metadata.creationTime,
         lastSignInTime: response.user.metadata.lastSignInTime,
       }));
-    });
-}
+    }));
 
 export const initUserAuth = (dispatch) => {
-  const unsubscribe = firebase.auth().onAuthStateChanged(user => {
+  const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
     if (user) {
       console.log('User already exist');
       dispatch(authActionCreators.authSuccess({
@@ -30,7 +30,7 @@ export const initUserAuth = (dispatch) => {
     }
   });
   return unsubscribe;
-}
+};
 
 export const signOutUser = async (dispatch) => {
   if (firebase.auth().currentUser.isAnonymous) {
@@ -41,4 +41,4 @@ export const signOutUser = async (dispatch) => {
     await firebase.auth().signOut();
   }
   dispatch(authActionCreators.authSignOut());
-}
+};

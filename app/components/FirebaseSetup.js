@@ -1,5 +1,5 @@
-import React, { Component, PropTypes } from 'react'
-import { StyleSheet, View, Text } from 'react-native'
+import React, { Component } from 'react';
+import { StyleSheet, View, Text } from 'react-native';
 import firebase from 'react-native-firebase';
 
 export default class FirebaseSetup extends Component {
@@ -37,5 +37,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 4,
     textAlign: 'center',
-  }
+  },
 });
