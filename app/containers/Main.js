@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { DaterMapView } from '../components';
 import { initUserAuth, signOutUser } from '../services/auth';
 import watchGeoPosition from '../services/geoDevice';
+import { listenForUsersAround } from '../services/geoQuery';
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
@@ -20,6 +21,7 @@ type Props = {
 
 class Main extends Component<Props> {
   authUnsubscribe;
+  unsubscribeFromUsersAround;
   geoWatchID: number;
 
   componentWillMount() {
@@ -28,8 +30,23 @@ class Main extends Component<Props> {
   }
 
   componentWillUnmount() {
+    this.unsubscribeFromUsersAround();
     navigator.geolocation.clearWatch(this.geoWatchID);
     this.authUnsubscribe();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.coords && !this.unsubscribeFromUsersAround) {
+      const queryArea = {
+        center: {
+          latitude: nextProps.coords.latitude,
+          longitude: nextProps.coords.longitude,
+        },
+        radius: 25,
+      };
+      console.log('Attach a listener for users around');
+      this.unsubscribeFromUsersAround = listenForUsersAround(queryArea, this.props.dispatch);
+    }
   }
 
   signOut = async () => {
@@ -38,7 +55,7 @@ class Main extends Component<Props> {
   }
 
   render() {
-    return (
+    return (this.props.coords &&
       <View style={styles.mainContainer}>
         {/* <FirebaseSetup /> */}
         {/* <View style={styles.button}>

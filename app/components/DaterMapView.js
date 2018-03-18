@@ -34,7 +34,7 @@ type Props = {
 };
 
 class DaterMapView extends Component<Props> {
-  unsubscribeFromUsersAround;
+  mapView;
 
   constructor(props) {
     super(props);
@@ -42,7 +42,17 @@ class DaterMapView extends Component<Props> {
   }
 
   componentWillUnmount() {
-    this.unsubscribeFromUsersAround();
+  }
+
+  componentDidMount() {
+    requestAnimationFrame(() => {
+      this.mapView.animateToRegion({
+        latitude: this.props.coords.latitude,
+        longitude: this.props.coords.longitude,
+        latitudeDelta: this.props.mapView.latitudeDelta,
+        longitudeDelta: this.props.mapView.longitudeDelta,
+      }, 1);
+    });
   }
 
   routeTo = async (user) => {
@@ -87,8 +97,9 @@ class DaterMapView extends Component<Props> {
         style={styles.mapView}
       >
         <MapView
+          ref={(component) => { this.mapView = component; }}
           style={styles.mapView}
-          region={{
+          initialRegion={{
             latitude: this.props.coords.latitude,
             longitude: this.props.coords.longitude,
             latitudeDelta: this.props.mapView.latitudeDelta,
