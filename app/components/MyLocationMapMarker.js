@@ -2,56 +2,63 @@ import React from 'react';
 
 import {
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
-import { Marker } from 'react-native-maps';
+import { Marker, Circle } from 'react-native-maps';
 
 const ANCHOR = { x: 0.5, y: 0.5 };
 
 const colorOfmyLocationMapMarker = 'blue';
 
 class MyLocationMapMarker extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.mounted = false;
-  }
-
   render() {
-    const { heading, coordinate } = this.props;
-
+    let { heading } = this.props;
+    const { coordinate } = this.props;
+    if (heading < 0 || !heading) {
+      heading = 0;
+    }
     const rotate = (typeof heading === 'number' && heading >= 0) ? `${heading}deg` : null;
 
     return (
-      <Marker
-        anchor={ANCHOR}
-        style={styles.mapMarker}
-        {...this.props}
-        coordinate={coordinate}
+      <View
+        style={styles.locationContainer}
+        key={`coord${this.props.coordinate.latitude}-${this.props.coordinate.longitude}`}
       >
-        <View style={styles.container}>
-          <View style={styles.markerHalo} />
-          {rotate &&
-            <View style={[styles.heading, { transform: [{ rotate }] }]}>
-              <View style={styles.headingPointer} />
-            </View>
-          }
-          <View style={styles.marker}>
-            <Text style={{ width: 0, height: 0 }}>
-              {this.props.enableHack && rotate}
-            </Text>
+        <Circle
+          center={{
+            latitude: this.props.coordinate.latitude,
+            longitude: this.props.coordinate.longitude,
+          }}
+          radius={coordinate.accuracy}
+          strokeColor="#b0e0e6"
+          fillColor="rgba(30,144,255,0.2)"
+        />
+        <Marker
+          anchor={ANCHOR}
+          style={styles.mapMarker}
+          {...this.props}
+          coordinate={coordinate}
+        >
+          <View style={styles.container}>
+            <View style={styles.markerHalo} />
+            {rotate &&
+              <View style={[styles.heading, { transform: [{ rotate }] }]}>
+                <View style={styles.headingPointer} />
+              </View>
+            }
+            <View style={styles.marker} />
           </View>
-        </View>
-        {this.props.children}
-      </Marker>
+          {this.props.children}
+        </Marker>
+      </View>
     );
   }
 }
 
-const SIZE = 35;
+const SIZE = 25;
 const HALO_RADIUS = 6;
 const ARROW_SIZE = 7;
-const ARROW_DISTANCE = 6;
+const ARROW_DISTANCE = 10;
 const HALO_SIZE = SIZE + HALO_RADIUS;
 const HEADING_BOX_SIZE = HALO_SIZE + ARROW_SIZE + ARROW_DISTANCE;
 

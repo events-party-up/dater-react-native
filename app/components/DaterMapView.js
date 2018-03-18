@@ -16,7 +16,17 @@ const mapStateToProps = (state) => ({
   mapView: state.geo.mapView,
 });
 
+const GEO_OPTIONS = {
+  useSignificantChanges: false,
+  enableHighAccuracy: true,
+  timeout: 20000,
+  maximumAge: 1000,
+};
+
 class DaterMapView extends Component {
+  watchId;
+  unsubscribeFromUsersAround;
+
   constructor(props) {
     super(props);
     this.routeTo = this.routeTo.bind(this);
@@ -40,7 +50,7 @@ class DaterMapView extends Component {
         }
       },
       (error) => this.props.dispatch(geoActionCreators.geoDenied(error)),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+      GEO_OPTIONS,
     );
   }
 
@@ -111,17 +121,6 @@ class DaterMapView extends Component {
           coordinate={this.props.coords}
           heading={this.props.coords.heading}
         />
-        <MapView.Circle
-          style={styles.circleAccuracy}
-          key={`coord2${this.props.coords.latitude}`}
-          center={{
-            latitude: this.props.coords.latitude,
-            longitude: this.props.coords.longitude,
-          }}
-          radius={this.props.coords.accuracy}
-          strokeColor="#b0e0e6"
-          fillColor="rgba(30,144,255,0.2)"
-        />
         {this.renderUsersAround()}
       </MapView>
     );
@@ -131,13 +130,6 @@ class DaterMapView extends Component {
 const styles = StyleSheet.create({
   mapView: {
     flex: 1,
-  },
-  circleAccuracy: {
-    opacity: 0.5,
-    zIndex: 4,
-  },
-  maker: {
-    zIndex: 1,
   },
   makerCallout: {
     width: 150,

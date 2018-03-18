@@ -20,7 +20,11 @@ type Props = {
     latitude: number,
     longitude: number,
     accuracy: number,
+    heading: number,
   },
+  auth: {
+    uid: string,
+  }
 };
 
 class Main extends Component<Props> {
@@ -51,8 +55,10 @@ class Main extends Component<Props> {
           <Button title='Выйти' color='blue' onPress={this.signOut}/>
         </View> */}
         <Text style={styles.debugText}>Accuracy: {this.props.coords.accuracy}{'\n'}
+          Heading: {this.props.coords.heading}{'\n'}
           Latitude: {this.props.coords.latitude}{'\n'}
           Longitude: {this.props.coords.longitude}{'\n'}
+          UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
         </Text>
         <DaterMapView />
       </View>
