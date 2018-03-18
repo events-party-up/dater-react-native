@@ -8,14 +8,13 @@ import Moment from 'react-moment';
 import { geoActionCreators } from '../redux';
 import PersonMaker from './PersonMaker';
 import { listenForUsersAround } from '../services/geoQuery';
+import MyLocationMapMarker from './MyLocationMapMarker';
 
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
   usersAround: state.usersAround,
   mapView: state.geo.mapView,
 });
-
-const MY_LOCATION_CIRCLE_RATIO = 120;
 
 class DaterMapView extends Component {
   constructor(props) {
@@ -108,6 +107,10 @@ class DaterMapView extends Component {
         moveOnMarkerPress={false}
         mapType="standard"
       >
+        <MyLocationMapMarker
+          coordinate={this.props.coords}
+          heading={this.props.coords.heading}
+        />
         <MapView.Circle
           style={styles.circleAccuracy}
           key={`coord2${this.props.coords.latitude}`}
@@ -118,18 +121,6 @@ class DaterMapView extends Component {
           radius={this.props.coords.accuracy}
           strokeColor="#b0e0e6"
           fillColor="rgba(30,144,255,0.2)"
-        />
-        <MapView.Circle
-          style={styles.circleCenter}
-          key={`coord${this.props.coords.latitude}`}
-          center={{
-            latitude: this.props.coords.latitude,
-            longitude: this.props.coords.longitude,
-          }}
-          radius={this.props.mapView.visibleRadiusInMeters / MY_LOCATION_CIRCLE_RATIO}
-          strokeColor="gray"
-          fillColor="#00bfff"
-          zIndex={10}
         />
         {this.renderUsersAround()}
       </MapView>
@@ -143,9 +134,6 @@ const styles = StyleSheet.create({
   },
   circleAccuracy: {
     opacity: 0.5,
-    zIndex: 4,
-  },
-  circleCenter: {
     zIndex: 4,
   },
   maker: {

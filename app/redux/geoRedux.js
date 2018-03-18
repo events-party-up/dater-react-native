@@ -22,6 +22,8 @@ const geoUpdated = (coords) => async (dispatch, getState) => {
   if (uid !== null) {
     await firebase.firestore().collection('geoPoints').doc(uid).update({
       accuracy: coords.accuracy,
+      heading: coords.heading,
+      speed: coords.speed,
       geoPoint: new firebase.firestore.GeoPoint(coords.latitude, coords.longitude),
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     })
