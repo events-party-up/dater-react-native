@@ -14,7 +14,18 @@ const mapStateToProps = (state) => ({
   coords: state.geo.coords,
 });
 
-class Main extends Component {
+type Props = {
+  dispatch: any,
+  coords: {
+    latitude: number,
+    longitude: number,
+    accuracy: number,
+  },
+};
+
+class Main extends Component<Props> {
+  authUnsubscribe;
+
   constructor(props) {
     super(props);
     this.authUnsubscribe = initUserAuth(this.props.dispatch);
