@@ -1,30 +1,39 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, Button } from 'react-native';
+import { StyleSheet, Text, Button, View } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import { connect } from 'react-redux';
 import 'moment/locale/ru';
 import Moment from 'react-moment';
 
-import { geoActionCreators } from '../redux';
 import PersonMaker from './PersonMaker';
-import { listenForUsersAround } from '../services/geoQuery';
 import MyLocationMapMarker from './MyLocationMapMarker';
 
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
   usersAround: state.usersAround,
   mapView: state.geo.mapView,
+  auth: state.auth,
 });
 
-const GEO_OPTIONS = {
-  useSignificantChanges: false,
-  enableHighAccuracy: true,
-  timeout: 20000,
-  maximumAge: 1000,
+type Props = {
+  heading: number,
+  usersAround: Array<mixed>,
+  coords: {
+    latitude: number,
+    longitude: number,
+    accuracy: number,
+    heading: number,
+  },
+  mapView: {
+    latitudeDelta: number,
+    longitudeDelta: number,
+  },
+  auth: {
+    uid: string,
+  }
 };
 
-class DaterMapView extends Component {
-  watchId;
+class DaterMapView extends Component<Props> {
   unsubscribeFromUsersAround;
 
   constructor(props) {
@@ -32,30 +41,7 @@ class DaterMapView extends Component {
     this.routeTo = this.routeTo.bind(this);
   }
 
-  async componentDidMount() {
-    // navigator.geolocation.requestAuthorization();
-    this.watchId = navigator.geolocation.watchPosition(
-      async (position) => {
-        await this.props.dispatch(geoActionCreators.geoUpdated(position.coords));
-        const queryArea = {
-          center: {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          },
-          radius: 25,
-        };
-        if (!this.unsubscribeFromUsersAround) {
-          console.log('Attach a listener for users around');
-          this.unsubscribeFromUsersAround = listenForUsersAround(queryArea, this.props.dispatch);
-        }
-      },
-      (error) => this.props.dispatch(geoActionCreators.geoDenied(error)),
-      GEO_OPTIONS,
-    );
-  }
-
   componentWillUnmount() {
-    navigator.geolocation.clearWatch(this.watchId);
     this.unsubscribeFromUsersAround();
   }
 
@@ -63,9 +49,9 @@ class DaterMapView extends Component {
     console.log(`Creating route to user: ${user.id}`);
   }
 
-  onRegionChangeComplete = (region) => {
-    this.props.dispatch(geoActionCreators.geoMapViewUpdated(region));
-  }
+  // onRegionChangeComplete = (region) => {
+  //   // this.props.dispatch(geoActionCreators.geoMapViewUpdated(region));
+  // }
 
   onRegionChange = (region) => {
     console.log('Region updated');
@@ -96,33 +82,46 @@ class DaterMapView extends Component {
   }
 
   render() {
-    return (
-      <MapView
+    return (this.props.coords &&
+      <View
         style={styles.mapView}
-        region={{
-          latitude: this.props.coords.latitude,
-          longitude: this.props.coords.longitude,
-          latitudeDelta: this.props.mapView.latitudeDelta,
-          longitudeDelta: this.props.mapView.longitudeDelta,
-        }}
-        onRegionChangeComplete={this.onRegionChangeComplete}
-        // onRegionChange={this.onRegionChange}
-        provider="google"
-        showsIndoors
-        showsTraffic={false}
-        showsBuildings={false}
-        showsMyLocationButton={false}
-        scrollEnabled={false}
-        toolbarEnabled={false}
-        moveOnMarkerPress={false}
-        mapType="standard"
       >
-        <MyLocationMapMarker
-          coordinate={this.props.coords}
-          heading={this.props.coords.heading}
-        />
-        {this.renderUsersAround()}
-      </MapView>
+        <MapView
+          style={styles.mapView}
+          region={{
+            latitude: this.props.coords.latitude,
+            longitude: this.props.coords.longitude,
+            latitudeDelta: this.props.mapView.latitudeDelta,
+            longitudeDelta: this.props.mapView.longitudeDelta,
+          }}
+          // onRegionChangeComplete={this.onRegionChangeComplete}
+          // onRegionChange={this.onRegionChange}
+          provider="google"
+          showsIndoors
+          showsTraffic={false}
+          showsBuildings={false}
+          // showsMyLocationButton={false}
+          showsMyLocationButton
+          // scrollEnabled={false}
+          toolbarEnabled={false}
+          moveOnMarkerPress={false}
+          mapType="standard"
+        >
+          <MyLocationMapMarker
+            coordinate={this.props.coords}
+            heading={this.props.coords.heading}
+          />
+          {this.renderUsersAround()}
+        </MapView>
+        <Text style={styles.debugText}>
+          Accuracy: {this.props.coords.accuracy}{'\n'}
+          Heading: {this.props.coords.heading}{'\n'}
+          Latitude: {this.props.coords.latitude}{'\n'}
+          Longitude: {this.props.coords.longitude}{'\n'}
+          UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
+        </Text>
+      </View>
+
     );
   }
 }
@@ -133,6 +132,13 @@ const styles = StyleSheet.create({
   },
   makerCallout: {
     width: 150,
+  },
+  debugText: {
+    position: 'absolute',
+    bottom: 0,
+    left: 20,
+    zIndex: 2,
+    opacity: 0.8,
   },
 });
 

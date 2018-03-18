@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
 
 import { DaterMapView } from '../components';
 import { initUserAuth, signOutUser } from '../services/auth';
+import watchGeoPosition from '../services/geoDevice';
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
@@ -16,29 +16,19 @@ const mapStateToProps = (state) => ({
 
 type Props = {
   dispatch: any,
-  coords: {
-    latitude: number,
-    longitude: number,
-    accuracy: number,
-    heading: number,
-  },
-  auth: {
-    uid: string,
-  }
 };
 
 class Main extends Component<Props> {
   authUnsubscribe;
-
-  constructor(props) {
-    super(props);
-    this.authUnsubscribe = initUserAuth(this.props.dispatch);
-  }
+  geoWatchID: number;
 
   componentWillMount() {
+    this.authUnsubscribe = initUserAuth(this.props.dispatch);
+    this.geoWatchID = watchGeoPosition(this.props.dispatch);
   }
 
   componentWillUnmount() {
+    navigator.geolocation.clearWatch(this.geoWatchID);
     this.authUnsubscribe();
   }
 
@@ -54,12 +44,6 @@ class Main extends Component<Props> {
         {/* <View style={styles.button}>
           <Button title='Выйти' color='blue' onPress={this.signOut}/>
         </View> */}
-        <Text style={styles.debugText}>Accuracy: {this.props.coords.accuracy}{'\n'}
-          Heading: {this.props.coords.heading}{'\n'}
-          Latitude: {this.props.coords.latitude}{'\n'}
-          Longitude: {this.props.coords.longitude}{'\n'}
-          UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
-        </Text>
         <DaterMapView />
       </View>
     );
@@ -83,7 +67,7 @@ const styles = StyleSheet.create({
   debugText: {
     position: 'absolute',
     bottom: 0,
-    right: 20,
+    left: 20,
     zIndex: 2,
     opacity: 0.8,
   },

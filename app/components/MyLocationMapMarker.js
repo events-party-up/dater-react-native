@@ -1,5 +1,4 @@
 import React from 'react';
-
 import {
   StyleSheet,
   View,
@@ -7,10 +6,24 @@ import {
 import { Marker, Circle } from 'react-native-maps';
 
 const ANCHOR = { x: 0.5, y: 0.5 };
-
+const SIZE: number = 25;
+const HALO_RADIUS = 6;
+const ARROW_SIZE = 7;
+const ARROW_DISTANCE = 10;
+const HALO_SIZE = SIZE + HALO_RADIUS;
+const HEADING_BOX_SIZE = HALO_SIZE + ARROW_SIZE + ARROW_DISTANCE;
 const colorOfmyLocationMapMarker = 'blue';
 
-class MyLocationMapMarker extends React.PureComponent {
+type Props = {
+  heading: number,
+  coordinate: {
+    latitude: number,
+    longitude: number,
+    accuracy: number,
+  }
+};
+
+class MyLocationMapMarker extends React.PureComponent<Props> {
   render() {
     let { heading } = this.props;
     const { coordinate } = this.props;
@@ -48,19 +61,11 @@ class MyLocationMapMarker extends React.PureComponent {
             }
             <View style={styles.marker} />
           </View>
-          {this.props.children}
         </Marker>
       </View>
     );
   }
 }
-
-const SIZE = 25;
-const HALO_RADIUS = 6;
-const ARROW_SIZE = 7;
-const ARROW_DISTANCE = 10;
-const HALO_SIZE = SIZE + HALO_RADIUS;
-const HEADING_BOX_SIZE = HALO_SIZE + ARROW_SIZE + ARROW_DISTANCE;
 
 const styles = StyleSheet.create({
   mapMarker: {

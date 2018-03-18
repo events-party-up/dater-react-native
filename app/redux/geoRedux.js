@@ -19,6 +19,9 @@ const types = {
 const geoUpdated = (coords) => async (dispatch, getState) => {
   const { uid } = getState().auth;
 
+  if (!coords) {
+    return;
+  }
   if (uid !== null) {
     await firebase.firestore().collection('geoPoints').doc(uid).update({
       accuracy: coords.accuracy,
@@ -80,11 +83,7 @@ export const geoActionCreators = {
 };
 
 const initialState = {
-  coords: {
-    latitude: 55.751244,
-    longitude: 37.618423,
-    accuracy: 800,
-  },
+  coords: null,
   mapView: {
     latitudeDelta: DEFAULT_LATITUDE_DELTA,
     longitudeDelta: DEFAULT_LONGITUDE_DELTA,
