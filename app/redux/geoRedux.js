@@ -89,6 +89,7 @@ const initialState = {
     longitudeDelta: DEFAULT_LONGITUDE_DELTA,
     visibleRadiusInMeters: 410,
   },
+  geoUpdates: 0,
   error: null,
   geoGranted: false,
 };
@@ -101,6 +102,7 @@ export const reducer = (state = initialState, action) => {
       return {
         ...state,
         coords: payload,
+        geoUpdates: state.geoUpdates + 1,
       };
     }
     case types.GEO_MAPVIEW_UPDATED: {

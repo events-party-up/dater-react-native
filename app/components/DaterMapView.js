@@ -13,6 +13,7 @@ const mapStateToProps = (state) => ({
   usersAround: state.usersAround,
   mapView: state.geo.mapView,
   auth: state.auth,
+  geoUpdates: state.geo.geoUpdates,
 });
 
 type Props = {
@@ -30,7 +31,8 @@ type Props = {
   },
   auth: {
     uid: string,
-  }
+  },
+  geoUpdates: number,
 };
 
 class DaterMapView extends Component<Props> {
@@ -111,8 +113,7 @@ class DaterMapView extends Component<Props> {
           showsIndoors
           showsTraffic={false}
           showsBuildings={false}
-          // showsMyLocationButton={false}
-          showsMyLocationButton
+          showsMyLocationButton={false}
           // scrollEnabled={false}
           toolbarEnabled={false}
           moveOnMarkerPress={false}
@@ -125,10 +126,9 @@ class DaterMapView extends Component<Props> {
           {this.renderUsersAround()}
         </MapView>
         <Text style={styles.debugText}>
-          Accuracy: {this.props.coords.accuracy}{'\n'}
+          Accuracy: {Math.floor(this.props.coords.accuracy)}{'\n'}
           Heading: {this.props.coords.heading}{'\n'}
-          Latitude: {this.props.coords.latitude}{'\n'}
-          Longitude: {this.props.coords.longitude}{'\n'}
+          GeoUpdates: {this.props.geoUpdates}{'\n'}
           UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
         </Text>
       </View>
