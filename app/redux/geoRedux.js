@@ -108,11 +108,7 @@ export const reducer = (state = initialState, action) => {
     case types.GEO_MAPVIEW_UPDATED: {
       return {
         ...state,
-        mapView: {
-          latitudeDelta: payload.latitudeDelta,
-          longitudeDelta: payload.longitudeDelta,
-          visibleRadiusInMeters: payload.visibleRadiusInMeters,
-        },
+        mapView: payload,
       };
     }
     default: {

@@ -7,6 +7,8 @@ import Moment from 'react-moment';
 
 import PersonMaker from './PersonMaker';
 import MyLocationMapMarker from './MyLocationMapMarker';
+import MyLocationButton from './MyLocationButton';
+import { geoActionCreators } from '../redux';
 
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
@@ -33,6 +35,7 @@ type Props = {
     uid: string,
   },
   geoUpdates: number,
+  dispatch: (() => void) => void,
 };
 
 class DaterMapView extends Component<Props> {
@@ -61,9 +64,9 @@ class DaterMapView extends Component<Props> {
     console.log(`Creating route to user: ${user.id}`);
   }
 
-  // onRegionChangeComplete = (region) => {
-  //   // this.props.dispatch(geoActionCreators.geoMapViewUpdated(region));
-  // }
+  onRegionChangeComplete = (region) => {
+    this.props.dispatch(geoActionCreators.geoMapViewUpdated(region));
+  }
 
   onRegionChange = (region) => {
     console.log('Region updated');
@@ -98,6 +101,7 @@ class DaterMapView extends Component<Props> {
       <View
         style={styles.mapView}
       >
+        <MyLocationButton />
         <MapView
           ref={(component) => { this.mapView = component; }}
           style={styles.mapView}
@@ -107,7 +111,7 @@ class DaterMapView extends Component<Props> {
             latitudeDelta: this.props.mapView.latitudeDelta,
             longitudeDelta: this.props.mapView.longitudeDelta,
           }}
-          // onRegionChangeComplete={this.onRegionChangeComplete}
+          onRegionChangeComplete={this.onRegionChangeComplete}
           // onRegionChange={this.onRegionChange}
           provider="google"
           showsIndoors
@@ -141,6 +145,7 @@ class DaterMapView extends Component<Props> {
 const styles = StyleSheet.create({
   mapView: {
     flex: 1,
+    zIndex: -1,
   },
   makerCallout: {
     width: 150,
