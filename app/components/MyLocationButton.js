@@ -7,6 +7,14 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
+type Region = {
+  latitude: number,
+  longitude: number,
+  latitudeDelta: number,
+  longitudeDelta: number,
+  visibleRadiusInMeters?: number,
+};
+
 type Props = {
   coords: {
     latitude: number,
@@ -14,11 +22,9 @@ type Props = {
     accuracy: number,
     heading: number,
   },
-  mapView: {
-    latitudeDelta: number,
-    longitudeDelta: number,
-  },
-  onPress: (region: any) => void,
+  mapView: Region,
+  onPress: (region: Region) => void,
+  getGeoPositionPressed: () => void,
 };
 
 const mapStateToProps = (state) => ({
@@ -28,13 +34,17 @@ const mapStateToProps = (state) => ({
 
 class MyLocationButton extends Component<Props> {
   onPress = () => {
-    const myLocationRegion = {
+    const myLocationRegion: Region = {
       latitude: this.props.coords.latitude,
       longitude: this.props.coords.longitude,
       latitudeDelta: this.props.mapView.latitudeDelta,
       longitudeDelta: this.props.mapView.longitudeDelta,
     };
     this.props.onPress(myLocationRegion);
+  }
+
+  onGeoPress = () => {
+    this.props.getGeoPositionPressed();
   }
 
   render() {
@@ -47,6 +57,16 @@ class MyLocationButton extends Component<Props> {
 
     return (
       <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          hitSlop={hitSlop}
+          activeOpacity={0.7}
+          style={styles.mapButton}
+          onPress={this.onGeoPress}
+        >
+          <Text style={{ fontWeight: 'bold', color: 'black' }}>
+            GEO
+          </Text>
+        </TouchableOpacity>
         <TouchableOpacity
           hitSlop={hitSlop}
           activeOpacity={0.7}

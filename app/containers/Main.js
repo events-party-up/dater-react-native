@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 
 import { DaterMapView } from '../components';
 import { initUserAuth, signOutUser } from '../services/auth';
-import watchGeoPosition from '../services/geoDevice';
+import { getGeoPosition } from '../services/geoDevice';
 import { listenForUsersAround } from '../services/geoQuery';
 
 const mapStateToProps = (state) => ({
@@ -26,7 +26,8 @@ class Main extends Component<Props> {
 
   componentWillMount() {
     this.authUnsubscribe = initUserAuth(this.props.dispatch);
-    this.geoWatchID = watchGeoPosition(this.props.dispatch);
+    // this.geoWatchID = watchGeoPosition(this.props.dispatch);
+    getGeoPosition(this.props.dispatch);
   }
 
   componentWillUnmount() {

@@ -39,6 +39,8 @@
 	<string>Required to work with maps when the app is closed.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Required to work with maps.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Required to work with maps.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

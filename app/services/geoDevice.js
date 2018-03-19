@@ -8,19 +8,19 @@ const GEO_OPTIONS = {
   distanceFilter: 1,
 };
 
-export default function watchGeoPosition(dispatch): number {
-  this.watchId = navigator.geolocation.watchPosition(
+export const watchGeoPosition = (dispatch): number => {
+  const watchId = navigator.geolocation.watchPosition(
     (position) => {
       dispatch(geoActionCreators.geoUpdated(position.coords));
     },
     (error) => dispatch(geoActionCreators.geoDenied(error)),
     GEO_OPTIONS,
   );
-  return this.watchId;
-}
+  return watchId;
+};
 
 export const getGeoPosition = (dispatch) => {
-  navigator.geolocation.watchPosition(
+  navigator.geolocation.getCurrentPosition(
     (position) => {
       dispatch(geoActionCreators.geoUpdated(position.coords));
     },

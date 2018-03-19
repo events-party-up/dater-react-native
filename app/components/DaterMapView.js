@@ -9,6 +9,7 @@ import PersonMaker from './PersonMaker';
 import MyLocationMapMarker from './MyLocationMapMarker';
 import MyLocationButton from './MyLocationButton';
 import { mapViewActionCreators } from '../redux';
+import { getGeoPosition } from '../services/geoDevice';
 
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
@@ -25,6 +26,10 @@ function mapDispatchToProps(dispatch) {
     },
     onRegionChangeComplete: (region) => {
       dispatch(mapViewActionCreators.mapViewRegionUpdate(region));
+    },
+    getGeoPosition: () => {
+      console.log('Updating geo position');
+      getGeoPosition(dispatch);
     },
   });
 }
@@ -49,6 +54,7 @@ type Props = {
   geoUpdates: number,
   animateToRegion: any,
   onRegionChangeComplete: (region: any) => void,
+  getGeoPosition: () => void,
 };
 
 class DaterMapView extends Component<Props> {
@@ -113,7 +119,10 @@ class DaterMapView extends Component<Props> {
       <View
         style={styles.mapView}
       >
-        <MyLocationButton onPress={(region) => this.props.animateToRegion(this.mapView, region)} />
+        <MyLocationButton
+          getGeoPositionPressed={() => this.props.getGeoPosition()}
+          onPress={(region) => this.props.animateToRegion(this.mapView, region)}
+        />
         <MapView
           ref={(component) => { this.mapView = component; }}
           style={styles.mapView}
@@ -164,7 +173,7 @@ const styles = StyleSheet.create({
   },
   debugText: {
     position: 'absolute',
-    bottom: 0,
+    top: 20,
     left: 20,
     zIndex: 2,
     opacity: 0.8,
