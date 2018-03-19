@@ -68,3 +68,7 @@
 -dontwarn java.nio.file.*
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 -dontwarn okio.**
+
+# BackgroundGeolocation lib tslocationmanager.aar is *already* proguarded
+-keep class com.transistorsoft.** { *; }
+-dontwarn com.transistorsoft.**

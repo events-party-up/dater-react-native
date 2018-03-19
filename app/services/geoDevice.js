@@ -6,7 +6,7 @@ const GEO_OPTIONS = {
   enableHighAccuracy: true,
   timeout: 20000,
   maximumAge: 1000,
-  distanceFilter: 1,
+  distanceFilter: 2,
   desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
 };
 
