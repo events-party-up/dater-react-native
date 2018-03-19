@@ -35,14 +35,17 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Required to work with maps.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Required to work with maps when the app is closed.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Required to work with maps.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Required to work with maps.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Required to work with location services.</string>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>audio</string>
 		<string>fetch</string>
 		<string>location</string>
 		<string>remote-notification</string>

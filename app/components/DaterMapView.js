@@ -28,7 +28,7 @@ function mapDispatchToProps(dispatch) {
       dispatch(mapViewActionCreators.mapViewRegionUpdate(region));
     },
     getGeoPosition: () => {
-      console.log('Updating geo position');
+      console.log('Manually Updating geo position');
       getGeoPosition(dispatch);
     },
   });
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   },
   debugText: {
     position: 'absolute',
-    top: 20,
+    top: 40,
     left: 20,
     zIndex: 2,
     opacity: 0.8,

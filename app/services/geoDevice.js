@@ -1,3 +1,4 @@
+import BackgroundGeolocation from 'react-native-background-geolocation';
 import { geoActionCreators } from '../redux/index';
 
 const GEO_OPTIONS = {
@@ -6,6 +7,7 @@ const GEO_OPTIONS = {
   timeout: 20000,
   maximumAge: 1000,
   distanceFilter: 1,
+  desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
 };
 
 export const watchGeoPosition = (dispatch): number => {
@@ -20,7 +22,7 @@ export const watchGeoPosition = (dispatch): number => {
 };
 
 export const getGeoPosition = (dispatch) => {
-  navigator.geolocation.getCurrentPosition(
+  BackgroundGeolocation.getCurrentPosition(
     (position) => {
       dispatch(geoActionCreators.geoUpdated(position.coords));
     },
