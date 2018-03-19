@@ -113,7 +113,8 @@ class DaterMapView extends Component<Props> {
           showsIndoors
           showsTraffic={false}
           showsBuildings={false}
-          showsMyLocationButton={false}
+          // showsMyLocationButton
+          // showsUserLocation
           // scrollEnabled={false}
           toolbarEnabled={false}
           moveOnMarkerPress={false}
