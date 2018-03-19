@@ -1,10 +1,4 @@
 import firebase from 'react-native-firebase';
-import { Dimensions } from 'react-native';
-
-const { width, height } = Dimensions.get('window');
-const ASPECT_RATIO = width / height;
-const DEFAULT_LATITUDE_DELTA = 0.00322;
-const DEFAULT_LONGITUDE_DELTA = DEFAULT_LATITUDE_DELTA * ASPECT_RATIO;
 
 const types = {
   GEO_UPDATED: 'GEO_UPDATED',
@@ -61,11 +55,6 @@ export const geoActionCreators = {
 
 const initialState = {
   coords: null,
-  mapView: {
-    latitudeDelta: DEFAULT_LATITUDE_DELTA,
-    longitudeDelta: DEFAULT_LONGITUDE_DELTA,
-    visibleRadiusInMeters: 410,
-  },
   geoUpdates: 0,
   error: null,
   geoGranted: false,

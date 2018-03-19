@@ -13,10 +13,22 @@ import { mapViewActionCreators } from '../redux';
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
   usersAround: state.usersAround,
-  mapView: state.geo.mapView,
+  mapView: state.mapView,
   auth: state.auth,
   geoUpdates: state.geo.geoUpdates,
 });
+
+function mapDispatchToProps(dispatch) {
+  return ({
+    animateToRegion: (mapView: MapView, region) => {
+      dispatch(mapViewActionCreators.mapViewAnimateToRegion(mapView, region));
+    },
+    onRegionChangeComplete: (region) => {
+      dispatch(mapViewActionCreators.mapViewRegionUpdate(region));
+    },
+  });
+}
+
 
 type Props = {
   heading: number,
@@ -35,12 +47,12 @@ type Props = {
     uid: string,
   },
   geoUpdates: number,
-  dispatch: (() => void) => void,
+  animateToRegion: any,
+  onRegionChangeComplete: (region: any) => void,
 };
 
 class DaterMapView extends Component<Props> {
-  mapView;
-
+  mapView: MapView;
   constructor(props) {
     super(props);
     this.routeTo = this.routeTo.bind(this);
@@ -64,9 +76,9 @@ class DaterMapView extends Component<Props> {
     console.log(`Creating route to user: ${user.id}`);
   }
 
-  onRegionChangeComplete = (region) => {
-    this.props.dispatch(mapViewActionCreators.mapViewRegionUpdate(region));
-  }
+  // onRegionChangeComplete = (region) => {
+  //   this.props.dispatch(mapViewActionCreators.mapViewRegionUpdate(region));
+  // }
 
   onRegionChange = (region) => {
     console.log('Region updated');
@@ -101,7 +113,7 @@ class DaterMapView extends Component<Props> {
       <View
         style={styles.mapView}
       >
-        <MyLocationButton />
+        <MyLocationButton onPress={(region) => this.props.animateToRegion(this.mapView, region)} />
         <MapView
           ref={(component) => { this.mapView = component; }}
           style={styles.mapView}
@@ -111,7 +123,7 @@ class DaterMapView extends Component<Props> {
             latitudeDelta: this.props.mapView.latitudeDelta,
             longitudeDelta: this.props.mapView.longitudeDelta,
           }}
-          onRegionChangeComplete={this.onRegionChangeComplete}
+          onRegionChangeComplete={this.props.onRegionChangeComplete}
           // onRegionChange={this.onRegionChange}
           provider="google"
           showsIndoors
@@ -159,4 +171,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps)(DaterMapView);
+export default connect(mapStateToProps, mapDispatchToProps)(DaterMapView);

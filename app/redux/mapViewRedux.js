@@ -1,4 +1,5 @@
 import { Dimensions } from 'react-native';
+import MapView from 'react-native-maps';
 
 import { distance } from '../services/geoQuery';
 
@@ -9,6 +10,7 @@ const DEFAULT_LONGITUDE_DELTA = DEFAULT_LATITUDE_DELTA * ASPECT_RATIO;
 
 const types = {
   MAPVIEW_REGION_UPDATED: 'MAPVIEW_REGION_UPDATED',
+  MAPVIEW_ANIMATE_TO_REGION: 'MAPVIEW_ANIMATE_TO_REGION',
 };
 
 const mapViewRegionUpdate = (region) => {
@@ -31,8 +33,19 @@ const mapViewRegionUpdate = (region) => {
   };
 };
 
+const mapViewAnimateToRegion = (mapView: MapView, region) => (dispatch) => {
+  mapView.animateToRegion(region, 500);
+
+  dispatch({
+    type: types.MAPVIEW_ANIMATE_TO_REGION,
+    payload: region,
+  });
+};
+
+
 export const mapViewActionCreators = {
   mapViewRegionUpdate,
+  mapViewAnimateToRegion,
 };
 
 const initialState = {
@@ -46,6 +59,12 @@ export const reducer = (state = initialState, action) => {
 
   switch (type) {
     case types.MAPVIEW_REGION_UPDATED: {
+      return {
+        ...state,
+        ...payload,
+      };
+    }
+    case types.MAPVIEW_ANIMATE_TO_REGION: {
       return {
         ...state,
         ...payload,

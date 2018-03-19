@@ -5,15 +5,36 @@ import {
   Text,
   View,
 } from 'react-native';
-
-// import watchGeoPosition from '../services/geoDevice';
+import { connect } from 'react-redux';
 
 type Props = {
+  coords: {
+    latitude: number,
+    longitude: number,
+    accuracy: number,
+    heading: number,
+  },
+  mapView: {
+    latitudeDelta: number,
+    longitudeDelta: number,
+  },
+  onPress: (region: any) => void,
 };
 
+const mapStateToProps = (state) => ({
+  coords: state.geo.coords,
+  mapView: state.mapView,
+});
+
 class MyLocationButton extends Component<Props> {
-  locateMe = () => {
-    console.log('Locate me');
+  onPress = () => {
+    const myLocationRegion = {
+      latitude: this.props.coords.latitude,
+      longitude: this.props.coords.longitude,
+      latitudeDelta: this.props.mapView.latitudeDelta,
+      longitudeDelta: this.props.mapView.longitudeDelta,
+    };
+    this.props.onPress(myLocationRegion);
   }
 
   render() {
@@ -30,7 +51,7 @@ class MyLocationButton extends Component<Props> {
           hitSlop={hitSlop}
           activeOpacity={0.7}
           style={styles.mapButton}
-          onPress={() => this.locateMe()}
+          onPress={this.onPress}
         >
           <Text style={{ fontWeight: 'bold', color: 'black' }}>
             Me
@@ -68,4 +89,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MyLocationButton;
+export default connect(mapStateToProps)(MyLocationButton);
