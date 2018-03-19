@@ -18,6 +18,8 @@
 
 ; Ignore metro
 .*/node_modules/metro/.*
+./*node_modules/node_modules/react-native/Libraries/Lists/FlatList.js
+./*node_modules/node_modules/react-native/Libraries/Lists/SectionList.js
 
 [include]
 

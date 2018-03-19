@@ -8,7 +8,7 @@ import Moment from 'react-moment';
 import PersonMaker from './PersonMaker';
 import MyLocationMapMarker from './MyLocationMapMarker';
 import MyLocationButton from './MyLocationButton';
-import { geoActionCreators } from '../redux';
+import { mapViewActionCreators } from '../redux';
 
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
@@ -65,7 +65,7 @@ class DaterMapView extends Component<Props> {
   }
 
   onRegionChangeComplete = (region) => {
-    this.props.dispatch(geoActionCreators.geoMapViewUpdated(region));
+    this.props.dispatch(mapViewActionCreators.mapViewRegionUpdate(region));
   }
 
   onRegionChange = (region) => {

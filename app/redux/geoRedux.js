@@ -1,8 +1,6 @@
 import firebase from 'react-native-firebase';
 import { Dimensions } from 'react-native';
 
-import { distance } from '../services/geoQuery';
-
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const DEFAULT_LATITUDE_DELTA = 0.00322;
@@ -54,32 +52,11 @@ const geoDenied = (error) => ({
   payload: error,
 });
 
-const geoMapViewUpdated = (region) => {
-  const center = {
-    latitude: region.latitude,
-    longitude: region.longitude,
-  };
-  const corner = {
-    latitude: center.latitude + region.latitudeDelta,
-    longitude: region.longitude + region.longitudeDelta,
-  };
-  const visibleRadiusInMeters = distance(center, corner);
-
-  return {
-    type: types.GEO_MAPVIEW_UPDATED,
-    payload: {
-      ...region,
-      visibleRadiusInMeters,
-    },
-  };
-};
-
 export const geoActionCreators = {
   geoUpdated,
   geoRequest,
   geoGranted,
   geoDenied,
-  geoMapViewUpdated,
 };
 
 const initialState = {
