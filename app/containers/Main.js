@@ -4,11 +4,11 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import BackgroundGeolocation from 'react-native-background-geolocation';
+import * as BackgroundGeolocation from 'react-native-background-geolocation';
 
 import { DaterMapView } from '../components';
 import { initUserAuth, signOutUser } from '../services/auth';
-import { getGeoPosition } from '../services/geoDevice';
+import { initBackgroundGeolocation } from '../services/geoDevice';
 import { listenForUsersAround } from '../services/geoQuery';
 import { geoActionCreators } from '../redux/index';
 
@@ -27,8 +27,8 @@ class Main extends Component<Props> {
 
   componentWillMount() {
     this.authUnsubscribe = initUserAuth(this.props.dispatch);
-    // this.geoWatchID = watchGeoPosition(this.props.dispatch);
-    // getGeoPosition(this.props.dispatch);
+    initBackgroundGeolocation(this.props.dispatch);
+
     // This handler fires whenever bgGeo receives a location update.
     BackgroundGeolocation.on('location', this.onLocation, this.onError);
 
@@ -40,31 +40,6 @@ class Main extends Component<Props> {
 
     // This event fires when the user toggles location-services authorization
     BackgroundGeolocation.on('providerchange', this.onProviderChange);
-    BackgroundGeolocation.configure({
-      // Geolocation Config
-      desiredAccuracy: 0,
-      distanceFilter: 2,
-      // Activity Recognition
-      stopTimeout: 1,
-      // Application config
-      debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
-      logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
-      stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.
-      startOnBoot: true, // <-- Auto start tracking when device is powered-up.
-      // HTTP / SQLite config
-      batchSync: false, // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
-      autoSync: false, // <-- [Default: true] Set true to sync each location to server as it arrives.
-    }, (state) => {
-      console.log('- BackgroundGeolocation is configured and ready: ', state.enabled);
-      if (!state.enabled) {
-        // 3. Start tracking!
-        BackgroundGeolocation.start(() => {
-          console.log('- Start success');
-        });
-      } else {
-        getGeoPosition(this.props.dispatch);
-      }
-    });
   }
 
   onLocation = (location) => {
