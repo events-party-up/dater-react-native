@@ -19,17 +19,6 @@ const GEO_OPTIONS = {
   autoSync: false, // <-- [Default: true] Set true to sync each location to server as it arrives.
 };
 
-export const watchGeoPosition = (dispatch): number => {
-  const watchId = navigator.geolocation.watchPosition(
-    (position) => {
-      dispatch(geoActionCreators.geoUpdated(position.coords));
-    },
-    (error) => dispatch(geoActionCreators.geoDenied(error)),
-    GEO_OPTIONS,
-  );
-  return watchId;
-};
-
 export const getGeoPosition = (dispatch) => {
   console.log('Getting geo position manually in getGeoPosition');
   BackgroundGeolocation.getCurrentPosition(
@@ -48,6 +37,15 @@ export const getGeoPosition = (dispatch) => {
 export const initBackgroundGeolocation = (dispatch) => {
   // This handler fires whenever bgGeo receives a location update.
   BackgroundGeolocation.on('location', onLocation, onError);
+
+  // This handler fires when movement states changes (stationary->moving; moving->stationary)
+  // BackgroundGeolocation.on('motionchange', onMotionChange);
+
+  // This event fires when a change in motion activity is detected
+  // BackgroundGeolocation.on('activitychange', onActivityChange);
+
+  // This event fires when the user toggles location-services authorization
+  BackgroundGeolocation.on('providerchange', onProviderChange);
 
   BackgroundGeolocation.configure(GEO_OPTIONS, (state) => {
     console.log('- BackgroundGeolocation is configured and ready: ', state.enabled);
@@ -70,5 +68,18 @@ export const initBackgroundGeolocation = (dispatch) => {
   function onError(error) {
     console.warn('- [event] location error ', error);
   }
+
+
+  function onProviderChange(provider) {
+    console.log('- [event] providerchange: ', provider);
+  }
+
+  // function onActivityChange(activity) {
+  //   console.log('- [event] activitychange: ', activity); // eg: 'on_foot', 'still', 'in_vehicle'
+  // }
+
+  // function onMotionChange(location) {
+  //   console.log('- [event] motionchange: ', location.isMoving, location);
+  // }
 };
 

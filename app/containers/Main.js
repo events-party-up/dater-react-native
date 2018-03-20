@@ -10,7 +10,6 @@ import { DaterMapView } from '../components';
 import { initUserAuth, signOutUser } from '../services/auth';
 import { initBackgroundGeolocation } from '../services/geoDevice';
 import { listenForUsersAround } from '../services/geoQuery';
-import { geoActionCreators } from '../redux/index';
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
@@ -28,36 +27,6 @@ class Main extends Component<Props> {
   async componentWillMount() {
     this.authUnsubscribe = initUserAuth(this.props.dispatch);
     initBackgroundGeolocation(this.props.dispatch);
-
-    // This handler fires when movement states changes (stationary->moving; moving->stationary)
-    BackgroundGeolocation.on('motionchange', this.onMotionChange);
-
-    // This event fires when a change in motion activity is detected
-    BackgroundGeolocation.on('activitychange', this.onActivityChange);
-
-    // This event fires when the user toggles location-services authorization
-    BackgroundGeolocation.on('providerchange', this.onProviderChange);
-  }
-
-  onLocation = (location) => {
-    console.log('- [event] location: ', location);
-    this.props.dispatch(geoActionCreators.geoUpdated(location.coords));
-  }
-
-  onError = (error) => {
-    console.warn('- [event] location error ', error);
-  }
-
-  onActivityChange = (activity) => {
-    console.log('- [event] activitychange: ', activity); // eg: 'on_foot', 'still', 'in_vehicle'
-  }
-
-  onProviderChange = (provider) => {
-    console.log('- [event] providerchange: ', provider);
-  }
-
-  onMotionChange = (location) => {
-    console.log('- [event] motionchange: ', location.isMoving, location);
   }
 
   componentWillUnmount() {
