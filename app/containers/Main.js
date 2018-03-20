@@ -25,12 +25,9 @@ class Main extends Component<Props> {
   authUnsubscribe;
   unsubscribeFromUsersAround;
 
-  componentWillMount() {
+  async componentWillMount() {
     this.authUnsubscribe = initUserAuth(this.props.dispatch);
     initBackgroundGeolocation(this.props.dispatch);
-
-    // This handler fires whenever bgGeo receives a location update.
-    BackgroundGeolocation.on('location', this.onLocation, this.onError);
 
     // This handler fires when movement states changes (stationary->moving; moving->stationary)
     BackgroundGeolocation.on('motionchange', this.onMotionChange);
@@ -64,6 +61,7 @@ class Main extends Component<Props> {
   }
 
   componentWillUnmount() {
+    BackgroundGeolocation.removeListeners();
     this.unsubscribeFromUsersAround();
     this.authUnsubscribe();
   }

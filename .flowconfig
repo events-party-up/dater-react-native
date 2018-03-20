@@ -18,8 +18,10 @@
 
 ; Ignore metro
 .*/node_modules/metro/.*
-./*node_modules/node_modules/react-native/Libraries/Lists/FlatList.js
-./*node_modules/node_modules/react-native/Libraries/Lists/SectionList.js
+
+; Ignore react-native strange stuff
+.*/*node_modules/node_modules/react-native/Libraries/Lists/FlatList.js
+.*/*node_modules/node_modules/react-native/Libraries/Lists/SectionList.js
 
 [include]
 
@@ -53,4 +55,4 @@ suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
 suppress_comment=\\(.\\|\n\\)*\\$FlowExpectedError
 
 [version]
-^0.66.0
+^0.63.0

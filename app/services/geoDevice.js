@@ -4,7 +4,6 @@ import { geoActionCreators } from '../redux/index';
 const GEO_OPTIONS = {
   useSignificantChanges: false,
   enableHighAccuracy: true,
-  timeout: 20000,
   maximumAge: 1000,
   distanceFilter: 2,
   desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
@@ -34,32 +33,27 @@ export const watchGeoPosition = (dispatch): number => {
 export const getGeoPosition = (dispatch) => {
   console.log('Getting geo position manually in getGeoPosition');
   BackgroundGeolocation.getCurrentPosition(
+    GEO_OPTIONS,
     (position) => {
+      console.log('Response in callback: ');
       dispatch(geoActionCreators.geoUpdated(position.coords));
     },
     (error) => {
       console.error(error);
       dispatch(geoActionCreators.geoDenied(error));
     },
-    {
-      useSignificantChanges: false,
-      enableHighAccuracy: true,
-      timeout: 20000,
-      maximumAge: 1000,
-      distanceFilter: 2,
-      desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
-    },
   );
 };
 
 export const initBackgroundGeolocation = (dispatch) => {
+  // This handler fires whenever bgGeo receives a location update.
+  BackgroundGeolocation.on('location', onLocation, onError);
+
   BackgroundGeolocation.configure(GEO_OPTIONS, (state) => {
     console.log('- BackgroundGeolocation is configured and ready: ', state.enabled);
-    console.log('HERE 1');
-
     if (state.enabled) {
-      console.log('HERE');
-      getGeoPosition(dispatch);
+      // manually activate tracking (for js reloads in simulator or hot pushes)
+      BackgroundGeolocation.changePace(true);
     } else {
       // 3. Start tracking!
       BackgroundGeolocation.start(() => {
@@ -67,5 +61,14 @@ export const initBackgroundGeolocation = (dispatch) => {
       });
     }
   });
+
+  function onLocation(location) {
+    console.log('- [event] location: ', location);
+    dispatch(geoActionCreators.geoUpdated(location.coords));
+  }
+
+  function onError(error) {
+    console.warn('- [event] location error ', error);
+  }
 };
 
