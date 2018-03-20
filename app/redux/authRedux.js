@@ -3,6 +3,7 @@ import DeviceInfo from 'react-native-device-info';
 import { Platform } from 'react-native';
 
 import { geoActionCreators } from '../redux';
+import BackgroundGeolocation from '../services/BackgroundGeolocation';
 
 const types = {
   AUTH_PENDING: 'AUTH_PENDING',
@@ -65,6 +66,7 @@ const authSuccess = (user) => async (dispatch, getState) => {
     type: types.AUTH_SUCCESS,
     payload: user,
   });
+  BackgroundGeolocation.init(dispatch);
   dispatch(geoActionCreators.geoUpdated(getState().geo.coords));
 };
 

@@ -1,7 +1,10 @@
 import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
+import firebase from 'react-native-firebase';
+import DeviceInfo from 'react-native-device-info';
+import { Platform } from 'react-native';
 import { geoActionCreators } from '../redux/index';
 
-const GEO_OPTIONS = {
+const geoOptions = () => ({
   useSignificantChanges: false,
   enableHighAccuracy: true,
   maximumAge: 1000,
@@ -16,8 +19,18 @@ const GEO_OPTIONS = {
   startOnBoot: true, // <-- Auto start tracking when device is powered-up.
   // HTTP / SQLite config
   batchSync: false, // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
-  autoSync: false, // <-- [Default: true] Set true to sync each location to server as it arrives.
-};
+  autoSync: true, // <-- [Default: true] Set true to sync each location to server as it arrives.
+  url: `https://3d1324aa.ngrok.io/locations/${firebase.auth().currentUser.uid}`,
+  params: {
+    device: {
+      platform: Platform.OS,
+      version: DeviceInfo.getSystemVersion(),
+      uuid: DeviceInfo.getUniqueID(),
+      model: DeviceInfo.getModel(),
+      manufacturer: DeviceInfo.getManufacturer(),
+    },
+  },
+});
 
 const BackgroundGeolocation = {
   init: (dispatch) => {
@@ -33,7 +46,7 @@ const BackgroundGeolocation = {
     // This event fires when the user toggles location-services authorization
     RNBackgroundGeolocation.on('providerchange', onProviderChange);
 
-    RNBackgroundGeolocation.configure(GEO_OPTIONS, (state) => {
+    RNBackgroundGeolocation.configure(geoOptions(), (state) => {
       console.log('- BackgroundGeolocation is configured and ready: ', state.enabled);
       if (state.enabled) {
         // manually activate tracking (for js reloads in simulator or hot pushes)
@@ -71,7 +84,7 @@ const BackgroundGeolocation = {
   getCurrentPosition: (dispatch) => {
     console.log('Getting geo position manually in getGeoPosition');
     RNBackgroundGeolocation.getCurrentPosition(
-      GEO_OPTIONS,
+      geoOptions(),
       (position) => {
         console.log('Response in callback: ');
         dispatch(geoActionCreators.geoUpdated(position.coords));

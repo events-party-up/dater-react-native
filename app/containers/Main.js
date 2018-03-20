@@ -8,7 +8,6 @@ import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 
 import { DaterMapView } from '../components';
 import { initUserAuth, signOutUser } from '../services/auth';
-import BackgroundGeolocation from '../services/BackgroundGeolocation';
 import { listenForUsersAround } from '../services/geoQuery';
 
 const mapStateToProps = (state) => ({
@@ -26,7 +25,6 @@ class Main extends Component<Props> {
 
   async componentWillMount() {
     this.authUnsubscribe = initUserAuth(this.props.dispatch);
-    BackgroundGeolocation.init(this.props.dispatch);
   }
 
   componentWillUnmount() {
