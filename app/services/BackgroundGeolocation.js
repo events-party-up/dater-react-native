@@ -20,7 +20,8 @@ const geoOptions = () => ({
   // HTTP / SQLite config
   batchSync: false, // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
   autoSync: true, // <-- [Default: true] Set true to sync each location to server as it arrives.
-  url: `https://3d1324aa.ngrok.io/locations/${firebase.auth().currentUser.uid}`,
+  url: `https://dater-geolocation-console.herokuapp.com/locations/${firebase.auth().currentUser.uid}`,
+  // url: `https://3d1324aa.ngrok.io/locations/${firebase.auth().currentUser.uid}`,
   params: {
     device: {
       platform: Platform.OS,
