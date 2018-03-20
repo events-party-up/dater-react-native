@@ -9,7 +9,7 @@ import PersonMaker from './PersonMaker';
 import MyLocationMapMarker from './MyLocationMapMarker';
 import MyLocationButton from './MyLocationButton';
 import { mapViewActionCreators } from '../redux';
-import { getGeoPosition } from '../services/geoDevice';
+import BackgroundGeolocation from '../services/BackgroundGeolocation';
 
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
@@ -29,7 +29,7 @@ function mapDispatchToProps(dispatch) {
     },
     getGeoPosition: () => {
       console.log('Manually Updating geo position');
-      getGeoPosition(dispatch);
+      BackgroundGeolocation.getCurrentPosition(dispatch);
     },
   });
 }

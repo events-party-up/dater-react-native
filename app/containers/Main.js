@@ -4,11 +4,11 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import * as BackgroundGeolocation from 'react-native-background-geolocation';
+import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 
 import { DaterMapView } from '../components';
 import { initUserAuth, signOutUser } from '../services/auth';
-import { initBackgroundGeolocation } from '../services/geoDevice';
+import BackgroundGeolocation from '../services/BackgroundGeolocation';
 import { listenForUsersAround } from '../services/geoQuery';
 
 const mapStateToProps = (state) => ({
@@ -26,11 +26,11 @@ class Main extends Component<Props> {
 
   async componentWillMount() {
     this.authUnsubscribe = initUserAuth(this.props.dispatch);
-    initBackgroundGeolocation(this.props.dispatch);
+    BackgroundGeolocation.init(this.props.dispatch);
   }
 
   componentWillUnmount() {
-    BackgroundGeolocation.removeListeners();
+    RNBackgroundGeolocation.removeListeners();
     this.unsubscribeFromUsersAround();
     this.authUnsubscribe();
   }
