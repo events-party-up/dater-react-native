@@ -3,12 +3,11 @@
 
 ## Build Android APK without signing
 
-Run commands:
+### RUN Standalone APK in Debug mode:
 
-`react-native bundle --dev false --platform android --entry-file index.js --bundle-output ./android/app/build/intermediates/assets/debug/index.android.bundle --assets-dest ./android/app/build/intermediates/res/merged/debug
-cd android;`
-`./gradlew assembleDebug`
-`adb install -r app/build/outputs/apk/debug/app-debug.apk`
+From project root run command:
+
+`npm run run:android:debug:standalone`
 
 ## Reset cache & reinstall packages:
 
