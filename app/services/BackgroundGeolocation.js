@@ -25,10 +25,10 @@ const BackgroundGeolocation = {
     RNBackgroundGeolocation.on('location', onLocation, onError);
 
     // This handler fires when movement states changes (stationary->moving; moving->stationary)
-    // BackgroundGeolocation.on('motionchange', onMotionChange);
+    // RNBackgroundGeolocation.on('motionchange', onMotionChange);
 
     // This event fires when a change in motion activity is detected
-    // BackgroundGeolocation.on('activitychange', onActivityChange);
+    // RNBackgroundGeolocation.on('activitychange', onActivityChange);
 
     // This event fires when the user toggles location-services authorization
     RNBackgroundGeolocation.on('providerchange', onProviderChange);
