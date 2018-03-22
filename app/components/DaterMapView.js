@@ -27,9 +27,8 @@ function mapDispatchToProps(dispatch) {
     onRegionChangeComplete: (region) => {
       dispatch(mapViewActionCreators.mapViewRegionUpdate(region));
     },
-    getGeoPosition: () => {
-      console.log('Manually Updating geo position');
-      BackgroundGeolocation.getCurrentPosition(dispatch);
+    toggleGeoService: () => {
+      BackgroundGeolocation.toggleGeoService();
     },
   });
 }
@@ -54,7 +53,7 @@ type Props = {
   geoUpdates: number,
   animateToRegion: any,
   onRegionChangeComplete: (region: any) => void,
-  getGeoPosition: () => void,
+  toggleGeoService: () => void,
 };
 
 class DaterMapView extends Component<Props> {
@@ -120,7 +119,7 @@ class DaterMapView extends Component<Props> {
         style={styles.mapView}
       >
         <MyLocationButton
-          getGeoPositionPressed={() => this.props.getGeoPosition()}
+          toggleGeoService={() => this.props.toggleGeoService()}
           onPress={(region) => this.props.animateToRegion(this.mapView, region)}
         />
         <MapView

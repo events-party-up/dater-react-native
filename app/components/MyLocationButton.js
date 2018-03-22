@@ -24,7 +24,7 @@ type Props = {
   },
   mapView: Region,
   onPress: (region: Region) => void,
-  getGeoPositionPressed: () => void,
+  toggleGeoService: () => void,
 };
 
 const mapStateToProps = (state) => ({
@@ -43,8 +43,8 @@ class MyLocationButton extends Component<Props> {
     this.props.onPress(myLocationRegion);
   }
 
-  onGeoPress = () => {
-    this.props.getGeoPositionPressed();
+  onGeoTogglePress = () => {
+    this.props.toggleGeoService();
   }
 
   render() {
@@ -61,10 +61,10 @@ class MyLocationButton extends Component<Props> {
           hitSlop={hitSlop}
           activeOpacity={0.7}
           style={styles.mapButton}
-          onPress={this.onGeoPress}
+          onPress={this.onGeoTogglePress}
         >
           <Text style={{ fontWeight: 'bold', color: 'black' }}>
-            GEO
+            TGL
           </Text>
         </TouchableOpacity>
         <TouchableOpacity

@@ -22,10 +22,14 @@ const geoOptions = async () => {
     logLevel: RNBackgroundGeolocation.LOG_LEVEL_VERBOSE,
     stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.
     enableHeadless: true, // <-- Android Headless mode
+    foregroundService: false, // <-- Android, enforced to true on Android 8
     startOnBoot: true, // <-- Auto start tracking when device is powered-up.
     batchSync: false, // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
     autoSync: true, // <-- [Default: true] Set true to sync each location to server as it arrives.
     url: `https://dater-geolocation-console.herokuapp.com/locations/${uid}`,
+    notificationPriority: RNBackgroundGeolocation.NOTIFICATION_PRIORITY_MIN,
+    notificationTitle: 'Dater.com',
+    notificationText: 'Dater Mode ON',
     params: {
       device: {
         platform: Platform.OS,
@@ -84,6 +88,22 @@ const updateGeoPointInFirestore = (options: {
       }
     })
     .catch((err) => console.error(err));
+};
+
+const toggleGeoService = () => {
+  RNBackgroundGeolocation.getState((state) => {
+    if (state.enabled) {
+      RNBackgroundGeolocation.stop((result) => {
+        console.log('Geo plugin stopped');
+        console.log(result);
+      });
+    } else {
+      RNBackgroundGeolocation.start((result) => {
+        console.log('Geo plugin started');
+        console.log(result);
+      });
+    }
+  });
 };
 
 const BackgroundGeolocation = {
@@ -151,6 +171,7 @@ const BackgroundGeolocation = {
     );
   },
   updateGeoPointInFirestore,
+  toggleGeoService,
 };
 
 export default BackgroundGeolocation;
