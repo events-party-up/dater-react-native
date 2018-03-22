@@ -4,37 +4,86 @@ import DeviceInfo from 'react-native-device-info';
 import { Platform } from 'react-native';
 import { geoActionCreators } from '../redux/index';
 
-const geoOptions = () => ({
-  useSignificantChanges: false,
-  enableHighAccuracy: true,
-  maximumAge: 1000,
-  distanceFilter: 2,
-  desiredAccuracy: RNBackgroundGeolocation.DESIRED_ACCURACY_HIGH,
-  // Activity Recognition
-  stopTimeout: 1,
-  // Application config
-  debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
-  logLevel: RNBackgroundGeolocation.LOG_LEVEL_VERBOSE,
-  stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.
-  startOnBoot: true, // <-- Auto start tracking when device is powered-up.
-  // HTTP / SQLite config
-  batchSync: false, // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
-  autoSync: true, // <-- [Default: true] Set true to sync each location to server as it arrives.
-  url: `https://dater-geolocation-console.herokuapp.com/locations/${firebase.auth().currentUser.uid}`,
-  // url: `https://3d1324aa.ngrok.io/locations/${firebase.auth().currentUser.uid}`,
-  params: {
-    device: {
-      platform: Platform.OS,
-      version: DeviceInfo.getSystemVersion(),
-      uuid: DeviceInfo.getUniqueID(),
-      model: DeviceInfo.getModel(),
-      manufacturer: DeviceInfo.getManufacturer(),
+const geoOptions = async () => {
+  const { currentUser } = firebase.auth();
+  const firebaseAuthToken = currentUser ? await currentUser.getIdToken() : null;
+  const uid = currentUser ? currentUser.uid : 'unknown';
+
+  return {
+    useSignificantChanges: false,
+    enableHighAccuracy: true,
+    maximumAge: 1000,
+    distanceFilter: 2,
+    desiredAccuracy: RNBackgroundGeolocation.DESIRED_ACCURACY_HIGH,
+    stopTimeout: 1,
+    debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
+    logLevel: RNBackgroundGeolocation.LOG_LEVEL_VERBOSE,
+    stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.
+    enableHeadless: true, // <-- Android Headless mode
+    startOnBoot: true, // <-- Auto start tracking when device is powered-up.
+    batchSync: false, // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
+    autoSync: true, // <-- [Default: true] Set true to sync each location to server as it arrives.
+    url: `https://dater-geolocation-console.herokuapp.com/locations/${uid}`,
+    params: {
+      device: {
+        platform: Platform.OS,
+        version: DeviceInfo.getSystemVersion(),
+        uuid: DeviceInfo.getUniqueID(),
+        model: DeviceInfo.getModel(),
+        manufacturer: DeviceInfo.getManufacturer(),
+      },
     },
-  },
-});
+    extras: {
+      uid,
+      firebaseAuthToken,
+    },
+  };
+};
+
+
+const updateGeoPointInFirestore = (uid, apiKey, coords) => {
+  const fireStoreUrl = 'https://firestore.googleapis.com/v1beta1/projects/dater3-dev/databases/(default)/documents';
+  const patchUrl = `${fireStoreUrl}/geoPoints/${uid}?currentDocument.exists=true&` +
+    'updateMask.fieldPaths=geoPoint&' +
+    'updateMask.fieldPaths=speed&' +
+    'updateMask.fieldPaths=accuracy&' +
+    'updateMask.fieldPaths=heading&' +
+    `key=${apiKey}`;
+
+  return fetch(patchUrl, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      fields: {
+        geoPoint: {
+          geoPointValue: {
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+          },
+        },
+        speed: {
+          doubleValue: coords.speed,
+        },
+        accuracy: {
+          doubleValue: coords.accuracy,
+        },
+        heading: {
+          doubleValue: coords.heading,
+        },
+      },
+    }),
+  })
+    .then((response) => {
+      if (response.status !== 200) {
+        console.error('Error while patching firestore in updateGeoPointInFirestore: ', response);
+      }
+    })
+    .catch((err) => console.error(err));
+};
 
 const BackgroundGeolocation = {
-  init: (dispatch) => {
+  init: async (dispatch) => {
+    const GEO_OPTIONS = await geoOptions();
+    console.log('Geo Options: ', GEO_OPTIONS);
     // This handler fires whenever bgGeo receives a location update.
     RNBackgroundGeolocation.on('location', onLocation, onError);
 
@@ -47,7 +96,7 @@ const BackgroundGeolocation = {
     // This event fires when the user toggles location-services authorization
     RNBackgroundGeolocation.on('providerchange', onProviderChange);
 
-    RNBackgroundGeolocation.configure(geoOptions(), (state) => {
+    RNBackgroundGeolocation.configure(GEO_OPTIONS, (state) => {
       console.log('- BackgroundGeolocation is configured and ready: ', state.enabled);
       if (state.enabled) {
         // manually activate tracking (for js reloads in simulator or hot pushes)
@@ -82,10 +131,11 @@ const BackgroundGeolocation = {
     //   console.log('- [event] motionchange: ', location.isMoving, location);
     // }
   },
-  getCurrentPosition: (dispatch) => {
+  getCurrentPosition: async (dispatch) => {
     console.log('Getting geo position manually in getGeoPosition');
+    const GEO_OPTIONS = await geoOptions();
     RNBackgroundGeolocation.getCurrentPosition(
-      geoOptions(),
+      GEO_OPTIONS,
       (position) => {
         console.log('Response in callback: ');
         dispatch(geoActionCreators.geoUpdated(position.coords));
@@ -96,6 +146,7 @@ const BackgroundGeolocation = {
       },
     );
   },
+  updateGeoPointInFirestore,
 };
 
 export default BackgroundGeolocation;

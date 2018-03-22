@@ -33,12 +33,26 @@ export const initUserAuth = (dispatch) => {
 };
 
 export const signOutUser = async (dispatch) => {
-  if (firebase.auth().currentUser.isAnonymous) {
-    await firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).delete();
-    await firebase.firestore().collection('geoPoints').doc(firebase.auth().currentUser.uid).delete();
-    await firebase.auth().currentUser.delete();
+  const { currentUser } = firebase.auth();
+
+  if (currentUser && currentUser.isAnonymous) {
+    await firebase.firestore().collection('users').doc(currentUser.uid).delete();
+    await firebase.firestore().collection('geoPoints').doc(currentUser.uid).delete();
+    await currentUser.delete();
   } else {
     await firebase.auth().signOut();
   }
   dispatch(authActionCreators.authSignOut());
 };
+
+export const getAuthStatus = async () => (
+  new Promise((resolve) => {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        console.log('User logged in as: ', user.uid);
+        resolve(user.uid);
+      } else {
+        resolve(null);
+      }
+    });
+  }));
