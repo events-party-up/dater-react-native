@@ -2,7 +2,9 @@ import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 import firebase from 'react-native-firebase';
 import DeviceInfo from 'react-native-device-info';
 import { Platform } from 'react-native';
+
 import { geoActionCreators } from '../redux/index';
+import { GeoCoordinates } from '../types/index';
 
 const geoOptions = async () => {
   const { currentUser } = firebase.auth();
@@ -41,14 +43,18 @@ const geoOptions = async () => {
 };
 
 
-const updateGeoPointInFirestore = (uid, apiKey, coords) => {
+const updateGeoPointInFirestore = (options: {
+  uid: string,
+  apiKey: string,
+  coords: GeoCoordinates,
+}) => {
   const fireStoreUrl = 'https://firestore.googleapis.com/v1beta1/projects/dater3-dev/databases/(default)/documents';
-  const patchUrl = `${fireStoreUrl}/geoPoints/${uid}?currentDocument.exists=true&` +
+  const patchUrl = `${fireStoreUrl}/geoPoints/${options.uid}?currentDocument.exists=true&` +
     'updateMask.fieldPaths=geoPoint&' +
     'updateMask.fieldPaths=speed&' +
     'updateMask.fieldPaths=accuracy&' +
     'updateMask.fieldPaths=heading&' +
-    `key=${apiKey}`;
+    `key=${options.apiKey}`;
 
   return fetch(patchUrl, {
     method: 'PATCH',
@@ -56,18 +62,18 @@ const updateGeoPointInFirestore = (uid, apiKey, coords) => {
       fields: {
         geoPoint: {
           geoPointValue: {
-            latitude: coords.latitude,
-            longitude: coords.longitude,
+            latitude: options.coords.latitude,
+            longitude: options.coords.longitude,
           },
         },
         speed: {
-          doubleValue: coords.speed,
+          doubleValue: options.coords.speed,
         },
         accuracy: {
-          doubleValue: coords.accuracy,
+          doubleValue: options.coords.accuracy,
         },
         heading: {
-          doubleValue: coords.heading,
+          doubleValue: options.coords.heading,
         },
       },
     }),
@@ -83,7 +89,6 @@ const updateGeoPointInFirestore = (uid, apiKey, coords) => {
 const BackgroundGeolocation = {
   init: async (dispatch) => {
     const GEO_OPTIONS = await geoOptions();
-    console.log('Geo Options: ', GEO_OPTIONS);
     // This handler fires whenever bgGeo receives a location update.
     RNBackgroundGeolocation.on('location', onLocation, onError);
 
@@ -137,7 +142,6 @@ const BackgroundGeolocation = {
     RNBackgroundGeolocation.getCurrentPosition(
       GEO_OPTIONS,
       (position) => {
-        console.log('Response in callback: ');
         dispatch(geoActionCreators.geoUpdated(position.coords));
       },
       (error) => {
