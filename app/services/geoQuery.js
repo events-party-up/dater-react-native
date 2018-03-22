@@ -20,8 +20,9 @@ const geoPointPath = 'geoPoint';
  * @return {Promise} a Promise that fulfills with an array of all the
  *    retrieved locations
  */
-export const listenForUsersAround = async (area, dispatch) => {
+export const listenForUsersAround = (area, dispatch) => {
   // calculate the SW and NE corners of the bounding box to query for
+  const { currentUser } = firebase.auth();
   const box = boundingBoxCoordinates(area.center, area.radius);
   const lesserGeopoint = new firebase.firestore
     .GeoPoint(box.swCorner.latitude, box.swCorner.longitude);
@@ -37,7 +38,7 @@ export const listenForUsersAround = async (area, dispatch) => {
       const userData = userSnapshot.data();
       userData.id = userSnapshot.id;
 
-      if (userData.id === firebase.auth().currentUser.uid) {
+      if (currentUser && userData.id === currentUser.uid) {
         return;
       }
       userData.shortId = userSnapshot.id.substring(0, 4);
