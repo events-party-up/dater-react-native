@@ -1,6 +1,7 @@
 const GeoUtils = {
   distance,
   boundingBoxCoordinates,
+  getRotationAngle,
 };
 
 /**
@@ -100,5 +101,17 @@ function wrapLongitude(longitude) {
 function degreesToRadians(degrees) {
   return (degrees * Math.PI) / 180;
 }
+
+const getRotationAngle = (previousPosition, currentPosition) => {
+  const x1 = previousPosition.latitude;
+  const y1 = previousPosition.longitude;
+  const x2 = currentPosition.latitude;
+  const y2 = currentPosition.longitude;
+
+  const xDiff = x2 - x1;
+  const yDiff = y2 - y1;
+
+  return (Math.atan2(yDiff, xDiff) * 180.0) / Math.PI;
+};
 
 export default GeoUtils;

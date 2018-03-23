@@ -2,13 +2,16 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
+  NativeEventEmitter,
 } from 'react-native';
 import { connect } from 'react-redux';
 import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
+import ReactNativeHeading from '@zsajjad/react-native-heading';
 
 import { DaterMapView } from '../components';
 import { initUserAuth, signOutUser } from '../services/auth';
 import listenForUsersAround from '../services/geoQuery';
+import { geoActionCreators } from '../redux/index';
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
@@ -22,15 +25,28 @@ type Props = {
 class Main extends Component<Props> {
   authUnsubscribe;
   unsubscribeFromUsersAround;
+  listener;
 
   async componentWillMount() {
     this.authUnsubscribe = initUserAuth(this.props.dispatch);
+    this.listener = new NativeEventEmitter(ReactNativeHeading);
+    ReactNativeHeading.start(5)
+      .then((didStart) => {
+        console.log('Heading is supported: ', didStart);
+        if (didStart) {
+          this.listener.addListener('headingUpdated', (heading) => {
+            this.props.dispatch(geoActionCreators.updateCompassHeading(heading));
+          });
+        }
+      });
   }
 
   componentWillUnmount() {
     RNBackgroundGeolocation.removeListeners();
     this.unsubscribeFromUsersAround();
     this.authUnsubscribe();
+    ReactNativeHeading.stop();
+    this.listener.removeAllListeners('headingUpdated');
   }
 
   componentWillReceiveProps(nextProps) {

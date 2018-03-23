@@ -16,6 +16,7 @@ const colorOfmyLocationMapMarker = 'blue';
 
 type Props = {
   heading: number,
+  compassHeading: number,
   coordinate: {
     latitude: number,
     longitude: number,
@@ -25,13 +26,13 @@ type Props = {
 
 class MyLocationMapMarker extends React.PureComponent<Props> {
   render() {
-    let { heading } = this.props;
+    // let { heading } = this.props;
+    let { compassHeading } = this.props;
     const { coordinate } = this.props;
-    if (heading < 0 || !heading) {
-      heading = 0;
+    if (compassHeading < 0 || !compassHeading) {
+      compassHeading = 0;
     }
-    const rotate = (typeof heading === 'number' && heading >= 0) ? `${heading}deg` : null;
-
+    const rotate = (typeof compassHeading === 'number' && compassHeading >= 0) ? `${compassHeading}deg` : null;
     return (
       <View
         style={styles.locationContainer}

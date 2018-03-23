@@ -17,6 +17,7 @@ const mapStateToProps = (state) => ({
   mapView: state.mapView,
   auth: state.auth,
   geoUpdates: state.geo.geoUpdates,
+  compassHeading: state.geo.compassHeading,
 });
 
 function mapDispatchToProps(dispatch) {
@@ -50,6 +51,7 @@ type Props = {
   auth: {
     uid: string,
   },
+  compassHeading: number,
   geoUpdates: number,
   animateToRegion: any,
   onRegionChangeComplete: (region: any) => void,
@@ -80,10 +82,6 @@ class DaterMapView extends Component<Props> {
   routeTo = async (user) => {
     console.log(`Creating route to user: ${user.id}`);
   }
-
-  // onRegionChangeComplete = (region) => {
-  //   this.props.dispatch(mapViewActionCreators.mapViewRegionUpdate(region));
-  // }
 
   onRegionChange = (region) => {
     console.log('Region updated');
@@ -147,12 +145,14 @@ class DaterMapView extends Component<Props> {
           <MyLocationMapMarker
             coordinate={this.props.coords}
             heading={this.props.coords.heading}
+            compassHeading={this.props.compassHeading}
           />
           {this.renderUsersAround()}
         </MapView>
         <Text style={styles.debugText}>
           Accuracy: {Math.floor(this.props.coords.accuracy)}{'\n'}
-          Heading: {this.props.coords.heading}{'\n'}
+          GPS Heading: {this.props.coords.heading}{'\n'}
+          Compass Heading: {this.props.compassHeading}{'\n'}
           GeoUpdates: {this.props.geoUpdates}{'\n'}
           UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
         </Text>
