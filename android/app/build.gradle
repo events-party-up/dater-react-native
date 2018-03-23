@@ -183,6 +183,7 @@ dependencies {
     compile(project(':react-native-maps')){
         exclude group: 'com.google.android.gms'
     }
+    compile project(':react-native-heading')
 
 }
 
