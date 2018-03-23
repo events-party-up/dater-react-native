@@ -6,6 +6,8 @@ const types = {
   GEO_PERMISSION_REQUESTED: 'GEO_PERMISSION_REQUESTED',
   GEO_PERMISSION_GRANTED: 'GEO_PERMISSION_GRANTED',
   GEO_PERMISSION_DENIED: 'GEO_PERMISSION_DENIED',
+  GEO_STOP_BACKGROUND_SERVICES: 'GEO_STOP_BACKGROUND_SERVICES',
+  GEO_START_BACKGROUND_SERVICES: 'GEO_START_BACKGROUND_SERVICES',
 };
 
 const geoUpdated = (coords) => async (dispatch, getState) => {
@@ -46,11 +48,21 @@ const geoDenied = (error) => ({
   payload: error,
 });
 
+const stopBgServices = () => ({
+  type: types.GEO_STOP_BACKGROUND_SERVICES,
+});
+
+const startBgServices = () => ({
+  type: types.GEO_START_BACKGROUND_SERVICES,
+});
+
 export const geoActionCreators = {
   geoUpdated,
   geoRequest,
   geoGranted,
   geoDenied,
+  stopBgServices,
+  startBgServices,
 };
 
 const initialState = {
@@ -58,6 +70,7 @@ const initialState = {
   geoUpdates: 0,
   error: null,
   geoGranted: false,
+  bgServicesEnabled: false,
 };
 
 export const reducer = (state = initialState, action) => {
@@ -75,6 +88,18 @@ export const reducer = (state = initialState, action) => {
       return {
         ...state,
         mapView: payload,
+      };
+    }
+    case types.GEO_START_BACKGROUND_SERVICES: {
+      return {
+        ...state,
+        bgServicesEnabled: true,
+      };
+    }
+    case types.GEO_STOP_BACKGROUND_SERVICES: {
+      return {
+        ...state,
+        bgServicesEnabled: false,
       };
     }
     default: {

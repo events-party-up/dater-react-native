@@ -28,7 +28,7 @@ function mapDispatchToProps(dispatch) {
       dispatch(mapViewActionCreators.mapViewRegionUpdate(region));
     },
     toggleGeoService: () => {
-      BackgroundGeolocation.toggleGeoService();
+      BackgroundGeolocation.toggleBgServices(dispatch);
     },
   });
 }

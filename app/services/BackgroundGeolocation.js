@@ -18,7 +18,7 @@ const geoOptions = async () => {
     distanceFilter: 2,
     desiredAccuracy: RNBackgroundGeolocation.DESIRED_ACCURACY_HIGH,
     stopTimeout: 1,
-    debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
+    debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
     logLevel: RNBackgroundGeolocation.LOG_LEVEL_VERBOSE,
     stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.
     enableHeadless: true, // <-- Android Headless mode
@@ -27,7 +27,7 @@ const geoOptions = async () => {
     batchSync: false, // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
     autoSync: true, // <-- [Default: true] Set true to sync each location to server as it arrives.
     url: `https://dater-geolocation-console.herokuapp.com/locations/${uid}`,
-    notificationPriority: RNBackgroundGeolocation.NOTIFICATION_PRIORITY_MIN,
+    notificationPriority: RNBackgroundGeolocation.NOTIFICATION_PRIORITY_LOW,
     notificationTitle: 'Dater.com',
     notificationText: 'Dater Mode ON',
     params: {
@@ -90,18 +90,12 @@ const updateGeoPointInFirestore = (options: {
     .catch((err) => console.error(err));
 };
 
-const toggleGeoService = () => {
+const toggleBgServices = (dispatch) => {
   RNBackgroundGeolocation.getState((state) => {
     if (state.enabled) {
-      RNBackgroundGeolocation.stop((result) => {
-        console.log('Geo plugin stopped');
-        console.log(result);
-      });
+      RNBackgroundGeolocation.stop(() => (dispatch(geoActionCreators.stopBgServices())));
     } else {
-      RNBackgroundGeolocation.start((result) => {
-        console.log('Geo plugin started');
-        console.log(result);
-      });
+      RNBackgroundGeolocation.start(() => (dispatch(geoActionCreators.startBgServices())));
     }
   });
 };
@@ -124,12 +118,14 @@ const BackgroundGeolocation = {
     RNBackgroundGeolocation.configure(GEO_OPTIONS, (state) => {
       console.log('- BackgroundGeolocation is configured and ready: ', state.enabled);
       if (state.enabled) {
+        dispatch(geoActionCreators.startBgServices());
         // manually activate tracking (for js reloads in simulator or hot pushes)
         RNBackgroundGeolocation.changePace(true);
       } else {
         // 3. Start tracking!
         RNBackgroundGeolocation.start(() => {
-          console.log('- Start success');
+          // console.log('- Start success');
+          dispatch(geoActionCreators.startBgServices());
         });
       }
     });
@@ -171,7 +167,7 @@ const BackgroundGeolocation = {
     );
   },
   updateGeoPointInFirestore,
-  toggleGeoService,
+  toggleBgServices,
 };
 
 export default BackgroundGeolocation;

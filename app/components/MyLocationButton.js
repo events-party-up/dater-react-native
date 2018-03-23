@@ -30,6 +30,7 @@ type Props = {
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
   mapView: state.mapView,
+  bgServicesEnabled: state.geo.bgServicesEnabled,
 });
 
 class MyLocationButton extends Component<Props> {
@@ -64,7 +65,7 @@ class MyLocationButton extends Component<Props> {
           onPress={this.onGeoTogglePress}
         >
           <Text style={{ fontWeight: 'bold', color: 'black' }}>
-            TGL
+            {this.props.bgServicesEnabled ? 'OFF' : 'ON'}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -90,7 +91,9 @@ const styles = StyleSheet.create({
     width: 45,
     height: 45,
     borderRadius: 45 / 2,
-    backgroundColor: 'rgba(252, 253, 253, 0.9)',
+    backgroundColor: 'rgba(255, 255, 253, 0.8)',
+    borderColor: 'gray',
+    borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: 'black',
@@ -98,11 +101,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.12,
     opacity: 0.6,
     zIndex: 10,
+    margin: 5,
   },
   buttonContainer: {
     position: 'absolute',
     bottom: 30,
-    right: 20,
+    right: 10,
     backgroundColor: 'transparent',
     alignItems: 'center',
     zIndex: 100000,
