@@ -1,7 +1,7 @@
 import { Dimensions } from 'react-native';
 import MapView from 'react-native-maps';
 
-import { distance } from '../services/geoQuery';
+import GeoUtils from '../utils';
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -22,7 +22,7 @@ const mapViewRegionUpdate = (region) => {
     latitude: center.latitude + region.latitudeDelta,
     longitude: region.longitude + region.longitudeDelta,
   };
-  const visibleRadiusInMeters = distance(center, corner);
+  const visibleRadiusInMeters = GeoUtils.distance(center, corner);
 
   return {
     type: types.MAPVIEW_REGION_UPDATED,
