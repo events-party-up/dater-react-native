@@ -31,6 +31,9 @@ function mapDispatchToProps(dispatch) {
     toggleGeoService: () => {
       BackgroundGeolocation.toggleBgServices(dispatch);
     },
+    rotateMap: (mapView: MapView, angle: number) => {
+      mapView.animateToBearing(angle);
+    },
   });
 }
 
@@ -56,6 +59,7 @@ type Props = {
   animateToRegion: any,
   onRegionChangeComplete: (region: any) => void,
   toggleGeoService: () => void,
+  rotateMap: () => void,
 };
 
 class DaterMapView extends Component<Props> {
@@ -119,6 +123,7 @@ class DaterMapView extends Component<Props> {
         <MyLocationButton
           toggleGeoService={() => this.props.toggleGeoService()}
           onPress={(region) => this.props.animateToRegion(this.mapView, region)}
+          rotateMap={() => this.props.rotateMap(this.mapView, this.props.compassHeading)}
         />
         <MapView
           ref={(component) => { this.mapView = component; }}

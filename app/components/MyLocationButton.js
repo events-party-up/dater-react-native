@@ -25,6 +25,7 @@ type Props = {
   mapView: Region,
   onPress: (region: Region) => void,
   toggleGeoService: () => void,
+  rotateMap: () => void,
 };
 
 const mapStateToProps = (state) => ({
@@ -58,6 +59,16 @@ class MyLocationButton extends Component<Props> {
 
     return (
       <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          hitSlop={hitSlop}
+          activeOpacity={0.7}
+          style={styles.mapButton}
+          onPress={this.props.rotateMap}
+        >
+          <Text style={{ fontWeight: 'bold', color: 'black' }}>
+            R
+          </Text>
+        </TouchableOpacity>
         <TouchableOpacity
           hitSlop={hitSlop}
           activeOpacity={0.7}
