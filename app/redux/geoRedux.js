@@ -9,7 +9,10 @@ const types = {
   GEO_PERMISSION_DENIED: 'GEO_PERMISSION_DENIED',
   GEO_STOP_BACKGROUND_SERVICES: 'GEO_STOP_BACKGROUND_SERVICES',
   GEO_START_BACKGROUND_SERVICES: 'GEO_START_BACKGROUND_SERVICES',
-  GEO_COMPASS_HEADING_UPDATED: 'GEO_COMPASS_HEADING_UPDATED',
+  GEO_COMPASS_HEADING_START: 'GEO_COMPASS_HEADING_START',
+  GEO_COMPASS_HEADING_STOP: 'GEO_COMPASS_HEADING_STOP',
+  GEO_COMPASS_HEADING_UPDATE: 'GEO_COMPASS_HEADING_UPDATE',
+  GEO_COMPASS_HEADING_UNAVAILABLE: 'GEO_COMPASS_HEADING_UNAVAILABLE',
 };
 
 const geoUpdated = (coords: GeoCoordinates) => async (dispatch, getState) => {
@@ -58,9 +61,21 @@ const startBgServices = () => ({
   type: types.GEO_START_BACKGROUND_SERVICES,
 });
 
+const startCompassHeading = () => ({
+  type: types.GEO_COMPASS_HEADING_START,
+});
+
+const stopCompassHeading = () => ({
+  type: types.GEO_COMPASS_HEADING_STOP,
+});
+
 const updateCompassHeading = (heading) => ({
-  type: types.GEO_COMPASS_HEADING_UPDATED,
+  type: types.GEO_COMPASS_HEADING_UPDATE,
   payload: heading,
+});
+
+const compassHeadingUnavailable = () => ({
+  type: types.GEO_COMPASS_HEADING_UNAVAILABLE,
 });
 
 export const geoActionCreators = {
@@ -71,11 +86,17 @@ export const geoActionCreators = {
   stopBgServices,
   startBgServices,
   updateCompassHeading,
+  compassHeadingUnavailable,
+  startCompassHeading,
+  stopCompassHeading,
 };
 
 const initialState = {
   coords: null,
-  compassHeading: 0,
+  compass: {
+    heading: 0,
+    enabled: false,
+  },
   geoUpdates: 0,
   error: null,
   geoGranted: false,
@@ -111,10 +132,40 @@ export const reducer = (state = initialState, action) => {
         bgServicesEnabled: false,
       };
     }
-    case types.GEO_COMPASS_HEADING_UPDATED: {
+    case types.GEO_COMPASS_HEADING_START: {
       return {
         ...state,
-        compassHeading: payload,
+        compass: {
+          heading: 0,
+          enabled: true,
+        },
+      };
+    }
+    case types.GEO_COMPASS_HEADING_STOP: {
+      return {
+        ...state,
+        compass: {
+          heading: 0,
+          enabled: false,
+        },
+      };
+    }
+    case types.GEO_COMPASS_HEADING_UPDATE: {
+      return {
+        ...state,
+        compass: {
+          heading: payload,
+          enabled: true,
+        },
+      };
+    }
+    case types.GEO_COMPASS_HEADING_UNAVAILABLE: {
+      return {
+        ...state,
+        compass: {
+          heading: 0,
+          enabled: false,
+        },
       };
     }
     default: {

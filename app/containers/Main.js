@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  NativeEventEmitter,
 } from 'react-native';
 import { connect } from 'react-redux';
 import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
@@ -29,16 +28,6 @@ class Main extends Component<Props> {
 
   async componentWillMount() {
     this.authUnsubscribe = initUserAuth(this.props.dispatch);
-    this.listener = new NativeEventEmitter(ReactNativeHeading);
-    ReactNativeHeading.start(5)
-      .then((didStart) => {
-        console.log('Heading is supported: ', didStart);
-        if (didStart) {
-          this.listener.addListener('headingUpdated', (heading) => {
-            this.props.dispatch(geoActionCreators.updateCompassHeading(heading));
-          });
-        }
-      });
   }
 
   componentWillUnmount() {
