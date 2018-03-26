@@ -18,6 +18,7 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
   geoUpdates: state.geo.geoUpdates,
   compassHeading: state.geo.compassHeading,
+  compass: state.geo.compass,
 });
 
 function mapDispatchToProps(dispatch) {
@@ -33,6 +34,9 @@ function mapDispatchToProps(dispatch) {
     },
     rotateMap: (mapView: MapView, angle: number) => {
       mapView.animateToBearing(angle);
+    },
+    toggleCompass: (compassStatus) => {
+      console.log('Current Compass status: ', compassStatus);
     },
   });
 }
@@ -59,7 +63,8 @@ type Props = {
   animateToRegion: any,
   onRegionChangeComplete: (region: any) => void,
   toggleGeoService: () => void,
-  rotateMap: () => void,
+  rotateMap: (mapView: MapView, angle:number) => void,
+  toggleCompass: () => void,
 };
 
 class DaterMapView extends Component<Props> {
@@ -124,6 +129,7 @@ class DaterMapView extends Component<Props> {
           toggleGeoService={() => this.props.toggleGeoService()}
           onPress={(region) => this.props.animateToRegion(this.mapView, region)}
           rotateMap={() => this.props.rotateMap(this.mapView, this.props.compassHeading)}
+          toggleCompass={() => this.props.toggleCompass(this.props.compass.enabled)}
         />
         <MapView
           ref={(component) => { this.mapView = component; }}
