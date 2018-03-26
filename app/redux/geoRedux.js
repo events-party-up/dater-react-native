@@ -1,5 +1,6 @@
 import firebase from 'react-native-firebase';
 import GeoCoordinates from '../types';
+import CompassHeading from '../services/compass-heading';
 
 const types = {
   GEO_UPDATED: 'GEO_UPDATED',
@@ -10,6 +11,7 @@ const types = {
   GEO_STOP_BACKGROUND_SERVICES: 'GEO_STOP_BACKGROUND_SERVICES',
   GEO_START_BACKGROUND_SERVICES: 'GEO_START_BACKGROUND_SERVICES',
   GEO_COMPASS_HEADING_START: 'GEO_COMPASS_HEADING_START',
+  GEO_COMPASS_HEADING_STARTED: 'GEO_COMPASS_HEADING_STARTED',
   GEO_COMPASS_HEADING_STOP: 'GEO_COMPASS_HEADING_STOP',
   GEO_COMPASS_HEADING_UPDATE: 'GEO_COMPASS_HEADING_UPDATE',
   GEO_COMPASS_HEADING_UNAVAILABLE: 'GEO_COMPASS_HEADING_UNAVAILABLE',
@@ -61,9 +63,17 @@ const startBgServices = () => ({
   type: types.GEO_START_BACKGROUND_SERVICES,
 });
 
-const startCompassHeading = () => ({
-  type: types.GEO_COMPASS_HEADING_START,
-});
+const startCompassHeading = () => async (dispatch, getState) => {
+  dispatch({
+    type: types.GEO_COMPASS_HEADING_START,
+  });
+
+  try {
+    const compassStarted = CompassHeading.start();
+  } catch (error) {
+
+  }
+};
 
 const stopCompassHeading = () => ({
   type: types.GEO_COMPASS_HEADING_STOP,

@@ -28,6 +28,7 @@ class Main extends Component<Props> {
 
   async componentWillMount() {
     this.authUnsubscribe = initUserAuth(this.props.dispatch);
+    this.props.dispatch(geoActionCreators.startCompassHeading());
   }
 
   componentWillUnmount() {
@@ -36,6 +37,7 @@ class Main extends Component<Props> {
     this.authUnsubscribe();
     ReactNativeHeading.stop();
     this.listener.removeAllListeners('headingUpdated');
+    this.props.dispatch(geoActionCreators.stopCompassHeading());
   }
 
   componentWillReceiveProps(nextProps) {
