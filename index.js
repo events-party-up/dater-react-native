@@ -2,7 +2,7 @@ import { AppRegistry, Platform } from 'react-native';
 import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 
 import App from './app/index';
-import BackgroundGeolocation from './app/services/BackgroundGeolocation';
+import BackgroundGeolocation from './app/services/background-geolocation';
 
 AppRegistry.registerComponent('DaterReactNative', () => App);
 

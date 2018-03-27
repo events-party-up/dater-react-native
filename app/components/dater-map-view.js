@@ -1,15 +1,24 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, Button, View } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  Button,
+  View,
+  NativeEventEmitter,
+} from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
-import { connect } from 'react-redux';
+import { connect, DeviceEventEmitter, Dispatch } from 'react-redux';
 import 'moment/locale/ru';
 import Moment from 'react-moment';
+import ReactNativeHeading from '@zsajjad/react-native-heading';
 
-import PersonMaker from './PersonMaker';
-import MyLocationMapMarker from './MyLocationMapMarker';
-import MyLocationButton from './MyLocationButton';
+import PersonMaker from './person-maker';
+import MyLocationMapMarker from './my-location-map-maker';
+import MyLocationButton from './my-location-button';
 import { mapViewActionCreators } from '../redux';
-import BackgroundGeolocation from '../services/BackgroundGeolocation';
+import BackgroundGeolocation from '../services/background-geolocation';
+import { GeoCompass, GeoCoordinates } from '../types';
+import GeoUtils from '../utils';
 
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
@@ -17,6 +26,7 @@ const mapStateToProps = (state) => ({
   mapView: state.mapView,
   auth: state.auth,
   geoUpdates: state.geo.geoUpdates,
+  compass: state.compass,
 });
 
 function mapDispatchToProps(dispatch) {
@@ -24,46 +34,68 @@ function mapDispatchToProps(dispatch) {
     animateToRegion: (mapView: MapView, region) => {
       dispatch(mapViewActionCreators.mapViewAnimateToRegion(mapView, region));
     },
-    onRegionChangeComplete: (region) => {
-      dispatch(mapViewActionCreators.mapViewRegionUpdate(region));
+    onRegionChangeComplete: (newRegion, prevRegion) => {
+      GeoUtils.getRotationAngle(newRegion, prevRegion);
+      dispatch(mapViewActionCreators.mapViewRegionUpdate(newRegion));
     },
     toggleGeoService: () => {
       BackgroundGeolocation.toggleBgServices(dispatch);
     },
+    rotateMap: (mapView: MapView, angle: number) => {
+      mapView.animateToBearing(angle);
+    },
+    toggleCompass: (compassStatus) => {
+      if (compassStatus) {
+        dispatch({
+          type: 'GEO_COMPASS_HEADING_STOP',
+        });
+      } else {
+        dispatch({
+          type: 'GEO_COMPASS_HEADING_START',
+        });
+      }
+    },
+    dispatch: (action) => dispatch(action),
   });
 }
 
 
 type Props = {
-  heading: number,
   usersAround: Array<mixed>,
-  coords: {
-    latitude: number,
-    longitude: number,
-    accuracy: number,
-    heading: number,
-  },
-  mapView: {
-    latitudeDelta: number,
-    longitudeDelta: number,
-  },
+  coords: GeoCoordinates,
+  mapView: MapView,
   auth: {
     uid: string,
   },
+  compass: GeoCompass,
   geoUpdates: number,
   animateToRegion: any,
-  onRegionChangeComplete: (region: any) => void,
+  onRegionChangeComplete: (newRegion: GeoCoordinates, prevRegion: GeoCoordinates) => void,
   toggleGeoService: () => void,
+  rotateMap: (mapView: MapView, angle:number) => void,
+  toggleCompass: (compassStatus: boolean) => void,
+  dispatch: Dispatch,
 };
 
 class DaterMapView extends Component<Props> {
   mapView: MapView;
+  listener = new NativeEventEmitter(ReactNativeHeading);
+
   constructor(props) {
     super(props);
     this.routeTo = this.routeTo.bind(this);
   }
-
-  componentWillUnmount() {
+  async componentWillMount() {
+    this.listener.addListener('headingUpdated', (heading) => {
+      this.props.dispatch({ type: 'GEO_COMPASS_HEADING_UPDATE', payload: heading });
+      this.props.dispatch({
+        type: 'MAPVIEW_ROTATE',
+        payload: {
+          mapView: this.mapView,
+          rotationAngle: GeoUtils.wrapCompassHeading(heading),
+        },
+      });
+    });
   }
 
   componentDidMount() {
@@ -77,13 +109,16 @@ class DaterMapView extends Component<Props> {
     });
   }
 
+  componentWillUnmount() {
+    DeviceEventEmitter.removeAllListeners('headingUpdated');
+    this.props.dispatch({
+      type: 'GEO_COMPASS_HEADING_STOP',
+    });
+  }
+
   routeTo = async (user) => {
     console.log(`Creating route to user: ${user.id}`);
   }
-
-  // onRegionChangeComplete = (region) => {
-  //   this.props.dispatch(mapViewActionCreators.mapViewRegionUpdate(region));
-  // }
 
   onRegionChange = (region) => {
     console.log('Region updated');
@@ -121,6 +156,8 @@ class DaterMapView extends Component<Props> {
         <MyLocationButton
           toggleGeoService={() => this.props.toggleGeoService()}
           onPress={(region) => this.props.animateToRegion(this.mapView, region)}
+          rotateMap={() => this.props.rotateMap(this.mapView, 90)}
+          toggleCompass={() => this.props.toggleCompass(this.props.compass.enabled)}
         />
         <MapView
           ref={(component) => { this.mapView = component; }}
@@ -131,7 +168,7 @@ class DaterMapView extends Component<Props> {
             latitudeDelta: this.props.mapView.latitudeDelta,
             longitudeDelta: this.props.mapView.longitudeDelta,
           }}
-          onRegionChangeComplete={this.props.onRegionChangeComplete}
+          onRegionChangeComplete={(region) => this.props.onRegionChangeComplete(region, this.props.coords)}
           // onRegionChange={this.onRegionChange}
           provider="google"
           showsIndoors
@@ -146,13 +183,15 @@ class DaterMapView extends Component<Props> {
         >
           <MyLocationMapMarker
             coordinate={this.props.coords}
-            heading={this.props.coords.heading}
+            gpsHeading={this.props.coords.heading}
+            compassHeading={this.props.compass.heading}
           />
           {this.renderUsersAround()}
         </MapView>
         <Text style={styles.debugText}>
           Accuracy: {Math.floor(this.props.coords.accuracy)}{'\n'}
-          Heading: {this.props.coords.heading}{'\n'}
+          GPS Heading: {this.props.coords.heading}{'\n'}
+          Compass Heading: {this.props.compass.heading}{'\n'}
           GeoUpdates: {this.props.geoUpdates}{'\n'}
           UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
         </Text>

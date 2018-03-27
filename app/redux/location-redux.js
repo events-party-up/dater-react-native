@@ -1,4 +1,5 @@
 import firebase from 'react-native-firebase';
+import GeoCoordinates from '../types';
 
 const types = {
   GEO_UPDATED: 'GEO_UPDATED',
@@ -10,7 +11,7 @@ const types = {
   GEO_START_BACKGROUND_SERVICES: 'GEO_START_BACKGROUND_SERVICES',
 };
 
-const geoUpdated = (coords) => async (dispatch, getState) => {
+const geoUpdated = (coords: GeoCoordinates) => async (dispatch, getState) => {
   const { uid } = getState().auth;
 
   if (!coords) {

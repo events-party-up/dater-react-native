@@ -3,7 +3,7 @@ import DeviceInfo from 'react-native-device-info';
 import { Platform } from 'react-native';
 
 import { geoActionCreators } from '../redux';
-import BackgroundGeolocation from '../services/BackgroundGeolocation';
+import BackgroundGeolocation from '../services/background-geolocation';
 
 const types = {
   AUTH_PENDING: 'AUTH_PENDING',

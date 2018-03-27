@@ -6,6 +6,8 @@ import android.app.Application;
 import com.facebook.react.ReactApplication;
 import com.transistorsoft.rnbackgroundgeolocation.*;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
+import com.joshblour.reactnativeheading.ReactNativeHeadingPackage;
+
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
 import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
@@ -44,7 +46,8 @@ public class MainApplication extends Application implements ReactApplication {
           new RNFirebaseCrashlyticsPackage(),
           new RNFirebaseFirestorePackage(),
           new RNFirebaseRemoteConfigPackage(),
-          new RNFirebasePerformancePackage()
+          new RNFirebasePerformancePackage(),
+          new ReactNativeHeadingPackage()
       );
     }
 

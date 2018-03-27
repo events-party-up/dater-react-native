@@ -3,12 +3,11 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { connect } from 'react-redux';
-import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
+import { connect, Dispatch } from 'react-redux';
 
 import { DaterMapView } from '../components';
 import { initUserAuth, signOutUser } from '../services/auth';
-import listenForUsersAround from '../services/geoQuery';
+import listenForUsersAround from '../services/geo-query';
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
@@ -16,7 +15,7 @@ const mapStateToProps = (state) => ({
 });
 
 type Props = {
-  dispatch: any,
+  dispatch: Dispatch,
 };
 
 class Main extends Component<Props> {
@@ -28,7 +27,6 @@ class Main extends Component<Props> {
   }
 
   componentWillUnmount() {
-    RNBackgroundGeolocation.removeListeners();
     this.unsubscribeFromUsersAround();
     this.authUnsubscribe();
   }

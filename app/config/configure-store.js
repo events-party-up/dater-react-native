@@ -1,4 +1,5 @@
 import { createStore, applyMiddleware } from 'redux';
+import createSagaMiddleware from 'redux-saga';
 // import { persistStore, autoRehydrate } from 'redux-persist';
 // Thunk middleware allows actions to be chained and waited on by returning
 // a function from that action
@@ -9,9 +10,11 @@ import thunk from 'redux-thunk';
 // https://github.com/evgenyrodionov/redux-logger
 import { createLogger } from 'redux-logger';
 import { reducer } from '../redux';
+import rootSaga from '../sagas/';
 
+const sagaMiddleware = createSagaMiddleware();
 // http://redux.js.org/docs/advanced/Middleware.html
-const middleware = [thunk];
+const middleware = [thunk, sagaMiddleware];
 
 // Use the NODE_ENV to include logging and debugging tools
 // in development environment. They will be compiled out of
@@ -19,7 +22,7 @@ const middleware = [thunk];
 if (process.env.NODE_ENV === 'development') {
   middleware.push(createLogger());
   // Turns on Reactotron debugging tool
-  require('./ReactotronConfig'); // eslint-disable-line global-require
+  require('./reactotron-config'); // eslint-disable-line global-require
 }
 
 // Can use a preloaded initialState if available, in this case we don't
@@ -33,6 +36,6 @@ export default (initialState) => {
   );
   // https://github.com/rt2zz/redux-persist
   // persistStore(store)
+  sagaMiddleware.run(rootSaga);
   return store;
 };
-
