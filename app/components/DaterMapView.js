@@ -17,7 +17,6 @@ const mapStateToProps = (state) => ({
   mapView: state.mapView,
   auth: state.auth,
   geoUpdates: state.geo.geoUpdates,
-  compassHeading: state.geo.compassHeading,
   compass: state.geo.compass,
 });
 
@@ -36,7 +35,15 @@ function mapDispatchToProps(dispatch) {
       mapView.animateToBearing(angle);
     },
     toggleCompass: (compassStatus) => {
-      console.log('Current Compass status: ', compassStatus);
+      if (compassStatus) {
+        dispatch({
+          type: 'GEO_COMPASS_HEADING_STOP',
+        });
+      } else {
+        dispatch({
+          type: 'GEO_COMPASS_HEADING_START',
+        });
+      }
     },
   });
 }
@@ -58,13 +65,13 @@ type Props = {
   auth: {
     uid: string,
   },
-  compassHeading: number,
+  compass: any,
   geoUpdates: number,
   animateToRegion: any,
   onRegionChangeComplete: (region: any) => void,
   toggleGeoService: () => void,
   rotateMap: (mapView: MapView, angle:number) => void,
-  toggleCompass: () => void,
+  toggleCompass: (compassStatus: boolean) => void,
 };
 
 class DaterMapView extends Component<Props> {
@@ -128,7 +135,7 @@ class DaterMapView extends Component<Props> {
         <MyLocationButton
           toggleGeoService={() => this.props.toggleGeoService()}
           onPress={(region) => this.props.animateToRegion(this.mapView, region)}
-          rotateMap={() => this.props.rotateMap(this.mapView, this.props.compassHeading)}
+          rotateMap={() => this.props.rotateMap(this.mapView, this.props.compass.heading)}
           toggleCompass={() => this.props.toggleCompass(this.props.compass.enabled)}
         />
         <MapView
@@ -156,14 +163,14 @@ class DaterMapView extends Component<Props> {
           <MyLocationMapMarker
             coordinate={this.props.coords}
             heading={this.props.coords.heading}
-            compassHeading={this.props.compassHeading}
+            compassHeading={this.props.compass.heading}
           />
           {this.renderUsersAround()}
         </MapView>
         <Text style={styles.debugText}>
           Accuracy: {Math.floor(this.props.coords.accuracy)}{'\n'}
           GPS Heading: {this.props.coords.heading}{'\n'}
-          Compass Heading: {this.props.compassHeading}{'\n'}
+          Compass Heading: {this.props.compass.heading}{'\n'}
           GeoUpdates: {this.props.geoUpdates}{'\n'}
           UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
         </Text>

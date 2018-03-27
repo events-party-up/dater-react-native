@@ -12,8 +12,10 @@ const types = {
   GEO_COMPASS_HEADING_START: 'GEO_COMPASS_HEADING_START',
   GEO_COMPASS_HEADING_STARTED: 'GEO_COMPASS_HEADING_STARTED',
   GEO_COMPASS_HEADING_STOP: 'GEO_COMPASS_HEADING_STOP',
+  GEO_COMPASS_HEADING_STOPPED: 'GEO_COMPASS_HEADING_STOPPED',
   GEO_COMPASS_HEADING_UPDATE: 'GEO_COMPASS_HEADING_UPDATE',
   GEO_COMPASS_HEADING_UNAVAILABLE: 'GEO_COMPASS_HEADING_UNAVAILABLE',
+  GEO_COMPASS_UNKNOWN_ERROR: 'GEO_COMPASS_UNKNOWN_ERROR',
 };
 
 const geoUpdated = (coords: GeoCoordinates) => async (dispatch, getState) => {
@@ -92,7 +94,7 @@ const initialState = {
   compass: {
     heading: 0,
     enabled: false,
-    listener: undefined,
+    error: null,
   },
   geoUpdates: 0,
   error: null,
@@ -142,13 +144,37 @@ export const reducer = (state = initialState, action) => {
       return {
         ...state,
         compass: {
-          heading: 0,
+          ...state.compass,
           enabled: true,
-          listener: payload,
         },
       };
     }
     case types.GEO_COMPASS_HEADING_STOP: {
+      return {
+        ...state,
+        compass: {
+          ...state.compass,
+          heading: 0,
+          enabled: false,
+        },
+      };
+    }
+    case types.GEO_COMPASS_HEADING_STOPPED: {
+      return {
+        ...state,
+        compass: initialState.compass,
+      };
+    }
+    case types.GEO_COMPASS_HEADING_UPDATE: {
+      return {
+        ...state,
+        compass: {
+          ...state.compass,
+          heading: payload,
+        },
+      };
+    }
+    case types.GEO_COMPASS_HEADING_UNAVAILABLE: {
       return {
         ...state,
         compass: {
@@ -157,16 +183,7 @@ export const reducer = (state = initialState, action) => {
         },
       };
     }
-    case types.GEO_COMPASS_HEADING_UPDATE: {
-      return {
-        ...state,
-        compass: {
-          heading: payload,
-          enabled: true,
-        },
-      };
-    }
-    case types.GEO_COMPASS_HEADING_UNAVAILABLE: {
+    case types.GEO_COMPASS_UNKNOWN_ERROR: {
       return {
         ...state,
         compass: {

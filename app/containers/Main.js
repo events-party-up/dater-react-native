@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
+  NativeEventEmitter,
 } from 'react-native';
-import { connect } from 'react-redux';
-import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
-// import ReactNativeHeading from '@zsajjad/react-native-heading';
+import { connect, DeviceEventEmitter } from 'react-redux';
+import ReactNativeHeading from '@zsajjad/react-native-heading';
 
 import { DaterMapView } from '../components';
 import { initUserAuth, signOutUser } from '../services/auth';
@@ -27,17 +27,17 @@ class Main extends Component<Props> {
 
   async componentWillMount() {
     this.authUnsubscribe = initUserAuth(this.props.dispatch);
-    // this.props.dispatch(geoActionCreators.startCompassHeading());
-    this.props.dispatch({
-      type: 'GEO_COMPASS_HEADING_START',
+    this.listener = new NativeEventEmitter(ReactNativeHeading);
+    this.listener.addListener('headingUpdated', (heading) => {
+      console.log('Heading: ', heading);
+      this.props.dispatch({ type: 'GEO_COMPASS_HEADING_UPDATE', payload: heading });
     });
   }
 
   componentWillUnmount() {
-    RNBackgroundGeolocation.removeListeners();
     this.unsubscribeFromUsersAround();
     this.authUnsubscribe();
-    // this.props.dispatch(geoActionCreators.stopCompassHeading());
+    DeviceEventEmitter.removeAllListeners('headingUpdated');
     this.props.dispatch({
       type: 'GEO_COMPASS_HEADING_STOP',
     });
