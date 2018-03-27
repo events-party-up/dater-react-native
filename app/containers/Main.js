@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  NativeEventEmitter,
 } from 'react-native';
-import { connect, DeviceEventEmitter } from 'react-redux';
-import ReactNativeHeading from '@zsajjad/react-native-heading';
+import { connect, Dispatch } from 'react-redux';
 
 import { DaterMapView } from '../components';
 import { initUserAuth, signOutUser } from '../services/auth';
@@ -17,28 +15,20 @@ const mapStateToProps = (state) => ({
 });
 
 type Props = {
-  dispatch: any,
+  dispatch: Dispatch,
 };
 
 class Main extends Component<Props> {
   authUnsubscribe;
   unsubscribeFromUsersAround;
-  listener = new NativeEventEmitter(ReactNativeHeading);
 
   async componentWillMount() {
     this.authUnsubscribe = initUserAuth(this.props.dispatch);
-    this.listener.addListener('headingUpdated', (heading) => {
-      (this.props.dispatch({ type: 'GEO_COMPASS_HEADING_UPDATE', payload: heading }));
-    });
   }
 
   componentWillUnmount() {
     this.unsubscribeFromUsersAround();
     this.authUnsubscribe();
-    DeviceEventEmitter.removeAllListeners('headingUpdated');
-    this.props.dispatch({
-      type: 'GEO_COMPASS_HEADING_STOP',
-    });
   }
 
   componentWillReceiveProps(nextProps) {

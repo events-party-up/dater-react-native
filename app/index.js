@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import firebase from 'react-native-firebase';
 
 import configureStore from './config/configureStore';
-import Main from './containers/Main';
+import Main from './containers/main';
 
 const store = configureStore();
 

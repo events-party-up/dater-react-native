@@ -2,6 +2,7 @@ const GeoUtils = {
   distance,
   boundingBoxCoordinates,
   getRotationAngle,
+  wrapCompassHeading,
 };
 
 /**
@@ -102,7 +103,7 @@ function degreesToRadians(degrees) {
   return (degrees * Math.PI) / 180;
 }
 
-const getRotationAngle = (previousPosition, currentPosition) => {
+function getRotationAngle(previousPosition, currentPosition) {
   const x1 = previousPosition.latitude;
   const y1 = previousPosition.longitude;
   const x2 = currentPosition.latitude;
@@ -112,6 +113,13 @@ const getRotationAngle = (previousPosition, currentPosition) => {
   const yDiff = y2 - y1;
 
   return (Math.atan2(yDiff, xDiff) * 180.0) / Math.PI;
-};
+}
+
+function wrapCompassHeading(heading) {
+  if (heading > 180) {
+    return -(360 - heading);
+  }
+  return heading;
+}
 
 export default GeoUtils;

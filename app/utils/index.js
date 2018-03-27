@@ -1,4 +1,4 @@
-import GeoUtils from './geoUtils';
+import GeoUtils from './geo-utils';
 
 export default GeoUtils;
 

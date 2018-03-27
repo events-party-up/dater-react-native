@@ -11,6 +11,7 @@ const DEFAULT_LONGITUDE_DELTA = DEFAULT_LATITUDE_DELTA * ASPECT_RATIO;
 const types = {
   MAPVIEW_REGION_UPDATED: 'MAPVIEW_REGION_UPDATED',
   MAPVIEW_ANIMATE_TO_REGION: 'MAPVIEW_ANIMATE_TO_REGION',
+  MAPVIEW_ROTATE: 'MAPVIEW_ROTATE',
 };
 
 const mapViewRegionUpdate = (region) => {
@@ -52,6 +53,7 @@ const initialState = {
   latitudeDelta: DEFAULT_LATITUDE_DELTA,
   longitudeDelta: DEFAULT_LONGITUDE_DELTA,
   visibleRadiusInMeters: 410,
+  rotationAngle: 0,
 };
 
 export const reducer = (state = initialState, action) => {
@@ -68,6 +70,12 @@ export const reducer = (state = initialState, action) => {
       return {
         ...state,
         ...payload,
+      };
+    }
+    case types.MAPVIEW_ROTATE: {
+      return {
+        ...state,
+        rotationAngle: payload.rotationAngle,
       };
     }
     default: {

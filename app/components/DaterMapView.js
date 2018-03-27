@@ -1,9 +1,16 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, Button, View } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  Button,
+  View,
+  NativeEventEmitter,
+} from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
-import { connect } from 'react-redux';
+import { connect, DeviceEventEmitter, Dispatch } from 'react-redux';
 import 'moment/locale/ru';
 import Moment from 'react-moment';
+import ReactNativeHeading from '@zsajjad/react-native-heading';
 
 import PersonMaker from './PersonMaker';
 import MyLocationMapMarker from './MyLocationMapMarker';
@@ -11,6 +18,7 @@ import MyLocationButton from './MyLocationButton';
 import { mapViewActionCreators } from '../redux';
 import BackgroundGeolocation from '../services/BackgroundGeolocation';
 import { GeoCompass, GeoCoordinates } from '../types';
+import GeoUtils from '../utils';
 
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
@@ -26,8 +34,9 @@ function mapDispatchToProps(dispatch) {
     animateToRegion: (mapView: MapView, region) => {
       dispatch(mapViewActionCreators.mapViewAnimateToRegion(mapView, region));
     },
-    onRegionChangeComplete: (region) => {
-      dispatch(mapViewActionCreators.mapViewRegionUpdate(region));
+    onRegionChangeComplete: (newRegion, prevRegion) => {
+      GeoUtils.getRotationAngle(newRegion, prevRegion);
+      dispatch(mapViewActionCreators.mapViewRegionUpdate(newRegion));
     },
     toggleGeoService: () => {
       BackgroundGeolocation.toggleBgServices(dispatch);
@@ -46,6 +55,7 @@ function mapDispatchToProps(dispatch) {
         });
       }
     },
+    dispatch: (action) => dispatch(action),
   });
 }
 
@@ -53,30 +63,39 @@ function mapDispatchToProps(dispatch) {
 type Props = {
   usersAround: Array<mixed>,
   coords: GeoCoordinates,
-  mapView: {
-    latitudeDelta: number,
-    longitudeDelta: number,
-  },
+  mapView: MapView,
   auth: {
     uid: string,
   },
   compass: GeoCompass,
   geoUpdates: number,
   animateToRegion: any,
-  onRegionChangeComplete: (region: any) => void,
+  onRegionChangeComplete: (newRegion: GeoCoordinates, prevRegion: GeoCoordinates) => void,
   toggleGeoService: () => void,
   rotateMap: (mapView: MapView, angle:number) => void,
   toggleCompass: (compassStatus: boolean) => void,
+  dispatch: Dispatch,
 };
 
 class DaterMapView extends Component<Props> {
   mapView: MapView;
+  listener = new NativeEventEmitter(ReactNativeHeading);
+
   constructor(props) {
     super(props);
     this.routeTo = this.routeTo.bind(this);
   }
-
-  componentWillUnmount() {
+  async componentWillMount() {
+    this.listener.addListener('headingUpdated', (heading) => {
+      this.props.dispatch({ type: 'GEO_COMPASS_HEADING_UPDATE', payload: heading });
+      this.props.dispatch({
+        type: 'MAPVIEW_ROTATE',
+        payload: {
+          mapView: this.mapView,
+          rotationAngle: GeoUtils.wrapCompassHeading(heading),
+        },
+      });
+    });
   }
 
   componentDidMount() {
@@ -87,6 +106,13 @@ class DaterMapView extends Component<Props> {
         latitudeDelta: this.props.mapView.latitudeDelta,
         longitudeDelta: this.props.mapView.longitudeDelta,
       }, 1);
+    });
+  }
+
+  componentWillUnmount() {
+    DeviceEventEmitter.removeAllListeners('headingUpdated');
+    this.props.dispatch({
+      type: 'GEO_COMPASS_HEADING_STOP',
     });
   }
 
@@ -130,7 +156,7 @@ class DaterMapView extends Component<Props> {
         <MyLocationButton
           toggleGeoService={() => this.props.toggleGeoService()}
           onPress={(region) => this.props.animateToRegion(this.mapView, region)}
-          rotateMap={() => this.props.rotateMap(this.mapView, this.props.compass.heading)}
+          rotateMap={() => this.props.rotateMap(this.mapView, 90)}
           toggleCompass={() => this.props.toggleCompass(this.props.compass.enabled)}
         />
         <MapView
@@ -142,7 +168,7 @@ class DaterMapView extends Component<Props> {
             latitudeDelta: this.props.mapView.latitudeDelta,
             longitudeDelta: this.props.mapView.longitudeDelta,
           }}
-          onRegionChangeComplete={this.props.onRegionChangeComplete}
+          onRegionChangeComplete={(region) => this.props.onRegionChangeComplete(region, this.props.coords)}
           // onRegionChange={this.onRegionChange}
           provider="google"
           showsIndoors

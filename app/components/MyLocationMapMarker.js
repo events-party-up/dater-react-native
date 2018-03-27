@@ -32,7 +32,9 @@ class MyLocationMapMarker extends React.PureComponent<Props> {
     if (compassHeading < 0 || !compassHeading) {
       compassHeading = 0;
     }
-    const rotate = (typeof compassHeading === 'number' && compassHeading >= 0) ? `${compassHeading}deg` : null;
+    // const rotate = (typeof compassHeading === 'number' && compassHeading >= 0) ? `${compassHeading}deg` : null;
+    const rotate = '0deg';
+
     return (
       <View
         style={styles.locationContainer}
