@@ -15,7 +15,6 @@ import ReactNativeHeading from '@zsajjad/react-native-heading';
 import PersonMaker from './person-maker';
 import MyLocationMapMarker from './my-location-map-maker';
 import MyLocationButton from './my-location-button';
-import { mapViewActionCreators } from '../redux';
 import BackgroundGeolocation from '../services/background-geolocation';
 import { GeoCompass, GeoCoordinates } from '../types';
 import GeoUtils from '../utils';
@@ -31,12 +30,23 @@ const mapStateToProps = (state) => ({
 
 function mapDispatchToProps(dispatch) {
   return ({
-    animateToRegion: (mapView: MapView, region) => {
-      dispatch(mapViewActionCreators.mapViewAnimateToRegion(mapView, region));
+    animateToRegion: (mapView: MapView, region: GeoCoordinates) => {
+      dispatch({
+        type: 'MAPVIEW_ANIMATE_TO_REGION',
+        payload: {
+          mapView,
+          region,
+        },
+      });
     },
     onRegionChangeComplete: (newRegion, prevRegion) => {
-      GeoUtils.getRotationAngle(newRegion, prevRegion);
-      dispatch(mapViewActionCreators.mapViewRegionUpdate(newRegion));
+      dispatch({
+        type: 'MAPVIEW_REGION_UPDATED',
+        payload: {
+          newRegion,
+          prevRegion,
+        },
+      });
     },
     toggleGeoService: () => {
       BackgroundGeolocation.toggleBgServices(dispatch);
@@ -100,12 +110,12 @@ class DaterMapView extends Component<Props> {
 
   componentDidMount() {
     requestAnimationFrame(() => {
-      this.mapView.animateToRegion({
+      this.props.animateToRegion(this.mapView, {
         latitude: this.props.coords.latitude,
         longitude: this.props.coords.longitude,
         latitudeDelta: this.props.mapView.latitudeDelta,
         longitudeDelta: this.props.mapView.longitudeDelta,
-      }, 1);
+      });
     });
   }
 
@@ -174,11 +184,10 @@ class DaterMapView extends Component<Props> {
           showsIndoors
           showsTraffic={false}
           showsBuildings={false}
-          // showsMyLocationButton
-          // showsUserLocation
           // scrollEnabled={false}
           toolbarEnabled={false}
           moveOnMarkerPress={false}
+          rotateEnabled={false}
           mapType="standard"
         >
           <MyLocationMapMarker

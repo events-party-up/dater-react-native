@@ -1,12 +1,6 @@
 import { Dimensions } from 'react-native';
-import MapView from 'react-native-maps';
 
 import GeoUtils from '../utils';
-
-const { width, height } = Dimensions.get('window');
-const ASPECT_RATIO = width / height;
-const DEFAULT_LATITUDE_DELTA = 0.00322;
-const DEFAULT_LONGITUDE_DELTA = DEFAULT_LATITUDE_DELTA * ASPECT_RATIO;
 
 const types = {
   MAPVIEW_REGION_UPDATED: 'MAPVIEW_REGION_UPDATED',
@@ -14,40 +8,10 @@ const types = {
   MAPVIEW_ROTATE: 'MAPVIEW_ROTATE',
 };
 
-const mapViewRegionUpdate = (region) => {
-  const center = {
-    latitude: region.latitude,
-    longitude: region.longitude,
-  };
-  const corner = {
-    latitude: center.latitude + region.latitudeDelta,
-    longitude: region.longitude + region.longitudeDelta,
-  };
-  const visibleRadiusInMeters = GeoUtils.distance(center, corner);
-
-  return {
-    type: types.MAPVIEW_REGION_UPDATED,
-    payload: {
-      ...region,
-      visibleRadiusInMeters,
-    },
-  };
-};
-
-const mapViewAnimateToRegion = (mapView: MapView, region) => (dispatch) => {
-  mapView.animateToRegion(region, 500);
-
-  dispatch({
-    type: types.MAPVIEW_ANIMATE_TO_REGION,
-    payload: region,
-  });
-};
-
-
-export const mapViewActionCreators = {
-  mapViewRegionUpdate,
-  mapViewAnimateToRegion,
-};
+const { width, height } = Dimensions.get('window');
+const ASPECT_RATIO = width / height;
+const DEFAULT_LATITUDE_DELTA = 0.00322;
+const DEFAULT_LONGITUDE_DELTA = DEFAULT_LATITUDE_DELTA * ASPECT_RATIO;
 
 const initialState = {
   latitudeDelta: DEFAULT_LATITUDE_DELTA,
@@ -56,20 +20,33 @@ const initialState = {
   rotationAngle: 0,
 };
 
-export const reducer = (state = initialState, action) => {
+const MapViewReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
     case types.MAPVIEW_REGION_UPDATED: {
+      const center = {
+        latitude: payload.newRegion.latitude,
+        longitude: payload.newRegion.longitude,
+      };
+      const corner = {
+        latitude: center.latitude + payload.newRegion.latitudeDelta,
+        longitude: payload.newRegion.longitude + payload.newRegion.longitudeDelta,
+      };
+      const visibleRadiusInMeters = GeoUtils.distance(center, corner);
+      const rotationAngle = GeoUtils.getRotationAngle(payload.newRegion, payload.prevRegion);
+
       return {
         ...state,
-        ...payload,
+        ...payload.newRegion,
+        visibleRadiusInMeters,
+        rotationAngle,
       };
     }
     case types.MAPVIEW_ANIMATE_TO_REGION: {
       return {
         ...state,
-        ...payload,
+        ...payload.region,
       };
     }
     case types.MAPVIEW_ROTATE: {
@@ -83,3 +60,5 @@ export const reducer = (state = initialState, action) => {
     }
   }
 };
+
+export default MapViewReducer;
