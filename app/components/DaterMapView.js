@@ -10,6 +10,7 @@ import MyLocationMapMarker from './MyLocationMapMarker';
 import MyLocationButton from './MyLocationButton';
 import { mapViewActionCreators } from '../redux';
 import BackgroundGeolocation from '../services/BackgroundGeolocation';
+import { GeoCompass, GeoCoordinates } from '../types';
 
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
@@ -17,7 +18,7 @@ const mapStateToProps = (state) => ({
   mapView: state.mapView,
   auth: state.auth,
   geoUpdates: state.geo.geoUpdates,
-  compass: state.geo.compass,
+  compass: state.compass,
 });
 
 function mapDispatchToProps(dispatch) {
@@ -50,14 +51,8 @@ function mapDispatchToProps(dispatch) {
 
 
 type Props = {
-  heading: number,
   usersAround: Array<mixed>,
-  coords: {
-    latitude: number,
-    longitude: number,
-    accuracy: number,
-    heading: number,
-  },
+  coords: GeoCoordinates,
   mapView: {
     latitudeDelta: number,
     longitudeDelta: number,
@@ -65,7 +60,7 @@ type Props = {
   auth: {
     uid: string,
   },
-  compass: any,
+  compass: GeoCompass,
   geoUpdates: number,
   animateToRegion: any,
   onRegionChangeComplete: (region: any) => void,
@@ -162,7 +157,7 @@ class DaterMapView extends Component<Props> {
         >
           <MyLocationMapMarker
             coordinate={this.props.coords}
-            heading={this.props.coords.heading}
+            gpsHeading={this.props.coords.heading}
             compassHeading={this.props.compass.heading}
           />
           {this.renderUsersAround()}

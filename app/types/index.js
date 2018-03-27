@@ -7,3 +7,9 @@ export type GeoCoordinates = {
   latitude: number,
   longitude: number,
 };
+
+export type GeoCompass = {
+  heading: number,
+  enabled: boolean,
+  error: string,
+};

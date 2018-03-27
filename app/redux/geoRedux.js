@@ -9,13 +9,6 @@ const types = {
   GEO_PERMISSION_DENIED: 'GEO_PERMISSION_DENIED',
   GEO_STOP_BACKGROUND_SERVICES: 'GEO_STOP_BACKGROUND_SERVICES',
   GEO_START_BACKGROUND_SERVICES: 'GEO_START_BACKGROUND_SERVICES',
-  GEO_COMPASS_HEADING_START: 'GEO_COMPASS_HEADING_START',
-  GEO_COMPASS_HEADING_STARTED: 'GEO_COMPASS_HEADING_STARTED',
-  GEO_COMPASS_HEADING_STOP: 'GEO_COMPASS_HEADING_STOP',
-  GEO_COMPASS_HEADING_STOPPED: 'GEO_COMPASS_HEADING_STOPPED',
-  GEO_COMPASS_HEADING_UPDATE: 'GEO_COMPASS_HEADING_UPDATE',
-  GEO_COMPASS_HEADING_UNAVAILABLE: 'GEO_COMPASS_HEADING_UNAVAILABLE',
-  GEO_COMPASS_UNKNOWN_ERROR: 'GEO_COMPASS_UNKNOWN_ERROR',
 };
 
 const geoUpdated = (coords: GeoCoordinates) => async (dispatch, getState) => {
@@ -64,19 +57,6 @@ const startBgServices = () => ({
   type: types.GEO_START_BACKGROUND_SERVICES,
 });
 
-const stopCompassHeading = () => ({
-  type: types.GEO_COMPASS_HEADING_STOP,
-});
-
-const updateCompassHeading = (heading) => ({
-  type: types.GEO_COMPASS_HEADING_UPDATE,
-  payload: heading,
-});
-
-const compassHeadingUnavailable = () => ({
-  type: types.GEO_COMPASS_HEADING_UNAVAILABLE,
-});
-
 export const geoActionCreators = {
   geoUpdated,
   geoRequest,
@@ -84,18 +64,10 @@ export const geoActionCreators = {
   geoDenied,
   stopBgServices,
   startBgServices,
-  updateCompassHeading,
-  compassHeadingUnavailable,
-  stopCompassHeading,
 };
 
 const initialState = {
   coords: null,
-  compass: {
-    heading: 0,
-    enabled: false,
-    error: null,
-  },
   geoUpdates: 0,
   error: null,
   geoGranted: false,
@@ -129,68 +101,6 @@ export const reducer = (state = initialState, action) => {
       return {
         ...state,
         bgServicesEnabled: false,
-      };
-    }
-    case types.GEO_COMPASS_HEADING_START: {
-      return {
-        ...state,
-        compass: {
-          heading: 0,
-          enabled: false,
-        },
-      };
-    }
-    case types.GEO_COMPASS_HEADING_STARTED: {
-      return {
-        ...state,
-        compass: {
-          ...state.compass,
-          enabled: true,
-        },
-      };
-    }
-    case types.GEO_COMPASS_HEADING_STOP: {
-      return {
-        ...state,
-        compass: {
-          ...state.compass,
-          heading: 0,
-          enabled: false,
-        },
-      };
-    }
-    case types.GEO_COMPASS_HEADING_STOPPED: {
-      return {
-        ...state,
-        compass: initialState.compass,
-      };
-    }
-    case types.GEO_COMPASS_HEADING_UPDATE: {
-      return {
-        ...state,
-        compass: {
-          ...state.compass,
-          heading: payload,
-        },
-      };
-    }
-    case types.GEO_COMPASS_HEADING_UNAVAILABLE: {
-      return {
-        ...state,
-        compass: {
-          heading: 0,
-          enabled: false,
-        },
-      };
-    }
-    case types.GEO_COMPASS_UNKNOWN_ERROR: {
-      return {
-        ...state,
-        compass: {
-          heading: 0,
-          enabled: false,
-          error: payload,
-        },
       };
     }
     default: {
