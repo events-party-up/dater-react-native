@@ -101,7 +101,17 @@ const toggleBgServices = (dispatch) => {
 };
 
 const BackgroundGeolocation = {
-  init: async (dispatch) => {
+  init: async () => {
+    const GEO_OPTIONS = await geoOptions();
+    const bgServiceState = await new Promise((resolve, reject) => {
+      RNBackgroundGeolocation.configure(GEO_OPTIONS, (state) => {
+        resolve(state);
+      }, (error) => reject(error));
+    });
+
+    return bgServiceState;
+  },
+  init_old: async (dispatch) => {
     const GEO_OPTIONS = await geoOptions();
     // This handler fires whenever bgGeo receives a location update.
     RNBackgroundGeolocation.on('location', onLocation, onError);

@@ -6,6 +6,7 @@ const types = {
   MAPVIEW_REGION_UPDATED: 'MAPVIEW_REGION_UPDATED',
   MAPVIEW_ANIMATE_TO_REGION: 'MAPVIEW_ANIMATE_TO_REGION',
   MAPVIEW_ROTATE: 'MAPVIEW_ROTATE',
+  MAPVIEW_READY: 'MAPVIEW_READY',
 };
 
 const { width, height } = Dimensions.get('window');
@@ -18,6 +19,7 @@ const initialState = {
   longitudeDelta: DEFAULT_LONGITUDE_DELTA,
   visibleRadiusInMeters: 410,
   rotationAngle: 0,
+  mapReady: false,
 };
 
 const MapViewReducer = (state = initialState, action) => {
@@ -53,6 +55,12 @@ const MapViewReducer = (state = initialState, action) => {
       return {
         ...state,
         rotationAngle: payload.rotationAngle,
+      };
+    }
+    case types.MAPVIEW_READY: {
+      return {
+        ...state,
+        mapReady: true,
       };
     }
     default: {

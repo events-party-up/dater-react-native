@@ -51,7 +51,7 @@ class Main extends Component<Props> {
   }
 
   render() {
-    return (this.props.coords &&
+    return (
       <View style={styles.mainContainer}>
         {/* <FirebaseSetup /> */}
         {/* <View style={styles.button}>

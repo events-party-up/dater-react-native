@@ -6,24 +6,14 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
+import MapView from 'react-native-maps';
 
-type Region = {
-  latitude: number,
-  longitude: number,
-  latitudeDelta: number,
-  longitudeDelta: number,
-  visibleRadiusInMeters?: number,
-};
+import { GeoCoordinates } from '../types';
 
 type Props = {
-  coords: {
-    latitude: number,
-    longitude: number,
-    accuracy: number,
-    heading: number,
-  },
-  mapView: Region,
-  onPress: (region: Region) => void,
+  coords: GeoCoordinates,
+  mapView: MapView,
+  onPress: (region: GeoCoordinates) => void,
   toggleGeoService: () => void,
   rotateMap: () => void,
   toggleCompass: () => void,
@@ -37,7 +27,7 @@ const mapStateToProps = (state) => ({
 
 class MyLocationButton extends Component<Props> {
   onPress = () => {
-    const myLocationRegion: Region = {
+    const myLocationRegion: GeoCoordinates = {
       latitude: this.props.coords.latitude,
       longitude: this.props.coords.longitude,
       latitudeDelta: this.props.mapView.latitudeDelta,

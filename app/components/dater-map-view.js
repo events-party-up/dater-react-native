@@ -21,6 +21,7 @@ import GeoUtils from '../utils';
 
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
+  location: state.geo,
   usersAround: state.usersAround,
   mapView: state.mapView,
   auth: state.auth,
@@ -40,6 +41,8 @@ function mapDispatchToProps(dispatch) {
       });
     },
     onRegionChangeComplete: (newRegion, prevRegion) => {
+      if (!prevRegion || !newRegion) return;
+
       dispatch({
         type: 'MAPVIEW_REGION_UPDATED',
         payload: {
@@ -73,7 +76,6 @@ function mapDispatchToProps(dispatch) {
 type Props = {
   usersAround: Array<mixed>,
   coords: GeoCoordinates,
-  mapView: MapView,
   auth: {
     uid: string,
   },
@@ -85,6 +87,7 @@ type Props = {
   rotateMap: (mapView: MapView, angle:number) => void,
   toggleCompass: (compassStatus: boolean) => void,
   dispatch: Dispatch,
+  location: any,
 };
 
 class DaterMapView extends Component<Props> {
@@ -109,14 +112,19 @@ class DaterMapView extends Component<Props> {
   }
 
   componentDidMount() {
-    requestAnimationFrame(() => {
-      this.props.animateToRegion(this.mapView, {
-        latitude: this.props.coords.latitude,
-        longitude: this.props.coords.longitude,
-        latitudeDelta: this.props.mapView.latitudeDelta,
-        longitudeDelta: this.props.mapView.longitudeDelta,
-      });
-    });
+  }
+
+  onMapReady= () => {
+    // requestAnimationFrame(() => {
+    //   this.props.animateToRegion(this.mapView, {
+    //     latitude: this.props.coords.latitude,
+    //     longitude: this.props.coords.longitude,
+    //     latitudeDelta: this.props.mapView.latitudeDelta,
+    //     longitudeDelta: this.props.mapView.longitudeDelta,
+    //   });
+    // });
+    this.props.dispatch({ type: 'GEO_LOCATION_INITIALIZE', payload: this.mapView });
+    this.props.dispatch({ type: 'MAPVIEW_READY' });
   }
 
   componentWillUnmount() {
@@ -159,7 +167,7 @@ class DaterMapView extends Component<Props> {
   }
 
   render() {
-    return (this.props.coords &&
+    return (
       <View
         style={styles.mapView}
       >
@@ -172,13 +180,14 @@ class DaterMapView extends Component<Props> {
         <MapView
           ref={(component) => { this.mapView = component; }}
           style={styles.mapView}
-          initialRegion={{
-            latitude: this.props.coords.latitude,
-            longitude: this.props.coords.longitude,
-            latitudeDelta: this.props.mapView.latitudeDelta,
-            longitudeDelta: this.props.mapView.longitudeDelta,
-          }}
+          // initialRegion={{
+          //   latitude: this.props.coords.latitude,
+          //   longitude: this.props.coords.longitude,
+          //   latitudeDelta: this.props.mapView.latitudeDelta,
+          //   longitudeDelta: this.props.mapView.longitudeDelta,
+          // }}
           onRegionChangeComplete={(region) => this.props.onRegionChangeComplete(region, this.props.coords)}
+          onMapReady={this.onMapReady}
           // onRegionChange={this.onRegionChange}
           provider="google"
           showsIndoors
@@ -190,20 +199,23 @@ class DaterMapView extends Component<Props> {
           rotateEnabled={false}
           mapType="standard"
         >
-          <MyLocationMapMarker
-            coordinate={this.props.coords}
-            gpsHeading={this.props.coords.heading}
-            compassHeading={this.props.compass.heading}
-          />
+          {this.props.location.enabled &&
+            <MyLocationMapMarker
+              coordinate={this.props.coords}
+              gpsHeading={this.props.coords.heading}
+              compassHeading={this.props.compass.heading}
+            /> }
           {this.renderUsersAround()}
         </MapView>
-        <Text style={styles.debugText}>
-          Accuracy: {Math.floor(this.props.coords.accuracy)}{'\n'}
-          GPS Heading: {this.props.coords.heading}{'\n'}
-          Compass Heading: {this.props.compass.heading}{'\n'}
-          GeoUpdates: {this.props.geoUpdates}{'\n'}
-          UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
-        </Text>
+        {this.props.location.enabled &&
+          <Text style={styles.debugText}>
+            Accuracy: {this.props.coords && Math.floor(this.props.coords.accuracy)}{'\n'}
+            GPS Heading: {this.props.coords && this.props.coords.heading}{'\n'}
+            Compass Heading: {this.props.compass && this.props.compass.heading}{'\n'}
+            GeoUpdates: {this.props.geoUpdates}{'\n'}
+            UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
+          </Text>
+        }
       </View>
 
     );

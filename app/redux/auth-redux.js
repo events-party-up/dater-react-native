@@ -66,8 +66,8 @@ const authSuccess = (user) => async (dispatch, getState) => {
     type: types.AUTH_SUCCESS,
     payload: user,
   });
-  BackgroundGeolocation.init(dispatch);
-  dispatch(geoActionCreators.geoUpdated(getState().geo.coords));
+  // BackgroundGeolocation.init(dispatch);
+  // dispatch(geoActionCreators.geoUpdated(getState().geo.coords));
 };
 
 const authSignOut = () => async (dispatch) => {
