@@ -23,14 +23,12 @@ type Props = {
 class Main extends Component<Props> {
   authUnsubscribe;
   unsubscribeFromUsersAround;
-  listener;
+  listener = new NativeEventEmitter(ReactNativeHeading);
 
   async componentWillMount() {
     this.authUnsubscribe = initUserAuth(this.props.dispatch);
-    this.listener = new NativeEventEmitter(ReactNativeHeading);
     this.listener.addListener('headingUpdated', (heading) => {
-      console.log('Heading: ', heading);
-      this.props.dispatch({ type: 'GEO_COMPASS_HEADING_UPDATE', payload: heading });
+      (this.props.dispatch({ type: 'GEO_COMPASS_HEADING_UPDATE', payload: heading }));
     });
   }
 

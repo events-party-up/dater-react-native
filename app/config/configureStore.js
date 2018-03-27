@@ -10,7 +10,7 @@ import thunk from 'redux-thunk';
 // https://github.com/evgenyrodionov/redux-logger
 import { createLogger } from 'redux-logger';
 import { reducer } from '../redux';
-import rootSaga from '../redux/sagas';
+import rootSaga from '../sagas/';
 
 const sagaMiddleware = createSagaMiddleware();
 // http://redux.js.org/docs/advanced/Middleware.html
@@ -39,4 +39,3 @@ export default (initialState) => {
   sagaMiddleware.run(rootSaga);
   return store;
 };
-

@@ -1,14 +1,15 @@
-import { delay } from 'redux-saga';
-import { put, take, all } from 'redux-saga/effects';
+import { put, take } from 'redux-saga/effects';
 import ReactNativeHeading from '@zsajjad/react-native-heading';
-
-// const compassListener = (state) => state.geo.compass.listener;
 
 const HEADING_UPDATE_ON_DEGREE_CHANGED = 10;
 
-function* helloSaga() {
-  yield delay(1000);
-  console.log('Hello Sagas');
+export default function* compassSaga() {
+  while (true) {
+    yield take('GEO_COMPASS_HEADING_START');
+    yield* compassStart();
+    yield take('GEO_COMPASS_HEADING_STOP', compassStop);
+    yield* compassStop();
+  }
 }
 
 function* compassStart() {
@@ -31,20 +32,4 @@ function* compassStop() {
   } catch (error) {
     yield put({ type: 'GEO_COMPASS_UNKNOWN_ERROR', payload: error });
   }
-}
-
-function* compassSaga() {
-  while (true) {
-    yield take('GEO_COMPASS_HEADING_START');
-    yield* compassStart();
-    yield take('GEO_COMPASS_HEADING_STOP', compassStop);
-    yield* compassStop();
-  }
-}
-
-export default function* rootSaga() {
-  yield all([
-    helloSaga(),
-    compassSaga(),
-  ]);
 }
