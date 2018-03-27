@@ -22,7 +22,7 @@ const middleware = [thunk, sagaMiddleware];
 if (process.env.NODE_ENV === 'development') {
   middleware.push(createLogger());
   // Turns on Reactotron debugging tool
-  require('./ReactotronConfig'); // eslint-disable-line global-require
+  require('./reactotron-config'); // eslint-disable-line global-require
 }
 
 // Can use a preloaded initialState if available, in this case we don't

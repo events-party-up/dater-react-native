@@ -12,11 +12,11 @@ import 'moment/locale/ru';
 import Moment from 'react-moment';
 import ReactNativeHeading from '@zsajjad/react-native-heading';
 
-import PersonMaker from './PersonMaker';
-import MyLocationMapMarker from './MyLocationMapMarker';
-import MyLocationButton from './MyLocationButton';
+import PersonMaker from './person-maker';
+import MyLocationMapMarker from './my-location-map-maker';
+import MyLocationButton from './my-location-button';
 import { mapViewActionCreators } from '../redux';
-import BackgroundGeolocation from '../services/BackgroundGeolocation';
+import BackgroundGeolocation from '../services/background-geolocation';
 import { GeoCompass, GeoCoordinates } from '../types';
 import GeoUtils from '../utils';
 

@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 import { Provider } from 'react-redux';
 import firebase from 'react-native-firebase';
 
-import configureStore from './config/configureStore';
+import configureStore from './config/configure-store';
 import Main from './containers/main';
 
 const store = configureStore();

@@ -7,7 +7,7 @@ import { connect, Dispatch } from 'react-redux';
 
 import { DaterMapView } from '../components';
 import { initUserAuth, signOutUser } from '../services/auth';
-import listenForUsersAround from '../services/geoQuery';
+import listenForUsersAround from '../services/geo-query';
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
