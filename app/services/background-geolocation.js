@@ -111,6 +111,18 @@ const BackgroundGeolocation = {
 
     return bgServiceState;
   },
+  start: () => (
+    new Promise((resolve, reject) => {
+      RNBackgroundGeolocation.start(() => resolve(), (error) => reject(error));
+    })),
+  stop: () => (
+    new Promise((resolve, reject) => {
+      RNBackgroundGeolocation.stop(() => resolve(), (error) => reject(error));
+    })),
+  changePace: (value: boolean) => (
+    new Promise((resolve, reject) => {
+      RNBackgroundGeolocation.changePace(value, () => resolve(), (error) => reject(error));
+    })),
   init_old: async (dispatch) => {
     const GEO_OPTIONS = await geoOptions();
     // This handler fires whenever bgGeo receives a location update.

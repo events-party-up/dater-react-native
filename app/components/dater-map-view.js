@@ -15,7 +15,6 @@ import ReactNativeHeading from '@zsajjad/react-native-heading';
 import PersonMaker from './person-maker';
 import MyLocationMapMarker from './my-location-map-maker';
 import MyLocationButton from './my-location-button';
-import BackgroundGeolocation from '../services/background-geolocation';
 import { GeoCompass, GeoCoordinates } from '../types';
 import GeoUtils from '../utils';
 
@@ -51,8 +50,16 @@ function mapDispatchToProps(dispatch) {
         },
       });
     },
-    toggleGeoService: () => {
-      BackgroundGeolocation.toggleBgServices(dispatch);
+    toggleGeoService: (location) => {
+      if (location.enabled) {
+        dispatch({
+          type: 'GEO_LOCATION_STOP',
+        });
+      } else {
+        dispatch({
+          type: 'GEO_LOCATION_START',
+        });
+      }
     },
     rotateMap: (mapView: MapView, angle: number) => {
       mapView.animateToBearing(angle);
@@ -115,14 +122,6 @@ class DaterMapView extends Component<Props> {
   }
 
   onMapReady= () => {
-    // requestAnimationFrame(() => {
-    //   this.props.animateToRegion(this.mapView, {
-    //     latitude: this.props.coords.latitude,
-    //     longitude: this.props.coords.longitude,
-    //     latitudeDelta: this.props.mapView.latitudeDelta,
-    //     longitudeDelta: this.props.mapView.longitudeDelta,
-    //   });
-    // });
     this.props.dispatch({ type: 'GEO_LOCATION_INITIALIZE', payload: this.mapView });
     this.props.dispatch({ type: 'MAPVIEW_READY' });
   }
@@ -172,7 +171,7 @@ class DaterMapView extends Component<Props> {
         style={styles.mapView}
       >
         <MyLocationButton
-          toggleGeoService={() => this.props.toggleGeoService()}
+          toggleGeoService={() => this.props.toggleGeoService(this.props.location)}
           onPress={(region) => this.props.animateToRegion(this.mapView, region)}
           rotateMap={() => this.props.rotateMap(this.mapView, 90)}
           toggleCompass={() => this.props.toggleCompass(this.props.compass.enabled)}
@@ -180,12 +179,6 @@ class DaterMapView extends Component<Props> {
         <MapView
           ref={(component) => { this.mapView = component; }}
           style={styles.mapView}
-          // initialRegion={{
-          //   latitude: this.props.coords.latitude,
-          //   longitude: this.props.coords.longitude,
-          //   latitudeDelta: this.props.mapView.latitudeDelta,
-          //   longitudeDelta: this.props.mapView.longitudeDelta,
-          // }}
           onRegionChangeComplete={(region) => this.props.onRegionChangeComplete(region, this.props.coords)}
           onMapReady={this.onMapReady}
           // onRegionChange={this.onRegionChange}
@@ -199,19 +192,19 @@ class DaterMapView extends Component<Props> {
           rotateEnabled={false}
           mapType="standard"
         >
-          {this.props.location.enabled &&
+          {this.props.location.enabled && this.props.location.coords &&
             <MyLocationMapMarker
               coordinate={this.props.coords}
               gpsHeading={this.props.coords.heading}
               compassHeading={this.props.compass.heading}
             /> }
-          {this.renderUsersAround()}
+          {this.props.location.enabled && this.renderUsersAround()}
         </MapView>
-        {this.props.location.enabled &&
+        {this.props.location.enabled && this.props.location.coords &&
           <Text style={styles.debugText}>
-            Accuracy: {this.props.coords && Math.floor(this.props.coords.accuracy)}{'\n'}
-            GPS Heading: {this.props.coords && this.props.coords.heading}{'\n'}
-            Compass Heading: {this.props.compass && this.props.compass.heading}{'\n'}
+            Accuracy: {Math.floor(this.props.coords.accuracy)}{'\n'}
+            GPS Heading: {this.props.coords.heading}{'\n'}
+            Compass Heading: {this.props.compass.heading}{'\n'}
             GeoUpdates: {this.props.geoUpdates}{'\n'}
             UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
           </Text>

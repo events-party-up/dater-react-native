@@ -21,6 +21,7 @@ type Props = {
 
 const mapStateToProps = (state) => ({
   coords: state.geo.coords,
+  location: state.geo,
   mapView: state.mapView,
   bgServicesEnabled: state.geo.bgServicesEnabled,
 });
@@ -77,7 +78,7 @@ class MyLocationButton extends Component<Props> {
           onPress={this.onGeoTogglePress}
         >
           <Text style={{ fontWeight: 'bold', color: 'black' }}>
-            {this.props.bgServicesEnabled ? 'OFF' : 'ON'}
+            {this.props.location.enabled ? 'OFF' : 'ON'}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity

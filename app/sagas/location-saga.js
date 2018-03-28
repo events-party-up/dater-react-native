@@ -5,35 +5,56 @@ import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 
 import BackgroundGeolocation from '../services/background-geolocation';
 
-const getUid = (state) => state.auth.uid;
-
 export default function* locationSaga() {
-  // yield throttle(5000, 'GEO_LOCATION_UPDATED', updateLocation);
   const locationChannel = yield call(createLocationChannel);
   yield takeEvery(locationChannel, updateLocation);
+  yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
+
+  const action = yield take('GEO_LOCATION_INITIALIZE');
+  const mapView = action.payload;
+  const locationServiceState = yield BackgroundGeolocation.init();
+
+  yield put({ type: 'GEO_LOCATION_INITIALIZED' });
+  yield throttle(5000, 'GEO_LOCATION_UPDATED', animateToCurrentLocation, mapView);
 
   while (true) {
-    const action = yield take('GEO_LOCATION_INITIALIZE');
-    const mapView = action.payload;
-    const locationServiceState = yield BackgroundGeolocation.init();
-    yield put({ type: 'GEO_LOCATION_INITIALIZED' });
-    yield put({ type: 'GEO_LOCATION_START' });
-
+    yield take('GEO_LOCATION_START');
     if (locationServiceState.enabled) {
-      yield RNBackgroundGeolocation.changePace(true);
+      yield BackgroundGeolocation.changePace(true);
     } else {
-      yield RNBackgroundGeolocation.start();
+      yield BackgroundGeolocation.start();
     }
     yield put({ type: 'GEO_LOCATION_STARTED' });
-    console.log('Location service state: ', locationServiceState);
-
-    // yield take('GEO_LOCATION_STARTED');
-    // yield take('GEO_LOCATION_STOP');
+    yield take('GEO_LOCATION_STOP');
+    yield console.log('Geo location stopping');
+    yield BackgroundGeolocation.stop();
+    yield put({ type: 'GEO_LOCATION_STOPPED' });
   }
 }
 
+function* startGeoLocationOnInit() {
+  yield put({ type: 'GEO_LOCATION_START' });
+}
+
+function* animateToCurrentLocation(mapView, action) {
+  const mapViewState = yield select((state) => state.mapView);
+  yield put({
+    type: 'MAPVIEW_ANIMATE_TO_REGION',
+    payload: {
+      mapView,
+      region: {
+        latitude: action.payload.latitude,
+        longitude: action.payload.longitude,
+        latitudeDelta: mapViewState.latitudeDelta,
+        longitudeDelta: mapViewState.longitudeDelta,
+      },
+      duration: 1,
+    },
+  });
+}
+
 function* updateLocation(coords) {
-  const uid = yield select(getUid);
+  const uid = yield select((state) => state.auth.uid);
 
   yield put({
     type: 'GEO_LOCATION_UPDATED',
