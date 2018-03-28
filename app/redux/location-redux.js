@@ -2,8 +2,6 @@ const types = {
   GEO_PERMISSION_REQUESTED: 'GEO_PERMISSION_REQUESTED',
   GEO_PERMISSION_GRANTED: 'GEO_PERMISSION_GRANTED',
   GEO_PERMISSION_DENIED: 'GEO_PERMISSION_DENIED',
-  GEO_STOP_BACKGROUND_SERVICES: 'GEO_STOP_BACKGROUND_SERVICES',
-  GEO_START_BACKGROUND_SERVICES: 'GEO_START_BACKGROUND_SERVICES',
 
   GEO_LOCATION_INITIALIZE: 'GEO_LOCATION_INITIALIZE',
   GEO_LOCATION_INITIALIZED: 'GEO_LOCATION_INITIALIZED',
@@ -11,9 +9,9 @@ const types = {
   GEO_LOCATION_STARTED: 'GEO_LOCATION_STARTED',
   GEO_LOCATION_STOP: 'GEO_LOCATION_STOP',
   GEO_LOCATION_STOPPED: 'GEO_LOCATION_STOPPED',
-  GEO_LOCATION_ERROR: 'GEO_LOCATION_ERROR',
   GEO_LOCATION_UPDATE: 'GEO_LOCATION_UPDATE',
   GEO_LOCATION_UPDATED: 'GEO_LOCATION_UPDATED',
+  GEO_LOCATION_ERROR: 'GEO_LOCATION_ERROR',
 };
 
 const initialState = {
@@ -95,18 +93,6 @@ const locationReducer = (state = initialState, action) => {
         ...state,
         coords: payload,
         geoUpdates: state.geoUpdates + 1,
-      };
-    }
-    case types.GEO_START_BACKGROUND_SERVICES: {
-      return {
-        ...state,
-        bgServicesEnabled: true,
-      };
-    }
-    case types.GEO_STOP_BACKGROUND_SERVICES: {
-      return {
-        ...state,
-        bgServicesEnabled: false,
       };
     }
     default: {

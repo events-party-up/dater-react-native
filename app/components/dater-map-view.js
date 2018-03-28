@@ -19,12 +19,11 @@ import { GeoCompass, GeoCoordinates } from '../types';
 import GeoUtils from '../utils';
 
 const mapStateToProps = (state) => ({
-  coords: state.geo.coords,
-  location: state.geo,
+  // coords: state.geo.coords,
+  location: state.location,
   usersAround: state.usersAround,
   mapView: state.mapView,
   auth: state.auth,
-  geoUpdates: state.geo.geoUpdates,
   compass: state.compass,
 });
 
@@ -82,19 +81,20 @@ function mapDispatchToProps(dispatch) {
 
 type Props = {
   usersAround: Array<mixed>,
-  coords: GeoCoordinates,
   auth: {
     uid: string,
   },
   compass: GeoCompass,
-  geoUpdates: number,
   animateToRegion: any,
   onRegionChangeComplete: (newRegion: GeoCoordinates, prevRegion: GeoCoordinates) => void,
   toggleGeoService: () => void,
   rotateMap: (mapView: MapView, angle:number) => void,
   toggleCompass: (compassStatus: boolean) => void,
   dispatch: Dispatch,
-  location: any,
+  location: {
+    coords: GeoCoordinates,
+    geoUpdates: number,
+  },
 };
 
 class DaterMapView extends Component<Props> {
@@ -171,7 +171,7 @@ class DaterMapView extends Component<Props> {
         style={styles.mapView}
       >
         <MyLocationButton
-          toggleGeoService={() => this.props.toggleGeoService(this.props.location)}
+          toggleGeoService={() => this.props.toggleGeoService()}
           onPress={(region) => this.props.animateToRegion(this.mapView, region)}
           rotateMap={() => this.props.rotateMap(this.mapView, 90)}
           toggleCompass={() => this.props.toggleCompass(this.props.compass.enabled)}
@@ -179,7 +179,7 @@ class DaterMapView extends Component<Props> {
         <MapView
           ref={(component) => { this.mapView = component; }}
           style={styles.mapView}
-          onRegionChangeComplete={(region) => this.props.onRegionChangeComplete(region, this.props.coords)}
+          onRegionChangeComplete={(region) => this.props.onRegionChangeComplete(region, this.props.location.coords)}
           onMapReady={this.onMapReady}
           // onRegionChange={this.onRegionChange}
           provider="google"
@@ -194,18 +194,18 @@ class DaterMapView extends Component<Props> {
         >
           {this.props.location.enabled && this.props.location.coords &&
             <MyLocationMapMarker
-              coordinate={this.props.coords}
-              gpsHeading={this.props.coords.heading}
+              coordinate={this.props.location.coords}
+              gpsHeading={this.props.location.coords.heading}
               compassHeading={this.props.compass.heading}
             /> }
           {this.props.location.enabled && this.renderUsersAround()}
         </MapView>
         {this.props.location.enabled && this.props.location.coords &&
           <Text style={styles.debugText}>
-            Accuracy: {Math.floor(this.props.coords.accuracy)}{'\n'}
-            GPS Heading: {this.props.coords.heading}{'\n'}
+            Accuracy: {Math.floor(this.props.location.coords.accuracy)}{'\n'}
+            GPS Heading: {this.props.location.coords.heading}{'\n'}
             Compass Heading: {this.props.compass.heading}{'\n'}
-            GeoUpdates: {this.props.geoUpdates}{'\n'}
+            GeoUpdates: {this.props.location.geoUpdates}{'\n'}
             UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
           </Text>
         }

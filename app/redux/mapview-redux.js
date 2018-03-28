@@ -22,7 +22,7 @@ const initialState = {
   mapReady: false,
 };
 
-const MapViewReducer = (state = initialState, action) => {
+const mapViewReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
@@ -69,4 +69,4 @@ const MapViewReducer = (state = initialState, action) => {
   }
 };
 
-export default MapViewReducer;
+export default mapViewReducer;

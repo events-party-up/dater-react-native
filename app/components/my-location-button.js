@@ -11,26 +11,26 @@ import MapView from 'react-native-maps';
 import { GeoCoordinates } from '../types';
 
 type Props = {
-  coords: GeoCoordinates,
   mapView: MapView,
   onPress: (region: GeoCoordinates) => void,
   toggleGeoService: () => void,
   rotateMap: () => void,
   toggleCompass: () => void,
+  location: {
+    coords: GeoCoordinates,
+  },
 };
 
 const mapStateToProps = (state) => ({
-  coords: state.geo.coords,
-  location: state.geo,
+  location: state.location,
   mapView: state.mapView,
-  bgServicesEnabled: state.geo.bgServicesEnabled,
 });
 
 class MyLocationButton extends Component<Props> {
   onPress = () => {
     const myLocationRegion: GeoCoordinates = {
-      latitude: this.props.coords.latitude,
-      longitude: this.props.coords.longitude,
+      latitude: this.props.location.coords.latitude,
+      longitude: this.props.location.coords.longitude,
       latitudeDelta: this.props.mapView.latitudeDelta,
       longitudeDelta: this.props.mapView.longitudeDelta,
     };

@@ -6,29 +6,33 @@ import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 import BackgroundGeolocation from '../services/background-geolocation';
 
 export default function* locationSaga() {
-  const locationChannel = yield call(createLocationChannel);
-  yield takeEvery(locationChannel, updateLocation);
-  yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
+  try {
+    const locationChannel = yield call(createLocationChannel);
+    yield takeEvery(locationChannel, updateLocation);
+    yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
 
-  const action = yield take('GEO_LOCATION_INITIALIZE');
-  const mapView = action.payload;
-  const locationServiceState = yield BackgroundGeolocation.init();
+    const action = yield take('GEO_LOCATION_INITIALIZE');
+    const mapView = action.payload;
+    const locationServiceState = yield BackgroundGeolocation.init();
 
-  yield put({ type: 'GEO_LOCATION_INITIALIZED' });
-  yield throttle(5000, 'GEO_LOCATION_UPDATED', animateToCurrentLocation, mapView);
+    yield put({ type: 'GEO_LOCATION_INITIALIZED' });
+    yield throttle(5000, 'GEO_LOCATION_UPDATED', animateToCurrentLocation, mapView);
 
-  while (true) {
-    yield take('GEO_LOCATION_START');
-    if (locationServiceState.enabled) {
-      yield BackgroundGeolocation.changePace(true);
-    } else {
-      yield BackgroundGeolocation.start();
+    while (true) {
+      yield take('GEO_LOCATION_START');
+      if (locationServiceState.enabled) {
+        yield BackgroundGeolocation.changePace(true);
+      } else {
+        yield BackgroundGeolocation.start();
+      }
+      yield put({ type: 'GEO_LOCATION_STARTED' });
+      yield take('GEO_LOCATION_STOP');
+      yield console.log('Geo location stopping');
+      yield BackgroundGeolocation.stop();
+      yield put({ type: 'GEO_LOCATION_STOPPED' });
     }
-    yield put({ type: 'GEO_LOCATION_STARTED' });
-    yield take('GEO_LOCATION_STOP');
-    yield console.log('Geo location stopping');
-    yield BackgroundGeolocation.stop();
-    yield put({ type: 'GEO_LOCATION_STOPPED' });
+  } catch (error) {
+    yield put({ type: 'GEO_LOCATION_ERROR', payload: error });
   }
 }
 
