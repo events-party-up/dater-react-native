@@ -6,40 +6,31 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
+import MapView from 'react-native-maps';
 
-type Region = {
-  latitude: number,
-  longitude: number,
-  latitudeDelta: number,
-  longitudeDelta: number,
-  visibleRadiusInMeters?: number,
-};
+import { GeoCoordinates } from '../types';
 
 type Props = {
-  coords: {
-    latitude: number,
-    longitude: number,
-    accuracy: number,
-    heading: number,
-  },
-  mapView: Region,
-  onPress: (region: Region) => void,
+  mapView: MapView,
+  onPress: (region: GeoCoordinates) => void,
   toggleGeoService: () => void,
   rotateMap: () => void,
   toggleCompass: () => void,
+  location: {
+    coords: GeoCoordinates,
+  },
 };
 
 const mapStateToProps = (state) => ({
-  coords: state.geo.coords,
+  location: state.location,
   mapView: state.mapView,
-  bgServicesEnabled: state.geo.bgServicesEnabled,
 });
 
 class MyLocationButton extends Component<Props> {
   onPress = () => {
-    const myLocationRegion: Region = {
-      latitude: this.props.coords.latitude,
-      longitude: this.props.coords.longitude,
+    const myLocationRegion: GeoCoordinates = {
+      latitude: this.props.location.coords.latitude,
+      longitude: this.props.location.coords.longitude,
       latitudeDelta: this.props.mapView.latitudeDelta,
       longitudeDelta: this.props.mapView.longitudeDelta,
     };
@@ -87,7 +78,7 @@ class MyLocationButton extends Component<Props> {
           onPress={this.onGeoTogglePress}
         >
           <Text style={{ fontWeight: 'bold', color: 'black' }}>
-            {this.props.bgServicesEnabled ? 'OFF' : 'ON'}
+            {this.props.location.enabled ? 'OFF' : 'ON'}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity

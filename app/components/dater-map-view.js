@@ -15,31 +15,50 @@ import ReactNativeHeading from '@zsajjad/react-native-heading';
 import PersonMaker from './person-maker';
 import MyLocationMapMarker from './my-location-map-maker';
 import MyLocationButton from './my-location-button';
-import { mapViewActionCreators } from '../redux';
-import BackgroundGeolocation from '../services/background-geolocation';
 import { GeoCompass, GeoCoordinates } from '../types';
 import GeoUtils from '../utils';
 
 const mapStateToProps = (state) => ({
-  coords: state.geo.coords,
+  // coords: state.geo.coords,
+  location: state.location,
   usersAround: state.usersAround,
   mapView: state.mapView,
   auth: state.auth,
-  geoUpdates: state.geo.geoUpdates,
   compass: state.compass,
 });
 
 function mapDispatchToProps(dispatch) {
   return ({
-    animateToRegion: (mapView: MapView, region) => {
-      dispatch(mapViewActionCreators.mapViewAnimateToRegion(mapView, region));
+    animateToRegion: (mapView: MapView, region: GeoCoordinates) => {
+      dispatch({
+        type: 'MAPVIEW_ANIMATE_TO_REGION',
+        payload: {
+          mapView,
+          region,
+        },
+      });
     },
     onRegionChangeComplete: (newRegion, prevRegion) => {
-      GeoUtils.getRotationAngle(newRegion, prevRegion);
-      dispatch(mapViewActionCreators.mapViewRegionUpdate(newRegion));
+      if (!prevRegion || !newRegion) return;
+
+      dispatch({
+        type: 'MAPVIEW_REGION_UPDATED',
+        payload: {
+          newRegion,
+          prevRegion,
+        },
+      });
     },
-    toggleGeoService: () => {
-      BackgroundGeolocation.toggleBgServices(dispatch);
+    toggleGeoService: (location) => {
+      if (location.enabled) {
+        dispatch({
+          type: 'GEO_LOCATION_STOP',
+        });
+      } else {
+        dispatch({
+          type: 'GEO_LOCATION_START',
+        });
+      }
     },
     rotateMap: (mapView: MapView, angle: number) => {
       mapView.animateToBearing(angle);
@@ -62,19 +81,20 @@ function mapDispatchToProps(dispatch) {
 
 type Props = {
   usersAround: Array<mixed>,
-  coords: GeoCoordinates,
-  mapView: MapView,
   auth: {
     uid: string,
   },
   compass: GeoCompass,
-  geoUpdates: number,
   animateToRegion: any,
   onRegionChangeComplete: (newRegion: GeoCoordinates, prevRegion: GeoCoordinates) => void,
   toggleGeoService: () => void,
   rotateMap: (mapView: MapView, angle:number) => void,
   toggleCompass: (compassStatus: boolean) => void,
   dispatch: Dispatch,
+  location: {
+    coords: GeoCoordinates,
+    geoUpdates: number,
+  },
 };
 
 class DaterMapView extends Component<Props> {
@@ -99,14 +119,11 @@ class DaterMapView extends Component<Props> {
   }
 
   componentDidMount() {
-    requestAnimationFrame(() => {
-      this.mapView.animateToRegion({
-        latitude: this.props.coords.latitude,
-        longitude: this.props.coords.longitude,
-        latitudeDelta: this.props.mapView.latitudeDelta,
-        longitudeDelta: this.props.mapView.longitudeDelta,
-      }, 1);
-    });
+  }
+
+  onMapReady= () => {
+    this.props.dispatch({ type: 'GEO_LOCATION_INITIALIZE', payload: this.mapView });
+    this.props.dispatch({ type: 'MAPVIEW_READY' });
   }
 
   componentWillUnmount() {
@@ -149,7 +166,7 @@ class DaterMapView extends Component<Props> {
   }
 
   render() {
-    return (this.props.coords &&
+    return (
       <View
         style={styles.mapView}
       >
@@ -162,39 +179,36 @@ class DaterMapView extends Component<Props> {
         <MapView
           ref={(component) => { this.mapView = component; }}
           style={styles.mapView}
-          initialRegion={{
-            latitude: this.props.coords.latitude,
-            longitude: this.props.coords.longitude,
-            latitudeDelta: this.props.mapView.latitudeDelta,
-            longitudeDelta: this.props.mapView.longitudeDelta,
-          }}
-          onRegionChangeComplete={(region) => this.props.onRegionChangeComplete(region, this.props.coords)}
+          onRegionChangeComplete={(region) => this.props.onRegionChangeComplete(region, this.props.location.coords)}
+          onMapReady={this.onMapReady}
           // onRegionChange={this.onRegionChange}
           provider="google"
           showsIndoors
           showsTraffic={false}
           showsBuildings={false}
-          // showsMyLocationButton
-          // showsUserLocation
           // scrollEnabled={false}
           toolbarEnabled={false}
           moveOnMarkerPress={false}
+          rotateEnabled={false}
           mapType="standard"
         >
-          <MyLocationMapMarker
-            coordinate={this.props.coords}
-            gpsHeading={this.props.coords.heading}
-            compassHeading={this.props.compass.heading}
-          />
-          {this.renderUsersAround()}
+          {this.props.location.enabled && this.props.location.coords &&
+            <MyLocationMapMarker
+              coordinate={this.props.location.coords}
+              gpsHeading={this.props.location.coords.heading}
+              compassHeading={this.props.compass.heading}
+            /> }
+          {this.props.location.enabled && this.renderUsersAround()}
         </MapView>
-        <Text style={styles.debugText}>
-          Accuracy: {Math.floor(this.props.coords.accuracy)}{'\n'}
-          GPS Heading: {this.props.coords.heading}{'\n'}
-          Compass Heading: {this.props.compass.heading}{'\n'}
-          GeoUpdates: {this.props.geoUpdates}{'\n'}
-          UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
-        </Text>
+        {this.props.location.enabled && this.props.location.coords &&
+          <Text style={styles.debugText}>
+            Accuracy: {Math.floor(this.props.location.coords.accuracy)}{'\n'}
+            GPS Heading: {this.props.location.coords.heading}{'\n'}
+            Compass Heading: {this.props.compass.heading}{'\n'}
+            GeoUpdates: {this.props.location.geoUpdates}{'\n'}
+            UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
+          </Text>
+        }
       </View>
 
     );

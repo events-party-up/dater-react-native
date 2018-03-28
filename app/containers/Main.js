@@ -8,14 +8,19 @@ import { connect, Dispatch } from 'react-redux';
 import { DaterMapView } from '../components';
 import { initUserAuth, signOutUser } from '../services/auth';
 import listenForUsersAround from '../services/geo-query';
+import { GeoCoordinates } from '../types';
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  coords: state.geo.coords,
+  // coords: state.geo.coords,
+  location: state.location,
 });
 
 type Props = {
   dispatch: Dispatch,
+  location: {
+    coords: GeoCoordinates,
+  },
 };
 
 class Main extends Component<Props> {
@@ -35,8 +40,8 @@ class Main extends Component<Props> {
     if (nextProps.coords && !this.unsubscribeFromUsersAround) {
       const queryArea = {
         center: {
-          latitude: nextProps.coords.latitude,
-          longitude: nextProps.coords.longitude,
+          latitude: nextProps.location.coords.latitude,
+          longitude: nextProps.location.coords.longitude,
         },
         radius: 25,
       };
@@ -51,7 +56,7 @@ class Main extends Component<Props> {
   }
 
   render() {
-    return (this.props.coords &&
+    return (
       <View style={styles.mainContainer}>
         {/* <FirebaseSetup /> */}
         {/* <View style={styles.button}>
