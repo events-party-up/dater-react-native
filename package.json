@@ -41,6 +41,7 @@
     "lodash": "^4.17.5",
     "react-test-renderer": "^16.3.0-alpha.1",
     "reactotron-react-native": "^1.14.0",
+    "reactotron-redux": "^1.13.0",
     "redux-logger": "^3.0.6"
   },
   "jest": {

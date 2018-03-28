@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
+  Button,
 } from 'react-native';
 import { connect, Dispatch } from 'react-redux';
 
 import { DaterMapView } from '../components';
-import { initUserAuth, signOutUser } from '../services/auth';
 import listenForUsersAround from '../services/geo-query';
 import { GeoCoordinates } from '../types';
 
@@ -28,12 +28,12 @@ class Main extends Component<Props> {
   unsubscribeFromUsersAround;
 
   async componentWillMount() {
-    this.authUnsubscribe = initUserAuth(this.props.dispatch);
+    // this.authUnsubscribe = initUserAuth(this.props.dispatch);
   }
 
   componentWillUnmount() {
     this.unsubscribeFromUsersAround();
-    this.authUnsubscribe();
+    // this.authUnsubscribe();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -51,17 +51,19 @@ class Main extends Component<Props> {
   }
 
   signOut = async () => {
-    this.authUnsubscribe();
-    await signOutUser(this.props.dispatch);
+    // await signOutUser(this.props.dispatch);
+    this.props.dispatch({
+      type: 'AUTH_SIGNOUT',
+    });
   }
 
   render() {
     return (
       <View style={styles.mainContainer}>
         {/* <FirebaseSetup /> */}
-        {/* <View style={styles.button}>
-          <Button title='Выйти' color='blue' onPress={this.signOut}/>
-        </View> */}
+        <View style={styles.button}>
+          <Button title="Выйти" color="blue" onPress={this.signOut} />
+        </View>
         <DaterMapView />
       </View>
     );
