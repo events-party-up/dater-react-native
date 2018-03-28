@@ -1,6 +1,5 @@
 import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
-import Reactotron from 'reactotron-react-native';
 // import { persistStore, autoRehydrate } from 'redux-persist';
 // Thunk middleware allows actions to be chained and waited on by returning
 // a function from that action
@@ -16,7 +15,6 @@ import rootSaga from '../sagas/';
 const sagaMiddleware = createSagaMiddleware();
 // http://redux.js.org/docs/advanced/Middleware.html
 const middleware = [thunk, sagaMiddleware];
-let storeCreator;
 
 // Use the NODE_ENV to include logging and debugging tools
 // in development environment. They will be compiled out of
@@ -25,9 +23,6 @@ if (process.env.NODE_ENV === 'development') {
   middleware.push(createLogger());
   // Turns on Reactotron debugging tool
   require('./reactotron-config'); // eslint-disable-line global-require
-  storeCreator = Reactotron.createStore;
-} else {
-  storeCreator = createStore;
 }
 
 // Can use a preloaded initialState if available, in this case we don't
