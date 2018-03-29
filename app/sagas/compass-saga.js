@@ -1,11 +1,16 @@
-import { put, take, throttle, select } from 'redux-saga/effects';
+import { put, take, throttle, select, call, takeEvery } from 'redux-saga/effects';
 import ReactNativeHeading from '@zsajjad/react-native-heading';
 import firebase from 'react-native-firebase';
+import { eventChannel } from 'redux-saga';
+import { DeviceEventEmitter } from 'react-redux';
+import { NativeEventEmitter } from 'react-native';
 
-const HEADING_UPDATE_ON_DEGREE_CHANGED = 10;
+const HEADING_UPDATE_ON_DEGREE_CHANGED = 5;
 const getUid = (state) => state.auth.uid;
 
 export default function* compassSaga() {
+  const compassChannel = yield call(createCompassChannel);
+  yield takeEvery(compassChannel, updateCompassHeading);
   yield throttle(5000, 'GEO_COMPASS_HEADING_UPDATE', writeHeadingToFirestore);
 
   while (true) {
@@ -38,6 +43,10 @@ function* compassStop() {
   }
 }
 
+function* updateCompassHeading(heading) {
+  yield put({ type: 'GEO_COMPASS_HEADING_UPDATE', payload: heading });
+}
+
 function* writeHeadingToFirestore(action) {
   const heading = action.payload;
   const uid = yield select(getUid);
@@ -45,5 +54,23 @@ function* writeHeadingToFirestore(action) {
 
   yield firebase.firestore().collection('geoPoints').doc(uid).update({
     compassHeading: heading,
+  });
+}
+
+function createCompassChannel() {
+  const compassListener = new NativeEventEmitter(ReactNativeHeading);
+
+  return eventChannel((emit) => {
+    const onHeadingUpdated = (heading) => {
+      emit(heading);
+    };
+
+    compassListener.addListener('headingUpdated', onHeadingUpdated);
+
+    // this will be invoked when the saga calls `channel.close` method
+    const unsubscribe = () => {
+      DeviceEventEmitter.removeAllListeners('headingUpdated');
+    };
+    return unsubscribe;
   });
 }

@@ -4,19 +4,16 @@ import {
   Text,
   Button,
   View,
-  NativeEventEmitter,
 } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
-import { connect, DeviceEventEmitter, Dispatch } from 'react-redux';
+import { connect, Dispatch } from 'react-redux';
 import 'moment/locale/ru';
 import Moment from 'react-moment';
-import ReactNativeHeading from '@zsajjad/react-native-heading';
 
 import PersonMaker from './person-maker';
 import MyLocationMapMarker from './my-location-map-maker';
 import MyLocationButton from './my-location-button';
 import { GeoCompass, GeoCoordinates } from '../types';
-import GeoUtils from '../utils';
 
 const mapStateToProps = (state) => ({
   location: state.location,
@@ -105,40 +102,23 @@ type Props = {
 
 class DaterMapView extends Component<Props> {
   mapView: MapView;
-  listener = new NativeEventEmitter(ReactNativeHeading);
 
   constructor(props) {
     super(props);
     this.routeTo = this.routeTo.bind(this);
   }
-  async componentWillMount() {
-    this.listener.addListener('headingUpdated', (heading) => {
-      this.props.dispatch({ type: 'GEO_COMPASS_HEADING_UPDATE', payload: heading });
-      this.props.dispatch({
-        type: 'MAPVIEW_ROTATE',
-        payload: {
-          mapView: this.mapView,
-          rotationAngle: GeoUtils.wrapCompassHeading(heading),
-        },
-      });
-    });
-  }
 
   componentDidMount() {
     this.props.dispatch({
       type: 'GEO_LOCATION_INITIALIZE',
-      payload: creatMapViewProxy(this.mapView),
+      mapView: creatMapViewProxy(this.mapView),
     });
   }
 
   onMapReady= () => {
-    this.props.dispatch({ type: 'MAPVIEW_READY' });
-  }
-
-  componentWillUnmount() {
-    DeviceEventEmitter.removeAllListeners('headingUpdated');
     this.props.dispatch({
-      type: 'GEO_COMPASS_HEADING_STOP',
+      type: 'MAPVIEW_READY',
+      mapView: creatMapViewProxy(this.mapView),
     });
   }
 

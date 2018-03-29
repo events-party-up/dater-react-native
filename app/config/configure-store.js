@@ -12,22 +12,30 @@ import { createLogger } from 'redux-logger';
 import { reducer } from '../redux';
 import rootSaga from '../sagas/';
 
+let storeCreator;
+let sagaMiddleware;
+
 if (process.env.NODE_ENV === 'development') {
   require('./reactotron-config'); // eslint-disable-line global-require
+  const sagaMonitor = Reactotron.createSagaMonitor();
+  sagaMiddleware = createSagaMiddleware({ sagaMonitor });
+} else {
+  sagaMiddleware = createSagaMiddleware();
 }
-
-const sagaMonitor = Reactotron.createSagaMonitor();
-const sagaMiddleware = createSagaMiddleware({ sagaMonitor });
 
 // http://redux.js.org/docs/advanced/Middleware.html
 const middleware = [thunk, sagaMiddleware];
-let storeCreator;
 
 if (process.env.NODE_ENV === 'development') {
   middleware.push(createLogger());
   storeCreator = Reactotron.createStore;
 } else {
   storeCreator = createStore;
+  console.tron = {
+    log: (message) => {
+      console.log(message);
+    },
+  };
 }
 
 // Can use a preloaded initialState if available, in this case we don't

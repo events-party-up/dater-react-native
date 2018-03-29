@@ -13,8 +13,7 @@ export default function* locationSaga() {
     yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
     yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeGeoLocationToFirestore);
 
-    const action = yield take('GEO_LOCATION_INITIALIZE');
-    const mapView = action.payload;
+    const { mapView } = yield take('GEO_LOCATION_INITIALIZE');
     const locationServiceState = yield BackgroundGeolocation.init();
 
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
