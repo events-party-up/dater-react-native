@@ -20,7 +20,6 @@ export default function* locationSaga() {
 
     while (true) {
       yield take('GEO_LOCATION_START');
-      console.log(locationServiceState);
       if (locationServiceState.enabled) {
         yield BackgroundGeolocation.changePace(true);
       } else {
@@ -28,7 +27,6 @@ export default function* locationSaga() {
       }
       yield put({ type: 'GEO_LOCATION_STARTED' });
       yield take('GEO_LOCATION_STOP');
-      yield console.log('Geo location stopping');
       yield BackgroundGeolocation.stop();
       yield put({ type: 'GEO_LOCATION_STOPPED' });
     }

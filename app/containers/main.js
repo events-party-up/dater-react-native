@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  Button,
+  // Button,
 } from 'react-native';
 import { connect, Dispatch } from 'react-redux';
 
@@ -61,9 +61,9 @@ class Main extends Component<Props> {
     return (
       <View style={styles.mainContainer}>
         {/* <FirebaseSetup /> */}
-        <View style={styles.button}>
+        {/* <View style={styles.button}>
           <Button title="Выйти" color="blue" onPress={this.signOut} />
-        </View>
+        </View> */}
         <DaterMapView />
       </View>
     );

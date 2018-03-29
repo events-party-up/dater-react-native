@@ -27,13 +27,20 @@ const mapStateToProps = (state) => ({
   compass: state.compass,
 });
 
+function creatMapViewProxy(mapView: MapView) {
+  return {
+    animateToBearing: (bearing, duration) => mapView.animateToBearing(bearing, duration),
+    animateToRegion: (region, duration) => mapView.animateToRegion(region, duration),
+  };
+}
+
 function mapDispatchToProps(dispatch) {
   return ({
     animateToRegion: (mapView: MapView, region: GeoCoordinates) => {
       dispatch({
         type: 'MAPVIEW_ANIMATE_TO_REGION',
         payload: {
-          mapView,
+          mapView: creatMapViewProxy(mapView),
           region,
         },
       });
@@ -87,7 +94,7 @@ type Props = {
   compass: GeoCompass,
   animateToRegion: any,
   onRegionChangeComplete: (newRegion: GeoCoordinates, prevRegion: GeoCoordinates) => void,
-  toggleGeoService: () => void,
+  toggleGeoService: (location: any) => void,
   rotateMap: (mapView: MapView, angle:number) => void,
   toggleCompass: (compassStatus: boolean) => void,
   dispatch: Dispatch,
@@ -119,10 +126,13 @@ class DaterMapView extends Component<Props> {
   }
 
   componentDidMount() {
+    this.props.dispatch({
+      type: 'GEO_LOCATION_INITIALIZE',
+      payload: creatMapViewProxy(this.mapView),
+    });
   }
 
   onMapReady= () => {
-    this.props.dispatch({ type: 'GEO_LOCATION_INITIALIZE', payload: this.mapView });
     this.props.dispatch({ type: 'MAPVIEW_READY' });
   }
 
@@ -171,7 +181,7 @@ class DaterMapView extends Component<Props> {
         style={styles.mapView}
       >
         <MyLocationButton
-          toggleGeoService={() => this.props.toggleGeoService()}
+          toggleGeoService={() => this.props.toggleGeoService(this.props.location)}
           onPress={(region) => this.props.animateToRegion(this.mapView, region)}
           rotateMap={() => this.props.rotateMap(this.mapView, 90)}
           toggleCompass={() => this.props.toggleCompass(this.props.compass.enabled)}
@@ -200,15 +210,13 @@ class DaterMapView extends Component<Props> {
             /> }
           {this.props.location.enabled && this.renderUsersAround()}
         </MapView>
-        {this.props.location.enabled && this.props.location.coords &&
-          <Text style={styles.debugText}>
-            Accuracy: {Math.floor(this.props.location.coords.accuracy)}{'\n'}
-            GPS Heading: {this.props.location.coords.heading}{'\n'}
-            Compass Heading: {this.props.compass.heading}{'\n'}
-            GeoUpdates: {this.props.location.geoUpdates}{'\n'}
-            UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
-          </Text>
-        }
+        <Text style={styles.debugText}>
+          Accuracy: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
+          GPS Heading: {this.props.location.coords && this.props.location.coords.heading}{'\n'}
+          Compass Heading: {this.props.compass.heading}{'\n'}
+          GeoUpdates: {this.props.location && this.props.location.geoUpdates}{'\n'}
+          UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
+        </Text>
       </View>
 
     );

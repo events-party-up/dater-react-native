@@ -8,6 +8,8 @@ import Reactotron, {
 
 import { Platform } from 'react-native';
 
+Reactotron.clear();
+
 Reactotron
   .configure({
     name: `Dater React Native (${Platform.OS})`,
