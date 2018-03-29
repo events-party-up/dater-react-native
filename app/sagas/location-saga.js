@@ -11,13 +11,15 @@ export default function* locationSaga() {
     const locationChannel = yield call(createLocationChannel);
     yield takeEvery(locationChannel, updateLocation);
     yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
+    yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeGeoLocationToFirestore);
 
     const action = yield take('GEO_LOCATION_INITIALIZE');
     const mapView = action.payload;
     const locationServiceState = yield BackgroundGeolocation.init();
 
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
-    yield throttle(1000, 'GEO_LOCATION_UPDATED', animateToCurrentLocation, mapView);
+    yield throttle(500, 'GEO_LOCATION_UPDATED', animateToCurrentLocation, mapView);
+    yield throttle(2000, 'GEO_LOCATION_UPDATED', writeGeoLocationToFirestore);
 
     while (true) {
       yield take('GEO_LOCATION_START');
@@ -58,13 +60,15 @@ function* animateToCurrentLocation(mapView, action) {
 }
 
 function* updateLocation(coords) {
-  const uid = yield select((state) => state.auth.uid);
-
   yield put({
     type: 'GEO_LOCATION_UPDATED',
     payload: coords,
   });
+}
 
+function* writeGeoLocationToFirestore() {
+  const coords = yield select((state) => state.location.coords);
+  const uid = yield select((state) => state.auth.uid);
   if (!uid) return;
 
   yield call(updateFirestore, {
