@@ -5,7 +5,6 @@ import DeviceInfo from 'react-native-device-info';
 import { Platform } from 'react-native';
 
 import {
-  deleteFirebaseUser,
   deleteFirestoreDoc,
   setFirestore,
   updateFirestore,
@@ -30,9 +29,9 @@ function* authSignOutSaga() {
       collection: 'geoPoints',
       doc: currentUser.uid,
     });
-    yield call(deleteFirebaseUser);
+    yield call([currentUser, 'delete']);
   } else {
-    yield firebase.auth().signOut();
+    yield call([firebase.auth()], 'signOut');
   }
 }
 
@@ -72,7 +71,8 @@ function* authStateChangedSaga(user) {
       payload: user,
     });
   } else {
-    const anonymousUser = yield firebase.auth().signInAnonymouslyAndRetrieveData();
+    const anonymousUser = yield call([firebase.auth(), 'signInAnonymouslyAndRetrieveData']);
+
     yield call(setFirestore, {
       collection: 'users',
       doc: anonymousUser.user.uid,

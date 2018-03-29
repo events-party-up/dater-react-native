@@ -4,6 +4,7 @@ import firebase from 'react-native-firebase';
 import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 
 import BackgroundGeolocation from '../services/background-geolocation';
+import { updateFirestore } from '../utils/firebase-utils';
 
 export default function* locationSaga() {
   try {
@@ -16,18 +17,18 @@ export default function* locationSaga() {
     const locationServiceState = yield BackgroundGeolocation.init();
 
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
-    yield throttle(5000, 'GEO_LOCATION_UPDATED', animateToCurrentLocation, mapView);
+    yield throttle(1000, 'GEO_LOCATION_UPDATED', animateToCurrentLocation, mapView);
 
     while (true) {
       yield take('GEO_LOCATION_START');
       if (locationServiceState.enabled) {
-        yield BackgroundGeolocation.changePace(true);
+        yield call([BackgroundGeolocation, 'changePace'], true);
       } else {
-        yield BackgroundGeolocation.start();
+        yield call([BackgroundGeolocation, 'start']);
       }
       yield put({ type: 'GEO_LOCATION_STARTED' });
       yield take('GEO_LOCATION_STOP');
-      yield BackgroundGeolocation.stop();
+      yield call([BackgroundGeolocation, 'stop']);
       yield put({ type: 'GEO_LOCATION_STOPPED' });
     }
   } catch (error) {
@@ -66,22 +67,22 @@ function* updateLocation(coords) {
 
   if (!uid) return;
 
-  yield firebase.firestore().collection('geoPoints').doc(uid).update({
-    accuracy: coords.accuracy,
-    heading: coords.heading,
-    speed: coords.speed,
-    geoPoint: new firebase.firestore.GeoPoint(coords.latitude, coords.longitude),
-    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+  yield call(updateFirestore, {
+    collection: 'geoPoints',
+    doc: uid,
+    data: {
+      accuracy: coords.accuracy,
+      heading: coords.heading,
+      speed: coords.speed,
+      geoPoint: new firebase.firestore.GeoPoint(coords.latitude, coords.longitude),
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    },
   });
 }
 
 function createLocationChannel() {
-  // `eventChannel` takes a subscriber function
-  // the subscriber function takes an `emit` argument to put messages onto the channel
   return eventChannel((emit) => {
     const onLocation = (location) => {
-      // puts event payload into the channel
-      // this allows a Saga to take this payload from the returned channel
       emit(location.coords);
     };
 
@@ -91,10 +92,8 @@ function createLocationChannel() {
       });
     };
 
-    // setup the subscription
     RNBackgroundGeolocation.on('location', onLocation, onError);
 
-    // the subscriber must return an unsubscribe function
     // this will be invoked when the saga calls `channel.close` method
     const unsubscribe = () => {
       RNBackgroundGeolocation.un('location', onLocation);

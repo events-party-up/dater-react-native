@@ -123,70 +123,16 @@ const BackgroundGeolocation = {
     new Promise((resolve, reject) => {
       RNBackgroundGeolocation.changePace(value, () => resolve(), (error) => reject(error));
     })),
-  init_old: async (dispatch) => {
-    const GEO_OPTIONS = await geoOptions();
-    // This handler fires whenever bgGeo receives a location update.
-    RNBackgroundGeolocation.on('location', onLocation, onError);
-
-    // This handler fires when movement states changes (stationary->moving; moving->stationary)
-    // RNBackgroundGeolocation.on('motionchange', onMotionChange);
-
-    // This event fires when a change in motion activity is detected
-    // RNBackgroundGeolocation.on('activitychange', onActivityChange);
-
-    // This event fires when the user toggles location-services authorization
-    RNBackgroundGeolocation.on('providerchange', onProviderChange);
-
-    RNBackgroundGeolocation.configure(GEO_OPTIONS, (state) => {
-      console.log('- BackgroundGeolocation is configured and ready: ', state.enabled);
-      if (state.enabled) {
-        dispatch(geoActionCreators.startBgServices());
-        // manually activate tracking (for js reloads in simulator or hot pushes)
-        RNBackgroundGeolocation.changePace(true);
-      } else {
-        // 3. Start tracking!
-        RNBackgroundGeolocation.start(() => {
-          // console.log('- Start success');
-          dispatch(geoActionCreators.startBgServices());
-        });
-      }
-    });
-
-    function onLocation(location) {
-      console.log('- [event] location: ', location);
-      dispatch(geoActionCreators.geoUpdated(location.coords));
-    }
-
-    function onError(error) {
-      console.warn('- [event] location error ', error);
-    }
-
-
-    function onProviderChange(provider) {
-      console.log('- [event] providerchange: ', provider);
-    }
-
-    // function onActivityChange(activity) {
-    //   console.log('- [event] activitychange: ', activity); // eg: 'on_foot', 'still', 'in_vehicle'
-    // }
-
-    // function onMotionChange(location) {
-    //   console.log('- [event] motionchange: ', location.isMoving, location);
-    // }
-  },
-  getCurrentPosition: async (dispatch) => {
+  getCurrentPosition: async () => {
     console.log('Getting geo position manually in getGeoPosition');
     const GEO_OPTIONS = await geoOptions();
-    RNBackgroundGeolocation.getCurrentPosition(
-      GEO_OPTIONS,
-      (position) => {
-        dispatch(geoActionCreators.geoUpdated(position.coords));
-      },
-      (error) => {
-        console.error(error);
-        dispatch(geoActionCreators.geoDenied(error));
-      },
-    );
+    return new Promise((resolve, reject) => {
+      RNBackgroundGeolocation.getCurrentPosition(
+        GEO_OPTIONS,
+        (position) => resolve(position),
+        (error) => reject(error),
+      );
+    });
   },
   updateGeoPointInFirestore,
   toggleBgServices,

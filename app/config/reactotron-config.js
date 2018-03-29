@@ -28,3 +28,4 @@ Reactotron
   .connect();
 
 console.tron = Reactotron;
+Reactotron.clear();

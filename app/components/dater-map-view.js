@@ -19,7 +19,6 @@ import { GeoCompass, GeoCoordinates } from '../types';
 import GeoUtils from '../utils';
 
 const mapStateToProps = (state) => ({
-  // coords: state.geo.coords,
   location: state.location,
   usersAround: state.usersAround,
   mapView: state.mapView,

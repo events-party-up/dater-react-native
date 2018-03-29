@@ -5,7 +5,6 @@ import {
   Button,
 } from 'react-native';
 import { connect, Dispatch } from 'react-redux';
-import Reactotron from 'reactotron-react-native';
 
 import { DaterMapView } from '../components';
 import listenForUsersAround from '../services/geo-query';
@@ -13,7 +12,6 @@ import { GeoCoordinates } from '../types';
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  // coords: state.geo.coords,
   location: state.location,
 });
 
@@ -25,17 +23,10 @@ type Props = {
 };
 
 class Main extends Component<Props> {
-  authUnsubscribe;
   unsubscribeFromUsersAround;
-
-  async componentWillMount() {
-    // this.authUnsubscribe = initUserAuth(this.props.dispatch);
-    Reactotron.clear();
-  }
 
   componentWillUnmount() {
     this.unsubscribeFromUsersAround();
-    // this.authUnsubscribe();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -53,7 +44,6 @@ class Main extends Component<Props> {
   }
 
   signOut = async () => {
-    // await signOutUser(this.props.dispatch);
     this.props.dispatch({
       type: 'AUTH_SIGNOUT',
     });

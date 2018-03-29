@@ -23,8 +23,3 @@ export function deleteFirestoreDoc({
 }) {
   return firebase.firestore().collection(collection).doc(doc).delete();
 }
-
-export function deleteFirebaseUser() {
-  const { currentUser } = firebase.auth();
-  return currentUser && currentUser.delete();
-}
