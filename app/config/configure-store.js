@@ -12,18 +12,19 @@ import { createLogger } from 'redux-logger';
 import { reducer } from '../redux';
 import rootSaga from '../sagas/';
 
-const sagaMiddleware = createSagaMiddleware();
+if (process.env.NODE_ENV === 'development') {
+  require('./reactotron-config'); // eslint-disable-line global-require
+}
+
+const sagaMonitor = Reactotron.createSagaMonitor();
+const sagaMiddleware = createSagaMiddleware({ sagaMonitor });
+
 // http://redux.js.org/docs/advanced/Middleware.html
 const middleware = [thunk, sagaMiddleware];
 let storeCreator;
 
-// Use the NODE_ENV to include logging and debugging tools
-// in development environment. They will be compiled out of
-// the production build.
 if (process.env.NODE_ENV === 'development') {
   middleware.push(createLogger());
-  // Turns on Reactotron debugging tool
-  require('./reactotron-config'); // eslint-disable-line global-require
   storeCreator = Reactotron.createStore;
 } else {
   storeCreator = createStore;
