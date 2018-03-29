@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  // Button,
+  Button,
 } from 'react-native';
 import { connect, Dispatch } from 'react-redux';
+import Reactotron from 'reactotron-react-native';
 
 import { DaterMapView } from '../components';
 import listenForUsersAround from '../services/geo-query';
@@ -29,6 +30,7 @@ class Main extends Component<Props> {
 
   async componentWillMount() {
     // this.authUnsubscribe = initUserAuth(this.props.dispatch);
+    Reactotron.clear();
   }
 
   componentWillUnmount() {
@@ -61,9 +63,9 @@ class Main extends Component<Props> {
     return (
       <View style={styles.mainContainer}>
         {/* <FirebaseSetup /> */}
-        {/* <View style={styles.button}>
+        <View style={styles.button}>
           <Button title="Выйти" color="blue" onPress={this.signOut} />
-        </View> */}
+        </View>
         <DaterMapView />
       </View>
     );

@@ -27,3 +27,4 @@ Reactotron
   .use(networking())
   .connect();
 
+console.tron = Reactotron;

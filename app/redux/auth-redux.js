@@ -1,36 +1,10 @@
-import firebase from 'react-native-firebase';
-
 const types = {
   AUTH_INIT: 'AUTH_INIT',
   AUTH_SUCCESS: 'AUTH_SUCCESS',
+  AUTH_SUCCESS_NEW_USER: 'AUTH_SUCCESS_NEW_USER',
   AUTH_FAILED: 'AUTH_FAILED',
   AUTH_NEW_REGISTRATION: 'AUTH_NEW_REGISTRATION',
   AUTH_SIGNOUT: 'AUTH_SIGNOUT',
-};
-
-
-const authNewRegistration = (user) => async (dispatch) => {
-  if (user.isNewUser) {
-    console.log('Setting first collection value for new user: ', user.uid);
-    await firebase.firestore().collection('users').doc(user.uid).set({
-      registered: firebase.firestore.FieldValue.serverTimestamp(),
-    })
-      .catch((error) => console.error(error));
-  }
-  console.log('After writing user');
-
-  dispatch({
-    type: types.AUTH_NEW_REGISTRATION,
-    payload: user,
-  });
-};
-
-export const authActionCreators = {
-  authNewRegistration,
-  authError: (error) => ({
-    type: types.AUTH_FAILED,
-    payload: error,
-  }),
 };
 
 const initialState = {
@@ -43,7 +17,7 @@ const initialState = {
   lastSignInTime: null,
 };
 
-export const reducer = (state = initialState, action) => {
+const authReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
@@ -53,6 +27,7 @@ export const reducer = (state = initialState, action) => {
         isAuthenticating: true,
       };
     }
+    case types.AUTH_SUCCESS_NEW_USER:
     case types.AUTH_SUCCESS: {
       return {
         ...state,
@@ -93,3 +68,4 @@ export const reducer = (state = initialState, action) => {
   }
 };
 
+export default authReducer;

@@ -4,33 +4,60 @@ import { eventChannel } from 'redux-saga';
 import DeviceInfo from 'react-native-device-info';
 import { Platform } from 'react-native';
 
+import {
+  deleteFirebaseUser,
+  deleteFirestoreDoc,
+  setFirestore,
+  updateFirestore,
+} from '../utils/firebase-utils';
+
 export default function* authSaga() {
   yield put({ type: 'AUTH_INIT' });
   const authStateChannel = yield call(createAuthStateChannel);
-  yield takeEvery(authStateChannel, stateChanged);
-  yield takeEvery('AUTH_SIGNOUT', signOut);
+  yield takeEvery(authStateChannel, authStateChangedSaga);
+  yield takeEvery('AUTH_SIGNOUT', authSignOutSaga);
 }
 
-function* signOut() {
+function* authSignOutSaga() {
   const { currentUser } = firebase.auth();
+
   if (currentUser && currentUser.isAnonymous) {
-    yield firebase.firestore().collection('users').doc(currentUser.uid).delete();
-    yield firebase.firestore().collection('geoPoints').doc(currentUser.uid).delete();
-    yield currentUser.delete();
+    yield call(deleteFirestoreDoc, {
+      collection: 'users',
+      doc: currentUser.uid,
+    });
+    yield call(deleteFirestoreDoc, {
+      collection: 'geoPoints',
+      doc: currentUser.uid,
+    });
+    yield call(deleteFirebaseUser);
   } else {
     yield firebase.auth().signOut();
   }
 }
 
-function* stateChanged(user) {
+function* authStateChangedSaga(user) {
   if (user.uid) {
-    console.log('Writing to firestore 1');
-    yield firebase.firestore().collection('users').doc(user.uid).set({}, { merge: true });
-    console.log('Writing to firestore 2');
-    yield firebase.firestore().collection('geoPoints').doc(user.uid).set({}, { merge: true });
-    console.log('Writing to firestore 3');
-    yield firebase.firestore().collection('users').doc(user.uid)
-      .update({
+    yield call(setFirestore, {
+      collection: 'users',
+      doc: user.uid,
+      data: {},
+      args: {
+        merge: true,
+      },
+    });
+    yield call(setFirestore, {
+      collection: 'geoPoints',
+      doc: user.uid,
+      data: {},
+      args: {
+        merge: true,
+      },
+    });
+    yield call(updateFirestore, {
+      collection: 'users',
+      doc: user.uid,
+      data: {
         device: {
           isEmulator: DeviceInfo.isEmulator(),
           osVersion: DeviceInfo.getSystemVersion(),
@@ -38,21 +65,24 @@ function* stateChanged(user) {
           platform: Platform.OS,
           locale: DeviceInfo.getDeviceLocale(),
         },
-      });
+      },
+    });
     yield put({
       type: 'AUTH_SUCCESS',
       payload: user,
     });
   } else {
-    // debugger;
-    console.log('No user! Signing anonymously');
-    // return yield console.log('test');
     const anonymousUser = yield firebase.auth().signInAnonymouslyAndRetrieveData();
-    yield firebase.firestore().collection('users').doc(anonymousUser.user.uid).set({
-      registered: firebase.firestore.FieldValue.serverTimestamp(),
+    yield call(setFirestore, {
+      collection: 'users',
+      doc: anonymousUser.user.uid,
+      data: {
+        registered: firebase.firestore.FieldValue.serverTimestamp(),
+      },
     });
+
     yield put({
-      type: 'AUTH_SUCCESS',
+      type: 'AUTH_SUCCESS_NEW_USER',
       payload: {
         isNewUser: anonymousUser.additionalUserInfo.isNewUser,
         isAnonymous: anonymousUser.user.isAnonymous,
