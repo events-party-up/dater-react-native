@@ -1,9 +1,10 @@
 import { put, take, throttle, select, call, takeEvery } from 'redux-saga/effects';
 import ReactNativeHeading from '@zsajjad/react-native-heading';
-import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
 import { DeviceEventEmitter } from 'react-redux';
 import { NativeEventEmitter } from 'react-native';
+
+import { updateFirestore } from '../utils/firebase-utils';
 
 const HEADING_UPDATE_ON_DEGREE_CHANGED = 10;
 const getUid = (state) => state.auth.uid;
@@ -23,7 +24,7 @@ export default function* compassSaga() {
 
 function* compassStart() {
   try {
-    const didStart = yield ReactNativeHeading.start(HEADING_UPDATE_ON_DEGREE_CHANGED);
+    const didStart = yield call([ReactNativeHeading, 'start'], HEADING_UPDATE_ON_DEGREE_CHANGED);
     if (didStart) {
       yield put({ type: 'GEO_COMPASS_HEADING_STARTED' });
     } else {
@@ -36,7 +37,7 @@ function* compassStart() {
 
 function* compassStop() {
   try {
-    yield ReactNativeHeading.stop();
+    yield call([ReactNativeHeading, 'stop']);
     yield put({ type: 'GEO_COMPASS_HEADING_STOPPED' });
   } catch (error) {
     yield put({ type: 'GEO_COMPASS_UNKNOWN_ERROR', payload: error });
@@ -52,8 +53,12 @@ function* writeHeadingToFirestore(action) {
   const uid = yield select(getUid);
   if (!uid) return;
 
-  yield firebase.firestore().collection('geoPoints').doc(uid).update({
-    compassHeading: heading,
+  yield call(updateFirestore, {
+    collection: 'geoPoints',
+    doc: uid,
+    data: {
+      compassHeading: heading,
+    },
   });
 }
 

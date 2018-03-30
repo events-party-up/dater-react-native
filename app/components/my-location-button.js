@@ -26,12 +26,6 @@ const mapStateToProps = (state) => ({
 
 class MyLocationButton extends Component<Props> {
   centerMe = () => {
-    // const myLocationRegion: GeoCoordinates = {
-    //   latitude: this.props.location.coords.latitude,
-    //   longitude: this.props.location.coords.longitude,
-    //   latitudeDelta: this.props.mapView.latitudeDelta,
-    //   longitudeDelta: this.props.mapView.longitudeDelta,
-    // };
     this.props.centerMe(this.props.location.coords);
   }
 
