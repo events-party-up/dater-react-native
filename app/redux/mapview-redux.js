@@ -36,13 +36,11 @@ const mapViewReducer = (state = initialState, action) => {
         longitude: payload.newRegion.longitude + payload.newRegion.longitudeDelta,
       };
       const visibleRadiusInMeters = GeoUtils.distance(center, corner);
-      const rotationAngle = GeoUtils.getRotationAngle(payload.newRegion, payload.prevRegion);
 
       return {
         ...state,
         ...payload.newRegion,
         visibleRadiusInMeters,
-        rotationAngle,
       };
     }
     case types.MAPVIEW_ANIMATE_TO_REGION: {

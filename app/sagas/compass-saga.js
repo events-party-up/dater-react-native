@@ -5,7 +5,7 @@ import { eventChannel } from 'redux-saga';
 import { DeviceEventEmitter } from 'react-redux';
 import { NativeEventEmitter } from 'react-native';
 
-const HEADING_UPDATE_ON_DEGREE_CHANGED = 5;
+const HEADING_UPDATE_ON_DEGREE_CHANGED = 10;
 const getUid = (state) => state.auth.uid;
 
 export default function* compassSaga() {

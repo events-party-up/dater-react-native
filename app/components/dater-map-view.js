@@ -42,7 +42,7 @@ function mapDispatchToProps(dispatch) {
       });
     },
     onRegionChangeComplete: (newRegion, prevRegion) => {
-      if (!prevRegion || !newRegion) return;
+      if (!prevRegion || !newRegion || !prevRegion.latitude) return;
 
       dispatch({
         type: 'MAPVIEW_REGION_UPDATED',
@@ -63,8 +63,15 @@ function mapDispatchToProps(dispatch) {
         });
       }
     },
-    rotateMap: (mapView: MapView, angle: number) => {
-      mapView.animateToBearing(angle);
+    rotateMap: (mapView: MapView, rotationAngle: number, duration: number) => {
+      dispatch({
+        type: 'MAPVIEW_ROTATE',
+        mapView: creatMapViewProxy(mapView),
+        payload: {
+          rotationAngle,
+          duration,
+        },
+      });
     },
     toggleCompass: (compassStatus) => {
       if (compassStatus) {
@@ -91,17 +98,19 @@ type Props = {
   animateToRegion: any,
   onRegionChangeComplete: (newRegion: GeoCoordinates, prevRegion: GeoCoordinates) => void,
   toggleGeoService: (location: any) => void,
-  rotateMap: (mapView: MapView, angle:number) => void,
+  rotateMap: (mapView: MapView, angle:number, duration: number) => void,
   toggleCompass: (compassStatus: boolean) => void,
   dispatch: Dispatch,
   location: {
     coords: GeoCoordinates,
     geoUpdates: number,
   },
+  mapView: any,
 };
 
 class DaterMapView extends Component<Props> {
   mapView: MapView;
+  rotate = 90;
 
   constructor(props) {
     super(props);
@@ -109,15 +118,15 @@ class DaterMapView extends Component<Props> {
   }
 
   componentDidMount() {
-    this.props.dispatch({
-      type: 'GEO_LOCATION_INITIALIZE',
-      mapView: creatMapViewProxy(this.mapView),
-    });
   }
 
   onMapReady= () => {
     this.props.dispatch({
       type: 'MAPVIEW_READY',
+      mapView: creatMapViewProxy(this.mapView),
+    });
+    this.props.dispatch({
+      type: 'GEO_LOCATION_INITIALIZE',
       mapView: creatMapViewProxy(this.mapView),
     });
   }
@@ -160,15 +169,15 @@ class DaterMapView extends Component<Props> {
         style={styles.mapView}
       >
         <MyLocationButton
-          toggleGeoService={() => this.props.toggleGeoService(this.props.location)}
-          onPress={(region) => this.props.animateToRegion(this.mapView, region)}
-          rotateMap={() => this.props.rotateMap(this.mapView, 90)}
           toggleCompass={() => this.props.toggleCompass(this.props.compass.enabled)}
+          rotateMap={() => { this.props.rotateMap(this.mapView, this.rotate, 2000); this.rotate = this.rotate + 90; }}
+          toggleGeoService={() => this.props.toggleGeoService(this.props.location)}
+          centerMe={(region) => this.props.animateToRegion(this.mapView, region)}
         />
         <MapView
           ref={(component) => { this.mapView = component; }}
           style={styles.mapView}
-          onRegionChangeComplete={(region) => this.props.onRegionChangeComplete(region, this.props.location.coords)}
+          onRegionChangeComplete={(region) => this.props.onRegionChangeComplete(region, this.props.mapView)}
           onMapReady={this.onMapReady}
           // onRegionChange={this.onRegionChange}
           provider="google"

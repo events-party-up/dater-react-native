@@ -12,7 +12,7 @@ import { GeoCoordinates } from '../types';
 
 type Props = {
   mapView: MapView,
-  onPress: (region: GeoCoordinates) => void,
+  centerMe: (region: GeoCoordinates) => void,
   toggleGeoService: () => void,
   rotateMap: () => void,
   toggleCompass: () => void,
@@ -27,14 +27,14 @@ const mapStateToProps = (state) => ({
 });
 
 class MyLocationButton extends Component<Props> {
-  onPress = () => {
+  centerMe = () => {
     const myLocationRegion: GeoCoordinates = {
       latitude: this.props.location.coords.latitude,
       longitude: this.props.location.coords.longitude,
       latitudeDelta: this.props.mapView.latitudeDelta,
       longitudeDelta: this.props.mapView.longitudeDelta,
     };
-    this.props.onPress(myLocationRegion);
+    this.props.centerMe(myLocationRegion);
   }
 
   onGeoTogglePress = () => {
@@ -85,7 +85,7 @@ class MyLocationButton extends Component<Props> {
           hitSlop={hitSlop}
           activeOpacity={0.7}
           style={styles.mapButton}
-          onPress={this.onPress}
+          onPress={this.centerMe}
         >
           <Text style={{ fontWeight: 'bold', color: 'black' }}>
             Me

@@ -7,20 +7,21 @@ export default function* mapViewSaga() {
   yield throttle(1000, 'MAPVIEW_ROTATE', rotate);
   yield takeEvery('MAPVIEW_ANIMATE_TO_REGION', animateToRegion);
   const { mapView } = yield take('MAPVIEW_READY');
-  yield throttle(500, 'GEO_COMPASS_HEADING_UPDATE', rotateMapViewSaga, mapView);
+  yield throttle(1000, 'GEO_COMPASS_HEADING_UPDATE', rotateMapViewSaga, mapView);
 }
-
-// GeoUtils.wrapCompassHeading(heading)
 
 function* rotateMapViewSaga(mapView, action) {
   const rotationAngle = GeoUtils.wrapCompassHeading(action.payload);
-  console.log('rotationAngle: ', rotationAngle);
-  yield call(mapView.animateToBearing, rotationAngle);
+  const { duration } = action.payload;
+  const animationDuration = duration || defaultAnimationDuration;
+  yield call(mapView.animateToBearing, rotationAngle, animationDuration);
 }
 
 function* rotate(action) {
-  const { mapView, rotationAngle } = action.payload;
-  yield call(mapView.animateToBearing, rotationAngle);
+  const { rotationAngle, duration } = action.payload;
+  const { mapView } = action;
+  const animationDuration = duration || defaultAnimationDuration;
+  yield call(mapView.animateToBearing, rotationAngle, animationDuration);
 }
 
 function* animateToRegion(action) {
