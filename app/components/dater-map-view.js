@@ -27,17 +27,18 @@ function creatMapViewProxy(mapView: MapView) {
   return {
     animateToBearing: (bearing, duration) => mapView.animateToBearing(bearing, duration),
     animateToRegion: (region, duration) => mapView.animateToRegion(region, duration),
+    animateToCoordinate: (coords, duration) => mapView.animateToCoordinate(coords, duration),
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return ({
-    animateToRegion: (mapView: MapView, region: GeoCoordinates) => {
+    animateToCoordinate: (mapView: MapView, coords: GeoCoordinates) => {
       dispatch({
-        type: 'MAPVIEW_ANIMATE_TO_REGION',
+        type: 'MAPVIEW_ANIMATE_TO_COORDINATE',
         payload: {
           mapView: creatMapViewProxy(mapView),
-          region,
+          coords,
         },
       });
     },
@@ -95,7 +96,7 @@ type Props = {
     uid: string,
   },
   compass: GeoCompass,
-  animateToRegion: any,
+  animateToCoordinate: any,
   onRegionChangeComplete: (newRegion: GeoCoordinates, prevRegion: GeoCoordinates) => void,
   toggleGeoService: (location: any) => void,
   rotateMap: (mapView: MapView, angle:number, duration: number) => void,
@@ -172,7 +173,7 @@ class DaterMapView extends Component<Props> {
           toggleCompass={() => this.props.toggleCompass(this.props.compass.enabled)}
           rotateMap={() => { this.props.rotateMap(this.mapView, this.rotate, 2000); this.rotate = this.rotate + 90; }}
           toggleGeoService={() => this.props.toggleGeoService(this.props.location)}
-          centerMe={(region) => this.props.animateToRegion(this.mapView, region)}
+          centerMe={(coordinates) => this.props.animateToCoordinate(this.mapView, coordinates)}
         />
         <MapView
           ref={(component) => { this.mapView = component; }}

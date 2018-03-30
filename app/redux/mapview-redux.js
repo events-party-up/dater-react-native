@@ -5,6 +5,7 @@ import GeoUtils from '../utils';
 const types = {
   MAPVIEW_REGION_UPDATED: 'MAPVIEW_REGION_UPDATED',
   MAPVIEW_ANIMATE_TO_REGION: 'MAPVIEW_ANIMATE_TO_REGION',
+  MAPVIEW_ANIMATE_TO_COORDINATE: 'MAPVIEW_ANIMATE_TO_COORDINATE',
   MAPVIEW_ROTATE: 'MAPVIEW_ROTATE',
   MAPVIEW_READY: 'MAPVIEW_READY',
 };
@@ -47,6 +48,12 @@ const mapViewReducer = (state = initialState, action) => {
       return {
         ...state,
         ...payload.region,
+      };
+    }
+    case types.MAPVIEW_ANIMATE_TO_COORDINATE: {
+      return {
+        ...state,
+        ...payload.coords,
       };
     }
     case types.MAPVIEW_ROTATE: {

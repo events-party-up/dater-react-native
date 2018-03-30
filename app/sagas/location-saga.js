@@ -28,6 +28,8 @@ export default function* locationSaga() {
         yield call([BackgroundGeolocation, 'start']);
       }
       yield put({ type: 'GEO_LOCATION_STARTED' });
+      // const initialLocation = yield take('GEO_LOCATION_UPDATED');
+      // yield animateToCurrentRegion(mapView, initialLocation);
       yield take('GEO_LOCATION_STOP');
       yield call([BackgroundGeolocation, 'stop']);
       yield put({ type: 'GEO_LOCATION_STOPPED' });
@@ -42,6 +44,19 @@ function* startGeoLocationOnInit() {
 }
 
 function* animateToCurrentLocation(mapView, action) {
+  yield put({
+    type: 'MAPVIEW_ANIMATE_TO_COORDINATE',
+    payload: {
+      mapView,
+      coords: {
+        latitude: action.payload.latitude,
+        longitude: action.payload.longitude,
+      },
+    },
+  });
+}
+
+function* animateToCurrentRegion(mapView, action) {
   const mapViewState = yield select((state) => state.mapView);
   yield put({
     type: 'MAPVIEW_ANIMATE_TO_REGION',
@@ -67,7 +82,7 @@ function* updateLocation(coords) {
 function* writeGeoLocationToFirestore() {
   const coords = yield select((state) => state.location.coords);
   const uid = yield select((state) => state.auth.uid);
-  if (!uid) return;
+  if (!uid || !coords) return;
 
   yield call(updateFirestore, {
     collection: 'geoPoints',
