@@ -28,8 +28,6 @@ export default function* locationSaga() {
         yield call([BackgroundGeolocation, 'start']);
       }
       yield put({ type: 'GEO_LOCATION_STARTED' });
-      // const initialLocation = yield take('GEO_LOCATION_UPDATED');
-      // yield animateToCurrentRegion(mapView, initialLocation);
       yield take('GEO_LOCATION_STOP');
       yield call([BackgroundGeolocation, 'stop']);
       yield put({ type: 'GEO_LOCATION_STOPPED' });
@@ -51,22 +49,6 @@ function* animateToCurrentLocation(mapView, action) {
       coords: {
         latitude: action.payload.latitude,
         longitude: action.payload.longitude,
-      },
-    },
-  });
-}
-
-function* animateToCurrentRegion(mapView, action) {
-  const mapViewState = yield select((state) => state.mapView);
-  yield put({
-    type: 'MAPVIEW_ANIMATE_TO_REGION',
-    payload: {
-      mapView,
-      region: {
-        latitude: action.payload.latitude,
-        longitude: action.payload.longitude,
-        latitudeDelta: mapViewState.latitudeDelta,
-        longitudeDelta: mapViewState.longitudeDelta,
       },
     },
   });
