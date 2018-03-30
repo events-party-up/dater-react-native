@@ -3,9 +3,9 @@
  */
 import { take, put, select } from 'redux-saga/effects';
 
-export default function* mapViewInitRegionSaga() {
+export default function* mapViewInitializeRegionSaga(action) {
   try {
-    const { mapView } = yield take('GEO_LOCATION_INITIALIZE'); // wait for geo services to initialize
+    const { mapView } = action;
     const initialLocation = yield take('GEO_LOCATION_UPDATED'); // get first geo update
     yield animateToCurrentRegion(mapView, initialLocation); // zoom map to first location
   } catch (error) {
