@@ -13,6 +13,7 @@ export default function* locationSaga() {
     yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
     yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeGeoLocationToFirestore);
 
+    yield take('MAPVIEW_READY');
     const locationServiceState = yield BackgroundGeolocation.init();
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
     yield throttle(500, 'GEO_LOCATION_UPDATED', animateToCurrentLocation);
