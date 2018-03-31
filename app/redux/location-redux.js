@@ -11,7 +11,8 @@ const types = {
   GEO_LOCATION_STOPPED: 'GEO_LOCATION_STOPPED',
   GEO_LOCATION_UPDATE: 'GEO_LOCATION_UPDATE',
   GEO_LOCATION_UPDATED: 'GEO_LOCATION_UPDATED',
-  GEO_LOCATION_ERROR: 'GEO_LOCATION_ERROR',
+  GEO_LOCATION_MAINSAGA_ERROR: 'GEO_LOCATION_MAINSAGA_ERROR',
+  GEO_LOCATION_UPDATE_FIRESTORE_ERROR: 'GEO_LOCATION_UPDATE_FIRESTORE_ERROR',
 };
 
 const initialState = {
@@ -69,7 +70,8 @@ const locationReducer = (state = initialState, action) => {
         enabled: false,
       };
     }
-    case types.GEO_LOCATION_ERROR: {
+    case types.GEO_LOCATION_UPDATE_FIRESTORE_ERROR:
+    case types.GEO_LOCATION_MAINSAGA_ERROR: {
       return {
         ...state,
         error: payload,

@@ -4,22 +4,18 @@ import {
   Text,
   Button,
   View,
-  NativeEventEmitter,
 } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
-import { connect, DeviceEventEmitter, Dispatch } from 'react-redux';
+import { connect, Dispatch } from 'react-redux';
 import 'moment/locale/ru';
 import Moment from 'react-moment';
-import ReactNativeHeading from '@zsajjad/react-native-heading';
 
 import PersonMaker from './person-maker';
 import MyLocationMapMarker from './my-location-map-maker';
 import MyLocationButton from './my-location-button';
 import { GeoCompass, GeoCoordinates } from '../types';
-import GeoUtils from '../utils';
 
 const mapStateToProps = (state) => ({
-  // coords: state.geo.coords,
   location: state.location,
   usersAround: state.usersAround,
   mapView: state.mapView,
@@ -27,19 +23,26 @@ const mapStateToProps = (state) => ({
   compass: state.compass,
 });
 
+function creatMapViewProxy(mapView: MapView) {
+  return {
+    animateToBearing: (bearing, duration) => mapView.animateToBearing(bearing, duration),
+    animateToRegion: (region, duration) => mapView.animateToRegion(region, duration),
+    animateToCoordinate: (coords, duration) => mapView.animateToCoordinate(coords, duration),
+  };
+}
+
 function mapDispatchToProps(dispatch) {
   return ({
-    animateToRegion: (mapView: MapView, region: GeoCoordinates) => {
+    animateToCoordinate: (mapView: MapView, coords: GeoCoordinates) => {
       dispatch({
-        type: 'MAPVIEW_ANIMATE_TO_REGION',
+        type: 'MAPVIEW_ANIMATE_TO_COORDINATE',
         payload: {
-          mapView,
-          region,
+          coords,
         },
       });
     },
     onRegionChangeComplete: (newRegion, prevRegion) => {
-      if (!prevRegion || !newRegion) return;
+      if (!prevRegion || !newRegion || !prevRegion.latitude) return;
 
       dispatch({
         type: 'MAPVIEW_REGION_UPDATED',
@@ -60,8 +63,14 @@ function mapDispatchToProps(dispatch) {
         });
       }
     },
-    rotateMap: (mapView: MapView, angle: number) => {
-      mapView.animateToBearing(angle);
+    rotateMap: (bearingAngle: number, duration: number) => {
+      dispatch({
+        type: 'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
+        payload: {
+          bearingAngle,
+          duration,
+        },
+      });
     },
     toggleCompass: (compassStatus) => {
       if (compassStatus) {
@@ -85,51 +94,38 @@ type Props = {
     uid: string,
   },
   compass: GeoCompass,
-  animateToRegion: any,
+  animateToCoordinate: any,
   onRegionChangeComplete: (newRegion: GeoCoordinates, prevRegion: GeoCoordinates) => void,
-  toggleGeoService: () => void,
-  rotateMap: (mapView: MapView, angle:number) => void,
+  toggleGeoService: (location: any) => void,
+  rotateMap: (angle:number, duration: number) => void,
   toggleCompass: (compassStatus: boolean) => void,
   dispatch: Dispatch,
   location: {
     coords: GeoCoordinates,
     geoUpdates: number,
   },
+  mapView: any,
 };
 
 class DaterMapView extends Component<Props> {
   mapView: MapView;
-  listener = new NativeEventEmitter(ReactNativeHeading);
+  rotate = 90;
 
   constructor(props) {
     super(props);
     this.routeTo = this.routeTo.bind(this);
-  }
-  async componentWillMount() {
-    this.listener.addListener('headingUpdated', (heading) => {
-      this.props.dispatch({ type: 'GEO_COMPASS_HEADING_UPDATE', payload: heading });
-      this.props.dispatch({
-        type: 'MAPVIEW_ROTATE',
-        payload: {
-          mapView: this.mapView,
-          rotationAngle: GeoUtils.wrapCompassHeading(heading),
-        },
-      });
-    });
   }
 
   componentDidMount() {
   }
 
   onMapReady= () => {
-    this.props.dispatch({ type: 'GEO_LOCATION_INITIALIZE', payload: this.mapView });
-    this.props.dispatch({ type: 'MAPVIEW_READY' });
-  }
-
-  componentWillUnmount() {
-    DeviceEventEmitter.removeAllListeners('headingUpdated');
     this.props.dispatch({
-      type: 'GEO_COMPASS_HEADING_STOP',
+      type: 'MAPVIEW_READY',
+      mapView: creatMapViewProxy(this.mapView),
+    });
+    this.props.dispatch({
+      type: 'GEO_LOCATION_INITIALIZE',
     });
   }
 
@@ -171,15 +167,15 @@ class DaterMapView extends Component<Props> {
         style={styles.mapView}
       >
         <MyLocationButton
-          toggleGeoService={() => this.props.toggleGeoService()}
-          onPress={(region) => this.props.animateToRegion(this.mapView, region)}
-          rotateMap={() => this.props.rotateMap(this.mapView, 90)}
           toggleCompass={() => this.props.toggleCompass(this.props.compass.enabled)}
+          rotateMap={() => { this.props.rotateMap(this.rotate, 2000); this.rotate = this.rotate + 90; }}
+          toggleGeoService={() => this.props.toggleGeoService(this.props.location)}
+          centerMe={(coordinates) => this.props.animateToCoordinate(this.mapView, coordinates)}
         />
         <MapView
           ref={(component) => { this.mapView = component; }}
           style={styles.mapView}
-          onRegionChangeComplete={(region) => this.props.onRegionChangeComplete(region, this.props.location.coords)}
+          onRegionChangeComplete={(region) => this.props.onRegionChangeComplete(region, this.props.mapView)}
           onMapReady={this.onMapReady}
           // onRegionChange={this.onRegionChange}
           provider="google"
@@ -200,15 +196,13 @@ class DaterMapView extends Component<Props> {
             /> }
           {this.props.location.enabled && this.renderUsersAround()}
         </MapView>
-        {this.props.location.enabled && this.props.location.coords &&
-          <Text style={styles.debugText}>
-            Accuracy: {Math.floor(this.props.location.coords.accuracy)}{'\n'}
-            GPS Heading: {this.props.location.coords.heading}{'\n'}
-            Compass Heading: {this.props.compass.heading}{'\n'}
-            GeoUpdates: {this.props.location.geoUpdates}{'\n'}
-            UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
-          </Text>
-        }
+        <Text style={styles.debugText}>
+          Accuracy: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
+          GPS Heading: {this.props.location.coords && this.props.location.coords.heading}{'\n'}
+          Compass Heading: {this.props.compass.heading}{'\n'}
+          GeoUpdates: {this.props.location && this.props.location.geoUpdates}{'\n'}
+          UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
+        </Text>
       </View>
 
     );
