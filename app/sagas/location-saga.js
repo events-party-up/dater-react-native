@@ -13,11 +13,9 @@ export default function* locationSaga() {
     yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
     yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeGeoLocationToFirestore);
 
-    const { mapView } = yield take('MAPVIEW_READY');
-
     const locationServiceState = yield BackgroundGeolocation.init();
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
-    yield throttle(500, 'GEO_LOCATION_UPDATED', animateToCurrentLocation, mapView);
+    yield throttle(500, 'GEO_LOCATION_UPDATED', animateToCurrentLocation);
     yield throttle(2000, 'GEO_LOCATION_UPDATED', writeGeoLocationToFirestore);
 
     while (true) {
@@ -41,11 +39,10 @@ function* startGeoLocationOnInit() {
   yield put({ type: 'GEO_LOCATION_START' });
 }
 
-function* animateToCurrentLocation(mapView, action) {
+function* animateToCurrentLocation(action) {
   yield put({
     type: 'MAPVIEW_ANIMATE_TO_COORDINATE',
     payload: {
-      mapView,
       coords: {
         latitude: action.payload.latitude,
         longitude: action.payload.longitude,

@@ -3,6 +3,7 @@ import ReactNativeHeading from '@zsajjad/react-native-heading';
 import { eventChannel } from 'redux-saga';
 import { DeviceEventEmitter } from 'react-redux';
 import { NativeEventEmitter } from 'react-native';
+import GeoUtils from '../utils';
 
 import { updateFirestore } from '../utils/firebase-utils';
 
@@ -49,7 +50,14 @@ function* compassStop() {
 }
 
 function* updateCompassHeading(heading) {
+  const bearingAngle = GeoUtils.wrapCompassHeading(heading);
   yield put({ type: 'GEO_COMPASS_HEADING_UPDATE', payload: heading });
+  yield put({
+    type: 'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
+    payload: {
+      bearingAngle,
+    },
+  });
 }
 
 function* writeHeadingToFirestore(action) {

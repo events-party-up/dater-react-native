@@ -37,7 +37,6 @@ function mapDispatchToProps(dispatch) {
       dispatch({
         type: 'MAPVIEW_ANIMATE_TO_COORDINATE',
         payload: {
-          mapView: creatMapViewProxy(mapView),
           coords,
         },
       });
@@ -64,12 +63,11 @@ function mapDispatchToProps(dispatch) {
         });
       }
     },
-    rotateMap: (mapView: MapView, rotationAngle: number, duration: number) => {
+    rotateMap: (bearingAngle: number, duration: number) => {
       dispatch({
-        type: 'MAPVIEW_ROTATE',
-        mapView: creatMapViewProxy(mapView),
+        type: 'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
         payload: {
-          rotationAngle,
+          bearingAngle,
           duration,
         },
       });
@@ -99,7 +97,7 @@ type Props = {
   animateToCoordinate: any,
   onRegionChangeComplete: (newRegion: GeoCoordinates, prevRegion: GeoCoordinates) => void,
   toggleGeoService: (location: any) => void,
-  rotateMap: (mapView: MapView, angle:number, duration: number) => void,
+  rotateMap: (angle:number, duration: number) => void,
   toggleCompass: (compassStatus: boolean) => void,
   dispatch: Dispatch,
   location: {
@@ -128,7 +126,6 @@ class DaterMapView extends Component<Props> {
     });
     this.props.dispatch({
       type: 'GEO_LOCATION_INITIALIZE',
-      mapView: creatMapViewProxy(this.mapView),
     });
   }
 
@@ -171,7 +168,7 @@ class DaterMapView extends Component<Props> {
       >
         <MyLocationButton
           toggleCompass={() => this.props.toggleCompass(this.props.compass.enabled)}
-          rotateMap={() => { this.props.rotateMap(this.mapView, this.rotate, 2000); this.rotate = this.rotate + 90; }}
+          rotateMap={() => { this.props.rotateMap(this.rotate, 2000); this.rotate = this.rotate + 90; }}
           toggleGeoService={() => this.props.toggleGeoService(this.props.location)}
           centerMe={(coordinates) => this.props.animateToCoordinate(this.mapView, coordinates)}
         />

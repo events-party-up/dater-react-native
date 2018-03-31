@@ -6,10 +6,14 @@ const types = {
   MAPVIEW_REGION_UPDATED: 'MAPVIEW_REGION_UPDATED',
   MAPVIEW_ANIMATE_TO_REGION: 'MAPVIEW_ANIMATE_TO_REGION',
   MAPVIEW_ANIMATE_TO_COORDINATE: 'MAPVIEW_ANIMATE_TO_COORDINATE',
-  MAPVIEW_ROTATE: 'MAPVIEW_ROTATE',
+  MAPVIEW_ANIMATE_TO_BEARING_MANUALLY: 'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
+  MAPVIEW_ANIMATE_TO_BEARING_HEADING: 'MAPVIEW_ANIMATE_TO_BEARING_HEADING',
   MAPVIEW_READY: 'MAPVIEW_READY',
   MAPVIEW_INIT_REGION_ERROR: 'MAPVIEW_INIT_REGION_ERROR',
   MAPVIEW_MAINSAGA_ERROR: 'MAPVIEW_MAINSAGA_ERROR',
+  MAPVIEW_ANIMATE_TO_BEARING_ERROR: 'MAPVIEW_ANIMATE_TO_BEARING_ERROR',
+  MAPVIEW_ANIMATE_TO_REGION_ERROR: 'MAPVIEW_ANIMATE_TO_REGION_ERROR',
+  MAPVIEW_ANIMATE_TO_COORDINATE_ERROR: 'MAPVIEW_ANIMATE_TO_COORDINATE_ERROR',
 };
 
 const { width, height } = Dimensions.get('window');
@@ -58,10 +62,11 @@ const mapViewReducer = (state = initialState, action) => {
         ...payload.coords,
       };
     }
-    case types.MAPVIEW_ROTATE: {
+    case types.MAPVIEW_ANIMATE_TO_BEARING_HEADING:
+    case types.MAPVIEW_ANIMATE_TO_BEARING_MANUALLY: {
       return {
         ...state,
-        rotationAngle: payload.rotationAngle,
+        ...payload,
       };
     }
     case types.MAPVIEW_READY: {
@@ -70,6 +75,9 @@ const mapViewReducer = (state = initialState, action) => {
         mapReady: true,
       };
     }
+    case types.MAPVIEW_ANIMATE_TO_COORDINATE_ERROR:
+    case types.MAPVIEW_ANIMATE_TO_REGION_ERROR:
+    case types.MAPVIEW_ANIMATE_TO_BEARING_ERROR:
     case types.MAPVIEW_INIT_REGION_ERROR:
     case types.MAPVIEW_MAINSAGA_ERROR: {
       return {
