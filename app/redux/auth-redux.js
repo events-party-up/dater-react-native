@@ -2,9 +2,11 @@ const types = {
   AUTH_INIT: 'AUTH_INIT',
   AUTH_SUCCESS: 'AUTH_SUCCESS',
   AUTH_SUCCESS_NEW_USER: 'AUTH_SUCCESS_NEW_USER',
-  AUTH_FAILED: 'AUTH_FAILED',
   AUTH_NEW_REGISTRATION: 'AUTH_NEW_REGISTRATION',
   AUTH_SIGNOUT: 'AUTH_SIGNOUT',
+  AUTH_MAINSAGA_ERROR: 'AUTH_MAINSAGA_ERROR',
+  AUTH_SIGNOUT_ERROR: 'AUTH_SIGNOUT_ERROR',
+  AUTH_STATE_CHANGED_ERROR: 'AUTH_STATE_CHANGED_ERROR',
 };
 
 const initialState = {
@@ -48,12 +50,12 @@ const authReducer = (state = initialState, action) => {
         isAuthenticated: true,
       };
     }
-    case types.AUTH_FAILED: {
+    case types.AUTH_SIGNOUT_ERROR:
+    case types.AUTH_STATE_CHANGED_ERROR:
+    case types.AUTH_MAINSAGA_ERROR: {
       return {
         ...state,
-        isAuthenticating: false,
-        accessToken: null,
-        authError: payload,
+        error: payload,
       };
     }
     case types.AUTH_SIGNOUT: {

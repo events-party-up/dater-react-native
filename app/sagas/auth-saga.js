@@ -11,85 +11,96 @@ import {
 } from '../utils/firebase-utils';
 
 export default function* authSaga() {
-  yield put({ type: 'AUTH_INIT' });
-  const authStateChannel = yield call(createAuthStateChannel);
-  yield takeEvery(authStateChannel, authStateChangedSaga);
-  yield takeEvery('AUTH_SIGNOUT', authSignOutSaga);
+  try {
+    yield put({ type: 'AUTH_INIT' });
+    const authStateChannel = yield call(createAuthStateChannel);
+    yield takeEvery(authStateChannel, authStateChangedSaga);
+    yield takeEvery('AUTH_SIGNOUT', authSignOutSaga);
+  } catch (error) {
+    yield put({ type: 'AUTH_MAINSAGA_ERROR', payload: error });
+  }
 }
 
 function* authSignOutSaga() {
-  const { currentUser } = firebase.auth();
-
-  if (currentUser && currentUser.isAnonymous) {
-    yield call(deleteFirestoreDoc, {
-      collection: 'users',
-      doc: currentUser.uid,
-    });
-    yield call(deleteFirestoreDoc, {
-      collection: 'geoPoints',
-      doc: currentUser.uid,
-    });
-    yield call([currentUser, 'delete']);
-  } else {
-    yield call([firebase.auth()], 'signOut');
+  try {
+    const { currentUser } = firebase.auth();
+    if (currentUser && currentUser.isAnonymous) {
+      yield call(deleteFirestoreDoc, {
+        collection: 'users',
+        doc: currentUser.uid,
+      });
+      yield call(deleteFirestoreDoc, {
+        collection: 'geoPoints',
+        doc: currentUser.uid,
+      });
+      yield call([currentUser, 'delete']);
+    } else {
+      yield call([firebase.auth()], 'signOut');
+    }
+  } catch (error) {
+    yield put({ type: 'AUTH_SIGNOUT_ERROR', payload: error });
   }
 }
 
 function* authStateChangedSaga(user) {
-  if (user.uid) {
-    yield call(setFirestore, {
-      collection: 'users',
-      doc: user.uid,
-      data: {},
-      args: {
-        merge: true,
-      },
-    });
-    yield call(setFirestore, {
-      collection: 'geoPoints',
-      doc: user.uid,
-      data: {},
-      args: {
-        merge: true,
-      },
-    });
-    yield call(updateFirestore, {
-      collection: 'users',
-      doc: user.uid,
-      data: {
-        device: {
-          isEmulator: DeviceInfo.isEmulator(),
-          osVersion: DeviceInfo.getSystemVersion(),
-          uuid: DeviceInfo.getUniqueID(),
-          platform: Platform.OS,
-          locale: DeviceInfo.getDeviceLocale(),
+  try {
+    if (user.uid) {
+      yield call(setFirestore, {
+        collection: 'users',
+        doc: user.uid,
+        data: {},
+        args: {
+          merge: true,
         },
-      },
-    });
-    yield put({
-      type: 'AUTH_SUCCESS',
-      payload: user,
-    });
-  } else {
-    const anonymousUser = yield call([firebase.auth(), 'signInAnonymouslyAndRetrieveData']);
+      });
+      yield call(setFirestore, {
+        collection: 'geoPoints',
+        doc: user.uid,
+        data: {},
+        args: {
+          merge: true,
+        },
+      });
+      yield call(updateFirestore, {
+        collection: 'users',
+        doc: user.uid,
+        data: {
+          device: {
+            isEmulator: DeviceInfo.isEmulator(),
+            osVersion: DeviceInfo.getSystemVersion(),
+            uuid: DeviceInfo.getUniqueID(),
+            platform: Platform.OS,
+            locale: DeviceInfo.getDeviceLocale(),
+          },
+        },
+      });
+      yield put({
+        type: 'AUTH_SUCCESS',
+        payload: user,
+      });
+    } else {
+      const anonymousUser = yield call([firebase.auth(), 'signInAnonymouslyAndRetrieveData']);
 
-    yield call(setFirestore, {
-      collection: 'users',
-      doc: anonymousUser.user.uid,
-      data: {
-        registered: firebase.firestore.FieldValue.serverTimestamp(),
-      },
-    });
+      yield call(setFirestore, {
+        collection: 'users',
+        doc: anonymousUser.user.uid,
+        data: {
+          registered: firebase.firestore.FieldValue.serverTimestamp(),
+        },
+      });
 
-    yield put({
-      type: 'AUTH_SUCCESS_NEW_USER',
-      payload: {
-        isNewUser: anonymousUser.additionalUserInfo.isNewUser,
-        isAnonymous: anonymousUser.user.isAnonymous,
-        uid: anonymousUser.user.uid,
-        metadata: anonymousUser.user.metadata,
-      },
-    });
+      yield put({
+        type: 'AUTH_SUCCESS_NEW_USER',
+        payload: {
+          isNewUser: anonymousUser.additionalUserInfo.isNewUser,
+          isAnonymous: anonymousUser.user.isAnonymous,
+          uid: anonymousUser.user.uid,
+          metadata: anonymousUser.user.metadata,
+        },
+      });
+    }
+  } catch (error) {
+    yield put({ type: 'AUTH_STATE_CHANGED_ERROR', payload: error });
   }
 }
 
