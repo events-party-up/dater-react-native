@@ -10,15 +10,19 @@ const HEADING_UPDATE_ON_DEGREE_CHANGED = 10;
 const getUid = (state) => state.auth.uid;
 
 export default function* compassSaga() {
-  const compassChannel = yield call(createCompassChannel);
-  yield takeEvery(compassChannel, updateCompassHeading);
-  yield throttle(5000, 'GEO_COMPASS_HEADING_UPDATE', writeHeadingToFirestore);
+  try {
+    const compassChannel = yield call(createCompassChannel);
+    yield takeEvery(compassChannel, updateCompassHeading);
+    yield throttle(5000, 'GEO_COMPASS_HEADING_UPDATE', writeHeadingToFirestore);
 
-  while (true) {
-    yield take('GEO_COMPASS_HEADING_START');
-    yield* compassStart();
-    yield take('GEO_COMPASS_HEADING_STOP', compassStop);
-    yield* compassStop();
+    while (true) {
+      yield take('GEO_COMPASS_HEADING_START');
+      yield* compassStart();
+      yield take('GEO_COMPASS_HEADING_STOP', compassStop);
+      yield* compassStop();
+    }
+  } catch (error) {
+    yield put({ type: 'GEO_COMPASS_MAINSAGA_ERROR', payload: error });
   }
 }
 
@@ -31,7 +35,7 @@ function* compassStart() {
       yield put({ type: 'GEO_COMPASS_HEADING_UNAVAILABLE' });
     }
   } catch (error) {
-    yield put({ type: 'GEO_COMPASS_UNKNOWN_ERROR', payload: error });
+    yield put({ type: 'GEO_COMPASS_START_ERROR', payload: error });
   }
 }
 
@@ -40,7 +44,7 @@ function* compassStop() {
     yield call([ReactNativeHeading, 'stop']);
     yield put({ type: 'GEO_COMPASS_HEADING_STOPPED' });
   } catch (error) {
-    yield put({ type: 'GEO_COMPASS_UNKNOWN_ERROR', payload: error });
+    yield put({ type: 'GEO_COMPASS_STOP_ERROR', payload: error });
   }
 }
 
@@ -49,17 +53,21 @@ function* updateCompassHeading(heading) {
 }
 
 function* writeHeadingToFirestore(action) {
-  const heading = action.payload;
-  const uid = yield select(getUid);
-  if (!uid) return;
+  try {
+    const heading = action.payload;
+    const uid = yield select(getUid);
+    if (!uid) return;
 
-  yield call(updateFirestore, {
-    collection: 'geoPoints',
-    doc: uid,
-    data: {
-      compassHeading: heading,
-    },
-  });
+    yield call(updateFirestore, {
+      collection: 'geoPoints',
+      doc: uid,
+      data: {
+        compassHeading: heading,
+      },
+    });
+  } catch (error) {
+    yield put({ type: 'GEO_COMPASS_UPDATE_ERROR', payload: error });
+  }
 }
 
 function createCompassChannel() {

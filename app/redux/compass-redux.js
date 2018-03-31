@@ -7,7 +7,10 @@ const types = {
   GEO_COMPASS_HEADING_STOPPED: 'GEO_COMPASS_HEADING_STOPPED',
   GEO_COMPASS_HEADING_UPDATE: 'GEO_COMPASS_HEADING_UPDATE',
   GEO_COMPASS_HEADING_UNAVAILABLE: 'GEO_COMPASS_HEADING_UNAVAILABLE',
-  GEO_COMPASS_UNKNOWN_ERROR: 'GEO_COMPASS_UNKNOWN_ERROR',
+  GEO_COMPASS_MAINSAGA_ERROR: 'GEO_COMPASS_MAINSAGA_ERROR',
+  GEO_COMPASS_START_ERROR: 'GEO_COMPASS_START_ERROR',
+  GEO_COMPASS_STOP_ERROR: 'GEO_COMPASS_STOP_ERROR',
+  GEO_COMPASS_UPDATE_ERROR: 'GEO_COMPASS_UPDATE_ERROR',
 };
 
 const initialState = {
@@ -52,12 +55,13 @@ const compassReducer = (state = initialState, action) => {
     case types.GEO_COMPASS_HEADING_UNAVAILABLE: {
       return initialState;
     }
-    case types.GEO_COMPASS_UNKNOWN_ERROR: {
+    case types.GEO_COMPASS_MAINSAGA_ERROR:
+    case types.GEO_COMPASS_START_ERROR:
+    case types.GEO_COMPASS_STOP_ERROR:
+    case types.GEO_COMPASS_UPDATE_ERROR: {
       return {
         ...state,
-        enabled: false,
         error: payload,
-        heading: 0,
       };
     }
     default: {
