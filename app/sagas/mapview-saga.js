@@ -1,14 +1,18 @@
-import { throttle, takeEvery, call, take } from 'redux-saga/effects';
+import { throttle, takeEvery, call, take, put } from 'redux-saga/effects';
 import GeoUtils from '../utils';
 
 const defaultAnimationDuration = 500;
 
 export default function* mapViewSaga() {
-  yield throttle(1000, 'MAPVIEW_ROTATE', rotate);
-  yield takeEvery('MAPVIEW_ANIMATE_TO_REGION', animateToRegion);
-  yield takeEvery('MAPVIEW_ANIMATE_TO_COORDINATE', animateToCoordinate);
-  const { mapView } = yield take('MAPVIEW_READY');
-  yield throttle(1000, 'GEO_COMPASS_HEADING_UPDATE', rotateMapViewSaga, mapView);
+  try {
+    yield throttle(1000, 'MAPVIEW_ROTATE', rotate);
+    yield takeEvery('MAPVIEW_ANIMATE_TO_REGION', animateToRegion);
+    yield takeEvery('MAPVIEW_ANIMATE_TO_COORDINATE', animateToCoordinate);
+    const { mapView } = yield take('MAPVIEW_READY');
+    yield throttle(1000, 'GEO_COMPASS_HEADING_UPDATE', rotateMapViewSaga, mapView);
+  } catch (error) {
+    yield put({ type: 'MAPVIEW_MAINSAGA_ERROR', payload: error });
+  }
 }
 
 function* rotateMapViewSaga(mapView, action) {

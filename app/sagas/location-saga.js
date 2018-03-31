@@ -33,7 +33,7 @@ export default function* locationSaga() {
       yield put({ type: 'GEO_LOCATION_STOPPED' });
     }
   } catch (error) {
-    yield put({ type: 'GEO_LOCATION_ERROR', payload: error });
+    yield put({ type: 'GEO_LOCATION_MAINSAGA_ERROR', payload: error });
   }
 }
 
@@ -62,21 +62,25 @@ function* updateLocation(coords) {
 }
 
 function* writeGeoLocationToFirestore() {
-  const coords = yield select((state) => state.location.coords);
-  const uid = yield select((state) => state.auth.uid);
-  if (!uid || !coords) return;
+  try {
+    const coords = yield select((state) => state.location.coords);
+    const uid = yield select((state) => state.auth.uid);
+    if (!uid || !coords) return;
 
-  yield call(updateFirestore, {
-    collection: 'geoPoints',
-    doc: uid,
-    data: {
-      accuracy: coords.accuracy,
-      heading: coords.heading,
-      speed: coords.speed,
-      geoPoint: new firebase.firestore.GeoPoint(coords.latitude, coords.longitude),
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    },
-  });
+    yield call(updateFirestore, {
+      collection: 'geoPoints',
+      doc: uid,
+      data: {
+        accuracy: coords.accuracy,
+        heading: coords.heading,
+        speed: coords.speed,
+        geoPoint: new firebase.firestore.GeoPoint(coords.latitude, coords.longitude),
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+    });
+  } catch (error) {
+    yield put({ type: 'GEO_LOCATION_UPDATE_FIRESTORE_ERROR', payload: error });
+  }
 }
 
 function createLocationChannel() {

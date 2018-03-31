@@ -8,6 +8,8 @@ const types = {
   MAPVIEW_ANIMATE_TO_COORDINATE: 'MAPVIEW_ANIMATE_TO_COORDINATE',
   MAPVIEW_ROTATE: 'MAPVIEW_ROTATE',
   MAPVIEW_READY: 'MAPVIEW_READY',
+  MAPVIEW_INIT_REGION_ERROR: 'MAPVIEW_INIT_REGION_ERROR',
+  MAPVIEW_MAINSAGA_ERROR: 'MAPVIEW_MAINSAGA_ERROR',
 };
 
 const { width, height } = Dimensions.get('window');
@@ -66,6 +68,13 @@ const mapViewReducer = (state = initialState, action) => {
       return {
         ...state,
         mapReady: true,
+      };
+    }
+    case types.MAPVIEW_INIT_REGION_ERROR:
+    case types.MAPVIEW_MAINSAGA_ERROR: {
+      return {
+        ...state,
+        error: payload,
       };
     }
     default: {

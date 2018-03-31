@@ -9,7 +9,7 @@ export default function* mapViewInitializeRegionSaga(action) {
     const initialLocation = yield take('GEO_LOCATION_UPDATED'); // get first geo update
     yield animateToCurrentRegion(mapView, initialLocation); // zoom map to first location
   } catch (error) {
-    yield put({ type: 'GEO_LOCATION_ERROR', payload: error });
+    yield put({ type: 'MAPVIEW_INIT_REGION_ERROR', payload: error });
   }
 }
 
