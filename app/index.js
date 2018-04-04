@@ -4,11 +4,13 @@ import { Provider } from 'react-redux';
 import firebase from 'react-native-firebase';
 
 import configureStore from './config/configure-store';
-import Main from './containers';
+import RootStack from './navigators';
 
 const store = configureStore();
+type Props = {
+};
 
-export default class App extends Component {
+export default class App extends Component<Props> {
   componentDidMount() {
     firebase.analytics().logEvent('App_Started', {
       platform: Platform.OS,
@@ -18,7 +20,7 @@ export default class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <Main />
+        <RootStack />
       </Provider>
     );
   }
