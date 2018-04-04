@@ -32,7 +32,7 @@ export const Body = (props) => (
 
 export const Caption1 = (props) => (
   <TextWithLetterSpacing spacing={1.2} textStyle={styles.caption1}>
-    {props.children}
+    {props.children.toUpperCase()}
   </TextWithLetterSpacing>
 );
 
