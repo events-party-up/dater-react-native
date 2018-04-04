@@ -2,29 +2,13 @@ import React, { Component } from 'react';
 import { Platform } from 'react-native';
 import { Provider } from 'react-redux';
 import firebase from 'react-native-firebase';
-import { StackNavigator } from 'react-navigation';
 
 import configureStore from './config/configure-store';
-import Main from './containers';
+import RootStack from './navigators';
 
 const store = configureStore();
 type Props = {
 };
-
-class MainScreen extends Component<Props> {
-  render() {
-    return (
-      <Main />
-    );
-  }
-}
-
-const RootStack = StackNavigator({
-  Home: {
-    screen: MainScreen,
-  },
-});
-
 
 export default class App extends Component<Props> {
   componentDidMount() {

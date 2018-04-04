@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  // Button,
+  Button,
 } from 'react-native';
 import { connect, Dispatch } from 'react-redux';
+import { type NavigationScreenProp, type NavigationStateRoute } from 'react-navigation';
 
 import { DaterMapView } from '../components';
 import listenForUsersAround from '../services/geo-query';
@@ -20,6 +21,7 @@ type Props = {
   location: {
     coords: GeoCoordinates,
   },
+  navigation: NavigationScreenProp<NavigationStateRoute>,
 };
 
 class Main extends Component<Props> {
@@ -56,6 +58,9 @@ class Main extends Component<Props> {
         {/* <View style={styles.button}>
           <Button title="Выйти" color="blue" onPress={this.signOut} />
         </View> */}
+        <View style={styles.button}>
+          <Button title="Вход" color="blue" onPress={() => this.props.navigation.navigate('Login')} />
+        </View>
         <DaterMapView />
       </View>
     );
