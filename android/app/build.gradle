@@ -141,7 +141,6 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-background-fetch')
     compile(project(':react-native-background-geolocation')) {
         exclude group: 'com.google.android.gms', module: 'play-services-location'
     }

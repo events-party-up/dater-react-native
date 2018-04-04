@@ -5,7 +5,7 @@ import {
   Button,
 } from 'react-native';
 
-import { H1, H2 } from '../components/ui-kit/typography';
+import { H1, H2, H3, Body, Caption1, Caption2 } from '../components/ui-kit/typography';
 
 type Props = {
   navigation: any,
@@ -27,6 +27,10 @@ export default class LoginScreen extends Component<Props> {
         </View>
         <H1>Sibainu 32/40</H1>
         <H2>Sibainu 22/24</H2>
+        <H3>Sibainu 16/20</H3>
+        <Body>Sibainu 16/20</Body>
+        <Caption1>SIABINU 12/16</Caption1>
+        <Caption2>Sibainu 12/16</Caption2>
         <View style={styles.button}>
           <Button title="Войти" color="blue" onPress={this.signIn} />
         </View>
