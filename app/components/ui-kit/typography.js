@@ -4,6 +4,8 @@ import {
   Text,
 } from 'react-native';
 
+import TextWithLetterSpacing from './text-with-letter-spacing';
+
 export const H1 = (props) => (
   <Text style={styles.h1}>
     {props.children}
@@ -29,9 +31,9 @@ export const Body = (props) => (
 );
 
 export const Caption1 = (props) => (
-  <Text style={styles.caption1}>
+  <TextWithLetterSpacing spacing={1.2} textStyle={styles.caption1}>
     {props.children}
-  </Text>
+  </TextWithLetterSpacing>
 );
 
 export const Caption2 = (props) => (
@@ -80,7 +82,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'normal',
     textAlign: 'left',
-    letterSpacing: 1.5,
   },
   caption2: {
     fontFamily: 'Open Sans',
