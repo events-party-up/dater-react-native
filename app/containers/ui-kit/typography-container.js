@@ -3,6 +3,7 @@ import {
   StyleSheet,
   View,
   Button,
+  Platform,
 } from 'react-native';
 
 import { H1, H2, H3, Body, Caption1, Caption2 } from '../../components/ui-kit/typography';
@@ -104,12 +105,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   modalContainer: {
+    margin: 8,
+    marginTop: Platform.OS === 'ios' ? 20 : 8,
     flex: 1,
     justifyContent: 'center',
     shadowColor: 'rgba(0, 0, 0, 0.05)',
+    backgroundColor: '#ffffff',
     shadowRadius: 16,
-    // borderRadius: 20,
-    // borderWidth: 1,
+    borderRadius: 4,
     shadowOffset: {
       width: 0, height: 4,
     },
