@@ -32,7 +32,7 @@ class Main extends Component<Props> {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.coords && !this.unsubscribeFromUsersAround) {
+    if (nextProps.location.coords && !this.unsubscribeFromUsersAround) {
       const queryArea = {
         center: {
           latitude: nextProps.location.coords.latitude,
