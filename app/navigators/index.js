@@ -1,6 +1,10 @@
 import { StackNavigator } from 'react-navigation';
 
-import Main from '../containers';
+import {
+  Main,
+  TypographyContainer,
+} from '../containers';
+
 import LoginScreen from '../containers/login';
 
 const MainStack = StackNavigator(
@@ -29,6 +33,12 @@ const RootStack = StackNavigator(
     Login: {
       screen: LoginScreen,
       title: 'Login Screen',
+      headerMode: 'none',
+    },
+    Typography: {
+      screen: TypographyContainer,
+      title: 'Typography',
+      headerMode: 'none',
     },
   },
   {

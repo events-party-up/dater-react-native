@@ -58,8 +58,11 @@ class Main extends Component<Props> {
         {/* <View style={styles.button}>
           <Button title="Выйти" color="blue" onPress={this.signOut} />
         </View> */}
-        <View style={styles.button}>
+        <View style={styles.loginButton}>
           <Button title="Вход" color="blue" onPress={() => this.props.navigation.navigate('Login')} />
+        </View>
+        <View style={styles.button}>
+          <Button title="Typography" color="blue" onPress={() => this.props.navigation.navigate('Typography')} />
         </View>
         <DaterMapView />
       </View>
@@ -80,6 +83,12 @@ const styles = StyleSheet.create({
     bottom: 50,
     left: 0,
     right: 0,
+  },
+  loginButton: {
+    position: 'absolute',
+    zIndex: 2,
+    right: 20,
+    top: 20,
   },
   debugText: {
     position: 'absolute',
