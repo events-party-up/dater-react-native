@@ -15,8 +15,13 @@ export default function* mapViewSaga() {
 
     yield takeEvery('MAPVIEW_ANIMATE_TO_REGION', animateToRegion, mapView);
     yield takeEvery('MAPVIEW_ANIMATE_TO_COORDINATE', animateToCoordinate, mapView);
-    yield throttle(1000, 'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY', animateToBearing, mapView);
-    yield throttle(1000, 'MAPVIEW_ANIMATE_TO_BEARING_HEADING', animateToBearing, mapView);
+    yield throttle(1000, [
+      'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
+      'MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING',
+      'MAPVIEW_ANIMATE_TO_BEARING_COMPASS_HEADING'], animateToBearing, mapView);
+    // yield throttle(1000, 'MAPVIEW_ANIMATE_TO_BEARING_HEADING', animateToBearing, mapView);
+    // yield throttle(1000, 'MAPVIEW_ANIMATE_TO_BEARING_HEADING', animateToBearing, mapView);
+    // yield throttle(1000, 'MAPVIEW_ANIMATE_TO_BEARING_HEADING', animateToBearing, mapView);
   } catch (error) {
     yield put({ type: 'MAPVIEW_MAINSAGA_ERROR', payload: error });
   }
