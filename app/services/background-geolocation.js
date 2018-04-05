@@ -18,8 +18,8 @@ const geoOptions = async () => {
     distanceFilter: 2,
     desiredAccuracy: RNBackgroundGeolocation.DESIRED_ACCURACY_HIGH,
     stopTimeout: 1,
-    debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
-    logLevel: RNBackgroundGeolocation.LOG_LEVEL_VERBOSE,
+    debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
+    logLevel: RNBackgroundGeolocation.LOG_LEVEL_DEBUG,
     stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.
     enableHeadless: true, // <-- Android Headless mode
     foregroundService: false, // <-- Android, enforced to true on Android 8
