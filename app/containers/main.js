@@ -61,9 +61,9 @@ class Main extends Component<Props> {
         <View style={styles.loginButton}>
           <Button title="Вход" color="blue" onPress={() => this.props.navigation.navigate('Login')} />
         </View>
-        <View style={styles.button}>
+        {/* <View style={styles.button}>
           <Button title="Typography" color="blue" onPress={() => this.props.navigation.navigate('Typography')} />
-        </View>
+        </View> */}
         <DaterMapView />
       </View>
     );
