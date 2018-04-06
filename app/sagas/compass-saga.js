@@ -51,7 +51,7 @@ function* compassStop() {
 
 function* updateCompassHeading(heading) {
   const gpsCoords = yield select((state) => state.location.coords);
-  if (gpsCoords && gpsCoords.heading >= 0) return; // do not rotate map if GPS heading is active
+  if (gpsCoords && gpsCoords.heading > 0) return; // do not rotate map if GPS heading is active
 
   const bearingAngle = GeoUtils.wrapCompassHeading(heading);
   yield put({ type: 'GEO_COMPASS_HEADING_UPDATE', payload: heading });
