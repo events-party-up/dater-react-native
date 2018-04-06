@@ -1,8 +1,9 @@
 import DaterMapView from './dater-map-view';
 import FirebaseSetup from './firebase-setup';
-import PersonMaker from './person-maker';
-import MyLocationMapMarker from './my-location-map-maker';
-import MyLocationButton from './my-location-button';
+import PersonMaker from './map/person-maker';
+import MyLocationMapMarker from './map/my-location-map-maker';
+import MyLocationOnMovingMap from './map/my-location-on-moving-map';
+import MyLocationButton from './map/my-location-button';
 
 export {
   DaterMapView,
@@ -10,4 +11,5 @@ export {
   PersonMaker,
   MyLocationMapMarker,
   MyLocationButton,
+  MyLocationOnMovingMap,
 };

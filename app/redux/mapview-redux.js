@@ -42,8 +42,8 @@ const mapViewReducer = (state = initialState, action) => {
         longitude: payload.newRegion.longitude,
       };
       const corner = {
-        latitude: center.latitude + payload.newRegion.latitudeDelta,
-        longitude: payload.newRegion.longitude + payload.newRegion.longitudeDelta,
+        latitude: center.latitude + (payload.newRegion.latitudeDelta / 2),
+        longitude: payload.newRegion.longitude + (payload.newRegion.longitudeDelta / 2),
       };
       const visibleRadiusInMeters = GeoUtils.distance(center, corner);
 

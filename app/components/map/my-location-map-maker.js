@@ -15,6 +15,7 @@ const HEADING_BOX_SIZE = HALO_SIZE + ARROW_SIZE + ARROW_DISTANCE;
 const colorOfmyLocationMapMarker = 'blue';
 
 type Props = {
+  accuracy: number,
   heading: number,
   compassHeading: number,
   coordinate: {

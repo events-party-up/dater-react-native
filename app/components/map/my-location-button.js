@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { GeoCoordinates } from '../types';
+import { GeoCoordinates } from '../../types';
 
 type Props = {
   centerMe: (region: GeoCoordinates) => void,
