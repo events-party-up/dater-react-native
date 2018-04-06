@@ -12,7 +12,7 @@ const ARROW_SIZE = 7;
 const ARROW_DISTANCE = 10;
 const HALO_SIZE = SIZE + HALO_RADIUS;
 const HEADING_BOX_SIZE = HALO_SIZE + ARROW_SIZE + ARROW_DISTANCE;
-const colorOfmyLocationMapMarker = 'red';
+const colorOfmyLocationMapMarker = 'blue';
 const { width, height } = Dimensions.get('window');
 const DIAGONAL = Math.sqrt((width * width) + (height * height));
 
@@ -44,7 +44,6 @@ class MyLocationOnMovingMap extends React.PureComponent<Props> {
           alignItems: 'center',
           position: 'absolute',
           zIndex: 1,
-          borderWidth: 1,
         }}
         />
         <View style={styles.container}>
