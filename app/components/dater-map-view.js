@@ -12,7 +12,7 @@ import Moment from 'react-moment';
 
 import {
   MyLocationOnMovingMap,
-  MyLocationMapMarker,
+  // MyLocationMapMarker,
   MyLocationButton,
   PersonMaker,
 } from './index';
