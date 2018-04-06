@@ -197,13 +197,13 @@ class DaterMapView extends Component<Props> {
           rotateEnabled={false}
           mapType="standard"
         >
-          {this.props.location.enabled && this.props.location.coords &&
+          {/* {this.props.location.enabled && this.props.location.coords &&
             <MyLocationMapMarker
               accuracy={this.props.location.coords.accuracy}
               coordinate={this.props.location.coords}
               gpsHeading={this.props.location.coords.heading}
               compassHeading={this.props.compass.heading}
-            /> }
+            /> } */}
           {this.props.location.enabled && this.renderUsersAround()}
         </MapView>
         <Text style={styles.debugText}>
