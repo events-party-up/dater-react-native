@@ -7,7 +7,8 @@ const types = {
   MAPVIEW_ANIMATE_TO_REGION: 'MAPVIEW_ANIMATE_TO_REGION',
   MAPVIEW_ANIMATE_TO_COORDINATE: 'MAPVIEW_ANIMATE_TO_COORDINATE',
   MAPVIEW_ANIMATE_TO_BEARING_MANUALLY: 'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
-  MAPVIEW_ANIMATE_TO_BEARING_HEADING: 'MAPVIEW_ANIMATE_TO_BEARING_HEADING',
+  MAPVIEW_ANIMATE_TO_BEARING_COMPASS_HEADING: 'MAPVIEW_ANIMATE_TO_BEARING_COMPASS_HEADING',
+  MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING: 'MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING',
   MAPVIEW_READY: 'MAPVIEW_READY',
   MAPVIEW_INIT_REGION_ERROR: 'MAPVIEW_INIT_REGION_ERROR',
   MAPVIEW_MAINSAGA_ERROR: 'MAPVIEW_MAINSAGA_ERROR',
@@ -22,6 +23,8 @@ const DEFAULT_LATITUDE_DELTA = 0.00322;
 const DEFAULT_LONGITUDE_DELTA = DEFAULT_LATITUDE_DELTA * ASPECT_RATIO;
 
 const initialState = {
+  longitude: null,
+  latitude: null,
   latitudeDelta: DEFAULT_LATITUDE_DELTA,
   longitudeDelta: DEFAULT_LONGITUDE_DELTA,
   visibleRadiusInMeters: 410,
@@ -39,8 +42,8 @@ const mapViewReducer = (state = initialState, action) => {
         longitude: payload.newRegion.longitude,
       };
       const corner = {
-        latitude: center.latitude + payload.newRegion.latitudeDelta,
-        longitude: payload.newRegion.longitude + payload.newRegion.longitudeDelta,
+        latitude: center.latitude + (payload.newRegion.latitudeDelta / 2),
+        longitude: payload.newRegion.longitude + (payload.newRegion.longitudeDelta / 2),
       };
       const visibleRadiusInMeters = GeoUtils.distance(center, corner);
 
@@ -62,7 +65,8 @@ const mapViewReducer = (state = initialState, action) => {
         ...payload.coords,
       };
     }
-    case types.MAPVIEW_ANIMATE_TO_BEARING_HEADING:
+    case types.MAPVIEW_ANIMATE_TO_BEARING_COMPASS_HEADING:
+    case types.MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING:
     case types.MAPVIEW_ANIMATE_TO_BEARING_MANUALLY: {
       return {
         ...state,

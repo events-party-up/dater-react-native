@@ -15,6 +15,7 @@ const HEADING_BOX_SIZE = HALO_SIZE + ARROW_SIZE + ARROW_DISTANCE;
 const colorOfmyLocationMapMarker = 'blue';
 
 type Props = {
+  accuracy: number,
   heading: number,
   compassHeading: number,
   coordinate: {
@@ -28,7 +29,11 @@ class MyLocationMapMarker extends React.PureComponent<Props> {
   render() {
     // let { heading } = this.props;
     let { compassHeading } = this.props;
+    // let { gpsHeading } = this.props;
+    const { accuracy } = this.props;
+
     const { coordinate } = this.props;
+
     if (compassHeading < 0 || !compassHeading) {
       compassHeading = 0;
     }
@@ -45,7 +50,7 @@ class MyLocationMapMarker extends React.PureComponent<Props> {
             latitude: this.props.coordinate.latitude,
             longitude: this.props.coordinate.longitude,
           }}
-          radius={coordinate.accuracy}
+          radius={accuracy}
           strokeColor="#b0e0e6"
           fillColor="rgba(30,144,255,0.2)"
         />

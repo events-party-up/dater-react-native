@@ -32,7 +32,7 @@ class Main extends Component<Props> {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.coords && !this.unsubscribeFromUsersAround) {
+    if (nextProps.location.coords && !this.unsubscribeFromUsersAround) {
       const queryArea = {
         center: {
           latitude: nextProps.location.coords.latitude,
@@ -61,9 +61,9 @@ class Main extends Component<Props> {
         <View style={styles.loginButton}>
           <Button title="Вход" color="blue" onPress={() => this.props.navigation.navigate('Login')} />
         </View>
-        <View style={styles.button}>
+        {/* <View style={styles.button}>
           <Button title="Typography" color="blue" onPress={() => this.props.navigation.navigate('Typography')} />
-        </View>
+        </View> */}
         <DaterMapView />
       </View>
     );

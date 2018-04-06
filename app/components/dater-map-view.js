@@ -10,9 +10,13 @@ import { connect, Dispatch } from 'react-redux';
 import 'moment/locale/ru';
 import Moment from 'react-moment';
 
-import PersonMaker from './person-maker';
-import MyLocationMapMarker from './my-location-map-maker';
-import MyLocationButton from './my-location-button';
+import {
+  MyLocationOnMovingMap,
+  // MyLocationMapMarker,
+  MyLocationButton,
+  PersonMaker,
+} from './index';
+
 import { GeoCompass, GeoCoordinates } from '../types';
 
 const mapStateToProps = (state) => ({
@@ -172,6 +176,11 @@ class DaterMapView extends Component<Props> {
           toggleGeoService={() => this.props.toggleGeoService(this.props.location)}
           centerMe={(coordinates) => this.props.animateToCoordinate(this.mapView, coordinates)}
         />
+        {this.props.location.coords &&
+        <MyLocationOnMovingMap
+          accuracy={this.props.location.coords.accuracy}
+          visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
+        /> }
         <MapView
           ref={(component) => { this.mapView = component; }}
           style={styles.mapView}
@@ -188,12 +197,13 @@ class DaterMapView extends Component<Props> {
           rotateEnabled={false}
           mapType="standard"
         >
-          {this.props.location.enabled && this.props.location.coords &&
+          {/* {this.props.location.enabled && this.props.location.coords &&
             <MyLocationMapMarker
+              accuracy={this.props.location.coords.accuracy}
               coordinate={this.props.location.coords}
               gpsHeading={this.props.location.coords.heading}
               compassHeading={this.props.compass.heading}
-            /> }
+            /> } */}
           {this.props.location.enabled && this.renderUsersAround()}
         </MapView>
         <Text style={styles.debugText}>

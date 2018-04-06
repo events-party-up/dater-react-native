@@ -5,6 +5,7 @@ import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 
 import BackgroundGeolocation from '../services/background-geolocation';
 import { updateFirestore } from '../utils/firebase-utils';
+import GeoUtils from '../utils';
 
 export default function* locationSaga() {
   try {
@@ -17,6 +18,7 @@ export default function* locationSaga() {
     const locationServiceState = yield BackgroundGeolocation.init();
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
     yield throttle(500, 'GEO_LOCATION_UPDATED', animateToCurrentLocation);
+    yield throttle(500, 'GEO_LOCATION_UPDATED', mapViewAnimateToBearing);
     yield throttle(2000, 'GEO_LOCATION_UPDATED', writeGeoLocationToFirestore);
 
     while (true) {
@@ -80,6 +82,20 @@ function* writeGeoLocationToFirestore() {
     yield put({ type: 'GEO_LOCATION_UPDATE_FIRESTORE_ERROR', payload: error });
   }
 }
+
+function* mapViewAnimateToBearing(action) {
+  const gpsHeading = action.payload.heading;
+  if (gpsHeading < 0) return;
+
+  const bearingAngle = GeoUtils.wrapCompassHeading(gpsHeading);
+  yield put({
+    type: 'MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING',
+    payload: {
+      bearingAngle,
+    },
+  });
+}
+
 
 function createLocationChannel() {
   return eventChannel((emit) => {
