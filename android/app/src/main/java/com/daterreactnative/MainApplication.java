@@ -5,6 +5,7 @@ import android.app.Application;
 // Firebase packages
 import com.facebook.react.ReactApplication;
 import com.transistorsoft.rnbackgroundgeolocation.*;
+import com.transistorsoft.rnbackgroundfetch.RNBackgroundFetchPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.joshblour.reactnativeheading.ReactNativeHeadingPackage;
 
@@ -38,6 +39,7 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
           new RNBackgroundGeolocation(),
+          new RNBackgroundFetchPackage(),
           new RNDeviceInfo(),
           new RNFirebasePackage(),
           new MapsPackage(),

@@ -97,13 +97,13 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '26.0.2'
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
 
     defaultConfig {
         applicationId "com.daterreactnative"
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion rootProject.targetSdkVersion
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -144,6 +144,8 @@ dependencies {
     compile(project(':react-native-background-geolocation')) {
         exclude group: 'com.google.android.gms', module: 'play-services-location'
     }
+    compile project(':react-native-background-fetch')
+
     compile(name: 'tslocationmanager', ext: 'aar')
     compile project(':react-native-device-info')
     compile 'com.android.support:multidex:1.0.0'
