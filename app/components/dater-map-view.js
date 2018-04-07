@@ -123,6 +123,13 @@ class DaterMapView extends Component<Props> {
   componentDidMount() {
   }
 
+  componentWillUnmount() {
+    // this.unsubscribeFromUsersAround();
+    this.props.dispatch({
+      type: 'MAPVIEW_UNLOAD',
+    });
+  }
+
   onMapReady= () => {
     this.props.dispatch({
       type: 'MAPVIEW_READY',

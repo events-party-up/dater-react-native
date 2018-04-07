@@ -10,6 +10,7 @@ const types = {
   MAPVIEW_ANIMATE_TO_BEARING_COMPASS_HEADING: 'MAPVIEW_ANIMATE_TO_BEARING_COMPASS_HEADING',
   MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING: 'MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING',
   MAPVIEW_READY: 'MAPVIEW_READY',
+  MAPVIEW_UNLOAD: 'MAPVIEW_UNLOAD',
   MAPVIEW_INIT_REGION_ERROR: 'MAPVIEW_INIT_REGION_ERROR',
   MAPVIEW_MAINSAGA_ERROR: 'MAPVIEW_MAINSAGA_ERROR',
   MAPVIEW_ANIMATE_TO_BEARING_ERROR: 'MAPVIEW_ANIMATE_TO_BEARING_ERROR',
@@ -77,6 +78,12 @@ const mapViewReducer = (state = initialState, action) => {
       return {
         ...state,
         mapReady: true,
+      };
+    }
+    case types.MAPVIEW_UNLOAD: {
+      return {
+        ...state,
+        mapReady: false,
       };
     }
     case types.MAPVIEW_ANIMATE_TO_COORDINATE_ERROR:
