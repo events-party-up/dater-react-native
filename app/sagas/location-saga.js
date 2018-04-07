@@ -9,16 +9,11 @@ import GeoUtils from '../utils';
 
 export default function* locationSaga() {
   try {
-    console.log('Starting location saga');
-    
     const locationChannel = yield call(createLocationChannel);
     yield takeEvery(locationChannel, updateLocation);
     yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
     yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeGeoLocationToFirestore);
-
-    console.log('Before mapview ready');
     yield take('MAPVIEW_READY');
-    console.log('After mapview ready');
 
     const locationServiceState = yield call([BackgroundGeolocation, 'init']);
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
@@ -32,8 +27,10 @@ export default function* locationSaga() {
       } else {
         yield call([BackgroundGeolocation, 'start']);
       }
+      yield put({ type: 'GEO_LOCATION_STARTED' });
       yield take('GEO_LOCATION_STOP');
       yield call([BackgroundGeolocation, 'stop']);
+      locationServiceState.enabled = false;
       yield put({ type: 'GEO_LOCATION_STOPPED' });
     }
   } catch (error) {
