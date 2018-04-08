@@ -4448,6 +4448,10 @@ react-native-firebase@^3.3.0:
     postinstall-build "^5.0.1"
     prop-types "^15.6.1"
 
+react-native-heading@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-heading/-/react-native-heading-1.1.1.tgz#a6426bb627df74b1f312f866d103defc85fda357"
+
 react-native-maps@^0.20.1:
   version "0.20.1"
   resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.20.1.tgz#b5247a9a26446b2e1ffc3f680db8ba6ccc960096"

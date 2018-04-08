@@ -10,7 +10,7 @@ import Reactotron from 'reactotron-react-native';
 // https://github.com/evgenyrodionov/redux-logger
 import { createLogger } from 'redux-logger';
 import { reducer } from '../redux';
-import rootSaga from '../sagas/';
+import rootSaga from '../sagas/root-saga';
 
 let storeCreator;
 let sagaMiddleware;

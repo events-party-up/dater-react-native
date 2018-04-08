@@ -13,14 +13,13 @@ export default function* locationSaga() {
     yield takeEvery(locationChannel, updateLocation);
     yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
     yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeGeoLocationToFirestore);
-
     yield take('MAPVIEW_READY');
-    const locationServiceState = yield BackgroundGeolocation.init();
+
+    const locationServiceState = yield call([BackgroundGeolocation, 'init']);
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
     yield throttle(500, 'GEO_LOCATION_UPDATED', animateToCurrentLocation);
     yield throttle(500, 'GEO_LOCATION_UPDATED', mapViewAnimateToBearing);
     yield throttle(2000, 'GEO_LOCATION_UPDATED', writeGeoLocationToFirestore);
-
     while (true) {
       yield take('GEO_LOCATION_START');
       if (locationServiceState.enabled) {
@@ -31,6 +30,7 @@ export default function* locationSaga() {
       yield put({ type: 'GEO_LOCATION_STARTED' });
       yield take('GEO_LOCATION_STOP');
       yield call([BackgroundGeolocation, 'stop']);
+      locationServiceState.enabled = false;
       yield put({ type: 'GEO_LOCATION_STOPPED' });
     }
   } catch (error) {
@@ -55,10 +55,21 @@ function* animateToCurrentLocation(action) {
 }
 
 function* updateLocation(coords) {
-  yield put({
-    type: 'GEO_LOCATION_UPDATED',
-    payload: coords,
-  });
+  if (coords && coords.latitude && coords.longitude) {
+    yield put({
+      type: 'GEO_LOCATION_UPDATED',
+      payload: coords,
+    });
+  } else if (coords.error) {
+    yield put({
+      type: 'GEO_LOCATION_UPDATE_CHANNEL_ERROR',
+      payload: coords.error,
+    });
+  } else {
+    yield put({
+      type: 'GEO_LOCATION_UPDATE_CHANNEL_UNKNOWN_ERROR',
+    });
+  }
 }
 
 function* writeGeoLocationToFirestore() {

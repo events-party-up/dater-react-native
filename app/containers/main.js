@@ -28,7 +28,7 @@ class Main extends Component<Props> {
   unsubscribeFromUsersAround;
 
   componentWillUnmount() {
-    this.unsubscribeFromUsersAround();
+    // this.unsubscribeFromUsersAround();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -41,7 +41,7 @@ class Main extends Component<Props> {
         radius: 25,
       };
       console.log('Attach a listener for users around');
-      this.unsubscribeFromUsersAround = listenForUsersAround(queryArea, this.props.dispatch);
+      // this.unsubscribeFromUsersAround = listenForUsersAround(queryArea, this.props.dispatch);
     }
   }
 
