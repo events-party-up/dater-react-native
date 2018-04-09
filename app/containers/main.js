@@ -83,14 +83,14 @@ const styles = StyleSheet.create({
   button1: {
     position: 'absolute',
     zIndex: 2,
-    bottom: 50,
+    top: 30,
     left: 0,
     right: 0,
   },
   button2: {
     position: 'absolute',
     zIndex: 2,
-    bottom: 100,
+    top: 70,
     left: 0,
     right: 0,
   },

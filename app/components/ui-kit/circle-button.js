@@ -32,6 +32,7 @@ const CircleButton = (props) => {
 
   const styles = StyleSheet.create({
     buttonContainer: {
+      elevation: 1,
       backgroundColor,
       shadowColor,
       width: 64,

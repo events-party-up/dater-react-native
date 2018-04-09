@@ -21,11 +21,10 @@ export const H2 = (props) => (
 export const H3 = (props) => {
   const style = StyleSheet.create({
     h3: {
-      fontFamily: 'Open Sans',
+      fontFamily: props.buttonText ? 'OpenSans-SemiBold' : 'OpenSans-Bold',
       color: props.color ? props.color : '#000000',
       lineHeight: 20,
       fontSize: 16,
-      fontWeight: props.buttonText ? '600' : 'bold',
       textAlign: props.align ? props.align : 'left',
     },
   });
@@ -39,11 +38,10 @@ export const H3 = (props) => {
 export const Body = (props) => {
   const styles = StyleSheet.create({
     body: {
-      fontFamily: 'Open Sans',
+      fontFamily: 'OpenSans-Regular',
       color: props.color ? props.color : '#000000',
       lineHeight: 20,
       fontSize: 16,
-      fontWeight: 'normal',
       textAlign: 'left',
     },
   });
@@ -69,23 +67,21 @@ export const Caption2 = (props) => (
 
 const styles = StyleSheet.create({
   h1: {
-    fontFamily: 'Open Sans',
+    fontFamily: 'OpenSans-Bold',
     color: '#000000',
     lineHeight: 40,
     fontSize: 32,
-    fontWeight: 'bold',
     textAlign: 'left',
   },
   h2: {
-    fontFamily: 'Open Sans',
+    fontFamily: 'OpenSans-Bold',
     color: '#000000',
     lineHeight: 24,
     fontSize: 22,
-    fontWeight: 'bold',
     textAlign: 'left',
   },
   h3: {
-    fontFamily: 'Open Sans',
+    fontFamily: 'OpenSans-Bold',
     color: '#000000',
     lineHeight: 20,
     fontSize: 16,
@@ -93,27 +89,24 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   body: {
-    fontFamily: 'Open Sans',
+    fontFamily: 'OpenSans-Regular',
     color: '#000000',
     lineHeight: 20,
     fontSize: 16,
-    fontWeight: 'normal',
     textAlign: 'left',
   },
   caption1: {
-    fontFamily: 'Open Sans',
+    fontFamily: 'OpenSans-Regular',
     color: 'rgba(0, 0, 0, 0.3)',
     lineHeight: 16,
     fontSize: 12,
-    fontWeight: 'normal',
     textAlign: 'left',
   },
   caption2: {
-    fontFamily: 'Open Sans',
+    fontFamily: 'OpenSans-Regular',
     color: 'rgba(0, 0, 0, 0.4)',
     lineHeight: 16,
     fontSize: 12,
-    fontWeight: 'normal',
     textAlign: 'left',
   },
 });

@@ -74,7 +74,6 @@ export default class TypographyContainer extends Component<Props> {
           </View>
         </View>
       </View>
-
     );
   }
 }
@@ -105,6 +104,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   modalContainer: {
+    elevation: 1,
     margin: 8,
     marginTop: Platform.OS === 'ios' ? 20 : 8,
     flex: 1,
