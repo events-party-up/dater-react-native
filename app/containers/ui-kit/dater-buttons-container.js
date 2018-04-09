@@ -37,6 +37,26 @@ export default class DaterButtonsContainer extends Component<Props> {
             text button
           </DaterButton>
         </View>
+        <View style={styles.row}>
+          <DaterButton type="main" xpReward={14}>
+            награда xp
+          </DaterButton>
+        </View>
+        <View style={styles.row}>
+          <DaterButton type="secondary" xpReward={14}>
+            reward xp
+          </DaterButton>
+        </View>
+        <View style={styles.row}>
+          <DaterButton type="main" coinReward={2}>
+            Coin Reward
+          </DaterButton>
+        </View>
+        <View style={styles.row}>
+          <DaterButton type="secondary" coinReward={2}>
+            Coin Reward
+          </DaterButton>
+        </View>
       </View>
 
     );

@@ -36,11 +36,24 @@ export const H3 = (props) => {
   );
 };
 
-export const Body = (props) => (
-  <Text style={styles.body}>
-    {props.children}
-  </Text>
-);
+export const Body = (props) => {
+  const styles = StyleSheet.create({
+    body: {
+      fontFamily: 'Open Sans',
+      color: props.color ? props.color : '#000000',
+      lineHeight: 20,
+      fontSize: 16,
+      fontWeight: 'normal',
+      textAlign: 'left',
+    },
+  });
+
+  return (
+    <Text style={styles.body}>
+      {props.children}
+    </Text>
+  );
+};
 
 export const Caption1 = (props) => (
   <TextWithLetterSpacing spacing={1.2} textStyle={styles.caption1}>
