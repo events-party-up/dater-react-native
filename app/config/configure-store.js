@@ -43,7 +43,7 @@ export default (initialState) => {
   if (module.hot) {
     console.log('Enabling hot reloading for store');
     // Enable Webpack hot module replacement for reducers
-    module.hot.accept('../redux/index', () => {
+    module.hot.accept(() => {
       console.log('Replacing store');
       const nextRootReducer = require('../redux/index').default; // eslint-disable-line global-require
       store.replaceReducer(nextRootReducer);
