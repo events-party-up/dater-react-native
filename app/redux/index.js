@@ -6,7 +6,25 @@ import locationReducer from './location-redux';
 import mapViewReducer from './mapview-redux';
 import compassReducer from './compass-redux';
 
-export const reducer = combineReducers({
+// const reducer = combineReducers({
+//   auth: authReducer,
+//   location: locationReducer,
+//   usersAround: usersAroundRedux.reducer,
+//   mapView: mapViewReducer,
+//   compass: compassReducer,
+// });
+
+// // module.exports = reducer;
+
+// module.exports = {
+//   auth: authReducer,
+//   location: locationReducer,
+//   usersAround: usersAroundRedux.reducer,
+//   mapView: mapViewReducer,
+//   compass: compassReducer,
+// };
+
+export default combineReducers({
   auth: authReducer,
   location: locationReducer,
   usersAround: usersAroundRedux.reducer,
@@ -14,4 +32,3 @@ export const reducer = combineReducers({
   compass: compassReducer,
 });
 
-export const { usersAroundActionCreators } = usersAroundRedux;

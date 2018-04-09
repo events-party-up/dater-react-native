@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 // import { persistStore, autoRehydrate } from 'redux-persist';
 // Thunk middleware allows actions to be chained and waited on by returning
@@ -9,7 +9,7 @@ import Reactotron from 'reactotron-react-native';
 // Logs all actions going through redux into console
 // https://github.com/evgenyrodionov/redux-logger
 import { createLogger } from 'redux-logger';
-import { reducer } from '../redux';
+import reducer from '../redux/index';
 import rootSaga from '../sagas/root-saga';
 
 let storeCreator;
@@ -40,6 +40,27 @@ if (process.env.NODE_ENV === 'development') {
 
 // Can use a preloaded initialState if available, in this case we don't
 export default (initialState) => {
+  if (module.hot) {
+    console.log('Enabling hot reloading for store');
+    // Enable Webpack hot module replacement for reducers
+    module.hot.accept('../redux/index', () => {
+      console.log('Replacing store');
+      const nextRootReducer = require('../redux/index').default; // eslint-disable-line global-require
+      store.replaceReducer(nextRootReducer);
+    });
+  }
+
+  // if (module.hot) {
+  //   module.hot.accept(() => {
+  //     console.log('Replacing store');
+  //     const nextRootReducer = require('../redux/index').default; // eslint-disable-line global-require
+  //     store.replaceReducer(nextRootReducer);
+
+  //     //   load(store)
+  //     //     .then((newState) => console.log('Loaded state:', newState))
+  //     // });
+  //   });
+  // }
   // http://redux.js.org/docs/api/createStore.html
   const store = storeCreator(
     reducer,
@@ -49,6 +70,8 @@ export default (initialState) => {
   );
   // https://github.com/rt2zz/redux-persist
   // persistStore(store)
+
+
   sagaMiddleware.run(rootSaga);
   return store;
 };
