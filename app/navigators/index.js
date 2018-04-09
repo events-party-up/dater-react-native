@@ -3,6 +3,7 @@ import { StackNavigator } from 'react-navigation';
 import {
   Main,
   TypographyContainer,
+  DaterButtonsContainer,
 } from '../containers';
 
 import LoginScreen from '../containers/login';
@@ -38,6 +39,11 @@ const RootStack = StackNavigator(
     Typography: {
       screen: TypographyContainer,
       title: 'Typography',
+      headerMode: 'none',
+    },
+    Buttons: {
+      screen: DaterButtonsContainer,
+      title: 'Buttons',
       headerMode: 'none',
     },
   },
