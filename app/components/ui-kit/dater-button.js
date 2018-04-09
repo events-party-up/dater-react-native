@@ -16,9 +16,6 @@ const DaterButton = (props) => {
   let buttonBackgroundColor = '#000';
   let borderWidth = 0;
   let dividerBackgroundColor = 'rgba(242, 242, 242, 0.2)';
-  function onPressButton() {
-    console.log('Button pressed');
-  }
 
   switch (props.type) {
     case 'secondary': {
@@ -77,8 +74,23 @@ const DaterButton = (props) => {
     },
   });
 
+  const onPress = () => {
+    if (props.onPress) {
+      props.onPress();
+    }
+  };
+
   return (
-    <TouchableOpacity style={styles.buttonContainer} onPress={onPressButton}>
+    <TouchableOpacity
+      style={styles.buttonContainer}
+      onPress={() => onPress()}
+      hitSlop={{
+      top: 10,
+      bottom: 10,
+      left: 10,
+      right: 10,
+    }}
+    >
       <View style={styles.textContainer}>
         {props.xpReward && (
           <View style={styles.rewardContainer}>
