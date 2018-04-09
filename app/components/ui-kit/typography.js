@@ -18,17 +18,42 @@ export const H2 = (props) => (
   </Text>
 );
 
-export const H3 = (props) => (
-  <Text style={styles.h3}>
-    {props.children}
-  </Text>
-);
+export const H3 = (props) => {
+  const style = StyleSheet.create({
+    h3: {
+      fontFamily: 'Open Sans',
+      color: props.color ? props.color : '#000000',
+      lineHeight: 20,
+      fontSize: 16,
+      fontWeight: props.buttonText ? '600' : 'bold',
+      textAlign: props.align ? props.align : 'left',
+    },
+  });
+  return (
+    <Text style={style.h3}>
+      {props.children}
+    </Text>
+  );
+};
 
-export const Body = (props) => (
-  <Text style={styles.body}>
-    {props.children}
-  </Text>
-);
+export const Body = (props) => {
+  const styles = StyleSheet.create({
+    body: {
+      fontFamily: 'Open Sans',
+      color: props.color ? props.color : '#000000',
+      lineHeight: 20,
+      fontSize: 16,
+      fontWeight: 'normal',
+      textAlign: 'left',
+    },
+  });
+
+  return (
+    <Text style={styles.body}>
+      {props.children}
+    </Text>
+  );
+};
 
 export const Caption1 = (props) => (
   <TextWithLetterSpacing spacing={1.2} textStyle={styles.caption1}>

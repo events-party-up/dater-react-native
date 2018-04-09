@@ -28,7 +28,7 @@ class Main extends Component<Props> {
   unsubscribeFromUsersAround;
 
   componentWillUnmount() {
-    // this.unsubscribeFromUsersAround();
+    this.unsubscribeFromUsersAround();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -41,7 +41,7 @@ class Main extends Component<Props> {
         radius: 25,
       };
       console.log('Attach a listener for users around');
-      // this.unsubscribeFromUsersAround = listenForUsersAround(queryArea, this.props.dispatch);
+      this.unsubscribeFromUsersAround = listenForUsersAround(queryArea, this.props.dispatch);
     }
   }
 
@@ -61,9 +61,12 @@ class Main extends Component<Props> {
         <View style={styles.loginButton}>
           <Button title="Вход" color="blue" onPress={() => this.props.navigation.navigate('Login')} />
         </View>
-        {/* <View style={styles.button}>
+        <View style={styles.button1}>
           <Button title="Typography" color="blue" onPress={() => this.props.navigation.navigate('Typography')} />
-        </View> */}
+        </View>
+        <View style={styles.button2}>
+          <Button title="Buttons" color="blue" onPress={() => this.props.navigation.navigate('Buttons')} />
+        </View>
         <DaterMapView />
       </View>
     );
@@ -77,10 +80,17 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     flex: 1,
   },
-  button: {
+  button1: {
     position: 'absolute',
     zIndex: 2,
     bottom: 50,
+    left: 0,
+    right: 0,
+  },
+  button2: {
+    position: 'absolute',
+    zIndex: 2,
+    bottom: 100,
     left: 0,
     right: 0,
   },
