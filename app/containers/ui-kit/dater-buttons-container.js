@@ -5,6 +5,7 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 
 import DaterButton from '../../components/ui-kit/dater-button';
 import CircleButton from '../../components/ui-kit/circle-button';
@@ -67,6 +68,24 @@ export default class DaterButtonsContainer extends Component<Props> {
   }
 }
 
+const modalTopMargin = () => {
+  if (Platform.OS === 'android') {
+    return 8;
+  } else if (DeviceInfo.getModel() === 'iPhone X') {
+    return 40;
+  } else if (Platform.OS === 'ios') {
+    return 20;
+  }
+  return 8;
+};
+
+const modalBottomMargin = () => {
+  if (DeviceInfo.getModel() === 'iPhone X') {
+    return 20;
+  }
+  return 8;
+};
+
 const styles = StyleSheet.create({
   header: {
     position: 'absolute',
@@ -96,9 +115,10 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   modalContainer: {
-    margin: 8,
     padding: 16,
-    marginTop: Platform.OS === 'ios' ? 20 : 8,
+    margin: 8,
+    marginTop: modalTopMargin(),
+    marginBottom: modalBottomMargin(),
     flex: 1,
     justifyContent: 'center',
     shadowColor: 'rgba(0, 0, 0, 0.1)',
