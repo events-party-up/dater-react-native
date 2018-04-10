@@ -5,18 +5,16 @@ import {
   Text,
   View,
 } from 'react-native';
-import { connect } from 'react-redux';
+import { connect, Dispatch } from 'react-redux';
 
-import { GeoCoordinates } from '../../types';
+import { GeoCoordinates, GeoCompass } from '../../types';
 
 type Props = {
-  centerMe: (region: GeoCoordinates) => void,
-  toggleGeoService: () => void,
-  rotateMap: () => void,
-  toggleCompass: () => void,
+  dispatch: Dispatch,
   location: {
     coords: GeoCoordinates,
   },
+  compass: GeoCompass,
 };
 
 const mapStateToProps = (state) => ({
@@ -25,12 +23,49 @@ const mapStateToProps = (state) => ({
 });
 
 class MyLocationButton extends Component<Props> {
+  rotate = 90;
+
   centerMe = () => {
-    this.props.centerMe(this.props.location.coords);
+    this.props.dispatch({
+      type: 'MAPVIEW_ANIMATE_TO_COORDINATE',
+      payload: {
+        coords: this.props.location.coords,
+      },
+    });
   }
 
   onGeoTogglePress = () => {
-    this.props.toggleGeoService();
+    if (this.props.location.enabled) {
+      this.props.dispatch({
+        type: 'GEO_LOCATION_STOP',
+      });
+    } else {
+      this.props.dispatch({
+        type: 'GEO_LOCATION_START',
+      });
+    }
+  }
+  rotateMap = () => {
+    this.rotate = this.rotate + 90;
+    this.props.dispatch({
+      type: 'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
+      payload: {
+        bearingAngle: this.rotate,
+        duratin: 2000,
+      },
+    });
+  }
+
+  toggleCompass = () => {
+    if (this.props.compass.enabled) {
+      this.props.dispatch({
+        type: 'GEO_COMPASS_HEADING_STOP',
+      });
+    } else {
+      this.props.dispatch({
+        type: 'GEO_COMPASS_HEADING_START',
+      });
+    }
   }
 
   render() {
@@ -47,7 +82,7 @@ class MyLocationButton extends Component<Props> {
           hitSlop={hitSlop}
           activeOpacity={0.7}
           style={styles.mapButton}
-          onPress={this.props.toggleCompass}
+          onPress={this.toggleCompass}
         >
           <Text style={{ fontWeight: 'bold', color: 'black' }}>
             C
@@ -57,7 +92,7 @@ class MyLocationButton extends Component<Props> {
           hitSlop={hitSlop}
           activeOpacity={0.7}
           style={styles.mapButton}
-          onPress={this.props.rotateMap}
+          onPress={this.rotateMap}
         >
           <Text style={{ fontWeight: 'bold', color: 'black' }}>
             R
@@ -105,7 +140,6 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     shadowOpacity: 0.12,
     opacity: 0.6,
-    zIndex: 10,
     margin: 5,
   },
   buttonContainer: {
@@ -114,7 +148,7 @@ const styles = StyleSheet.create({
     right: 10,
     backgroundColor: 'transparent',
     alignItems: 'center',
-    zIndex: 100000,
+    zIndex: 2,
   },
 });
 

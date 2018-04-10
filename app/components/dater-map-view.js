@@ -13,7 +13,6 @@ import Moment from 'react-moment';
 import {
   MyLocationOnMovingMap,
   // MyLocationMapMarker,
-  MyLocationButton,
   PersonMaker,
 } from './index';
 
@@ -35,89 +34,38 @@ function creatMapViewProxy(mapView: MapView) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return ({
-    animateToCoordinate: (mapView: MapView, coords: GeoCoordinates) => {
-      dispatch({
-        type: 'MAPVIEW_ANIMATE_TO_COORDINATE',
-        payload: {
-          coords,
-        },
-      });
-    },
-    onRegionChangeComplete: (newRegion, prevRegion) => {
-      if (!prevRegion || !newRegion || !prevRegion.latitude) return;
-
-      dispatch({
-        type: 'MAPVIEW_REGION_UPDATED',
-        payload: {
-          newRegion,
-          prevRegion,
-        },
-      });
-    },
-    toggleGeoService: (location) => {
-      if (location.enabled) {
-        dispatch({
-          type: 'GEO_LOCATION_STOP',
-        });
-      } else {
-        dispatch({
-          type: 'GEO_LOCATION_START',
-        });
-      }
-    },
-    rotateMap: (bearingAngle: number, duration: number) => {
-      dispatch({
-        type: 'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
-        payload: {
-          bearingAngle,
-          duration,
-        },
-      });
-    },
-    toggleCompass: (compassStatus) => {
-      if (compassStatus) {
-        dispatch({
-          type: 'GEO_COMPASS_HEADING_STOP',
-        });
-      } else {
-        dispatch({
-          type: 'GEO_COMPASS_HEADING_START',
-        });
-      }
-    },
-    dispatch: (action) => dispatch(action),
-  });
-}
-
-
 type Props = {
   usersAround: Array<mixed>,
   auth: {
     uid: string,
   },
   compass: GeoCompass,
-  animateToCoordinate: any,
-  onRegionChangeComplete: (newRegion: GeoCoordinates, prevRegion: GeoCoordinates) => void,
-  toggleGeoService: (location: any) => void,
-  rotateMap: (angle:number, duration: number) => void,
-  toggleCompass: (compassStatus: boolean) => void,
   dispatch: Dispatch,
   location: {
     coords: GeoCoordinates,
     geoUpdates: number,
   },
-  mapView: any,
+  mapView: MapView,
 };
 
 class DaterMapView extends Component<Props> {
   mapView: MapView;
-  rotate = 90;
 
   constructor(props) {
     super(props);
     this.routeTo = this.routeTo.bind(this);
+  }
+
+  onRegionChangeComplete = (newRegion, prevRegion) => {
+    if (!prevRegion || !newRegion || !prevRegion.latitude) return;
+
+    this.props.dispatch({
+      type: 'MAPVIEW_REGION_UPDATED',
+      payload: {
+        newRegion,
+        prevRegion,
+      },
+    });
   }
 
   componentDidMount() {
@@ -177,12 +125,6 @@ class DaterMapView extends Component<Props> {
       <View
         style={styles.mapView}
       >
-        <MyLocationButton
-          toggleCompass={() => this.props.toggleCompass(this.props.compass.enabled)}
-          rotateMap={() => { this.props.rotateMap(this.rotate, 2000); this.rotate = this.rotate + 90; }}
-          toggleGeoService={() => this.props.toggleGeoService(this.props.location)}
-          centerMe={(coordinates) => this.props.animateToCoordinate(this.mapView, coordinates)}
-        />
         {this.props.location.coords &&
         <MyLocationOnMovingMap
           accuracy={this.props.location.coords.accuracy}
@@ -243,4 +185,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(DaterMapView);
+export default connect(mapStateToProps)(DaterMapView);

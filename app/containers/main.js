@@ -2,18 +2,20 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  Button,
 } from 'react-native';
 import { connect, Dispatch } from 'react-redux';
 import { type NavigationScreenProp, type NavigationStateRoute } from 'react-navigation';
 
 import { DaterMapView } from '../components';
 import listenForUsersAround from '../services/geo-query';
-import { GeoCoordinates } from '../types';
+import { GeoCoordinates, GeoCompass } from '../types';
+import DaterButton from '../components/ui-kit/dater-button';
+import MyLocationButton from '../components/map/my-location-button';
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
   location: state.location,
+  compass: state.compass,
 });
 
 type Props = {
@@ -22,6 +24,7 @@ type Props = {
     coords: GeoCoordinates,
   },
   navigation: NavigationScreenProp<NavigationStateRoute>,
+  compass: GeoCompass,
 };
 
 class Main extends Component<Props> {
@@ -58,16 +61,24 @@ class Main extends Component<Props> {
         {/* <View style={styles.button}>
           <Button title="Выйти" color="blue" onPress={this.signOut} />
         </View> */}
-        <View style={styles.loginButton}>
+        <MyLocationButton
+          location={this.props.location}
+          compass={this.props.compass}
+        />
+
+        {/* <View style={styles.loginButton}>
           <Button title="Вход" color="blue" onPress={() => this.props.navigation.navigate('Login')} />
-        </View>
-        <View style={styles.button1}>
+        </View> */}
+        {/* <View style={styles.button1}>
           <Button title="Typography" color="blue" onPress={() => this.props.navigation.navigate('Typography')} />
         </View>
         <View style={styles.button2}>
           <Button title="Buttons" color="blue" onPress={() => this.props.navigation.navigate('Buttons')} />
-        </View>
+        </View> */}
         <DaterMapView />
+        <DaterButton style={styles.button1} onPress={() => this.props.navigation.navigate('UIKit')}>
+          UI Kit
+        </DaterButton>
       </View>
     );
   }
@@ -82,17 +93,10 @@ const styles = StyleSheet.create({
   },
   button1: {
     position: 'absolute',
-    zIndex: 2,
-    top: 30,
+    bottom: 30,
     left: 0,
     right: 0,
-  },
-  button2: {
-    position: 'absolute',
-    zIndex: 2,
-    top: 70,
-    left: 0,
-    right: 0,
+    alignItems: 'center',
   },
   loginButton: {
     position: 'absolute',
