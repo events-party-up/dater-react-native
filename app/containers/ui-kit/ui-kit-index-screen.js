@@ -14,52 +14,23 @@ type Props = {
   navigation: any,
 };
 
-export default class DaterButtonsContainer extends Component<Props> {
+export default class UIKitIndexScreen extends Component<Props> {
   render() {
     return (
       <View style={styles.modalContainer}>
         <View style={styles.dismissButon}>
-          <CircleButton type="close" onPress={() => this.props.navigation.goBack()} />
+          <CircleButton type="close" onPress={() => this.props.navigation.goBack(null)} />
         </View>
         <ScrollView>
           <View style={styles.row}>
-            <DaterButton type="main">
-              button cta
+            <DaterButton type="main" onPress={() => this.props.navigation.navigate('Buttons')}>
+              Buttons
             </DaterButton>
           </View>
           <View style={styles.row}>
-            <DaterButton type="secondary">
-              button sec
+            <DaterButton type="main" onPress={() => this.props.navigation.navigate('Typography')}>
+              Typography
             </DaterButton>
-          </View>
-          <View style={styles.row}>
-            <DaterButton type="text">
-              text button
-            </DaterButton>
-          </View>
-          <View style={styles.row}>
-            <DaterButton type="main" xpReward={14}>
-              награда xp
-            </DaterButton>
-          </View>
-          <View style={styles.row}>
-            <DaterButton type="secondary" xpReward={14}>
-              reward xp
-            </DaterButton>
-          </View>
-          <View style={styles.row}>
-            <DaterButton type="main" coinReward={2}>
-              Coin Reward
-            </DaterButton>
-          </View>
-          <View style={styles.row}>
-            <DaterButton type="secondary" coinReward={2}>
-              Coin Reward
-            </DaterButton>
-          </View>
-          <View style={styles.row}>
-            <CircleButton type="close" />
-            <CircleButton type="back" />
           </View>
         </ScrollView>
       </View>

@@ -4,6 +4,7 @@ import {
   Main,
   TypographyContainer,
   DaterButtonsContainer,
+  UIKitIndexScreen,
 } from '../containers';
 
 import LoginScreen from '../containers/login';
@@ -23,17 +24,11 @@ const MainStack = StackNavigator(
   },
 );
 
-const RootStack = StackNavigator(
+const UIKitStack = StackNavigator(
   {
-    Home: {
-      screen: MainStack,
-      title: 'Main Screen',
-      headerMode: 'none',
-      header: null,
-    },
-    Login: {
-      screen: LoginScreen,
-      title: 'Login Screen',
+    UIKitIndex: {
+      screen: UIKitIndexScreen,
+      title: 'UI Kit Main',
       headerMode: 'none',
     },
     Typography: {
@@ -48,13 +43,46 @@ const RootStack = StackNavigator(
     },
   },
   {
+    initialRouteName: 'UIKitIndex',
     headerMode: 'none',
-    mode: 'modal',
-    transitionConfig: () => ({ screenInterpolator: forVertical }),
+    transitionConfig: () => ({
+      containerStyle: {
+      },
+    }),
     cardStyle: {
-      backgroundColor: 'rgba(0, 0, 0, 0)',
+      backgroundColor: 'transparent',
     },
+  },
+);
 
+const RootStack = StackNavigator(
+  {
+    Home: {
+      screen: MainStack,
+      title: 'Main Screen',
+      headerMode: 'none',
+      header: null,
+    },
+    Login: {
+      screen: LoginScreen,
+      title: 'Login Screen',
+      headerMode: 'none',
+    },
+    UIKit: {
+      screen: UIKitStack,
+      title: 'UI Kit',
+      headerMode: 'none',
+      header: null,
+    },
+  },
+  {
+    mode: 'modal',
+    initialRouteName: 'Home',
+    headerMode: 'none',
+    cardStyle: {
+      backgroundColor: 'transparent',
+    },
+    transitionConfig: () => ({ screenInterpolator: forVertical }),
   },
 );
 

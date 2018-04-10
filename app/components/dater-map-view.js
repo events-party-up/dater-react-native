@@ -133,7 +133,7 @@ class DaterMapView extends Component<Props> {
         <MapView
           ref={(component) => { this.mapView = component; }}
           style={styles.mapView}
-          onRegionChangeComplete={(region) => this.props.onRegionChangeComplete(region, this.props.mapView)}
+          onRegionChangeComplete={(region) => this.onRegionChangeComplete(region, this.props.mapView)}
           onMapReady={this.onMapReady}
           // onRegionChange={this.onRegionChange}
           provider="google"
