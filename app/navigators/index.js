@@ -2,8 +2,8 @@ import { StackNavigator } from 'react-navigation';
 
 import {
   Main,
-  TypographyContainer,
-  DaterButtonsContainer,
+  TypographyScreen,
+  DaterButtonsScreen,
   UIKitIndexScreen,
 } from '../containers';
 
@@ -32,19 +32,21 @@ const UIKitStack = StackNavigator(
       headerMode: 'none',
     },
     Typography: {
-      screen: TypographyContainer,
+      screen: TypographyScreen,
       title: 'Typography',
       headerMode: 'none',
     },
     Buttons: {
-      screen: DaterButtonsContainer,
+      screen: DaterButtonsScreen,
       title: 'Buttons',
       headerMode: 'none',
     },
   },
   {
-    initialRouteName: 'UIKitIndex',
     headerMode: 'none',
+    initialRouteName: 'UIKitIndex',
+    // hack to make transparent background on iOS
+    // see https://github.com/react-navigation/react-navigation/issues/2713
     transitionConfig: () => ({
       containerStyle: {
       },

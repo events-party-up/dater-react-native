@@ -1,6 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import Letter from './letter';
+import { StyleSheet, View, Text } from 'react-native';
 
 const spacingForLetterIndex = (letters, index, spacing) => (letters.length - 1 === index) ? 0 : spacing; // eslint-disable-line no-confusing-arrow
 
@@ -34,5 +33,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
 });
+
+const Letter = (props) => {
+  const { children, spacing, textStyle } = props;
+
+  const letterStyles = [
+    textStyle,
+    { paddingRight: spacing },
+  ];
+
+  return <Text style={letterStyles}>{children}</Text>;
+};
 
 export default TextWithLetterSpacing;
