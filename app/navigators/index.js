@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { StackNavigator } from 'react-navigation';
 
 import {
@@ -10,7 +8,6 @@ import {
 } from '../containers';
 
 import LoginScreen from '../containers/login';
-import { DaterHeader } from '../components';
 
 const LoginStack = StackNavigator(
   {
@@ -25,8 +22,11 @@ const LoginStack = StackNavigator(
       containerStyle: {
       },
     }),
+    // hack to make transparent background on iOS
+    // see https://github.com/react-navigation/react-navigation/issues/2713
     cardStyle: {
       backgroundColor: 'transparent',
+      shadowOpacity: 0,
     },
   },
 );
@@ -35,69 +35,19 @@ const UIKitStack = StackNavigator(
   {
     UIKitIndex: {
       screen: UIKitIndexScreen,
-      title: 'UI Kit Main',
-      // navigationOptions: () => ({
-      //   // header: <DaterHeader>UI Kit Collection</DaterHeader>,
-      //   // header: (navigation, header) => (<DaterHeader>UI Kit Collection</DaterHeader>),
-      //   headerTitle: <DaterHeader>UI Kit Collection</DaterHeader>,
-      //   headerLeft: null,
-      //   headerStyle: {
-      //     backgroundColor: '#fff',
-      //     borderWidth: 0,
-      //     borderBottomWidth: 0,
-      //   },
-      //   titleStyle: {
-      //     textAlign: 'left',
-      //     alignSelf: 'flex-start',
-      //     alignItems: 'flex-start',
-      //     justifyContent: 'flex-start',
-      //     flex: 1,
-      //   },
-      //   headerTitleStyle: {
-      //     textAlign: 'left',
-      //     flex: 1,
-      //     alignSelf: 'flex-start',
-      //     alignItems: 'flex-start',
-      //     justifyContent: 'flex-start',
-      //   },
-      //   style: {
-      //     textAlign: 'left',
-      //     flex: 1,
-      //     alignSelf: 'flex-start',
-      //     alignItems: 'flex-start',
-      //     justifyContent: 'flex-start',
-      //   },
-      // }),
     },
     Typography: {
       screen: TypographyScreen,
       headerMode: 'none',
-      navigationOptions: {
-        headerTitle: <DaterHeader>Typography</DaterHeader>,
-        headerLeft: null,
-      },
     },
     Buttons: {
       screen: DaterButtonsScreen,
-      navigationOptions: {
-        headerTitle: <DaterHeader>Buttons</DaterHeader>,
-        headerLeft: null,
-      },
     },
   },
   {
     headerMode: 'none',
     header: null,
     initialRouteName: 'UIKitIndex',
-    // hack to make transparent background on iOS
-    // see https://github.com/react-navigation/react-navigation/issues/2713
-    transitionConfig: () => ({
-      containerStyle: {
-      },
-    }),
-    cardStyle: {
-      backgroundColor: 'transparent',
-    },
   },
 );
 
@@ -121,6 +71,7 @@ const RootStack = StackNavigator(
     header: null,
     cardStyle: {
       backgroundColor: 'transparent',
+      shadowOpacity: 0,
     },
     transitionConfig: () => ({ screenInterpolator: forVertical }),
   },

@@ -107,12 +107,12 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     backgroundColor: '#ffffff',
     borderRadius: 4,
-    // shadowColor: 'rgba(0, 0, 0, 0.1)',
-    // shadowRadius: 16,
-    // shadowOpacity: 1,
-    // shadowOffset: {
-    //   width: 0, height: 4,
-    // },
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowRadius: 16,
+    shadowOpacity: 1,
+    shadowOffset: {
+      width: 0, height: 4,
+    },
     elevation: 1,
   },
 });
