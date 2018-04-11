@@ -4,7 +4,7 @@ import {
   TypographyScreen,
   DaterButtonsScreen,
   UIKitIndexScreen,
-} from '../containers';
+} from '../screens';
 
 const UIKitNavigator = StackNavigator(
   {

@@ -27,7 +27,7 @@ type Props = {
   compass: GeoCompass,
 };
 
-class Main extends Component<Props> {
+class MainScreen extends Component<Props> {
   unsubscribeFromUsersAround;
 
   componentWillUnmount() {
@@ -123,4 +123,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps)(Main);
+export default connect(mapStateToProps)(MainScreen);

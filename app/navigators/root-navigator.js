@@ -1,13 +1,13 @@
 import { StackNavigator } from 'react-navigation';
 
-import { Main } from '../containers';
+import { MainScreen } from '../screens';
 import UIKitNavigator from './ui-kit-navigator';
 import LoginNavigator from './login-navigator';
 
 const RootStack = StackNavigator(
   {
     Home: {
-      screen: Main,
+      screen: MainScreen,
     },
     Login: {
       screen: LoginNavigator,
