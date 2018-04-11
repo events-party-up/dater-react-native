@@ -79,6 +79,9 @@ class Main extends Component<Props> {
         <DaterButton style={styles.button1} onPress={() => this.props.navigation.navigate('UIKit')}>
           UI Kit
         </DaterButton>
+        <DaterButton style={styles.button2} onPress={() => this.props.navigation.navigate('Login')} type="secondary">
+          Login
+        </DaterButton>
       </View>
     );
   }
@@ -94,6 +97,13 @@ const styles = StyleSheet.create({
   button1: {
     position: 'absolute',
     bottom: 30,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+  },
+  button2: {
+    position: 'absolute',
+    bottom: 90,
     left: 0,
     right: 0,
     alignItems: 'center',

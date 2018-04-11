@@ -53,15 +53,12 @@ const DaterButton = (props) => {
       marginRight: 4,
     },
     rewardContainer: {
-      // flex: 0.3,
-      // width: 84,
       justifyContent: 'center',
       flexDirection: 'row',
     },
     divider: {
       marginLeft: 16,
       marginRight: 16,
-      // right: 16,
       width: 1,
       height: 28,
       backgroundColor: dividerBackgroundColor,

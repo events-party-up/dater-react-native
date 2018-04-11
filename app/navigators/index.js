@@ -12,18 +12,22 @@ import {
 import LoginScreen from '../containers/login';
 import { DaterHeader } from '../components';
 
-const MainStack = StackNavigator(
+const LoginStack = StackNavigator(
   {
-    Home: {
-      screen: Main,
-      title: 'Main Screen',
-      headerMode: 'none',
-      header: null,
+    Login: {
+      screen: LoginScreen,
     },
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'Login',
     headerMode: 'none',
+    transitionConfig: () => ({
+      containerStyle: {
+      },
+    }),
+    cardStyle: {
+      backgroundColor: 'transparent',
+    },
   },
 );
 
@@ -100,12 +104,10 @@ const UIKitStack = StackNavigator(
 const RootStack = StackNavigator(
   {
     Home: {
-      screen: MainStack,
-      title: 'Main Screen',
+      screen: Main,
     },
     Login: {
-      screen: LoginScreen,
-      title: 'Login Screen',
+      screen: LoginStack,
     },
     UIKit: {
       screen: UIKitStack,
