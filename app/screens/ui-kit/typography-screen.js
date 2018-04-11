@@ -2,29 +2,24 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  Button,
-  Platform,
 } from 'react-native';
 
 import { H1, H2, H3, Body, Caption1, Caption2 } from '../../components/ui-kit/typography';
+import DaterModal from '../../components/ui-kit/dater-modal';
 
 type Props = {
   navigation: any,
 };
 
-export default class TypographyContainer extends Component<Props> {
+export default class TypographyScreen extends Component<Props> {
   render() {
     return (
-      <View style={styles.modalContainer}>
-        <View style={styles.dismissButon}>
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Dismiss"
-          />
-        </View>
-        <View style={styles.header}>
-          <H2>Typography</H2>
-        </View>
+      <DaterModal
+        fullscreen
+        backButton
+        backButtonPress={() => this.props.navigation.goBack()}
+        headerTitle="Typography"
+      >
         <View style={styles.row}>
           <View style={styles.firstColumn}>
             <Caption1>H1</Caption1>
@@ -73,22 +68,12 @@ export default class TypographyContainer extends Component<Props> {
             <Caption2>Sibainu 12/16</Caption2>
           </View>
         </View>
-      </View>
+      </DaterModal>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  header: {
-    position: 'absolute',
-    left: 20,
-    top: 34,
-  },
-  dismissButon: {
-    position: 'absolute',
-    right: 20,
-    top: 34,
-  },
   row: {
     left: 64,
     flexDirection: 'row',
@@ -102,19 +87,5 @@ const styles = StyleSheet.create({
     paddingRight: 24,
     alignContent: 'center',
     alignSelf: 'center',
-  },
-  modalContainer: {
-    elevation: 1,
-    margin: 8,
-    marginTop: Platform.OS === 'ios' ? 20 : 8,
-    flex: 1,
-    justifyContent: 'center',
-    shadowColor: 'rgba(0, 0, 0, 0.05)',
-    backgroundColor: '#ffffff',
-    shadowRadius: 16,
-    borderRadius: 4,
-    shadowOffset: {
-      width: 0, height: 4,
-    },
   },
 });

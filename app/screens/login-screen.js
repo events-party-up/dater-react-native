@@ -5,7 +5,7 @@ import {
   Button,
 } from 'react-native';
 
-import { H2 } from '../components/ui-kit/typography';
+import DaterModal from '../components/ui-kit/dater-modal';
 
 type Props = {
   navigation: any,
@@ -18,20 +18,15 @@ export default class LoginScreen extends Component<Props> {
 
   render() {
     return (
-      <View style={styles.modalContainer}>
-        <View style={styles.dismissButon}>
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Dismiss"
-          />
-        </View>
-        <View style={styles.header}>
-          <H2>Log In</H2>
-        </View>
+      <DaterModal
+        closeButton
+        closeButtonPress={() => this.props.navigation.goBack(null)}
+        headerTitle="Log In"
+      >
         <View style={styles.button}>
           <Button title="Войти" color="blue" onPress={this.signIn} />
         </View>
-      </View>
+      </DaterModal>
 
     );
   }

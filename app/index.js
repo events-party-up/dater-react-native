@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import firebase from 'react-native-firebase';
 
 import configureStore from './config/configure-store';
-import RootStack from './navigators';
+import RootStack from './navigators/root-navigator';
 
 const store = configureStore();
 type Props = {

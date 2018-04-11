@@ -1,71 +1,65 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-} from 'react-native';
+import { Text } from 'react-native';
 
 import TextWithLetterSpacing from './text-with-letter-spacing';
 
 export const H1 = (props) => (
-  <Text style={styles.h1}>
+  <Text style={{ ...props.style, ...styles.h1 }}>
     {props.children}
   </Text>
 );
 
 export const H2 = (props) => (
-  <Text style={styles.h2}>
+  <Text style={{ ...props.style, ...styles.h2 }}>
     {props.children}
   </Text>
 );
 
 export const H3 = (props) => {
-  const style = StyleSheet.create({
-    h3: {
-      fontFamily: props.buttonText ? 'OpenSans-SemiBold' : 'OpenSans-Bold',
-      color: props.color ? props.color : '#000000',
-      lineHeight: 20,
-      fontSize: 16,
-      textAlign: props.align ? props.align : 'left',
-    },
-  });
+  const styleH3 = {
+    fontFamily: props.buttonText ? 'OpenSans-SemiBold' : 'OpenSans-Bold',
+    color: props.color ? props.color : '#000000',
+    lineHeight: 20,
+    fontSize: 16,
+    textAlign: props.align ? props.align : 'left',
+  };
+
   return (
-    <Text style={style.h3}>
+    <Text style={{ ...props.style, ...styleH3 }}>
       {props.children}
     </Text>
   );
 };
 
 export const Body = (props) => {
-  const styles = StyleSheet.create({
-    body: {
-      fontFamily: 'OpenSans-Regular',
-      color: props.color ? props.color : '#000000',
-      lineHeight: 20,
-      fontSize: 16,
-      textAlign: 'left',
-    },
-  });
+  const styleBody = {
+    fontFamily: 'OpenSans-Regular',
+    color: props.color ? props.color : '#000000',
+    lineHeight: 20,
+    fontSize: 16,
+    textAlign: 'left',
+  };
 
   return (
-    <Text style={styles.body}>
+    <Text style={{ ...props.style, ...styleBody }}>
       {props.children}
     </Text>
   );
 };
 
 export const Caption1 = (props) => (
-  <TextWithLetterSpacing spacing={1.2} textStyle={styles.caption1}>
+  <TextWithLetterSpacing spacing={1.2} textStyle={{ ...props.style, ...styles.caption1 }}>
     {props.children.toUpperCase()}
   </TextWithLetterSpacing>
 );
 
 export const Caption2 = (props) => (
-  <Text style={styles.caption2}>
+  <Text style={{ ...props.style, ...styles.caption2 }}>
     {props.children}
   </Text>
 );
 
-const styles = StyleSheet.create({
+const styles = {
   h1: {
     fontFamily: 'OpenSans-Bold',
     color: '#000000',
@@ -109,4 +103,4 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'left',
   },
-});
+};

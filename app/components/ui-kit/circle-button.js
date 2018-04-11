@@ -34,19 +34,19 @@ const CircleButton = (props) => {
     buttonContainer: {
       elevation: 1,
       backgroundColor,
-      shadowColor,
       width: 64,
       height: 64,
       borderRadius: 64 / 2,
       alignItems: 'center',
       justifyContent: 'center',
+      shadowColor,
       shadowOpacity: 0.5,
       shadowRadius: 4,
       shadowOffset: {
         width: 0, height: 4,
       },
-      padding: 4,
-      margin: 8,
+      // padding: 4,
+      // margin: 8,
     },
     imageContainer: {
 
