@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { StackNavigator } from 'react-navigation';
 
 import {
@@ -8,6 +10,7 @@ import {
 } from '../containers';
 
 import LoginScreen from '../containers/login';
+import { DaterHeader } from '../components';
 
 const MainStack = StackNavigator(
   {
@@ -29,21 +32,58 @@ const UIKitStack = StackNavigator(
     UIKitIndex: {
       screen: UIKitIndexScreen,
       title: 'UI Kit Main',
-      headerMode: 'none',
+      // navigationOptions: () => ({
+      //   // header: <DaterHeader>UI Kit Collection</DaterHeader>,
+      //   // header: (navigation, header) => (<DaterHeader>UI Kit Collection</DaterHeader>),
+      //   headerTitle: <DaterHeader>UI Kit Collection</DaterHeader>,
+      //   headerLeft: null,
+      //   headerStyle: {
+      //     backgroundColor: '#fff',
+      //     borderWidth: 0,
+      //     borderBottomWidth: 0,
+      //   },
+      //   titleStyle: {
+      //     textAlign: 'left',
+      //     alignSelf: 'flex-start',
+      //     alignItems: 'flex-start',
+      //     justifyContent: 'flex-start',
+      //     flex: 1,
+      //   },
+      //   headerTitleStyle: {
+      //     textAlign: 'left',
+      //     flex: 1,
+      //     alignSelf: 'flex-start',
+      //     alignItems: 'flex-start',
+      //     justifyContent: 'flex-start',
+      //   },
+      //   style: {
+      //     textAlign: 'left',
+      //     flex: 1,
+      //     alignSelf: 'flex-start',
+      //     alignItems: 'flex-start',
+      //     justifyContent: 'flex-start',
+      //   },
+      // }),
     },
     Typography: {
       screen: TypographyScreen,
-      title: 'Typography',
       headerMode: 'none',
+      navigationOptions: {
+        headerTitle: <DaterHeader>Typography</DaterHeader>,
+        headerLeft: null,
+      },
     },
     Buttons: {
       screen: DaterButtonsScreen,
-      title: 'Buttons',
-      headerMode: 'none',
+      navigationOptions: {
+        headerTitle: <DaterHeader>Buttons</DaterHeader>,
+        headerLeft: null,
+      },
     },
   },
   {
     headerMode: 'none',
+    header: null,
     initialRouteName: 'UIKitIndex',
     // hack to make transparent background on iOS
     // see https://github.com/react-navigation/react-navigation/issues/2713
@@ -62,25 +102,21 @@ const RootStack = StackNavigator(
     Home: {
       screen: MainStack,
       title: 'Main Screen',
-      headerMode: 'none',
-      header: null,
     },
     Login: {
       screen: LoginScreen,
       title: 'Login Screen',
-      headerMode: 'none',
     },
     UIKit: {
       screen: UIKitStack,
-      title: 'UI Kit',
-      headerMode: 'none',
-      header: null,
+      headerTitle: 'UI Kit Collection',
     },
   },
   {
     mode: 'modal',
     initialRouteName: 'Home',
     headerMode: 'none',
+    header: null,
     cardStyle: {
       backgroundColor: 'transparent',
     },

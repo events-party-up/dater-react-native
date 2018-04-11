@@ -9,12 +9,14 @@ import {
 import DeviceInfo from 'react-native-device-info';
 
 import CircleButton from '../../components/ui-kit/circle-button';
+import { DaterHeader } from '../../components';
 
 type Props = {
   children: React.Node,
   closeButton: boolean,
   closeButtonPress: () => void,
   backButtonPress: () => void,
+  headerTitle: string,
 };
 
 export default class DaterModal extends React.Component<Props> {
@@ -29,7 +31,11 @@ export default class DaterModal extends React.Component<Props> {
           <View style={styles.backButton}>
             <CircleButton type="back" onPress={() => this.props.backButtonPress()} />
           </View>)}
-        <ScrollView>
+        {this.props.headerTitle && (
+        <DaterHeader>
+          {this.props.headerTitle}
+        </DaterHeader>)}
+        <ScrollView style={styles.scrollView}>
           {this.props.children}
         </ScrollView>
       </View>
@@ -37,7 +43,7 @@ export default class DaterModal extends React.Component<Props> {
   }
 }
 
-const modalTopMargin = () => {
+const modalTopSpace = () => {
   if (Platform.OS === 'android') {
     return 8;
   } else if (DeviceInfo.getModel() === 'iPhone X') {
@@ -47,6 +53,7 @@ const modalTopMargin = () => {
   }
   return 8;
 };
+
 
 const modalBottomMargin = () => {
   if (DeviceInfo.getModel() === 'iPhone X') {
@@ -76,7 +83,7 @@ const styles = StyleSheet.create({
   floatingModalContainer: {
     padding: 16,
     margin: 8,
-    marginTop: modalTopMargin(),
+    marginTop: modalTopSpace(),
     marginBottom: modalBottomMargin(),
     flex: 1,
     justifyContent: 'center',
@@ -90,11 +97,14 @@ const styles = StyleSheet.create({
     },
     elevation: 1,
   },
+  scrollView: {
+    paddingLeft: 16,
+    paddingRight: 16,
+  },
   fullScreenModalContainer: {
-    padding: 16,
-    paddingTop: 32,
+    paddingTop: modalTopSpace(),
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     shadowColor: 'rgba(0, 0, 0, 0.1)',
     backgroundColor: '#ffffff',
     borderRadius: 4,

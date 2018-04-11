@@ -45,8 +45,8 @@ const CircleButton = (props) => {
       shadowOffset: {
         width: 0, height: 4,
       },
-      padding: 4,
-      margin: 8,
+      // padding: 4,
+      // margin: 8,
     },
     imageContainer: {
 

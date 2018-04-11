@@ -6,7 +6,6 @@ import {
 
 import DaterButton from '../../components/ui-kit/dater-button';
 import DaterModal from '../../components/ui-kit/dater-modal';
-import { DaterHeader } from '../../components';
 
 type Props = {
   navigation: any,
@@ -15,10 +14,12 @@ type Props = {
 export default class UIKitIndexScreen extends Component<Props> {
   render() {
     return (
-      <DaterModal fullscreen closeButton closeButtonPress={() => this.props.navigation.goBack(null)}>
-        <DaterHeader>
-          UI Kit Collection
-        </DaterHeader>
+      <DaterModal
+        fullscreen
+        closeButton
+        closeButtonPress={() => this.props.navigation.goBack(null)}
+        headerTitle="UI Kit Collection"
+      >
         <View style={styles.row}>
           <DaterButton type="main" onPress={() => this.props.navigation.navigate('Buttons')}>
             Buttons

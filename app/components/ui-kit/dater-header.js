@@ -15,7 +15,7 @@ export default class DaterHeader extends React.Component<Props> {
   render() {
     return (
       <View style={styles.header}>
-        <H2>{this.props.children}</H2>
+        <H2 style={{ textAlign: 'left' }}>{this.props.children}</H2>
       </View>
     );
   }
@@ -25,5 +25,6 @@ const styles = StyleSheet.create({
   header: {
     paddingBottom: 16,
     paddingTop: 8,
+    paddingLeft: 16,
   },
 });

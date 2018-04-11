@@ -13,7 +13,7 @@ export const H1 = (props) => (
 );
 
 export const H2 = (props) => (
-  <Text style={styles.h2}>
+  <Text style={{ ...props.style, ...styleH2 }}>
     {props.children}
   </Text>
 );
@@ -64,6 +64,14 @@ export const Caption2 = (props) => (
     {props.children}
   </Text>
 );
+
+const styleH2 = {
+  fontFamily: 'OpenSans-Bold',
+  color: '#000000',
+  lineHeight: 24,
+  fontSize: 22,
+  textAlign: 'left',
+};
 
 const styles = StyleSheet.create({
   h1: {

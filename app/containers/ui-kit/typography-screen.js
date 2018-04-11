@@ -6,7 +6,6 @@ import {
 
 import { H1, H2, H3, Body, Caption1, Caption2 } from '../../components/ui-kit/typography';
 import DaterModal from '../../components/ui-kit/dater-modal';
-import { DaterHeader } from '../../components';
 
 type Props = {
   navigation: any,
@@ -15,10 +14,12 @@ type Props = {
 export default class TypographyScreen extends Component<Props> {
   render() {
     return (
-      <DaterModal fullscreen backButton backButtonPress={() => this.props.navigation.goBack()}>
-        <DaterHeader>
-          Typography
-        </DaterHeader>
+      <DaterModal
+        fullscreen
+        backButton
+        backButtonPress={() => this.props.navigation.goBack()}
+        headerTitle="Typography"
+      >
         <View style={styles.row}>
           <View style={styles.firstColumn}>
             <Caption1>H1</Caption1>

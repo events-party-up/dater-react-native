@@ -7,7 +7,6 @@ import {
 import DaterButton from '../../components/ui-kit/dater-button';
 import CircleButton from '../../components/ui-kit/circle-button';
 import DaterModal from '../../components/ui-kit/dater-modal';
-import { DaterHeader } from '../../components';
 
 type Props = {
   navigation: any,
@@ -16,10 +15,12 @@ type Props = {
 export default class DaterButtonsScreen extends Component<Props> {
   render() {
     return (
-      <DaterModal fullscreen backButton backButtonPress={() => this.props.navigation.goBack()}>
-        <DaterHeader>
-          Buttons
-        </DaterHeader>
+      <DaterModal
+        fullscreen
+        backButton
+        backButtonPress={() => this.props.navigation.goBack()}
+        headerTitle="Buttons"
+      >
         <View style={styles.row}>
           <DaterButton type="main">
             button cta
@@ -56,6 +57,26 @@ export default class DaterButtonsScreen extends Component<Props> {
           </DaterButton>
         </View>
         <View style={styles.row}>
+          <DaterButton type="secondary" coinReward={2}>
+            Coin Reward
+          </DaterButton>
+        </View>
+        <View style={styles.row}>
+          <DaterButton type="secondary" coinReward={2}>
+            Coin Reward
+          </DaterButton>
+        </View>
+        <View style={styles.row}>
+          <DaterButton type="secondary" coinReward={2}>
+            Coin Reward
+          </DaterButton>
+        </View>
+        <View style={styles.row}>
+          <DaterButton type="secondary" coinReward={2}>
+            Coin Reward
+          </DaterButton>
+        </View>
+        <View style={styles.row}>
           <CircleButton type="close" />
           <CircleButton type="back" />
         </View>
@@ -68,6 +89,5 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     paddingBottom: 16,
-    justifyContent: 'center',
   },
 });
