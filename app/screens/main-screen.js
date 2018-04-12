@@ -61,6 +61,7 @@ class MainScreen extends Component<Props> {
         {/* <View style={styles.button}>
           <Button title="Выйти" color="blue" onPress={this.signOut} />
         </View> */}
+        <DaterMapView />
         <MyLocationButton
           location={this.props.location}
           compass={this.props.compass}
@@ -75,7 +76,6 @@ class MainScreen extends Component<Props> {
         <View style={styles.button2}>
           <Button title="Buttons" color="blue" onPress={() => this.props.navigation.navigate('Buttons')} />
         </View> */}
-        <DaterMapView />
         <DaterButton style={styles.button1} onPress={() => this.props.navigation.navigate('UIKit')}>
           UI Kit
         </DaterButton>

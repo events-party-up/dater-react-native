@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
-  Button,
   View,
 } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
@@ -53,11 +52,6 @@ class DaterMapView extends Component<Props> {
   mapView: MapView;
   directions: null;
 
-  constructor(props) {
-    super(props);
-    this.routeTo = this.routeTo.bind(this);
-  }
-
   onRegionChangeComplete = async (newRegion, prevRegion) => {
     if (!prevRegion || !newRegion || !prevRegion.latitude) return;
 
@@ -95,6 +89,11 @@ class DaterMapView extends Component<Props> {
 
   routeTo = async (user) => {
     console.log(`Creating route to user: ${user.id}`);
+    console.log(`Userr: ${user}`);
+  }
+
+  testClick = (element) => {
+    console.log(`Clicked: ${element}`);
   }
 
   onRegionChange = (region) => {
@@ -111,15 +110,18 @@ class DaterMapView extends Component<Props> {
         }}
         style={styles.maker}
         key={user.id}
-        zIndex={1}
+        onPress={() => this.testClick('maker')}
+        // zIndex={1}
       >
         <PersonMaker title={user.shortId} />
-        <Callout style={styles.makerCallout}>
+        <Callout
+          style={styles.makerCallout}
+          onPress={() => this.testClick('callout')}
+        >
           <Text>Расстояние: {user.distance} м</Text>
           <Text>Обновлено:{' '}
             <Moment locale="ru" element={Text} fromNow>{user.timestamp}</Moment>
           </Text>
-          <Button title="Маршрут" onPress={() => this.routeTo(user)} />
         </Callout>
       </Marker>
     ));
@@ -162,8 +164,8 @@ class DaterMapView extends Component<Props> {
           {this.directions &&
             <MapView.Polyline
               coordinates={this.directions.polyLines}
-              strokeWidth={2}
-              strokeColor="red"
+              strokeWidth={4}
+              strokeColor="green"
             />}
         </MapView>
         <Text style={styles.debugText}>
