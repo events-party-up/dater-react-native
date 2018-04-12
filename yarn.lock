@@ -4452,6 +4452,10 @@ react-native-firebase@^3.3.0:
     postinstall-build "^5.0.1"
     prop-types "^15.6.1"
 
+react-native-interactable@^0.1.10:
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/react-native-interactable/-/react-native-interactable-0.1.10.tgz#65b9a68f6a84ba1c0e2ad5478b1f22ffb29c0526"
+
 react-native-maps@^0.20.1:
   version "0.20.1"
   resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.20.1.tgz#b5247a9a26446b2e1ffc3f680db8ba6ccc960096"

@@ -1,4 +1,6 @@
 rootProject.name = 'DaterReactNative'
+include ':react-native-interactable'
+project(':react-native-interactable').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-interactable/android')
 include ':react-native-background-geolocation'
 project(':react-native-background-geolocation').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-background-geolocation/android')
 include ':react-native-background-fetch'
