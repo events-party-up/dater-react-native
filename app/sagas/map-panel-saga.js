@@ -28,14 +28,14 @@ function* showPanel(mapPanelSnapper, action) {
 
   yield take('UI_MAP_PANEL_HIDE_START');
   yield cancel(task2);
-  yield call(mapPanelSnapper, { index: 1 }); // hide
+  yield call(mapPanelSnapper, { index: 2 }); // hide
   yield delay(defaultAnimationDuration);
   yield put({ type: 'UI_MAP_PANEL_HIDE_FINISH' });
 }
 
 function* replacePanel(mapPanelSnapper, action) {
   const user = action.payload;
-  yield call(mapPanelSnapper, { index: 1 }); // first hide
+  yield call(mapPanelSnapper, { index: 2 }); // first hide
   yield delay(defaultAnimationDuration);
   yield put({
     type: 'UI_MAP_PANEL_REPLACE_FINISH',

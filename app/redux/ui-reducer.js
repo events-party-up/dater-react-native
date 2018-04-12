@@ -19,11 +19,15 @@ const uiReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
-    case types.UI_MAP_PANEL_REPLACE_START:
     case types.UI_MAP_PANEL_SHOW_START: {
       return {
         ...state,
         user: payload,
+      };
+    }
+    case types.UI_MAP_PANEL_REPLACE_START: {
+      return {
+        ...state,
       };
     }
     case types.UI_MAP_PANEL_REPLACE_FINISH:
@@ -36,6 +40,7 @@ const uiReducer = (state = initialState, action) => {
     }
     case types.UI_MAP_PANEL_HIDE_START: {
       return {
+        mapPanelShown: false,
         ...state,
       };
     }

@@ -4,6 +4,7 @@ import {
   View,
   Dimensions,
   Animated,
+  Platform,
 } from 'react-native';
 import Interactable from 'react-native-interactable';
 import Moment from 'react-moment';
@@ -31,6 +32,7 @@ class MapPanel extends Component<Props> {
   _deltaY: Animated.Value;
   panViewBottom: Animated.Value;
   interactableElement: Interactable.View;
+  showSnapPosition = Platform.OS === 'ios' ? Screen.height - 100 : Screen.height - 130;
 
   componentDidMount() {
     this.props.dispatch({
@@ -46,6 +48,8 @@ class MapPanel extends Component<Props> {
   }
 
   onSnap = (event) => {
+    console.log('On Snap: ', event.nativeEvent.index);
+    
     if (event && event.nativeEvent && event.nativeEvent.index === 1 && this.props.mapPanelShown) {
       this.props.dispatch({
         type: 'UI_MAP_PANEL_HIDE_START',
@@ -64,8 +68,9 @@ class MapPanel extends Component<Props> {
           verticalOnly
           snapPoints={
             [
-              { y: Screen.height - 100 }, // open card snap point
-              { y: Screen.height + 80 }, // close card snap point
+              { y: this.showSnapPosition }, // open card snap point
+              { y: Screen.height + 80 }, // close card snap point, manual
+              { y: Screen.height + 80 }, // close card snap point, auto
             ]}
           boundaries={{ top: -300 }}
           initialPosition={{ y: Screen.height + 80 }}
