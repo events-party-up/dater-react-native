@@ -96,6 +96,13 @@ class DaterMapView extends Component<Props> {
     console.log(`Clicked: ${element}`);
   }
 
+  onPersonMakerPress = (user) => {
+    this.props.dispatch({
+      type: 'UI_MAP_PANEL_SHOW',
+      payload: user,
+    });
+  }
+
   onRegionChange = (region) => {
     console.log('Region updated');
     console.log(region);
@@ -110,11 +117,11 @@ class DaterMapView extends Component<Props> {
         }}
         style={styles.maker}
         key={user.id}
-        onPress={() => this.testClick('maker')}
+        onPress={() => this.onPersonMakerPress(user)}
         // zIndex={1}
       >
         <PersonMaker title={user.shortId} />
-        <Callout
+        {/* <Callout
           style={styles.makerCallout}
           onPress={() => this.testClick('callout')}
         >
@@ -122,7 +129,7 @@ class DaterMapView extends Component<Props> {
           <Text>Обновлено:{' '}
             <Moment locale="ru" element={Text} fromNow>{user.timestamp}</Moment>
           </Text>
-        </Callout>
+        </Callout> */}
       </Marker>
     ));
   }
@@ -153,6 +160,7 @@ class DaterMapView extends Component<Props> {
           rotateEnabled={false}
           mapType="standard"
         >
+          {/* <MapView.UrlTile urlTemplate="http://a.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png" /> */}
           {/* {this.props.location.enabled && this.props.location.coords &&
             <MyLocationMapMarker
               accuracy={this.props.location.coords.accuracy}

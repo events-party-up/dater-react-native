@@ -1,5 +1,11 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Dimensions, Animated } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Dimensions,
+  Animated,
+  Easing,
+} from 'react-native';
 import Interactable from 'react-native-interactable';
 
 import { H2, Body } from '../../components/ui-kit/typography';
@@ -16,29 +22,44 @@ type Props = {
 
 export default class MapPanel extends Component<Props> {
   _deltaY;
+  panViewBottom: Animated.Value;
 
   constructor(props) {
     super(props);
     this._deltaY = new Animated.Value(Screen.height - 100);
+    this.panViewBottom = new Animated.Value(150 - Screen.height);
+  }
+
+  showPanel = () => {
+    Animated.timing(
+      this.panViewBottom,
+      {
+        toValue: 350 - Screen.height,
+        duration: 2000,
+        easing: Easing.elastic(1), // Easing.inOut(Easing.quad)
+      },
+    ).start();
+  }
+
+  componentDidMount() {
+    this.showPanel();
   }
 
   render() {
     return (
-      <View style={styles.panelContainer} pointerEvents="box-none">
-        <Animated.View
-          pointerEvents="box-none"
-          style={[styles.panelContainer, {
-            backgroundColor: 'black',
-            opacity: this._deltaY.interpolate({
-              inputRange: [0, Screen.height - 100],
-              outputRange: [0.5, 0],
-              extrapolateRight: 'clamp',
-            }),
-          }]}
-        />
+      <Animated.View
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: this.panViewBottom,
+          zIndex: 4,
+        }}
+        pointerEvents="box-none"
+      >
         <Interactable.View
           verticalOnly
-          snapPoints={[{ y: 40 }, { y: Screen.height - 300 }, { y: Screen.height - 100 }]}
+          snapPoints={[{ y: Screen.height - 100 }]}
           boundaries={{ top: -300 }}
           initialPosition={{ y: Screen.height - 100 }}
           animatedValueY={this._deltaY}
@@ -61,7 +82,7 @@ export default class MapPanel extends Component<Props> {
             </DaterButton>
           </View>
         </Interactable.View>
-      </View>
+      </Animated.View>
     );
   }
 }
@@ -71,6 +92,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
+    bottom: 0,
     zIndex: 4,
   },
   panel: {
