@@ -1,10 +1,17 @@
 const types = {
-  UI_MAP_PANEL_SHOW: 'UI_MAP_PANEL_SHOW',
-  UI_MAP_PANEL_HIDE: 'UI_MAP_PANEL_HIDE',
+  UI_MAP_PANEL_READY: 'UI_MAP_PANEL_READY',
+  UI_MAP_PANEL_UNLOAD: 'UI_MAP_PANEL_UNLOAD',
+  UI_MAP_PANEL_SHOW_START: 'UI_MAP_PANEL_SHOW_START',
+  UI_MAP_PANEL_SHOW_FINISH: 'UI_MAP_PANEL_SHOW_FINISH',
+  UI_MAP_PANEL_REPLACE_START: 'UI_MAP_PANEL_REPLACE_START',
+  UI_MAP_PANEL_REPLACE_FINISH: 'UI_MAP_PANEL_REPLACE_FINISH',
+  UI_MAP_PANEL_HIDE_START: 'UI_MAP_PANEL_HIDE_START',
+  UI_MAP_PANEL_HIDE_FINISH: 'UI_MAP_PANEL_HIDE_FINISH',
 };
 
 const initialState = {
   mapPanelShown: false,
+  user: {},
   error: null,
 };
 
@@ -12,18 +19,30 @@ const uiReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
-    case types.UI_MAP_PANEL_SHOW: {
+    case types.UI_MAP_PANEL_REPLACE_START:
+    case types.UI_MAP_PANEL_SHOW_START: {
+      return {
+        ...state,
+        user: payload,
+      };
+    }
+    case types.UI_MAP_PANEL_REPLACE_FINISH:
+    case types.UI_MAP_PANEL_SHOW_FINISH: {
       return {
         ...state,
         mapPanelShown: true,
-        heading: payload,
+        user: payload,
       };
     }
-    case types.UI_MAP_PANEL_HIDE: {
+    case types.UI_MAP_PANEL_HIDE_START: {
+      return {
+        ...state,
+      };
+    }
+    case types.UI_MAP_PANEL_HIDE_FINISH: {
       return {
         ...state,
         mapPanelShown: false,
-        heading: payload,
       };
     }
     default: {

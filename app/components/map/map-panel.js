@@ -4,12 +4,17 @@ import {
   View,
   Dimensions,
   Animated,
-  Easing,
 } from 'react-native';
 import Interactable from 'react-native-interactable';
+import Moment from 'react-moment';
+import { connect, Dispatch } from 'react-redux';
 
 import { H2, Body } from '../../components/ui-kit/typography';
 import DaterButton from '../../components/ui-kit/dater-button';
+
+const mapStateToProps = (state) => ({
+  ui: state.ui,
+});
 
 const Screen = {
   width: Dimensions.get('window').width,
@@ -17,72 +22,75 @@ const Screen = {
 };
 
 type Props = {
-
+  mapPanelShown: boolean,
+  dispatch: Dispatch,
+  user: any,
 };
 
-export default class MapPanel extends Component<Props> {
-  _deltaY;
+class MapPanel extends Component<Props> {
+  _deltaY: Animated.Value;
   panViewBottom: Animated.Value;
-
-  constructor(props) {
-    super(props);
-    this._deltaY = new Animated.Value(Screen.height - 100);
-    this.panViewBottom = new Animated.Value(150 - Screen.height);
-  }
-
-  showPanel = () => {
-    Animated.timing(
-      this.panViewBottom,
-      {
-        toValue: 350 - Screen.height,
-        duration: 2000,
-        easing: Easing.elastic(1), // Easing.inOut(Easing.quad)
-      },
-    ).start();
-  }
+  interactableElement: Interactable.View;
 
   componentDidMount() {
-    this.showPanel();
+    this.props.dispatch({
+      type: 'UI_MAP_PANEL_READY',
+      mapPanelSnapper: (args) => this.interactableElement.snapTo(args),
+    });
   }
+
+  componentWillUnmount() {
+    this.props.dispatch({
+      type: 'UI_MAP_PANEL_UNLOAD',
+    });
+  }
+
+  onSnap = (event) => {
+    if (event && event.nativeEvent && event.nativeEvent.index === 1 && this.props.mapPanelShown) {
+      this.props.dispatch({
+        type: 'UI_MAP_PANEL_HIDE_START',
+      });
+    }
+  };
 
   render() {
     return (
-      <Animated.View
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: this.panViewBottom,
-          zIndex: 4,
-        }}
+      <View
+        style={styles.panelContainer}
         pointerEvents="box-none"
       >
         <Interactable.View
+          ref={(component) => { this.interactableElement = component; }}
           verticalOnly
-          snapPoints={[{ y: Screen.height - 100 }]}
+          snapPoints={
+            [
+              { y: Screen.height - 100 }, // open card snap point
+              { y: Screen.height + 80 }, // close card snap point
+            ]}
           boundaries={{ top: -300 }}
-          initialPosition={{ y: Screen.height - 100 }}
+          initialPosition={{ y: Screen.height + 80 }}
           animatedValueY={this._deltaY}
+          onSnap={this.onSnap}
         >
           <View style={styles.panel}>
             <View style={styles.panelHeader}>
               <View style={styles.panelHandle} />
             </View>
-            <H2>Девушка 25 лет</H2>
+            <H2>Ольга, 25 лет ({this.props.user.shortId} )</H2>
             <Body style={{
               marginBottom: 8,
               marginTop: 8,
             }}
             >
-              International Airport - 40 miles away
+              {this.props.user.distance} метров от вас, {' '}
+              <Moment locale="ru" element={Body} fromNow>{this.props.user.timestamp}</Moment>
             </Body>
-
             <DaterButton style={styles.panelButton}>
               Встретиться
             </DaterButton>
           </View>
         </Interactable.View>
-      </Animated.View>
+      </View>
     );
   }
 }
@@ -92,7 +100,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    bottom: 0,
+    bottom: 350 - Screen.height,
     zIndex: 4,
   },
   panel: {
@@ -130,3 +138,5 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
 });
+
+export default connect(mapStateToProps)(MapPanel);

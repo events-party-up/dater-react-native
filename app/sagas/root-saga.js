@@ -5,6 +5,8 @@ import locationSaga from './location-saga';
 import authSaga from './auth-saga';
 import mapViewInitializeRegionSaga from './mapview-init-region-saga';
 import startGeolocationOnFirstUpdate from './location-start-saga';
+import mapPanelSaga from './map-panel-saga';
+
 
 export default function* rootSaga() {
   yield all([
@@ -14,5 +16,6 @@ export default function* rootSaga() {
     locationSaga(),
     authSaga(),
     startGeolocationOnFirstUpdate(),
+    mapPanelSaga(),
   ]);
 }

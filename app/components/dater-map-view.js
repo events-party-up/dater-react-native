@@ -4,10 +4,9 @@ import {
   Text,
   View,
 } from 'react-native';
-import MapView, { Marker, Callout } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import { connect, Dispatch } from 'react-redux';
 import 'moment/locale/ru';
-import Moment from 'react-moment';
 
 import {
   MyLocationOnMovingMap,
@@ -24,6 +23,7 @@ const mapStateToProps = (state) => ({
   mapView: state.mapView,
   auth: state.auth,
   compass: state.compass,
+  ui: state.ui,
 });
 
 function creatMapViewProxy(mapView: MapView) {
@@ -46,6 +46,7 @@ type Props = {
     geoUpdates: number,
   },
   mapView: MapView,
+  ui: any,
 };
 
 class DaterMapView extends Component<Props> {
@@ -97,10 +98,25 @@ class DaterMapView extends Component<Props> {
   }
 
   onPersonMakerPress = (user) => {
-    this.props.dispatch({
-      type: 'UI_MAP_PANEL_SHOW',
-      payload: user,
-    });
+    if (this.props.ui.mapPanelShown) {
+      this.props.dispatch({
+        type: 'UI_MAP_PANEL_REPLACE',
+        payload: user,
+      });
+    } else {
+      this.props.dispatch({
+        type: 'UI_MAP_PANEL_SHOW_START',
+        payload: user,
+      });
+    }
+  }
+
+  onMapPressed = () => {
+    if (this.props.ui.mapPanelShown) {
+      this.props.dispatch({
+        type: 'UI_MAP_PANEL_HIDE_START',
+      });
+    }
   }
 
   onRegionChange = (region) => {
@@ -117,19 +133,10 @@ class DaterMapView extends Component<Props> {
         }}
         style={styles.maker}
         key={user.id}
-        onPress={() => this.onPersonMakerPress(user)}
+        onPress={(event) => { event.stopPropagation(); this.onPersonMakerPress(user); }}
         // zIndex={1}
       >
         <PersonMaker title={user.shortId} />
-        {/* <Callout
-          style={styles.makerCallout}
-          onPress={() => this.testClick('callout')}
-        >
-          <Text>Расстояние: {user.distance} м</Text>
-          <Text>Обновлено:{' '}
-            <Moment locale="ru" element={Text} fromNow>{user.timestamp}</Moment>
-          </Text>
-        </Callout> */}
       </Marker>
     ));
   }
@@ -159,6 +166,7 @@ class DaterMapView extends Component<Props> {
           moveOnMarkerPress={false}
           rotateEnabled={false}
           mapType="standard"
+          onPress={() => { this.onMapPressed(); }}
         >
           {/* <MapView.UrlTile urlTemplate="http://a.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png" /> */}
           {/* {this.props.location.enabled && this.props.location.coords &&

@@ -16,6 +16,8 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
   location: state.location,
   compass: state.compass,
+  mapPanelShown: state.ui.mapPanelShown,
+  mapPanel: state.ui,
 });
 
 type Props = {
@@ -24,6 +26,8 @@ type Props = {
     coords: GeoCoordinates,
   },
   compass: GeoCompass,
+  mapPanelShown: boolean,
+  mapPanel: any,
 };
 
 class MainScreen extends Component<Props> {
@@ -60,7 +64,10 @@ class MainScreen extends Component<Props> {
         {/* <View style={styles.button}>
           <Button title="Выйти" color="blue" onPress={this.signOut} />
         </View> */}
-        <MapPanel />
+        <MapPanel
+          mapPanelShown={this.props.mapPanelShown}
+          user={this.props.mapPanel.user}
+        />
         <DaterMapView />
         <MyLocationButton
           location={this.props.location}
