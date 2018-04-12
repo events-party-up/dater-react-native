@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Dimensions, Text, Animated } from 'react-native';
+import { StyleSheet, View, Dimensions, Animated } from 'react-native';
 import Interactable from 'react-native-interactable';
+
+import { H2, Body } from '../../components/ui-kit/typography';
+import DaterButton from '../../components/ui-kit/dater-button';
 
 const Screen = {
   width: Dimensions.get('window').width,
@@ -21,112 +24,87 @@ export default class MapPanel extends Component<Props> {
 
   render() {
     return (
-      <View style={styles.container}>
-
-        <View style={styles.panelContainer} pointerEvents="box-none">
-          <Animated.View
-            pointerEvents="box-none"
-            style={[styles.panelContainer, {
-              backgroundColor: 'black',
-              opacity: this._deltaY.interpolate({
-                inputRange: [0, Screen.height - 100],
-                outputRange: [0.5, 0],
-                extrapolateRight: 'clamp',
-              }),
-            }]}
-          />
-          <Interactable.View
-            verticalOnly
-            snapPoints={[{ y: 40 }, { y: Screen.height - 300 }, { y: Screen.height - 100 }]}
-            boundaries={{ top: -300 }}
-            initialPosition={{ y: Screen.height - 100 }}
-            animatedValueY={this._deltaY}
-          >
-            <View style={styles.panel}>
-              <View style={styles.panelHeader}>
-                <View style={styles.panelHandle} />
-              </View>
-              <Text style={styles.panelTitle}>San Francisco Airport</Text>
-              <Text style={styles.panelSubtitle}>International Airport - 40 miles away</Text>
-              <View style={styles.panelButton}>
-                <Text style={styles.panelButtonTitle}>Directions</Text>
-              </View>
-              <View style={styles.panelButton}>
-                <Text style={styles.panelButtonTitle}>Search Nearby</Text>
-              </View>
+      <View style={styles.panelContainer} pointerEvents="box-none">
+        <Animated.View
+          pointerEvents="box-none"
+          style={[styles.panelContainer, {
+            backgroundColor: 'black',
+            opacity: this._deltaY.interpolate({
+              inputRange: [0, Screen.height - 100],
+              outputRange: [0.5, 0],
+              extrapolateRight: 'clamp',
+            }),
+          }]}
+        />
+        <Interactable.View
+          verticalOnly
+          snapPoints={[{ y: 40 }, { y: Screen.height - 300 }, { y: Screen.height - 100 }]}
+          boundaries={{ top: -300 }}
+          initialPosition={{ y: Screen.height - 100 }}
+          animatedValueY={this._deltaY}
+        >
+          <View style={styles.panel}>
+            <View style={styles.panelHeader}>
+              <View style={styles.panelHandle} />
             </View>
-          </Interactable.View>
-        </View>
+            <H2>Девушка 25 лет</H2>
+            <Body style={{
+              marginBottom: 8,
+              marginTop: 8,
+            }}
+            >
+              International Airport - 40 miles away
+            </Body>
 
+            <DaterButton style={styles.panelButton}>
+              Встретиться
+            </DaterButton>
+          </View>
+        </Interactable.View>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#efefef',
-  },
   panelContainer: {
     position: 'absolute',
-    top: 0,
-    bottom: 0,
     left: 0,
     right: 0,
+    zIndex: 4,
   },
   panel: {
     height: Screen.height + 300,
     padding: 20,
-    backgroundColor: '#f7f5eee8',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 5,
-    shadowOpacity: 0.4,
+    backgroundColor: '#FAFAFA',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderRadius: 4,
+    shadowColor: 'rgba(0, 0, 0, 0.2)',
+    shadowRadius: 4,
+    shadowOpacity: 1,
+    shadowOffset: {
+      width: 0, height: 0,
+    },
+    elevation: 1,
   },
   panelHeader: {
     alignItems: 'center',
   },
   panelHandle: {
-    width: 40,
-    height: 8,
+    width: 48,
+    height: 4,
     borderRadius: 4,
     backgroundColor: '#00000040',
     marginBottom: 10,
   },
-  panelTitle: {
-    fontSize: 27,
-    height: 35,
-  },
-  panelSubtitle: {
-    fontSize: 14,
-    color: 'gray',
-    height: 30,
-    marginBottom: 10,
-  },
   panelButton: {
-    padding: 20,
-    borderRadius: 10,
-    backgroundColor: '#318bfb',
     alignItems: 'center',
-    marginVertical: 10,
-  },
-  panelButtonTitle: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    color: 'white',
+    marginVertical: 8,
   },
   photo: {
     width: Screen.width - 40,
     height: 225,
     marginTop: 30,
-  },
-  map: {
-    height: Screen.height,
-    width: Screen.width,
   },
 });

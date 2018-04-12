@@ -11,6 +11,7 @@ import listenForUsersAround from '../services/geo-query';
 import { GeoCoordinates, GeoCompass } from '../types';
 import DaterButton from '../components/ui-kit/dater-button';
 import MyLocationButton from '../components/map/my-location-button';
+import MapPanel from '../components/map/map-panel';
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
@@ -61,6 +62,7 @@ class MainScreen extends Component<Props> {
         {/* <View style={styles.button}>
           <Button title="Выйти" color="blue" onPress={this.signOut} />
         </View> */}
+        <MapPanel />
         <DaterMapView />
         <MyLocationButton
           location={this.props.location}
