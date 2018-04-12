@@ -156,7 +156,8 @@ PODS:
   - RNBackgroundGeolocation (2.11.0):
     - CocoaLumberjack (~> 3.0)
     - React
-  - RNDeviceInfo (0.21.4)
+  - RNDeviceInfo (0.21.0):
+    - React
   - yoga (0.53.3.React)
 
 DEPENDENCIES:
@@ -236,7 +237,7 @@ SPEC CHECKSUMS:
   react-native-maps: 066c2afcc89e18726377bcc685315f989ca22449
   RNBackgroundFetch: 8c4f77f83c398c659bce82af2f0a885079417b9e
   RNBackgroundGeolocation: c9bbf69b9aa277f0b46754cc5f853bd26051a18f
-  RNDeviceInfo: 06a9f93956871270fe4a07785e6fa4dea82eef74
+  RNDeviceInfo: 45f04a9c291b639308a8459a83fced0ec69f9367
   yoga: 55da126afc384965b96bff46652464373b330add
 
 PODFILE CHECKSUM: 8f493fd7571a22558a4dafef58c5f2f91b2b0fc8

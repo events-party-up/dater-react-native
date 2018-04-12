@@ -56,8 +56,8 @@ class DaterMapView extends Component<Props> {
     if (!prevRegion || !newRegion || !prevRegion.latitude) return;
 
     const toLocation = {
-      latitude: 55.79239,
-      longitude: 37.56689,
+      latitude: 55.80111,
+      longitude: 37.53159,
     };
 
     this.directions = await MapDirections(newRegion, toLocation);
