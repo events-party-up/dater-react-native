@@ -5,10 +5,10 @@ import {
 } from 'react-native';
 import { connect, Dispatch } from 'react-redux';
 
-import { DaterMapView } from '../components';
+import DaterMapView from '../components/dater-map-view';
 import listenForUsersAround from '../services/geo-query';
 import { GeoCoordinates, GeoCompass } from '../types';
-// import DaterButton from '../components/ui-kit/dater-button';
+import DaterButton from '../components/ui-kit/dater-button';
 import MyLocationButton from '../components/map/my-location-button';
 import MapPanelComponent from '../components/map/map-panel-component';
 
@@ -67,21 +67,12 @@ class MainScreen extends Component<Props> {
           compass={this.props.compass}
         />
 
-        {/* <View style={styles.loginButton}>
-          <Button title="Вход" color="blue" onPress={() => this.props.navigation.navigate('Login')} />
-        </View> */}
-        {/* <View style={styles.button1}>
-          <Button title="Typography" color="blue" onPress={() => this.props.navigation.navigate('Typography')} />
-        </View>
-        <View style={styles.button2}>
-          <Button title="Buttons" color="blue" onPress={() => this.props.navigation.navigate('Buttons')} />
-        </View> */}
-        {/* <DaterButton style={styles.button1} onPress={() => this.props.navigation.navigate('UIKit')}>
+        <DaterButton style={styles.button1} onPress={() => this.props.navigation.navigate('UIKit')}>
           UI Kit
         </DaterButton>
         <DaterButton style={styles.button2} onPress={() => this.props.navigation.navigate('Login')} type="secondary">
           Login
-        </DaterButton> */}
+        </DaterButton>
       </View>
     );
   }

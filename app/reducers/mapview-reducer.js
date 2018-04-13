@@ -1,4 +1,4 @@
-import GeoUtils from '../utils';
+import GeoUtils from '../utils/geo-utils';
 import {
   DEFAULT_LATITUDE_DELTA,
   DEFAULT_LONGITUDE_DELTA,

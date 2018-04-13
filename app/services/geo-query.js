@@ -1,6 +1,6 @@
 import firebase from 'react-native-firebase';
 import { usersAroundActionCreators } from '../reducers/root-reducer';
-import GeoUtils from '../utils';
+import GeoUtils from '../utils/geo-utils';
 
 const ONE_HOUR = 1000 * 60 * 60;
 const collectionPath = 'geoPoints';

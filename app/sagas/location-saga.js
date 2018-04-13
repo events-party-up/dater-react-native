@@ -5,7 +5,7 @@ import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 
 import BackgroundGeolocation from '../services/background-geolocation';
 import { updateFirestore } from '../utils/firebase-utils';
-import GeoUtils from '../utils';
+import GeoUtils from '../utils/geo-utils';
 
 export default function* locationSaga() {
   try {

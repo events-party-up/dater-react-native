@@ -3,7 +3,7 @@ import ReactNativeHeading from '@zsajjad/react-native-heading';
 import { eventChannel } from 'redux-saga';
 import { DeviceEventEmitter } from 'react-redux';
 import { NativeEventEmitter } from 'react-native';
-import GeoUtils from '../utils';
+import GeoUtils from '../utils/geo-utils';
 
 import { updateFirestore } from '../utils/firebase-utils';
 

@@ -1,10 +1,8 @@
 import { StackNavigator } from 'react-navigation';
 
-import {
-  TypographyScreen,
-  DaterButtonsScreen,
-  UIKitIndexScreen,
-} from '../screens';
+import TypographyScreen from '../screens/ui-kit/typography-screen';
+import DaterButtonsScreen from '../screens/ui-kit/dater-buttons-screen';
+import UIKitIndexScreen from '../screens/ui-kit/ui-kit-index-screen';
 
 const UIKitNavigator = StackNavigator(
   {
