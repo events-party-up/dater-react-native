@@ -27,7 +27,6 @@ export default function* mapDirectionsSaga() {
           },
         },
       });
-      // yield put({ type: 'UI_MAP_PANEL_HIDE_START' });
     }
   } catch (error) {
     yield put({ type: 'MAPVIEW_BUILD_ROUTE_ERROR', payload: error });

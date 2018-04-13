@@ -27,7 +27,7 @@ type Props = {
   dispatch: Dispatch,
 };
 
-class MapPanel extends Component<Props> {
+class MapPanelComponent extends Component<Props> {
   _deltaY: Animated.Value;
   panViewBottom: Animated.Value;
   interactableElement: Interactable.View;
@@ -183,4 +183,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps)(MapPanel);
+export default connect(mapStateToProps)(MapPanelComponent);

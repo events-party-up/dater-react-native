@@ -135,12 +135,31 @@ class DaterMapView extends Component<Props> {
     ));
   }
 
+  onMapDragStart = (event) => {
+    this.props.dispatch({
+      type: 'MAPVIEW_DRAG_START',
+      payload: event.nativeEvent,
+    });
+  }
+
+  onMapDragEnd = (event) => {
+    this.props.dispatch({
+      type: 'MAPVIEW_DRAG_END',
+      payload: event.nativeEvent,
+    });
+  }
+
   render() {
     return (
       <View
         style={styles.mapView}
+        onMoveShouldSetResponder={(event) => {
+          this.onMapDragStart(event);
+          return true;
+        }}
+        onResponderRelease={this.onMapDragEnd}
       >
-        {this.props.location.coords &&
+        {this.props.location.enabled && this.props.location.coords && this.props.mapView.centered &&
         <MyLocationOnMovingMap
           accuracy={this.props.location.coords.accuracy}
           visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
@@ -162,7 +181,7 @@ class DaterMapView extends Component<Props> {
           mapType="standard"
           onPress={() => { this.onMapPressed(); }}
         >
-          {this.props.location.enabled && this.props.location.coords &&
+          {this.props.location.enabled && this.props.location.coords && !this.props.mapView.centered &&
             <MyLocationMapMarker
               accuracy={this.props.location.coords.accuracy}
               coordinate={this.props.location.coords}

@@ -19,8 +19,9 @@ export default function* mapViewSaga() {
         'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
         'MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING',
         'MAPVIEW_ANIMATE_TO_BEARING_COMPASS_HEADING'], animateToBearing, mapView);
+      const task4 = yield takeEvery('MAPVIEW_SHOW_MY_LOCATION_START', showMyLocation, mapView);
       yield take('MAPVIEW_UNLOAD');
-      yield cancel(task1, task2, task3);
+      yield cancel(task1, task2, task3, task4);
     }
   } catch (error) {
     yield put({ type: 'MAPVIEW_MAINSAGA_ERROR', payload: error });
@@ -52,7 +53,35 @@ function* animateToCoordinate(mapView, action) {
     const { coords, duration } = action.payload;
     const animationDuration = duration || defaultAnimationDuration;
     yield call(mapView.animateToCoordinate, coords, animationDuration);
+    yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
   } catch (error) {
     yield put({ type: 'MAPVIEW_ANIMATE_TO_COORDINATE_ERROR', payload: error });
+  }
+}
+
+function* showMyLocation(mapView, action) {
+  try {
+    const { coords, duration } = action.payload;
+    const animationDuration = duration || defaultAnimationDuration;
+    yield call(mapView.animateToCoordinate, coords, animationDuration);
+    yield call(delay, animationDuration);
+
+    yield put({
+      type: 'MAPVIEW_ANIMATE_TO_REGION',
+      payload: {
+        region: {
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+          latitudeDelta: 0.00322,
+          longitudeDelta: 0.00322,
+        },
+        duration: animationDuration,
+      },
+    });
+
+    yield call(delay, animationDuration);
+    yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
+  } catch (error) {
+    yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_ERROR', payload: error });
   }
 }
