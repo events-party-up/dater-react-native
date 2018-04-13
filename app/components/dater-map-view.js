@@ -55,13 +55,6 @@ class DaterMapView extends Component<Props> {
 
   onRegionChangeComplete = async (newRegion, prevRegion) => {
     if (!prevRegion || !newRegion || !prevRegion.latitude) return;
-
-    // const toLocation = {
-    //   latitude: 55.80111,
-    //   longitude: 37.53159,
-    // };
-
-    // this.directions = await MapDirections(newRegion, toLocation);
     this.props.dispatch({
       type: 'MAPVIEW_REGION_UPDATED',
       payload: {
@@ -72,7 +65,7 @@ class DaterMapView extends Component<Props> {
   }
 
   componentWillUnmount() {
-    // this.unsubscribeFromUsersAround();
+    this.unsubscribeFromUsersAround();
     this.props.dispatch({
       type: 'MAPVIEW_UNLOAD',
     });
