@@ -16,7 +16,18 @@ export default function* mapDirectionsSaga() {
       const route = yield call(MapDirections, myLocation, toLocation);
       yield put({ type: 'MAPVIEW_BUILD_ROUTE_FINISH', payload: route });
       yield delay(250);
-      yield put({ type: 'UI_MAP_PANEL_HIDE_START' });
+
+      yield put({
+        type: 'UI_MAP_PANEL_REPLACE_START',
+        payload: {
+          mode: 'routeInfo',
+          data: {
+            route,
+            routeToUser,
+          },
+        },
+      });
+      // yield put({ type: 'UI_MAP_PANEL_HIDE_START' });
     }
   } catch (error) {
     yield put({ type: 'MAPVIEW_BUILD_ROUTE_ERROR', payload: error });

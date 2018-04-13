@@ -9,7 +9,7 @@ const MapDirections = async (startCoords, destinationCoords) => {
     const fetchUrl = `${mapDirectionUrl}?origin=${startLoc}&destination=${destinationLoc}&key=${mapDirectionsApiKey}&mode=walking`; // eslint-disable-line 
     const resp = await fetch(fetchUrl);
     const respJson = await resp.json();
-    // console.log('Directions: ', respJson);
+    console.log('Directions: ', respJson);
     const points = Polyline.decode(respJson.routes[0].overview_polyline.points);
     const polyLines = points.map((point) => ({
       latitude: point[0],

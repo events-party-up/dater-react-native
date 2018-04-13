@@ -17,14 +17,13 @@ export default function* mapPanelSaga() {
 }
 
 function* showPanel(mapPanelSnapper, action) {
-  const user = action.payload;
   yield call(mapPanelSnapper, { index: 0 }); // show
   yield put({
     type: 'UI_MAP_PANEL_SHOW_FINISH',
-    payload: user,
+    payload: action.payload,
   });
 
-  const task2 = yield takeEvery('UI_MAP_PANEL_REPLACE', replacePanel, mapPanelSnapper);
+  const task2 = yield takeEvery('UI_MAP_PANEL_REPLACE_START', replacePanel, mapPanelSnapper);
 
   yield take('UI_MAP_PANEL_HIDE_START');
   yield cancel(task2);
@@ -33,12 +32,11 @@ function* showPanel(mapPanelSnapper, action) {
 }
 
 function* replacePanel(mapPanelSnapper, action) {
-  const user = action.payload;
   yield call(mapPanelSnapper, { index: 2 }); // first hide
   yield delay(defaultAnimationDuration);
   yield put({
     type: 'UI_MAP_PANEL_REPLACE_FINISH',
-    payload: user,
+    payload: action.payload,
   });
   yield call(mapPanelSnapper, { index: 0 }); // and show again
 }

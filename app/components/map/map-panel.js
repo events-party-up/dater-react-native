@@ -10,7 +10,7 @@ import Interactable from 'react-native-interactable';
 import Moment from 'react-moment';
 import { connect, Dispatch } from 'react-redux';
 
-import { H2, Body } from '../../components/ui-kit/typography';
+import { H2, Body, Caption2 } from '../../components/ui-kit/typography';
 import DaterButton from '../../components/ui-kit/dater-button';
 
 const mapStateToProps = (state) => ({
@@ -55,11 +55,55 @@ class MapPanel extends Component<Props> {
     }
   };
 
-  buildRoute = () => {
+  buildRoute = (user) => {
     this.props.dispatch({
       type: 'MAPVIEW_BUILD_ROUTE_START',
-      payload: this.props.mapPanel.user,
+      payload: user,
     });
+  }
+
+  renderCard() {
+    switch (this.props.mapPanel.mode) {
+      case 'userCard':
+        return (
+          <View>
+            <H2>Пользователь ({this.props.mapPanel.data.shortId} )</H2>
+            <Body style={{
+              marginBottom: 8,
+              marginTop: 8,
+            }}
+            >
+              {this.props.mapPanel.data.distance} метров от вас. {' '}
+              Был <Moment locale="ru" element={Body} fromNow>{this.props.mapPanel.data.timestamp}</Moment>.
+            </Body>
+            <DaterButton style={styles.panelButton} onPress={() => this.buildRoute(this.props.mapPanel.data)}>
+              Встретиться
+            </DaterButton>
+          </View>
+        );
+      case 'routeInfo':
+        return (
+          <View>
+            <H2>Маршрут до {this.props.mapPanel.data.routeToUser.shortId}</H2>
+            <Caption2 style={{
+              marginBottom: 8,
+              marginTop: 8,
+            }}
+            >
+              Расстояние {this.props.mapPanel.data.route.distance} м. {' '}
+              Продолжительность {Math.floor(this.props.mapPanel.data.route.duration / 60)} мин.
+            </Caption2>
+            <DaterButton
+              style={styles.panelButton}
+              onPress={() => this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_START' })}
+            >
+              Поехали!
+            </DaterButton>
+          </View>
+        );
+      default:
+        return null;
+    }
   }
 
   render() {
@@ -86,18 +130,7 @@ class MapPanel extends Component<Props> {
             <View style={styles.panelHeader}>
               <View style={styles.panelHandle} />
             </View>
-            <H2>Ольга, 25 лет ({this.props.mapPanel.user.shortId} )</H2>
-            <Body style={{
-              marginBottom: 8,
-              marginTop: 8,
-            }}
-            >
-              {this.props.mapPanel.user.distance} метров от вас, {' '}
-              <Moment locale="ru" element={Body} fromNow>{this.props.mapPanel.user.timestamp}</Moment>
-            </Body>
-            <DaterButton style={styles.panelButton} onPress={this.buildRoute}>
-              Встретиться
-            </DaterButton>
+            {this.renderCard()}
           </View>
         </Interactable.View>
       </View>

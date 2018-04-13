@@ -96,13 +96,19 @@ class DaterMapView extends Component<Props> {
   onPersonMakerPress = (user) => {
     if (this.props.mapPanel.visible) {
       this.props.dispatch({
-        type: 'UI_MAP_PANEL_REPLACE',
-        payload: user,
+        type: 'UI_MAP_PANEL_REPLACE_START',
+        payload: {
+          mode: 'userCard',
+          data: user,
+        },
       });
     } else {
       this.props.dispatch({
         type: 'UI_MAP_PANEL_SHOW_START',
-        payload: user,
+        payload: {
+          mode: 'userCard',
+          data: user,
+        },
       });
     }
   }

@@ -11,8 +11,9 @@ const types = {
 };
 
 const initialState = {
+  mode: '',
   visible: false,
-  user: {},
+  data: {},
   error: null,
 };
 
@@ -23,7 +24,8 @@ const mapPanelReducer = (state = initialState, action) => {
     case types.UI_MAP_PANEL_SHOW_START: {
       return {
         ...state,
-        user: payload,
+        mode: payload.mode,
+        data: payload.data,
       };
     }
     case types.UI_MAP_PANEL_REPLACE_START: {
@@ -36,13 +38,14 @@ const mapPanelReducer = (state = initialState, action) => {
       return {
         ...state,
         visible: true,
-        user: payload,
+        mode: payload.mode,
+        data: payload.data,
       };
     }
     case types.UI_MAP_PANEL_HIDE_START: {
       return {
-        visible: false,
         ...state,
+        visible: false,
       };
     }
     case types.UI_MAP_PANEL_HIDE_FINISH: {
