@@ -1,5 +1,5 @@
 import firebase from 'react-native-firebase';
-import { usersAroundActionCreators } from '../redux';
+import { usersAroundActionCreators } from '../reducers/root-reducer';
 import GeoUtils from '../utils';
 
 const ONE_HOUR = 1000 * 60 * 60;

@@ -3,7 +3,6 @@ import firebase from 'react-native-firebase';
 import DeviceInfo from 'react-native-device-info';
 import { Platform } from 'react-native';
 
-import { geoActionCreators } from '../redux/index';
 import { GeoCoordinates } from '../types/index';
 
 const geoOptions = async () => {
@@ -90,16 +89,6 @@ const updateGeoPointInFirestore = (options: {
     .catch((err) => console.error(err));
 };
 
-const toggleBgServices = (dispatch) => {
-  RNBackgroundGeolocation.getState((state) => {
-    if (state.enabled) {
-      RNBackgroundGeolocation.stop(() => (dispatch(geoActionCreators.stopBgServices())));
-    } else {
-      RNBackgroundGeolocation.start(() => (dispatch(geoActionCreators.startBgServices())));
-    }
-  });
-};
-
 const BackgroundGeolocation = {
   init: async () => {
     const GEO_OPTIONS = await geoOptions();
@@ -135,7 +124,6 @@ const BackgroundGeolocation = {
     });
   },
   updateGeoPointInFirestore,
-  toggleBgServices,
 };
 
 export default BackgroundGeolocation;
