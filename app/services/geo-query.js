@@ -42,10 +42,10 @@ const listenForUsersAround = (area, dispatch) => {
 
       if (currentUser && userData.uid === currentUser.uid) {
         return;
-      }
-
-      // only show users with fresh timestamps
-      if (Date.now() - new Date(userData.timestamp) > ONE_HOUR * 12) {
+      } else if (Date.now() - new Date(userData.timestamp) > ONE_HOUR * 12) {
+        // only show users with fresh timestamps
+        return;
+      } else if (!userData.visible) {
         return;
       }
 

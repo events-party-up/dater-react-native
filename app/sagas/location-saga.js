@@ -5,7 +5,7 @@ import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 
 import BackgroundGeolocation from '../services/background-geolocation';
 import { updateFirestore } from '../utils/firebase-utils';
-// import GeoUtils from '../utils';
+import GeoUtils from '../utils';
 
 export default function* locationSaga() {
   try {
@@ -18,7 +18,7 @@ export default function* locationSaga() {
     const locationServiceState = yield call([BackgroundGeolocation, 'init']);
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
     yield throttle(500, 'GEO_LOCATION_UPDATED', animateToCurrentLocation);
-    // yield throttle(500, 'GEO_LOCATION_UPDATED', mapViewAnimateToBearing);
+    yield throttle(500, 'GEO_LOCATION_UPDATED', mapViewAnimateToBearing);
     yield throttle(2000, 'GEO_LOCATION_UPDATED', writeGeoLocationToFirestore);
     while (true) {
       yield take('GEO_LOCATION_START');
@@ -31,6 +31,14 @@ export default function* locationSaga() {
       yield take('GEO_LOCATION_STOP');
       yield call([BackgroundGeolocation, 'stop']);
       locationServiceState.enabled = false;
+      const uid = yield select((state) => state.auth.uid);
+      yield call(updateFirestore, {
+        collection: 'geoPoints',
+        doc: uid,
+        data: {
+          visible: false,
+        },
+      });
       yield put({ type: 'GEO_LOCATION_STOPPED' });
     }
   } catch (error) {
@@ -82,6 +90,7 @@ function* writeGeoLocationToFirestore() {
       collection: 'geoPoints',
       doc: uid,
       data: {
+        visible: true,
         accuracy: coords.accuracy,
         heading: coords.heading,
         speed: coords.speed,
@@ -94,18 +103,18 @@ function* writeGeoLocationToFirestore() {
   }
 }
 
-// function* mapViewAnimateToBearing(action) {
-//   const gpsHeading = action.payload.heading;
-//   if (gpsHeading < 0) return;
+function* mapViewAnimateToBearing(action) {
+  const gpsHeading = action.payload.heading;
+  if (gpsHeading < 0) return;
 
-//   const bearingAngle = GeoUtils.wrapCompassHeading(gpsHeading);
-//   yield put({
-//     type: 'MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING',
-//     payload: {
-//       bearingAngle,
-//     },
-//   });
-// }
+  const bearingAngle = GeoUtils.wrapCompassHeading(gpsHeading);
+  yield put({
+    type: 'MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING',
+    payload: {
+      bearingAngle,
+    },
+  });
+}
 
 
 function createLocationChannel() {

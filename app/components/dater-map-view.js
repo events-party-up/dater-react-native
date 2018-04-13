@@ -10,7 +10,7 @@ import 'moment/locale/ru';
 
 import {
   MyLocationOnMovingMap,
-  // MyLocationMapMarker,
+  MyLocationMapMarker,
   PersonMaker,
 } from './index';
 
@@ -65,7 +65,6 @@ class DaterMapView extends Component<Props> {
   }
 
   componentWillUnmount() {
-    this.unsubscribeFromUsersAround();
     this.props.dispatch({
       type: 'MAPVIEW_UNLOAD',
     });
@@ -163,14 +162,13 @@ class DaterMapView extends Component<Props> {
           mapType="standard"
           onPress={() => { this.onMapPressed(); }}
         >
-          {/* <MapView.UrlTile urlTemplate="http://a.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png" /> */}
-          {/* {this.props.location.enabled && this.props.location.coords &&
+          {this.props.location.enabled && this.props.location.coords &&
             <MyLocationMapMarker
               accuracy={this.props.location.coords.accuracy}
               coordinate={this.props.location.coords}
               gpsHeading={this.props.location.coords.heading}
               compassHeading={this.props.compass.heading}
-            /> } */}
+            /> }
           {this.props.location.enabled && this.renderUsersAround()}
           <MapDirectionsComponent />
         </MapView>
