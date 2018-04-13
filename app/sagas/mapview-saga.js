@@ -1,7 +1,10 @@
-import { throttle, takeEvery, call, take, put, cancel } from 'redux-saga/effects';
+import { throttle, takeEvery, call, take, put, cancel, select } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
-
-const defaultAnimationDuration = 500;
+import {
+  DEFAULT_MAPVIEW_ANIMATION_DURATION,
+  DEFAULT_LATITUDE_DELTA,
+  DEFAULT_LONGITUDE_DELTA,
+} from '../constants';
 
 export default function* mapViewSaga() {
   try {
@@ -12,7 +15,7 @@ export default function* mapViewSaga() {
       // and will not allow correct zoom on map load
       const firstAnimateToRegionAction = yield take('MAPVIEW_ANIMATE_TO_REGION', animateToRegion, mapView);
       yield animateToRegion(mapView, firstAnimateToRegionAction);
-      yield call(delay, defaultAnimationDuration);
+      yield call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
       const task1 = yield takeEvery('MAPVIEW_ANIMATE_TO_REGION', animateToRegion, mapView);
       const task2 = yield takeEvery('MAPVIEW_ANIMATE_TO_COORDINATE', animateToCoordinate, mapView);
       const task3 = yield throttle(1000, [
@@ -31,7 +34,7 @@ export default function* mapViewSaga() {
 function* animateToBearing(mapView, action) {
   try {
     const { duration, bearingAngle } = action.payload;
-    const animationDuration = duration || defaultAnimationDuration;
+    const animationDuration = duration || DEFAULT_MAPVIEW_ANIMATION_DURATION;
     yield call(mapView.animateToBearing, bearingAngle, animationDuration);
   } catch (error) {
     yield put({ type: 'MAPVIEW_ANIMATE_TO_BEARING_ERROR', payload: error });
@@ -41,7 +44,7 @@ function* animateToBearing(mapView, action) {
 function* animateToRegion(mapView, action) {
   try {
     const { region, duration } = action.payload;
-    const animationDuration = duration || defaultAnimationDuration;
+    const animationDuration = duration || DEFAULT_MAPVIEW_ANIMATION_DURATION;
     yield call(mapView.animateToRegion, region, animationDuration);
   } catch (error) {
     yield put({ type: 'MAPVIEW_ANIMATE_TO_REGION_ERROR', payload: error });
@@ -51,7 +54,7 @@ function* animateToRegion(mapView, action) {
 function* animateToCoordinate(mapView, action) {
   try {
     const { coords, duration } = action.payload;
-    const animationDuration = duration || defaultAnimationDuration;
+    const animationDuration = duration || DEFAULT_MAPVIEW_ANIMATION_DURATION;
     yield call(mapView.animateToCoordinate, coords, animationDuration);
     yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
   } catch (error) {
@@ -59,12 +62,11 @@ function* animateToCoordinate(mapView, action) {
   }
 }
 
-function* showMyLocation(mapView, action) {
+function* showMyLocation(mapView) {
   try {
-    const { coords, duration } = action.payload;
-    const animationDuration = duration || defaultAnimationDuration;
-    yield call(mapView.animateToCoordinate, coords, animationDuration);
-    yield call(delay, animationDuration);
+    const coords = yield select((state) => state.location.coords);
+    yield call(mapView.animateToCoordinate, coords, DEFAULT_MAPVIEW_ANIMATION_DURATION);
+    yield call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
 
     yield put({
       type: 'MAPVIEW_ANIMATE_TO_REGION',
@@ -72,14 +74,14 @@ function* showMyLocation(mapView, action) {
         region: {
           latitude: coords.latitude,
           longitude: coords.longitude,
-          latitudeDelta: 0.00322,
-          longitudeDelta: 0.00322,
+          latitudeDelta: DEFAULT_LATITUDE_DELTA,
+          longitudeDelta: DEFAULT_LONGITUDE_DELTA,
         },
-        duration: animationDuration,
+        duration: DEFAULT_MAPVIEW_ANIMATION_DURATION,
       },
     });
 
-    yield call(delay, animationDuration);
+    yield call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
     yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
   } catch (error) {
     yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_ERROR', payload: error });

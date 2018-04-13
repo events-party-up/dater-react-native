@@ -62,6 +62,13 @@ class MapPanelComponent extends Component<Props> {
     });
   }
 
+  letsStart = () => {
+    this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_START' });
+    this.props.dispatch({
+      type: 'MAPVIEW_SHOW_MY_LOCATION_START',
+    });
+  }
+
   renderCard() {
     switch (this.props.mapPanel.mode) {
       case 'userCard':
@@ -95,7 +102,7 @@ class MapPanelComponent extends Component<Props> {
             </Caption2>
             <DaterButton
               style={styles.panelButton}
-              onPress={() => this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_START' })}
+              onPress={this.letsStart}
             >
               Поехали!
             </DaterButton>

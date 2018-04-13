@@ -28,9 +28,6 @@ class MyLocationButton extends Component<Props> {
   centerMe = () => {
     this.props.dispatch({
       type: 'MAPVIEW_SHOW_MY_LOCATION_START',
-      payload: {
-        coords: this.props.location.coords,
-      },
     });
   }
 

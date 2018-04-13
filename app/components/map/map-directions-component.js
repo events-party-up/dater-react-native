@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import MapView from 'react-native-maps';
-import { Dimensions } from 'react-native';
-
-const { width, height } = Dimensions.get('window');
-const DIAGONAL = Math.sqrt((width * width) + (height * height));
+import { SCREEN_DIAGONAL } from '../../constants';
 
 const mapStateToProps = (state) => ({
   mapDirections: state.mapDirections,
   visibleRadiusInMeters: state.mapView.visibleRadiusInMeters,
 });
+
+const defaultStrokeWidth = 3;
 
 type Props = {
   mapDirections: any,
@@ -21,12 +20,13 @@ class MapDirectionsComponent extends Component<Props> {
   }
 
   render() {
-    const pixelsPerMeter = DIAGONAL / (this.props.visibleRadiusInMeters * 2);
+    const pixelsPerMeter = SCREEN_DIAGONAL / (this.props.visibleRadiusInMeters * 2);
+    const strokeWidth = 3 * pixelsPerMeter > defaultStrokeWidth ? 3 * pixelsPerMeter : defaultStrokeWidth;
 
     return (
       this.props.mapDirections.visible && <MapView.Polyline
         coordinates={this.props.mapDirections.route.polyLines}
-        strokeWidth={3 * pixelsPerMeter}
+        strokeWidth={strokeWidth}
         strokeColor="green"
       />
     );

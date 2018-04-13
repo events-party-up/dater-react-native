@@ -1,6 +1,8 @@
-import { Dimensions } from 'react-native';
-
 import GeoUtils from '../utils';
+import {
+  DEFAULT_LATITUDE_DELTA,
+  DEFAULT_LONGITUDE_DELTA,
+} from '../constants';
 
 const types = {
   MAPVIEW_REGION_UPDATED: 'MAPVIEW_REGION_UPDATED',
@@ -21,11 +23,6 @@ const types = {
   MAPVIEW_SHOW_MY_LOCATION_FINISH: 'MAPVIEW_SHOW_MY_LOCATION_FINISH',
   MAPVIEW_SHOW_MY_LOCATION_ERROR: 'MAPVIEW_SHOW_MY_LOCATION_ERROR',
 };
-
-const { width, height } = Dimensions.get('window');
-const ASPECT_RATIO = width / height;
-const DEFAULT_LATITUDE_DELTA = 0.00322;
-const DEFAULT_LONGITUDE_DELTA = DEFAULT_LATITUDE_DELTA * ASPECT_RATIO;
 
 const initialState = {
   longitude: null,
