@@ -9,7 +9,7 @@ import {
 import DeviceInfo from 'react-native-device-info';
 
 import CircleButton from '../../components/ui-kit/circle-button';
-import { DaterHeader } from '../../components';
+import DaterHeader from '../../components/ui-kit/dater-header';
 
 type Props = {
   children: React.Node,

@@ -8,11 +8,9 @@ import MapView, { Marker } from 'react-native-maps';
 import { connect, Dispatch } from 'react-redux';
 import 'moment/locale/ru';
 
-import {
-  MyLocationOnMovingMap,
-  MyLocationMapMarker,
-  PersonMaker,
-} from './index';
+import MyLocationOnMovingMap from './map/my-location-on-moving-map';
+import MyLocationMapMarker from './map/my-location-map-maker';
+import PersonMaker from './map/person-maker';
 
 import { GeoCompass, GeoCoordinates } from '../types';
 import MapDirectionsComponent from '../components/map/map-directions-component';

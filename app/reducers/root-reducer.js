@@ -1,14 +1,14 @@
 import { combineReducers } from 'redux';
 
-import * as usersAroundRedux from './users-around-redux';
-import authReducer from './auth-redux';
-import locationReducer from './location-redux';
-import mapViewReducer from './mapview-redux';
+import * as usersAroundRedux from './users-around-reducer';
+import authReducer from './auth-reducer';
+import locationReducer from './location-reducer';
+import mapViewReducer from './mapview-reducer';
 import mapDirectionsReducer from './map-directions-reducer';
-import compassReducer from './compass-redux';
+import compassReducer from './compass-reducer';
 import mapPanelReducer from './map-panel-reducer';
 
-export const reducer = combineReducers({
+export const rootReducer = combineReducers({
   auth: authReducer,
   location: locationReducer,
   usersAround: usersAroundRedux.reducer,

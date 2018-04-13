@@ -1,6 +1,6 @@
 import { StackNavigator } from 'react-navigation';
 
-import { MainScreen } from '../screens';
+import MainScreen from '../screens/main-screen';
 import UIKitNavigator from './ui-kit-navigator';
 import LoginNavigator from './login-navigator';
 
