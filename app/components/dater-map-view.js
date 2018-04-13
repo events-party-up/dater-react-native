@@ -23,7 +23,7 @@ const mapStateToProps = (state) => ({
   mapView: state.mapView,
   auth: state.auth,
   compass: state.compass,
-  ui: state.ui,
+  mapPanel: state.mapPanel,
 });
 
 function creatMapViewProxy(mapView: MapView) {
@@ -46,7 +46,7 @@ type Props = {
     geoUpdates: number,
   },
   mapView: MapView,
-  ui: any,
+  mapPanel: any,
 };
 
 class DaterMapView extends Component<Props> {
@@ -93,12 +93,8 @@ class DaterMapView extends Component<Props> {
     console.log(`Userr: ${user}`);
   }
 
-  testClick = (element) => {
-    console.log(`Clicked: ${element}`);
-  }
-
   onPersonMakerPress = (user) => {
-    if (this.props.ui.mapPanelShown) {
+    if (this.props.mapPanel.visible) {
       this.props.dispatch({
         type: 'UI_MAP_PANEL_REPLACE',
         payload: user,
@@ -112,7 +108,7 @@ class DaterMapView extends Component<Props> {
   }
 
   onMapPressed = () => {
-    if (this.props.ui.mapPanelShown) {
+    if (this.props.mapPanel.visible) {
       this.props.dispatch({
         type: 'UI_MAP_PANEL_HIDE_START',
       });

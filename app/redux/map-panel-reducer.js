@@ -10,12 +10,12 @@ const types = {
 };
 
 const initialState = {
-  mapPanelShown: false,
+  visible: false,
   user: {},
   error: null,
 };
 
-const uiReducer = (state = initialState, action) => {
+const mapPanelReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
@@ -34,20 +34,20 @@ const uiReducer = (state = initialState, action) => {
     case types.UI_MAP_PANEL_SHOW_FINISH: {
       return {
         ...state,
-        mapPanelShown: true,
+        visible: true,
         user: payload,
       };
     }
     case types.UI_MAP_PANEL_HIDE_START: {
       return {
-        mapPanelShown: false,
+        visible: false,
         ...state,
       };
     }
     case types.UI_MAP_PANEL_HIDE_FINISH: {
       return {
         ...state,
-        mapPanelShown: false,
+        visible: false,
       };
     }
     default: {
@@ -56,4 +56,4 @@ const uiReducer = (state = initialState, action) => {
   }
 };
 
-export default uiReducer;
+export default mapPanelReducer;

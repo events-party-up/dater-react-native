@@ -14,7 +14,7 @@ import { H2, Body } from '../../components/ui-kit/typography';
 import DaterButton from '../../components/ui-kit/dater-button';
 
 const mapStateToProps = (state) => ({
-  ui: state.ui,
+  mapPanel: state.mapPanel,
 });
 
 const Screen = {
@@ -23,9 +23,8 @@ const Screen = {
 };
 
 type Props = {
-  mapPanelShown: boolean,
+  mapPanel: any,
   dispatch: Dispatch,
-  user: any,
 };
 
 class MapPanel extends Component<Props> {
@@ -49,7 +48,7 @@ class MapPanel extends Component<Props> {
 
   onSnap = (event) => {
     // console.log('On Snap: ', event.nativeEvent);
-    if (event && event.nativeEvent && event.nativeEvent.id === 'close_manual' && this.props.mapPanelShown) {
+    if (event && event.nativeEvent && event.nativeEvent.id === 'close_manual' && this.props.mapPanel.visible) {
       this.props.dispatch({
         type: 'UI_MAP_PANEL_HIDE_START',
       });
@@ -80,14 +79,14 @@ class MapPanel extends Component<Props> {
             <View style={styles.panelHeader}>
               <View style={styles.panelHandle} />
             </View>
-            <H2>Ольга, 25 лет ({this.props.user.shortId} )</H2>
+            <H2>Ольга, 25 лет ({this.props.mapPanel.user.shortId} )</H2>
             <Body style={{
               marginBottom: 8,
               marginTop: 8,
             }}
             >
-              {this.props.user.distance} метров от вас, {' '}
-              <Moment locale="ru" element={Body} fromNow>{this.props.user.timestamp}</Moment>
+              {this.props.mapPanel.user.distance} метров от вас, {' '}
+              <Moment locale="ru" element={Body} fromNow>{this.props.mapPanel.user.timestamp}</Moment>
             </Body>
             <DaterButton style={styles.panelButton}>
               Встретиться
