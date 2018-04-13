@@ -2,21 +2,20 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
-  Button,
   View,
 } from 'react-native';
-import MapView, { Marker, Callout } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import { connect, Dispatch } from 'react-redux';
 import 'moment/locale/ru';
-import Moment from 'react-moment';
 
 import {
   MyLocationOnMovingMap,
-  // MyLocationMapMarker,
+  MyLocationMapMarker,
   PersonMaker,
 } from './index';
 
 import { GeoCompass, GeoCoordinates } from '../types';
+import MapDirectionsComponent from '../components/map/map-directions-component';
 
 const mapStateToProps = (state) => ({
   location: state.location,
@@ -24,6 +23,7 @@ const mapStateToProps = (state) => ({
   mapView: state.mapView,
   auth: state.auth,
   compass: state.compass,
+  mapPanel: state.mapPanel,
 });
 
 function creatMapViewProxy(mapView: MapView) {
@@ -46,19 +46,15 @@ type Props = {
     geoUpdates: number,
   },
   mapView: MapView,
+  mapPanel: any,
 };
 
 class DaterMapView extends Component<Props> {
   mapView: MapView;
+  directions: null;
 
-  constructor(props) {
-    super(props);
-    this.routeTo = this.routeTo.bind(this);
-  }
-
-  onRegionChangeComplete = (newRegion, prevRegion) => {
+  onRegionChangeComplete = async (newRegion, prevRegion) => {
     if (!prevRegion || !newRegion || !prevRegion.latitude) return;
-
     this.props.dispatch({
       type: 'MAPVIEW_REGION_UPDATED',
       payload: {
@@ -68,11 +64,7 @@ class DaterMapView extends Component<Props> {
     });
   }
 
-  componentDidMount() {
-  }
-
   componentWillUnmount() {
-    // this.unsubscribeFromUsersAround();
     this.props.dispatch({
       type: 'MAPVIEW_UNLOAD',
     });
@@ -90,6 +82,35 @@ class DaterMapView extends Component<Props> {
 
   routeTo = async (user) => {
     console.log(`Creating route to user: ${user.id}`);
+    console.log(`Userr: ${user}`);
+  }
+
+  onPersonMakerPress = (user) => {
+    if (this.props.mapPanel.visible) {
+      this.props.dispatch({
+        type: 'UI_MAP_PANEL_REPLACE_START',
+        payload: {
+          mode: 'userCard',
+          data: user,
+        },
+      });
+    } else {
+      this.props.dispatch({
+        type: 'UI_MAP_PANEL_SHOW_START',
+        payload: {
+          mode: 'userCard',
+          data: user,
+        },
+      });
+    }
+  }
+
+  onMapPressed = () => {
+    if (this.props.mapPanel.visible) {
+      this.props.dispatch({
+        type: 'UI_MAP_PANEL_HIDE_START',
+      });
+    }
   }
 
   onRegionChange = (region) => {
@@ -105,27 +126,40 @@ class DaterMapView extends Component<Props> {
           longitude: user.geoPoint.longitude,
         }}
         style={styles.maker}
-        key={user.id}
-        zIndex={1}
+        key={user.uid}
+        onPress={(event) => { event.stopPropagation(); this.onPersonMakerPress(user); }}
+        // zIndex={1}
       >
         <PersonMaker title={user.shortId} />
-        <Callout style={styles.makerCallout}>
-          <Text>Расстояние: {user.distance} м</Text>
-          <Text>Обновлено:{' '}
-            <Moment locale="ru" element={Text} fromNow>{user.timestamp}</Moment>
-          </Text>
-          <Button title="Маршрут" onPress={() => this.routeTo(user)} />
-        </Callout>
       </Marker>
     ));
+  }
+
+  onMapDragStart = (event) => {
+    this.props.dispatch({
+      type: 'MAPVIEW_DRAG_START',
+      payload: event.nativeEvent,
+    });
+  }
+
+  onMapDragEnd = (event) => {
+    this.props.dispatch({
+      type: 'MAPVIEW_DRAG_END',
+      payload: event.nativeEvent,
+    });
   }
 
   render() {
     return (
       <View
         style={styles.mapView}
+        onMoveShouldSetResponder={(event) => {
+          this.onMapDragStart(event);
+          return true;
+        }}
+        onResponderRelease={this.onMapDragEnd}
       >
-        {this.props.location.coords &&
+        {this.props.location.enabled && this.props.location.coords && this.props.mapView.centered &&
         <MyLocationOnMovingMap
           accuracy={this.props.location.coords.accuracy}
           visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
@@ -145,15 +179,17 @@ class DaterMapView extends Component<Props> {
           moveOnMarkerPress={false}
           rotateEnabled={false}
           mapType="standard"
+          onPress={() => { this.onMapPressed(); }}
         >
-          {/* {this.props.location.enabled && this.props.location.coords &&
+          {this.props.location.enabled && this.props.location.coords && !this.props.mapView.centered &&
             <MyLocationMapMarker
               accuracy={this.props.location.coords.accuracy}
               coordinate={this.props.location.coords}
               gpsHeading={this.props.location.coords.heading}
               compassHeading={this.props.compass.heading}
-            /> } */}
+            /> }
           {this.props.location.enabled && this.renderUsersAround()}
+          <MapDirectionsComponent />
         </MapView>
         <Text style={styles.debugText}>
           Accuracy: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}

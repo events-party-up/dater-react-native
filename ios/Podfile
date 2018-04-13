@@ -39,6 +39,8 @@ target 'DaterReactNative' do
   pod 'RNBackgroundGeolocation', :path => '../node_modules/react-native-background-geolocation'
   pod 'RNBackgroundFetch', :path => '../node_modules/react-native-background-fetch'
 
+  pod 'Interactable', :path => '../node_modules/react-native-interactable'
+
 end
 
 post_install do |installer|

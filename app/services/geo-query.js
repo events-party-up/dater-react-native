@@ -2,6 +2,7 @@ import firebase from 'react-native-firebase';
 import { usersAroundActionCreators } from '../redux';
 import GeoUtils from '../utils';
 
+const ONE_HOUR = 1000 * 60 * 60;
 const collectionPath = 'geoPoints';
 const geoPointPath = 'geoPoint';
 
@@ -37,11 +38,17 @@ const listenForUsersAround = (area, dispatch) => {
     const usersAround = []; // used to hold all the loc data
     snapshot.forEach((userSnapshot) => {
       const userData = userSnapshot.data();
-      userData.id = userSnapshot.id;
+      userData.uid = userSnapshot.id;
 
-      if (currentUser && userData.id === currentUser.uid) {
+      if (currentUser && userData.uid === currentUser.uid) {
+        return;
+      } else if (Date.now() - new Date(userData.timestamp) > ONE_HOUR * 12) {
+        // only show users with fresh timestamps
+        return;
+      } else if (!userData.visible) {
         return;
       }
+
       userData.shortId = userSnapshot.id.substring(0, 4);
       userData.distance = GeoUtils.distance(area.center, userData[geoPointPath]);
       usersAround.push(userData);

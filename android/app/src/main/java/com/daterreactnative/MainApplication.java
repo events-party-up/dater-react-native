@@ -4,6 +4,7 @@ import android.app.Application;
 
 // Firebase packages
 import com.facebook.react.ReactApplication;
+import com.wix.interactable.Interactable;
 import com.transistorsoft.rnbackgroundgeolocation.*;
 import com.transistorsoft.rnbackgroundfetch.RNBackgroundFetchPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
@@ -38,6 +39,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new Interactable(),
           new RNBackgroundGeolocation(),
           new RNBackgroundFetchPackage(),
           new RNDeviceInfo(),

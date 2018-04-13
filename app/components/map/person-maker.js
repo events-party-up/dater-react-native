@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import {
   StyleSheet,
@@ -7,22 +6,17 @@ import {
   Text,
 } from 'react-native';
 
-const propTypes = {
-  title: PropTypes.string.isRequired,
-  fontSize: PropTypes.number,
+type Props = {
+  title: string,
 };
 
-const defaultProps = {
-  fontSize: 13,
-};
-
-class PersonMaker extends React.Component {
+class PersonMaker extends React.Component<Props> {
   render() {
-    const { fontSize, title } = this.props;
+    const { title } = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.bubble}>
-          <Text style={[styles.title, { fontSize }]}>{title}</Text>
+          <Text style={styles.title}>{title}</Text>
         </View>
         <View style={styles.arrowBorder} />
         <View style={styles.arrow} />
@@ -30,9 +24,6 @@ class PersonMaker extends React.Component {
     );
   }
 }
-
-PersonMaker.propTypes = propTypes;
-PersonMaker.defaultProps = defaultProps;
 
 const styles = StyleSheet.create({
   container: {
@@ -52,7 +43,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#FFFFFF',
-    fontSize: 13,
+    fontSize: 16,
   },
   arrow: {
     backgroundColor: 'transparent',

@@ -1,6 +1,8 @@
-import { Dimensions } from 'react-native';
-
 import GeoUtils from '../utils';
+import {
+  DEFAULT_LATITUDE_DELTA,
+  DEFAULT_LONGITUDE_DELTA,
+} from '../constants';
 
 const types = {
   MAPVIEW_REGION_UPDATED: 'MAPVIEW_REGION_UPDATED',
@@ -16,12 +18,11 @@ const types = {
   MAPVIEW_ANIMATE_TO_BEARING_ERROR: 'MAPVIEW_ANIMATE_TO_BEARING_ERROR',
   MAPVIEW_ANIMATE_TO_REGION_ERROR: 'MAPVIEW_ANIMATE_TO_REGION_ERROR',
   MAPVIEW_ANIMATE_TO_COORDINATE_ERROR: 'MAPVIEW_ANIMATE_TO_COORDINATE_ERROR',
+  MAPVIEW_DRAG_START: 'MAPVIEW_DRAG_START',
+  MAPVIEW_SHOW_MY_LOCATION_START: 'MAPVIEW_SHOW_MY_LOCATION_START',
+  MAPVIEW_SHOW_MY_LOCATION_FINISH: 'MAPVIEW_SHOW_MY_LOCATION_FINISH',
+  MAPVIEW_SHOW_MY_LOCATION_ERROR: 'MAPVIEW_SHOW_MY_LOCATION_ERROR',
 };
-
-const { width, height } = Dimensions.get('window');
-const ASPECT_RATIO = width / height;
-const DEFAULT_LATITUDE_DELTA = 0.00322;
-const DEFAULT_LONGITUDE_DELTA = DEFAULT_LATITUDE_DELTA * ASPECT_RATIO;
 
 const initialState = {
   longitude: null,
@@ -31,6 +32,7 @@ const initialState = {
   visibleRadiusInMeters: 410,
   rotationAngle: 0,
   mapReady: false,
+  centered: false,
 };
 
 const mapViewReducer = (state = initialState, action) => {
@@ -86,7 +88,20 @@ const mapViewReducer = (state = initialState, action) => {
         mapReady: false,
       };
     }
+    case types.MAPVIEW_DRAG_START: {
+      return {
+        ...state,
+        centered: false,
+      };
+    }
+    case types.MAPVIEW_SHOW_MY_LOCATION_FINISH: {
+      return {
+        ...state,
+        centered: true,
+      };
+    }
     case types.MAPVIEW_ANIMATE_TO_COORDINATE_ERROR:
+    case types.MAPVIEW_SHOW_MY_LOCATION_ERROR:
     case types.MAPVIEW_ANIMATE_TO_REGION_ERROR:
     case types.MAPVIEW_ANIMATE_TO_BEARING_ERROR:
     case types.MAPVIEW_INIT_REGION_ERROR:

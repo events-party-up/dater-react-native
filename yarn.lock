@@ -92,6 +92,10 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
+"@mapbox/polyline@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@mapbox/polyline/-/polyline-1.0.0.tgz#b6f1c3cf61f8dddcf9ac6dce0b2e50e5f4e965bc"
+
 "@zsajjad/react-native-heading@https://github.com/zsajjad/react-native-heading.git":
   version "1.1.0"
   resolved "https://github.com/zsajjad/react-native-heading.git#19fb2355f6d5ee62dda63650f123e6466e197bca"
@@ -4448,9 +4452,9 @@ react-native-firebase@^3.3.0:
     postinstall-build "^5.0.1"
     prop-types "^15.6.1"
 
-react-native-heading@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/react-native-heading/-/react-native-heading-1.1.1.tgz#a6426bb627df74b1f312f866d103defc85fda357"
+react-native-interactable@^0.1.10:
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/react-native-interactable/-/react-native-interactable-0.1.10.tgz#65b9a68f6a84ba1c0e2ad5478b1f22ffb29c0526"
 
 react-native-maps@^0.20.1:
   version "0.20.1"

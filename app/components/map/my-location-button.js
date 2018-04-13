@@ -27,10 +27,7 @@ class MyLocationButton extends Component<Props> {
 
   centerMe = () => {
     this.props.dispatch({
-      type: 'MAPVIEW_ANIMATE_TO_COORDINATE',
-      payload: {
-        coords: this.props.location.coords,
-      },
+      type: 'MAPVIEW_SHOW_MY_LOCATION_START',
     });
   }
 
@@ -88,7 +85,7 @@ class MyLocationButton extends Component<Props> {
             C
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           hitSlop={hitSlop}
           activeOpacity={0.7}
           style={styles.mapButton}
@@ -97,7 +94,7 @@ class MyLocationButton extends Component<Props> {
           <Text style={{ fontWeight: 'bold', color: 'black' }}>
             R
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity
           hitSlop={hitSlop}
           activeOpacity={0.7}

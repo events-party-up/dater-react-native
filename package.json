@@ -8,6 +8,7 @@
     "run:android:debug:standalone": "react-native bundle --dev false --platform android --entry-file index.js --bundle-output ./android/app/build/intermediates/assets/debug/index.android.bundle --assets-dest ./android/app/build/intermediates/res/merged/debug && cd android && ./gradlew assembleDebug && adb install -r app/build/outputs/apk/debug/app-debug.apk"
   },
   "dependencies": {
+    "@mapbox/polyline": "^1.0.0",
     "@zsajjad/react-native-heading": "https://github.com/zsajjad/react-native-heading.git",
     "moment": "^2.21.0",
     "prop-types": "^15.6.1",
@@ -19,6 +20,7 @@
     "react-native-device-info": "^0.21.0",
     "react-native-firebase": "^3.3.0",
     "react-native-heading": "^1.1.1",
+    "react-native-interactable": "^0.1.10",
     "react-native-maps": "^0.20.1",
     "react-navigation": "^1.5.9",
     "react-redux": "^5.0.7",
