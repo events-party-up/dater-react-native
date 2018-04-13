@@ -48,9 +48,8 @@ class MapPanel extends Component<Props> {
   }
 
   onSnap = (event) => {
-    console.log('On Snap: ', event.nativeEvent.index);
-    
-    if (event && event.nativeEvent && event.nativeEvent.index === 1 && this.props.mapPanelShown) {
+    // console.log('On Snap: ', event.nativeEvent);
+    if (event && event.nativeEvent && event.nativeEvent.id === 'close_manual' && this.props.mapPanelShown) {
       this.props.dispatch({
         type: 'UI_MAP_PANEL_HIDE_START',
       });
@@ -68,9 +67,9 @@ class MapPanel extends Component<Props> {
           verticalOnly
           snapPoints={
             [
-              { y: this.showSnapPosition }, // open card snap point
-              { y: Screen.height + 80 }, // close card snap point, manual
-              { y: Screen.height + 80 }, // close card snap point, auto
+              { y: this.showSnapPosition, id: 'show' }, // open card snap point
+              { y: Screen.height + 80, id: 'close_manual' }, // close card snap point, manual
+              { y: Screen.height + 195, id: 'close_auto' }, // close card snap point, auto
             ]}
           boundaries={{ top: -300 }}
           initialPosition={{ y: Screen.height + 80 }}
@@ -105,7 +104,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    bottom: 350 - Screen.height,
+    bottom: 0,
+    top: 0,
     zIndex: 4,
   },
   panel: {

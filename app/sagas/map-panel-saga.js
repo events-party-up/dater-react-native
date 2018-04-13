@@ -1,7 +1,7 @@
 import { takeEvery, call, take, put, cancel } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 
-const defaultAnimationDuration = 500;
+const defaultAnimationDuration = 300;
 
 export default function* mapPanelSaga() {
   try {
@@ -29,7 +29,6 @@ function* showPanel(mapPanelSnapper, action) {
   yield take('UI_MAP_PANEL_HIDE_START');
   yield cancel(task2);
   yield call(mapPanelSnapper, { index: 2 }); // hide
-  yield delay(defaultAnimationDuration);
   yield put({ type: 'UI_MAP_PANEL_HIDE_FINISH' });
 }
 
