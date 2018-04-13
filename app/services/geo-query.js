@@ -37,9 +37,9 @@ const listenForUsersAround = (area, dispatch) => {
     const usersAround = []; // used to hold all the loc data
     snapshot.forEach((userSnapshot) => {
       const userData = userSnapshot.data();
-      userData.id = userSnapshot.id;
+      userData.uid = userSnapshot.id;
 
-      if (currentUser && userData.id === currentUser.uid) {
+      if (currentUser && userData.uid === currentUser.uid) {
         return;
       }
       userData.shortId = userSnapshot.id.substring(0, 4);

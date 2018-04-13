@@ -55,6 +55,13 @@ class MapPanel extends Component<Props> {
     }
   };
 
+  buildRoute = () => {
+    this.props.dispatch({
+      type: 'MAPVIEW_BUILD_ROUTE_START',
+      payload: this.props.mapPanel.user,
+    });
+  }
+
   render() {
     return (
       <View
@@ -88,7 +95,7 @@ class MapPanel extends Component<Props> {
               {this.props.mapPanel.user.distance} метров от вас, {' '}
               <Moment locale="ru" element={Body} fromNow>{this.props.mapPanel.user.timestamp}</Moment>
             </Body>
-            <DaterButton style={styles.panelButton}>
+            <DaterButton style={styles.panelButton} onPress={this.buildRoute}>
               Встретиться
             </DaterButton>
           </View>

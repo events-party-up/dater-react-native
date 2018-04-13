@@ -7,6 +7,7 @@ const types = {
   UI_MAP_PANEL_REPLACE_FINISH: 'UI_MAP_PANEL_REPLACE_FINISH',
   UI_MAP_PANEL_HIDE_START: 'UI_MAP_PANEL_HIDE_START',
   UI_MAP_PANEL_HIDE_FINISH: 'UI_MAP_PANEL_HIDE_FINISH',
+  UI_MAP_PANEL_ERROR: 'UI_MAP_PANEL_ERROR',
 };
 
 const initialState = {
@@ -48,6 +49,12 @@ const mapPanelReducer = (state = initialState, action) => {
       return {
         ...state,
         visible: false,
+      };
+    }
+    case types.UI_MAP_PANEL_ERROR: {
+      return {
+        ...state,
+        error: payload,
       };
     }
     default: {

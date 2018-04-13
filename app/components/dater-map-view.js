@@ -13,9 +13,9 @@ import {
   // MyLocationMapMarker,
   PersonMaker,
 } from './index';
-import MapDirections from '../services/maps-directions';
 
 import { GeoCompass, GeoCoordinates } from '../types';
+import MapDirectionsComponent from '../components/map/map-directions-component';
 
 const mapStateToProps = (state) => ({
   location: state.location,
@@ -56,12 +56,12 @@ class DaterMapView extends Component<Props> {
   onRegionChangeComplete = async (newRegion, prevRegion) => {
     if (!prevRegion || !newRegion || !prevRegion.latitude) return;
 
-    const toLocation = {
-      latitude: 55.80111,
-      longitude: 37.53159,
-    };
+    // const toLocation = {
+    //   latitude: 55.80111,
+    //   longitude: 37.53159,
+    // };
 
-    this.directions = await MapDirections(newRegion, toLocation);
+    // this.directions = await MapDirections(newRegion, toLocation);
     this.props.dispatch({
       type: 'MAPVIEW_REGION_UPDATED',
       payload: {
@@ -128,7 +128,7 @@ class DaterMapView extends Component<Props> {
           longitude: user.geoPoint.longitude,
         }}
         style={styles.maker}
-        key={user.id}
+        key={user.uid}
         onPress={(event) => { event.stopPropagation(); this.onPersonMakerPress(user); }}
         // zIndex={1}
       >
@@ -173,12 +173,7 @@ class DaterMapView extends Component<Props> {
               compassHeading={this.props.compass.heading}
             /> } */}
           {this.props.location.enabled && this.renderUsersAround()}
-          {this.directions &&
-            <MapView.Polyline
-              coordinates={this.directions.polyLines}
-              strokeWidth={4}
-              strokeColor="green"
-            />}
+          <MapDirectionsComponent />
         </MapView>
         <Text style={styles.debugText}>
           Accuracy: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
