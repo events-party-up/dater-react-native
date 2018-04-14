@@ -117,7 +117,7 @@ class DaterMapView extends Component<Props> {
   }
 
   renderUsersAround() {
-    return this.props.usersAround.map((user) => (
+    return this.props.usersAround.users.map((user) => (
       <Marker
         coordinate={{
           latitude: user.geoPoint.latitude,

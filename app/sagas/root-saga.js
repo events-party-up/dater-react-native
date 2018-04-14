@@ -7,6 +7,7 @@ import mapViewInitializeRegionSaga from './mapview-init-region-saga';
 import startGeolocationOnFirstUpdate from './location-start-saga';
 import mapPanelSaga from './map-panel-saga';
 import mapDirectionsSaga from './map-directions-saga';
+import usersAroundSaga from './users-around-saga';
 
 
 export default function* rootSaga() {
@@ -19,5 +20,6 @@ export default function* rootSaga() {
     startGeolocationOnFirstUpdate(),
     mapPanelSaga(),
     mapDirectionsSaga(),
+    usersAroundSaga(),
   ]);
 }

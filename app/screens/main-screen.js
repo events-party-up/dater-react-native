@@ -6,7 +6,6 @@ import {
 import { connect, Dispatch } from 'react-redux';
 
 import DaterMapView from '../components/dater-map-view';
-import listenForUsersAround from '../services/geo-query';
 import { GeoCoordinates, GeoCompass } from '../types';
 import DaterButton from '../components/ui-kit/dater-button';
 import MyLocationButton from '../components/map/my-location-button';
@@ -24,29 +23,10 @@ type Props = {
     coords: GeoCoordinates,
   },
   compass: GeoCompass,
+  navigation: any,
 };
 
 class MainScreen extends Component<Props> {
-  unsubscribeFromUsersAround;
-
-  componentWillUnmount() {
-    this.unsubscribeFromUsersAround();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.location.coords && !this.unsubscribeFromUsersAround) {
-      const queryArea = {
-        center: {
-          latitude: nextProps.location.coords.latitude,
-          longitude: nextProps.location.coords.longitude,
-        },
-        radius: 25,
-      };
-      console.log('Attach a listener for users around');
-      this.unsubscribeFromUsersAround = listenForUsersAround(queryArea, this.props.dispatch);
-    }
-  }
-
   signOut = async () => {
     this.props.dispatch({
       type: 'AUTH_SIGNOUT',
