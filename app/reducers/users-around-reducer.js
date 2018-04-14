@@ -1,30 +1,30 @@
 const types = {
   USERS_AROUND_UPDATED: 'USERS_AROUND_UPDATED',
+  USERS_AROUND_SAGA_ERROR: 'USERS_AROUND_SAGA_ERROR',
+  USERS_AROUND_CHANNEL_ERROR: 'USERS_AROUND_CHANNEL_ERROR',
 };
 
-const updateUsersAround = (users) => async (dispatch, getState) => {
-  if (getState().auth.isAuthenticated === false) {
-    return;
-  }
-
-  dispatch({
-    type: types.USERS_AROUND_UPDATED,
-    payload: users,
-  });
+const initialState = {
+  error: null,
+  users: [],
 };
 
-export const usersAroundActionCreators = {
-  updateUsersAround,
-};
-
-const initialState = [];
-
-export const reducer = (state = initialState, action) => {
+const usersAroundReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
     case types.USERS_AROUND_UPDATED: {
-      return payload;
+      return {
+        ...state,
+        users: payload,
+      };
+    }
+    case types.USERS_AROUND_CHANNEL_ERROR:
+    case types.USERS_AROUND_SAGA_ERROR: {
+      return {
+        ...state,
+        error: payload,
+      };
     }
     default: {
       return state;
@@ -32,3 +32,4 @@ export const reducer = (state = initialState, action) => {
   }
 };
 
+export default usersAroundReducer;
