@@ -33,7 +33,8 @@ const listenForUsersAround = (area, dispatch) => {
   // construct the Firestore query
   const query = firebase.firestore().collection(collectionPath)
     .where(geoPointPath, '>', lesserGeopoint)
-    .where(geoPointPath, '<', greaterGeopoint);
+    .where(geoPointPath, '<', greaterGeopoint)
+    .where('visible', '==', true);
   const unsubscribe = query.onSnapshot((snapshot) => {
     const usersAround = []; // used to hold all the loc data
     snapshot.forEach((userSnapshot) => {
@@ -44,8 +45,6 @@ const listenForUsersAround = (area, dispatch) => {
         return;
       } else if (Date.now() - new Date(userData.timestamp) > ONE_HOUR * 12) {
         // only show users with fresh timestamps
-        return;
-      } else if (!userData.visible) {
         return;
       }
 
@@ -66,6 +65,8 @@ const listenForUsersAround = (area, dispatch) => {
     //     console.log("Removed location: ", change.doc.data());
     //   }
     // });
+  }, (err) => {
+    console.log('Error in firestore query: ', err);
   });
   return unsubscribe;
 };
