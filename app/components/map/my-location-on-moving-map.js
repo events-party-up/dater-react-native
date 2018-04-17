@@ -33,6 +33,7 @@ class MyLocationOnMovingMap extends React.PureComponent<Props> {
     // console.log(`Visible radius: ${visibleRadiusInMeters}, DIAGONAL: ${DIAGONAL}, pixelsPerMeter: ${pixelsPerMeter}, Radius: ${RADIUS}`);
     const rotation = this.props.moveHeadingAngle - this.props.mapViewBearingAngle;
     const rotate = `${rotation}deg`;
+    // console.log(`moveHeadingAngle: ${this.props.moveHeadingAngle}, mapViewBearingAngle: ${this.props.mapViewBearingAngle}, rotation: ${rotation}`);
 
     return (
       <View

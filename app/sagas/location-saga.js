@@ -56,9 +56,12 @@ function* startGeoLocationOnInit() {
 }
 
 function* locationUpdatedSaga(action) {
-  yield* animateToCurrentLocation(action);
-  // yield* call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
-  // yield* animateToBearing(action);
+  const isCentered = yield select((state) => state.mapView.centered);
+  if (isCentered) {
+    yield* animateToCurrentLocation(action);
+    yield* call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
+    yield* animateToBearing(action);
+  }
   const firstCoords = yield select((state) => state.location.firstCoords);
   const currentCoords = action.payload;
   if (!firstCoords || !currentCoords) return;

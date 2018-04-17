@@ -1,3 +1,6 @@
+import GeoUtils from '../utils/geo-utils';
+import { MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION } from '../constants';
+
 const types = {
   GEO_PERMISSION_REQUESTED: 'GEO_PERMISSION_REQUESTED',
   GEO_PERMISSION_GRANTED: 'GEO_PERMISSION_GRANTED',
@@ -85,6 +88,7 @@ const locationReducer = (state = initialState, action) => {
         ...state,
         stopping: false,
         enabled: false,
+        pastCoords: [],
       };
     }
     case types.GEO_LOCATION_UPDATE_CHANNEL_UNKNOWN_ERROR:
@@ -103,19 +107,22 @@ const locationReducer = (state = initialState, action) => {
       };
     }
     case types.GEO_LOCATION_UPDATED: {
-      let moveHeadingAngle = 0;
+      let { moveHeadingAngle } = state;
       let pastCoords = [...state.pastCoords];
 
-      if (pastCoords.length > 0 && (pastCoords[pastCoords.length - 1].latitude !== state.coords.latitude ||
-        pastCoords[pastCoords.length - 1].longitude !== state.coords.longitude)
-      ) {
-        moveHeadingAngle = (Math.atan2(payload.longitude - state.coords.longitude, payload.latitude -
-          state.coords.latitude) * 180) / Math.PI;
+      // if this is not the first location update
+      if (state.coords) {
+        moveHeadingAngle = GeoUtils.getRotationAngle(state.coords, payload);
+      }
+
+      if (pastCoords.length > 0 &&
+        GeoUtils.distance(pastCoords[pastCoords.length - 1], state.coords) > MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
         pastCoords = state.coords ? [...state.pastCoords, {
           latitude: state.coords.latitude,
           longitude: state.coords.longitude,
           moveHeadingAngle,
         }] : [];
+        // if we just started location tracking
       } else if (pastCoords.length === 0 && state.coords) {
         pastCoords.push({
           latitude: state.coords.latitude,

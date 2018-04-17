@@ -197,11 +197,12 @@ class DaterMapView extends Component<Props> {
             /> }
           {this.props.location.enabled && this.renderUsersAround()}
           <MapDirectionsComponent />
-          <MapView.Polyline
-            coordinates={this.props.location.pastCoords}
-            strokeWidth={3}
-            strokeColor="aliceblue"
-          />
+          {this.props.location.coords &&
+            <MapView.Polyline
+              coordinates={[...this.props.location.pastCoords, this.props.location.coords]}
+              strokeWidth={3}
+              strokeColor="aliceblue"
+            />}
           <PastLocationMarker
             pastCoords={this.props.location.pastCoords}
             mapViewBearingAngle={this.props.mapView.bearingAngle}
