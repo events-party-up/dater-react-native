@@ -107,9 +107,12 @@ const locationReducer = (state = initialState, action) => {
       if (pastCoords.length > 0 && (pastCoords[pastCoords.length - 1].latitude !== state.coords.latitude ||
         pastCoords[pastCoords.length - 1].longitude !== state.coords.longitude)
       ) {
+        const angle = (Math.atan2(payload.longitude - state.coords.longitude, payload.latitude -
+          state.coords.latitude) * 180) / Math.PI;
         pastCoords = state.coords ? [...state.pastCoords, {
           latitude: state.coords.latitude,
           longitude: state.coords.longitude,
+          angle,
         }] : [];
       } else if (pastCoords.length === 0 && state.coords) {
         pastCoords.push({

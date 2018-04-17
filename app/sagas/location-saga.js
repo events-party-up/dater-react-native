@@ -57,10 +57,12 @@ function* startGeoLocationOnInit() {
 
 function* locationUpdatedSaga(action) {
   yield* animateToCurrentLocation(action);
-  yield* call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
-  yield* animateToBearing(action);
+  // yield* call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
+  // yield* animateToBearing(action);
   const firstCoords = yield select((state) => state.location.firstCoords);
   const currentCoords = action.payload;
+  if (!firstCoords || !currentCoords) return;
+
   const distanceFromFirstCoords = GeoUtils.distance(firstCoords, currentCoords);
   if (distanceFromFirstCoords > USERS_AROUND_SEARCH_RADIUS_KM * (1000 / 2)) {
     // restart users around if user travelled distance more than 1/2 of the searchable radius
