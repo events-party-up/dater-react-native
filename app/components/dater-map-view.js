@@ -135,38 +135,6 @@ class DaterMapView extends Component<Props> {
     ));
   }
 
-  renderPastLocations() {
-    const styles = StyleSheet.create({
-      triangle: {
-        backgroundColor: 'transparent',
-        borderStyle: 'solid',
-        borderLeftWidth: 6,
-        borderRightWidth: 6,
-        borderBottomWidth: 14,
-        borderLeftColor: 'transparent',
-        borderRightColor: 'transparent',
-        borderBottomColor: 'gray',
-        transform: [
-          {
-            rotate: '0deg',
-          },
-        ],
-      },
-    });
-
-    return this.props.location.pastCoords.map((coord) => (
-      <Marker
-        key={`${coord.latitude}-${coord.longitude}`}
-        coordinate={{
-          latitude: coord.latitude,
-          longitude: coord.longitude,
-        }}
-      >
-        <View style={styles.triangle} />
-      </Marker>
-    ));
-  }
-
   onMapDragStart = (event) => {
     this.props.dispatch({
       type: 'MAPVIEW_DRAG_START',
@@ -225,12 +193,11 @@ class DaterMapView extends Component<Props> {
           <MapView.Polyline
             coordinates={this.props.location.pastCoords}
             strokeWidth={3}
-            strokeColor="gray"
+            strokeColor="aliceblue"
           />
           <PastLocationMarker
             pastCoords={this.props.location.pastCoords}
           />
-          {/* {this.renderPastLocations()} */}
         </MapView>
         <Text style={styles.debugText}>
           Accuracy: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}

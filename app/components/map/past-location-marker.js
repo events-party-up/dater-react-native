@@ -20,12 +20,12 @@ class PastLocationMarker extends React.Component<Props> {
       triangle: {
         backgroundColor: 'transparent',
         borderStyle: 'solid',
-        borderLeftWidth: 3,
-        borderRightWidth: 3,
-        borderBottomWidth: 10,
+        borderLeftWidth: 6,
+        borderRightWidth: 6,
+        borderBottomWidth: 15,
         borderLeftColor: 'transparent',
         borderRightColor: 'transparent',
-        borderBottomColor: 'red',
+        borderBottomColor: 'darkgray',
         zIndex: 5,
         transform: [
           {
