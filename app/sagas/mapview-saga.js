@@ -10,12 +10,6 @@ export default function* mapViewSaga() {
   try {
     while (true) {
       const { mapView } = yield take('MAPVIEW_READY');
-      // need to wait for the first MAPVIEW_ANIMATE_TO_REGION action first
-      // otherwise MAPVIEW_ANIMATE_TO_COORDINATE will interfer with MAPVIEW_ANIMATE_TO_REGION
-      // and will not allow correct zoom on map load
-      const firstAnimateToRegionAction = yield take('MAPVIEW_ANIMATE_TO_REGION', animateToRegion, mapView);
-      yield animateToRegion(mapView, firstAnimateToRegionAction);
-      yield call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
       const task1 = yield takeEvery('MAPVIEW_ANIMATE_TO_REGION', animateToRegion, mapView);
       const task2 = yield takeEvery('MAPVIEW_ANIMATE_TO_COORDINATE', animateToCoordinate, mapView);
       const task3 = yield throttle(1000, [
@@ -56,7 +50,6 @@ function* animateToCoordinate(mapView, action) {
     const { coords, duration } = action.payload;
     const animationDuration = duration || DEFAULT_MAPVIEW_ANIMATION_DURATION;
     yield call(mapView.animateToCoordinate, coords, animationDuration);
-    yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
   } catch (error) {
     yield put({ type: 'MAPVIEW_ANIMATE_TO_COORDINATE_ERROR', payload: error });
   }

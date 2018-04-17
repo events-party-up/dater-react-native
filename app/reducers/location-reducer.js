@@ -19,6 +19,7 @@ const types = {
 
 const initialState = {
   coords: null,
+  firstCoords: null,
   geoUpdates: 0,
   error: null,
   geoGranted: false,
@@ -49,7 +50,6 @@ const locationReducer = (state = initialState, action) => {
       return {
         ...state,
         starting: true,
-        enabled: false,
       };
     }
     case types.GEO_LOCATION_STARTED: {
@@ -57,6 +57,10 @@ const locationReducer = (state = initialState, action) => {
         ...state,
         starting: false,
         enabled: true,
+        firstCoords: {
+          latitude: payload.latitude,
+          longitude: payload.longitude,
+        },
       };
     }
     case types.GEO_LOCATION_STOP: {

@@ -1,11 +1,12 @@
 import { throttle, takeEvery, select, take, put, call } from 'redux-saga/effects';
-import { eventChannel } from 'redux-saga';
+import { eventChannel, delay } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 
 import BackgroundGeolocation from '../services/background-geolocation';
 import { updateFirestore } from '../utils/firebase-utils';
 import GeoUtils from '../utils/geo-utils';
+import { DEFAULT_MAPVIEW_ANIMATION_DURATION } from '../constants';
 
 export default function* locationSaga() {
   try {
@@ -17,9 +18,9 @@ export default function* locationSaga() {
 
     const locationServiceState = yield call([BackgroundGeolocation, 'init']);
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
-    yield throttle(500, 'GEO_LOCATION_UPDATED', animateToCurrentLocation);
-    yield throttle(500, 'GEO_LOCATION_UPDATED', mapViewAnimateToBearing);
+    yield throttle(500, 'GEO_LOCATION_UPDATED', locationUpdatedSaga);
     yield throttle(2000, 'GEO_LOCATION_UPDATED', writeGeoLocationToFirestore);
+
     while (true) {
       yield take('GEO_LOCATION_START');
       if (locationServiceState.enabled) {
@@ -27,7 +28,8 @@ export default function* locationSaga() {
       } else {
         yield call([BackgroundGeolocation, 'start']);
       }
-      yield put({ type: 'GEO_LOCATION_STARTED' });
+      const action = yield take('GEO_LOCATION_UPDATED'); // wait for first update!
+      yield put({ type: 'GEO_LOCATION_STARTED', payload: action.payload });
       yield take('GEO_LOCATION_STOP');
       yield call([BackgroundGeolocation, 'stop']);
       locationServiceState.enabled = false;
@@ -50,6 +52,15 @@ function* startGeoLocationOnInit() {
   yield put({ type: 'GEO_LOCATION_START' });
 }
 
+function* locationUpdatedSaga(action) {
+  yield* animateToCurrentLocation(action);
+  yield* call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
+  yield* animateToBearing(action);
+  const firstCoords = yield select((state) => state.location.firstCoords);
+  const currentCoords = action.payload;
+  console.log('Distance from first coords: ', GeoUtils.distance(firstCoords, currentCoords));
+}
+
 function* animateToCurrentLocation(action) {
   yield put({
     type: 'MAPVIEW_ANIMATE_TO_COORDINATE',
@@ -58,6 +69,19 @@ function* animateToCurrentLocation(action) {
         latitude: action.payload.latitude,
         longitude: action.payload.longitude,
       },
+    },
+  });
+}
+
+function* animateToBearing(action) {
+  const gpsHeading = action.payload.heading;
+  if (gpsHeading < 0) return;
+
+  const bearingAngle = GeoUtils.wrapCompassHeading(gpsHeading);
+  yield put({
+    type: 'MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING',
+    payload: {
+      bearingAngle,
     },
   });
 }
@@ -102,20 +126,6 @@ function* writeGeoLocationToFirestore() {
     yield put({ type: 'GEO_LOCATION_UPDATE_FIRESTORE_ERROR', payload: error });
   }
 }
-
-function* mapViewAnimateToBearing(action) {
-  const gpsHeading = action.payload.heading;
-  if (gpsHeading < 0) return;
-
-  const bearingAngle = GeoUtils.wrapCompassHeading(gpsHeading);
-  yield put({
-    type: 'MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING',
-    payload: {
-      bearingAngle,
-    },
-  });
-}
-
 
 function createLocationChannel() {
   return eventChannel((emit) => {
