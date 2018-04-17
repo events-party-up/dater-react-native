@@ -28,6 +28,7 @@ const initialState = {
   stopping: false,
   updating: false,
   initializing: false,
+  pastCoords: [],
 };
 
 const locationReducer = (state = initialState, action) => {
@@ -101,17 +102,27 @@ const locationReducer = (state = initialState, action) => {
       };
     }
     case types.GEO_LOCATION_UPDATED: {
+      let pastCoords = [...state.pastCoords];
+
+      if (pastCoords.length > 0 && (pastCoords[pastCoords.length - 1].latitude !== state.coords.latitude ||
+        pastCoords[pastCoords.length - 1].longitude !== state.coords.longitude)
+      ) {
+        pastCoords = state.coords ? [...state.pastCoords, {
+          latitude: state.coords.latitude,
+          longitude: state.coords.longitude,
+        }] : [];
+      } else if (pastCoords.length === 0 && state.coords) {
+        pastCoords.push({
+          latitude: state.coords.latitude,
+          longitude: state.coords.longitude,
+        });
+      }
+
       return {
         ...state,
         coords: payload,
         geoUpdates: state.geoUpdates + 1,
-      };
-    }
-    case types.GEO_UPDATED: {
-      return {
-        ...state,
-        coords: payload,
-        geoUpdates: state.geoUpdates + 1,
+        pastCoords,
       };
     }
     default: {

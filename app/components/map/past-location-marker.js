@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Marker } from 'react-native-maps';
 
 import {
@@ -9,17 +9,14 @@ import { GeoCoordinates } from '../../types';
 
 type Props = {
   style: any,
-  coords: GeoCoordinates,
+  pastCoords: Array<GeoCoordinates>,
   rotate: number,
 };
 
 class PastLocationMarker extends React.Component<Props> {
-  render() {
+  renderPastLocations() {
     const rotate = `${(this.props.rotate ? this.props.rotate : 0).toString()}deg`;
-
     const styles = StyleSheet.create({
-      container: {
-      },
       triangle: {
         backgroundColor: 'transparent',
         borderStyle: 'solid',
@@ -28,7 +25,8 @@ class PastLocationMarker extends React.Component<Props> {
         borderBottomWidth: 10,
         borderLeftColor: 'transparent',
         borderRightColor: 'transparent',
-        borderBottomColor: 'gray',
+        borderBottomColor: 'red',
+        zIndex: 5,
         transform: [
           {
             rotate,
@@ -37,21 +35,26 @@ class PastLocationMarker extends React.Component<Props> {
       },
     });
 
-    if (this.props.coords) {
-      return (
-        <Marker
-          coordinate={{
-            latitude: this.props.coords.latitude,
-            longitude: this.props.coords.longitude,
-          }}
-        >
-          <View style={[styles.triangle, this.props.style]} />
-        </Marker>
-      );
-    }
-    return null;
+    return this.props.pastCoords.map((coord) => (
+      <Marker
+        key={`${coord.latitude}-${coord.longitude}`}
+        coordinate={{
+          latitude: coord.latitude,
+          longitude: coord.longitude,
+        }}
+      >
+        <View style={[styles.triangle, this.props.style]} />
+      </Marker>
+    ));
+  }
+
+  render() {
+    return (
+      <React.Fragment>
+        { this.renderPastLocations() }
+      </React.Fragment>
+    );
   }
 }
-
 
 export default PastLocationMarker;

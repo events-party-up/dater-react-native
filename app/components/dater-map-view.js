@@ -43,6 +43,7 @@ type Props = {
   location: {
     coords: GeoCoordinates,
     geoUpdates: number,
+    pastCoords: Array<GeoCoordinates>,
   },
   mapView: MapView,
   mapPanel: any,
@@ -134,6 +135,38 @@ class DaterMapView extends Component<Props> {
     ));
   }
 
+  renderPastLocations() {
+    const styles = StyleSheet.create({
+      triangle: {
+        backgroundColor: 'transparent',
+        borderStyle: 'solid',
+        borderLeftWidth: 6,
+        borderRightWidth: 6,
+        borderBottomWidth: 14,
+        borderLeftColor: 'transparent',
+        borderRightColor: 'transparent',
+        borderBottomColor: 'gray',
+        transform: [
+          {
+            rotate: '0deg',
+          },
+        ],
+      },
+    });
+
+    return this.props.location.pastCoords.map((coord) => (
+      <Marker
+        key={`${coord.latitude}-${coord.longitude}`}
+        coordinate={{
+          latitude: coord.latitude,
+          longitude: coord.longitude,
+        }}
+      >
+        <View style={styles.triangle} />
+      </Marker>
+    ));
+  }
+
   onMapDragStart = (event) => {
     this.props.dispatch({
       type: 'MAPVIEW_DRAG_START',
@@ -158,11 +191,11 @@ class DaterMapView extends Component<Props> {
         }}
         onResponderRelease={this.onMapDragEnd}
       >
-        {/* {this.props.location.enabled && this.props.location.coords && this.props.mapView.centered &&
+        {this.props.location.enabled && this.props.location.coords && this.props.mapView.centered &&
         <MyLocationOnMovingMap
           accuracy={this.props.location.coords.accuracy}
           visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
-        /> } */}
+        /> }
         <MapView
           ref={(component) => { this.mapView = component; }}
           style={styles.mapView}
@@ -187,11 +220,17 @@ class DaterMapView extends Component<Props> {
               gpsHeading={this.props.location.coords.heading}
               compassHeading={this.props.compass.heading}
             /> }
-          {/* {this.props.location.enabled && this.renderUsersAround()} */}
+          {this.props.location.enabled && this.renderUsersAround()}
           <MapDirectionsComponent />
-          <PastLocationMarker
-            coords={this.props.location.coords}
+          <MapView.Polyline
+            coordinates={this.props.location.pastCoords}
+            strokeWidth={3}
+            strokeColor="gray"
           />
+          <PastLocationMarker
+            pastCoords={this.props.location.pastCoords}
+          />
+          {/* {this.renderPastLocations()} */}
         </MapView>
         <Text style={styles.debugText}>
           Accuracy: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
