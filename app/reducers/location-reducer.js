@@ -2,7 +2,6 @@ const types = {
   GEO_PERMISSION_REQUESTED: 'GEO_PERMISSION_REQUESTED',
   GEO_PERMISSION_GRANTED: 'GEO_PERMISSION_GRANTED',
   GEO_PERMISSION_DENIED: 'GEO_PERMISSION_DENIED',
-
   GEO_LOCATION_INITIALIZE: 'GEO_LOCATION_INITIALIZE',
   GEO_LOCATION_INITIALIZED: 'GEO_LOCATION_INITIALIZED',
   GEO_LOCATION_START: 'GEO_LOCATION_START',
@@ -11,6 +10,7 @@ const types = {
   GEO_LOCATION_STOPPED: 'GEO_LOCATION_STOPPED',
   GEO_LOCATION_UPDATE: 'GEO_LOCATION_UPDATE',
   GEO_LOCATION_UPDATED: 'GEO_LOCATION_UPDATED',
+  GEO_LOCATION_SET_FIRST_COORDS: 'GEO_LOCATION_SET_FIRST_COORDS',
   GEO_LOCATION_MAINSAGA_ERROR: 'GEO_LOCATION_MAINSAGA_ERROR',
   GEO_LOCATION_UPDATE_FIRESTORE_ERROR: 'GEO_LOCATION_UPDATE_FIRESTORE_ERROR',
   GEO_LOCATION_UPDATE_CHANNEL_ERROR: 'GEO_LOCATION_UPDATE_CHANNEL_ERROR',
@@ -57,6 +57,15 @@ const locationReducer = (state = initialState, action) => {
         ...state,
         starting: false,
         enabled: true,
+        firstCoords: {
+          latitude: payload.latitude,
+          longitude: payload.longitude,
+        },
+      };
+    }
+    case types.GEO_LOCATION_SET_FIRST_COORDS: {
+      return {
+        ...state,
         firstCoords: {
           latitude: payload.latitude,
           longitude: payload.longitude,

@@ -6,7 +6,10 @@ import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 import BackgroundGeolocation from '../services/background-geolocation';
 import { updateFirestore } from '../utils/firebase-utils';
 import GeoUtils from '../utils/geo-utils';
-import { DEFAULT_MAPVIEW_ANIMATION_DURATION } from '../constants';
+import {
+  DEFAULT_MAPVIEW_ANIMATION_DURATION,
+  USERS_AROUND_SEARCH_RADIUS_KM,
+} from '../constants';
 
 export default function* locationSaga() {
   try {
@@ -58,7 +61,18 @@ function* locationUpdatedSaga(action) {
   yield* animateToBearing(action);
   const firstCoords = yield select((state) => state.location.firstCoords);
   const currentCoords = action.payload;
-  console.log('Distance from first coords: ', GeoUtils.distance(firstCoords, currentCoords));
+  const distanceFromFirstCoords = GeoUtils.distance(firstCoords, currentCoords);
+  if (distanceFromFirstCoords > USERS_AROUND_SEARCH_RADIUS_KM * (1000 / 2)) {
+    // restart users around if user travelled distance more than 1/2 of the searchable radius
+    yield put({
+      type: 'GEO_LOCATION_SET_FIRST_COORDS',
+      payload: {
+        latitude: currentCoords.latitude,
+        longitude: currentCoords.longitude,
+      },
+    });
+    yield put({ type: 'USERS_AROUND_RESTART', payload: distanceFromFirstCoords });
+  }
 }
 
 function* animateToCurrentLocation(action) {

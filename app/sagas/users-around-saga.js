@@ -1,21 +1,30 @@
-import { put, select, call, take, takeEvery } from 'redux-saga/effects';
+import { put, select, call, take, takeEvery, cancel } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
 import GeoUtils from '../utils/geo-utils';
 
+import {
+  USERS_AROUND_SEARCH_RADIUS_KM,
+  USERS_AROUND_SHOW_LAST_SEEN_HOURS_AGO,
+} from '../constants';
+
 const ONE_HOUR = 1000 * 60 * 60;
-const SHOW_USERS_LAST_SEEN_HOURS_AGO = 12;
-const DEFAULT_SEARCH_RADIUS_KM = 25;
 const collectionPath = 'geoPoints';
 const geoPointPath = 'geoPoint';
 
 export default function* usersAroundSaga() {
   try {
-    yield take('GEO_LOCATION_UPDATED');
-    const userCoords = yield select((state) => state.location.coords);
-    const { currentUser } = yield call(firebase.auth);
-    const usersAroundChannel = yield call(createUsersAroundChannel, userCoords, currentUser);
-    yield takeEvery(usersAroundChannel, updateUsersAround);
+    yield take('GEO_LOCATION_STARTED');
+
+    while (true) {
+      const userCoords = yield select((state) => state.location.coords);
+      const { currentUser } = yield call(firebase.auth);
+      const usersAroundChannel = yield call(createUsersAroundChannel, userCoords, currentUser);
+      const task1 = yield takeEvery(usersAroundChannel, updateUsersAround);
+      yield take('USERS_AROUND_RESTART');
+      yield cancel(task1);
+      yield usersAroundChannel.close();
+    }
   } catch (error) {
     yield put({ type: 'USERS_AROUND_SAGA_ERROR', payload: error });
   }
@@ -41,14 +50,14 @@ function createUsersAroundChannel(userCoords, currentUser) {
       latitude: userCoords.latitude,
       longitude: userCoords.longitude,
     },
-    radius: DEFAULT_SEARCH_RADIUS_KM,
+    radius: USERS_AROUND_SEARCH_RADIUS_KM,
   };
   const box = GeoUtils.boundingBoxCoordinates(queryArea.center, queryArea.radius);
   const lesserGeopoint = new firebase.firestore
     .GeoPoint(box.swCorner.latitude, box.swCorner.longitude);
   const greaterGeopoint = new firebase.firestore
     .GeoPoint(box.neCorner.latitude, box.neCorner.longitude);
-  // construct the Firestore query
+
   const query = firebase.firestore().collection(collectionPath)
     .where(geoPointPath, '>', lesserGeopoint)
     .where(geoPointPath, '<', greaterGeopoint)
@@ -56,14 +65,14 @@ function createUsersAroundChannel(userCoords, currentUser) {
 
   return eventChannel((emit) => {
     const onSnapshotUpdated = (snapshot) => {
-      const usersAround = []; // used to hold all the loc data
+      const usersAround = [];
       snapshot.forEach((userSnapshot) => {
         const userData = userSnapshot.data();
         userData.uid = userSnapshot.id;
 
         if (currentUser && userData.uid === currentUser.uid) {
           return;
-        } else if (Date.now() - new Date(userData.timestamp) > ONE_HOUR * SHOW_USERS_LAST_SEEN_HOURS_AGO) {
+        } else if (Date.now() - new Date(userData.timestamp) > ONE_HOUR * USERS_AROUND_SHOW_LAST_SEEN_HOURS_AGO) {
           // only show users with fresh timestamps
           return;
         }
