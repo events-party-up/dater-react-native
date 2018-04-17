@@ -10,6 +10,7 @@ import { GeoCoordinates } from '../../types';
 type Props = {
   style: any,
   pastCoords: Array<GeoCoordinates>,
+  mapViewBearingAngle: number,
 };
 
 class PastLocationMarker extends React.Component<Props> {
@@ -18,7 +19,6 @@ class PastLocationMarker extends React.Component<Props> {
 
     return this.props.pastCoords.map((coord, index) => {
       if (index < 1) return null; // do not show marker for first point
-      const rotate = `${coord.angle}deg`;
       const styles = StyleSheet.create({
         triangle: {
           backgroundColor: 'transparent',
@@ -29,15 +29,10 @@ class PastLocationMarker extends React.Component<Props> {
           borderLeftColor: 'transparent',
           borderRightColor: 'transparent',
           borderBottomColor: 'darkgray',
-          zIndex: 5,
-          transform: [
-            {
-              rotate,
-            },
-          ],
         },
       });
-
+      const rotation = coord.moveHeadingAngle - this.props.mapViewBearingAngle;
+      // console.log(`Rotation in maker: ${coord.moveHeadingAngle} Rotation in map: ${this.props.mapViewBearingAngle} Total rotation: ${rotation}`);
       return (
         <Marker
           key={`${coord.latitude}-${coord.longitude}`}
@@ -45,6 +40,7 @@ class PastLocationMarker extends React.Component<Props> {
             latitude: coord.latitude,
             longitude: coord.longitude,
           }}
+          rotation={rotation}
         >
           <View style={[styles.triangle, this.props.style]} />
         </Marker>

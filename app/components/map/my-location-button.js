@@ -23,7 +23,7 @@ const mapStateToProps = (state) => ({
 });
 
 class MyLocationButton extends Component<Props> {
-  rotate = 90;
+  rotate = 0;
 
   centerMe = () => {
     this.props.dispatch({
@@ -44,11 +44,12 @@ class MyLocationButton extends Component<Props> {
   }
   rotateMap = () => {
     this.rotate = this.rotate + 90;
+    if (this.rotate >= 360) this.rotate = 0;
     this.props.dispatch({
       type: 'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
       payload: {
         bearingAngle: this.rotate,
-        duratin: 2000,
+        duration: 500,
       },
     });
   }
@@ -85,7 +86,7 @@ class MyLocationButton extends Component<Props> {
             C
           </Text>
         </TouchableOpacity>
-        {/* <TouchableOpacity
+        <TouchableOpacity
           hitSlop={hitSlop}
           activeOpacity={0.7}
           style={styles.mapButton}
@@ -94,7 +95,7 @@ class MyLocationButton extends Component<Props> {
           <Text style={{ fontWeight: 'bold', color: 'black' }}>
             R
           </Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
         <TouchableOpacity
           hitSlop={hitSlop}
           activeOpacity={0.7}

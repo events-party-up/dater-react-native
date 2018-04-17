@@ -34,7 +34,9 @@ function creatMapViewProxy(mapView: MapView) {
 }
 
 type Props = {
-  usersAround: Array<mixed>,
+  usersAround: {
+    users: Array<mixed>,
+  },
   auth: {
     uid: string,
   },
@@ -44,6 +46,7 @@ type Props = {
     coords: GeoCoordinates,
     geoUpdates: number,
     pastCoords: Array<GeoCoordinates>,
+    moveHeadingAngle: number,
   },
   mapView: MapView,
   mapPanel: any,
@@ -163,7 +166,9 @@ class DaterMapView extends Component<Props> {
         <MyLocationOnMovingMap
           accuracy={this.props.location.coords.accuracy}
           visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
-        /> }
+          moveHeadingAngle={this.props.location.moveHeadingAngle}
+          mapViewBearingAngle={this.props.mapView.bearingAngle}
+        />}
         <MapView
           ref={(component) => { this.mapView = component; }}
           style={styles.mapView}
@@ -187,6 +192,8 @@ class DaterMapView extends Component<Props> {
               coordinate={this.props.location.coords}
               gpsHeading={this.props.location.coords.heading}
               compassHeading={this.props.compass.heading}
+              moveHeadingAngle={this.props.location.moveHeadingAngle}
+              mapViewBearingAngle={this.props.mapView.bearingAngle}
             /> }
           {this.props.location.enabled && this.renderUsersAround()}
           <MapDirectionsComponent />
@@ -197,6 +204,7 @@ class DaterMapView extends Component<Props> {
           />
           <PastLocationMarker
             pastCoords={this.props.location.pastCoords}
+            mapViewBearingAngle={this.props.mapView.bearingAngle}
           />
         </MapView>
         <Text style={styles.debugText}>

@@ -30,7 +30,7 @@ const initialState = {
   latitudeDelta: DEFAULT_LATITUDE_DELTA,
   longitudeDelta: DEFAULT_LONGITUDE_DELTA,
   visibleRadiusInMeters: 410,
-  rotationAngle: 0,
+  bearingAngle: 0,
   mapReady: false,
   centered: false,
 };

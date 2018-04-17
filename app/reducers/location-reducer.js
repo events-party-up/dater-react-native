@@ -29,6 +29,7 @@ const initialState = {
   updating: false,
   initializing: false,
   pastCoords: [],
+  moveHeadingAngle: 0,
 };
 
 const locationReducer = (state = initialState, action) => {
@@ -102,17 +103,18 @@ const locationReducer = (state = initialState, action) => {
       };
     }
     case types.GEO_LOCATION_UPDATED: {
+      let moveHeadingAngle = 0;
       let pastCoords = [...state.pastCoords];
 
       if (pastCoords.length > 0 && (pastCoords[pastCoords.length - 1].latitude !== state.coords.latitude ||
         pastCoords[pastCoords.length - 1].longitude !== state.coords.longitude)
       ) {
-        const angle = (Math.atan2(payload.longitude - state.coords.longitude, payload.latitude -
+        moveHeadingAngle = (Math.atan2(payload.longitude - state.coords.longitude, payload.latitude -
           state.coords.latitude) * 180) / Math.PI;
         pastCoords = state.coords ? [...state.pastCoords, {
           latitude: state.coords.latitude,
           longitude: state.coords.longitude,
-          angle,
+          moveHeadingAngle,
         }] : [];
       } else if (pastCoords.length === 0 && state.coords) {
         pastCoords.push({
@@ -126,6 +128,7 @@ const locationReducer = (state = initialState, action) => {
         coords: payload,
         geoUpdates: state.geoUpdates + 1,
         pastCoords,
+        moveHeadingAngle,
       };
     }
     default: {
