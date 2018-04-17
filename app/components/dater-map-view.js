@@ -14,6 +14,7 @@ import PersonMaker from './map/person-maker';
 
 import { GeoCompass, GeoCoordinates } from '../types';
 import MapDirectionsComponent from '../components/map/map-directions-component';
+import PastLocationMarker from '../components/map/past-location-marker';
 
 const mapStateToProps = (state) => ({
   location: state.location,
@@ -157,11 +158,11 @@ class DaterMapView extends Component<Props> {
         }}
         onResponderRelease={this.onMapDragEnd}
       >
-        {this.props.location.enabled && this.props.location.coords && this.props.mapView.centered &&
+        {/* {this.props.location.enabled && this.props.location.coords && this.props.mapView.centered &&
         <MyLocationOnMovingMap
           accuracy={this.props.location.coords.accuracy}
           visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
-        /> }
+        /> } */}
         <MapView
           ref={(component) => { this.mapView = component; }}
           style={styles.mapView}
@@ -186,8 +187,11 @@ class DaterMapView extends Component<Props> {
               gpsHeading={this.props.location.coords.heading}
               compassHeading={this.props.compass.heading}
             /> }
-          {this.props.location.enabled && this.renderUsersAround()}
+          {/* {this.props.location.enabled && this.renderUsersAround()} */}
           <MapDirectionsComponent />
+          <PastLocationMarker
+            coords={this.props.location.coords}
+          />
         </MapView>
         <Text style={styles.debugText}>
           Accuracy: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
