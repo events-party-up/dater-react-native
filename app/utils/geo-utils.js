@@ -1,3 +1,5 @@
+import { GeoCoordinates } from '../types';
+
 const GeoUtils = {
   distance,
   boundingBoxCoordinates,
@@ -103,7 +105,12 @@ function degreesToRadians(degrees) {
   return (degrees * Math.PI) / 180;
 }
 
-function getRotationAngle(previousPosition, currentPosition) {
+/**
+ * Calculates the angle in degrees between two geolocation points
+ * @param {GeoCoordinates} previousPosition
+ * @param {GeoCoordinates} currentPosition
+ */
+function getRotationAngle(previousPosition: GeoCoordinates, currentPosition: GeoCoordinates) {
   const x1 = previousPosition.latitude;
   const y1 = previousPosition.longitude;
   const x2 = currentPosition.latitude;
@@ -114,6 +121,7 @@ function getRotationAngle(previousPosition, currentPosition) {
 
   return (Math.atan2(yDiff, xDiff) * 180.0) / Math.PI;
 }
+
 
 function wrapCompassHeading(heading) {
   if (heading > 180) {

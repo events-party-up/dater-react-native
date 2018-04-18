@@ -18,6 +18,8 @@ type Props = {
   accuracy: number,
   heading: number,
   compassHeading: number,
+  moveHeadingAngle: number,
+  mapViewBearingAngle: number,
   coordinate: {
     latitude: number,
     longitude: number,
@@ -27,18 +29,15 @@ type Props = {
 
 class MyLocationMapMarker extends React.PureComponent<Props> {
   render() {
-    // let { heading } = this.props;
     let { compassHeading } = this.props;
-    // let { gpsHeading } = this.props;
     const { accuracy } = this.props;
-
     const { coordinate } = this.props;
 
     if (compassHeading < 0 || !compassHeading) {
       compassHeading = 0;
     }
-    // const rotate = (typeof compassHeading === 'number' && compassHeading >= 0) ? `${compassHeading}deg` : null;
-    const rotate = '0deg';
+    const rotation = this.props.moveHeadingAngle - this.props.mapViewBearingAngle;
+    const rotate = `${rotation}deg`;
 
     return (
       <View

@@ -19,6 +19,8 @@ const DIAGONAL = Math.sqrt((width * width) + (height * height));
 type Props = {
   accuracy: number,
   visibleRadiusInMeters: number,
+  moveHeadingAngle: number,
+  mapViewBearingAngle: number,
 };
 
 class MyLocationOnMovingMap extends React.PureComponent<Props> {
@@ -29,6 +31,9 @@ class MyLocationOnMovingMap extends React.PureComponent<Props> {
     const pixelsPerMeter = DIAGONAL / (visibleRadiusInMeters * 2);
     const RADIUS = pixelsPerMeter * accuracy;
     // console.log(`Visible radius: ${visibleRadiusInMeters}, DIAGONAL: ${DIAGONAL}, pixelsPerMeter: ${pixelsPerMeter}, Radius: ${RADIUS}`);
+    const rotation = this.props.moveHeadingAngle - this.props.mapViewBearingAngle;
+    const rotate = `${rotation}deg`;
+    // console.log(`moveHeadingAngle: ${this.props.moveHeadingAngle}, mapViewBearingAngle: ${this.props.mapViewBearingAngle}, rotation: ${rotation}`);
 
     return (
       <View
@@ -48,7 +53,7 @@ class MyLocationOnMovingMap extends React.PureComponent<Props> {
         />
         <View style={styles.container}>
           <View style={styles.markerHalo} />
-          <View style={styles.heading}>
+          <View style={[styles.heading, { transform: [{ rotate }] }]}>
             <View style={styles.headingPointer} />
           </View>
           <View style={styles.marker} />

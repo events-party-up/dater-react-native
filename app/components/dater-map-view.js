@@ -14,6 +14,8 @@ import PersonMaker from './map/person-maker';
 
 import { GeoCompass, GeoCoordinates } from '../types';
 import MapDirectionsComponent from '../components/map/map-directions-component';
+import PastLocationMarker from '../components/map/past-location-marker';
+import PastLocationPolylines from '../components/map/past-location-polylines';
 
 const mapStateToProps = (state) => ({
   location: state.location,
@@ -33,7 +35,9 @@ function creatMapViewProxy(mapView: MapView) {
 }
 
 type Props = {
-  usersAround: Array<mixed>,
+  usersAround: {
+    users: Array<mixed>,
+  },
   auth: {
     uid: string,
   },
@@ -42,6 +46,8 @@ type Props = {
   location: {
     coords: GeoCoordinates,
     geoUpdates: number,
+    pastCoords: Array<GeoCoordinates>,
+    moveHeadingAngle: number,
   },
   mapView: MapView,
   mapPanel: any,
@@ -76,11 +82,6 @@ class DaterMapView extends Component<Props> {
     this.props.dispatch({
       type: 'GEO_LOCATION_INITIALIZE',
     });
-  }
-
-  routeTo = async (user) => {
-    console.log(`Creating route to user: ${user.id}`);
-    console.log(`Userr: ${user}`);
   }
 
   onPersonMakerPress = (user) => {
@@ -126,7 +127,6 @@ class DaterMapView extends Component<Props> {
         style={styles.maker}
         key={user.uid}
         onPress={(event) => { event.stopPropagation(); this.onPersonMakerPress(user); }}
-        // zIndex={1}
       >
         <PersonMaker title={user.shortId} />
       </Marker>
@@ -161,7 +161,9 @@ class DaterMapView extends Component<Props> {
         <MyLocationOnMovingMap
           accuracy={this.props.location.coords.accuracy}
           visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
-        /> }
+          moveHeadingAngle={this.props.location.moveHeadingAngle}
+          mapViewBearingAngle={this.props.mapView.bearingAngle}
+        />}
         <MapView
           ref={(component) => { this.mapView = component; }}
           style={styles.mapView}
@@ -185,9 +187,18 @@ class DaterMapView extends Component<Props> {
               coordinate={this.props.location.coords}
               gpsHeading={this.props.location.coords.heading}
               compassHeading={this.props.compass.heading}
+              moveHeadingAngle={this.props.location.moveHeadingAngle}
+              mapViewBearingAngle={this.props.mapView.bearingAngle}
             /> }
           {this.props.location.enabled && this.renderUsersAround()}
           <MapDirectionsComponent />
+          <PastLocationPolylines
+            pastCoords={[...this.props.location.pastCoords, this.props.location.coords]}
+          />
+          <PastLocationMarker
+            pastCoords={[...this.props.location.pastCoords, this.props.location.coords]}
+            mapViewBearingAngle={this.props.mapView.bearingAngle}
+          />
         </MapView>
         <Text style={styles.debugText}>
           Accuracy: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}

@@ -23,12 +23,14 @@ const mapStateToProps = (state) => ({
 });
 
 class MyLocationButton extends Component<Props> {
-  rotate = 90;
+  rotate = 0;
 
   centerMe = () => {
-    this.props.dispatch({
-      type: 'MAPVIEW_SHOW_MY_LOCATION_START',
-    });
+    if (this.props.location.enabled === true) {
+      this.props.dispatch({
+        type: 'MAPVIEW_SHOW_MY_LOCATION_START',
+      });
+    }
   }
 
   onGeoTogglePress = () => {
@@ -43,14 +45,17 @@ class MyLocationButton extends Component<Props> {
     }
   }
   rotateMap = () => {
-    this.rotate = this.rotate + 90;
-    this.props.dispatch({
-      type: 'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
-      payload: {
-        bearingAngle: this.rotate,
-        duratin: 2000,
-      },
-    });
+    if (this.props.location.enabled === true) {
+      this.rotate = this.rotate + 90;
+      if (this.rotate >= 360) this.rotate = 0;
+      this.props.dispatch({
+        type: 'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
+        payload: {
+          bearingAngle: this.rotate,
+          duration: 500,
+        },
+      });
+    }
   }
 
   toggleCompass = () => {
@@ -85,7 +90,7 @@ class MyLocationButton extends Component<Props> {
             C
           </Text>
         </TouchableOpacity>
-        {/* <TouchableOpacity
+        <TouchableOpacity
           hitSlop={hitSlop}
           activeOpacity={0.7}
           style={styles.mapButton}
@@ -94,7 +99,7 @@ class MyLocationButton extends Component<Props> {
           <Text style={{ fontWeight: 'bold', color: 'black' }}>
             R
           </Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
         <TouchableOpacity
           hitSlop={hitSlop}
           activeOpacity={0.7}

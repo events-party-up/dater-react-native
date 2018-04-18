@@ -1,3 +1,9 @@
+import GeoUtils from '../utils/geo-utils';
+import {
+  MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION,
+  MAX_PAST_LOCATIONS,
+} from '../constants';
+
 const types = {
   GEO_PERMISSION_REQUESTED: 'GEO_PERMISSION_REQUESTED',
   GEO_PERMISSION_GRANTED: 'GEO_PERMISSION_GRANTED',
@@ -28,6 +34,8 @@ const initialState = {
   stopping: false,
   updating: false,
   initializing: false,
+  pastCoords: [],
+  moveHeadingAngle: 0,
 };
 
 const locationReducer = (state = initialState, action) => {
@@ -83,6 +91,9 @@ const locationReducer = (state = initialState, action) => {
         ...state,
         stopping: false,
         enabled: false,
+        pastCoords: [],
+        coords: null,
+        moveHeadingAngle: 0,
       };
     }
     case types.GEO_LOCATION_UPDATE_CHANNEL_UNKNOWN_ERROR:
@@ -101,17 +112,38 @@ const locationReducer = (state = initialState, action) => {
       };
     }
     case types.GEO_LOCATION_UPDATED: {
+      let { moveHeadingAngle } = state;
+      let pastCoords = [...state.pastCoords];
+      // if this is not the first location update
+      if (state.coords) {
+        moveHeadingAngle = GeoUtils.getRotationAngle(state.coords, payload);
+      }
+
+      if (pastCoords.length > 0 &&
+        GeoUtils.distance(pastCoords[pastCoords.length - 1], payload) > MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
+        pastCoords = [...state.pastCoords, {
+          latitude: payload.latitude,
+          longitude: payload.longitude,
+          moveHeadingAngle,
+        }];
+        // if we just started location tracking
+      } else if (pastCoords.length === 0) {
+        pastCoords.push({
+          latitude: payload.latitude,
+          longitude: payload.longitude,
+        });
+      }
+
+      if (pastCoords.length > MAX_PAST_LOCATIONS) { // limit number of records
+        pastCoords.shift();
+      }
+
       return {
         ...state,
         coords: payload,
         geoUpdates: state.geoUpdates + 1,
-      };
-    }
-    case types.GEO_UPDATED: {
-      return {
-        ...state,
-        coords: payload,
-        geoUpdates: state.geoUpdates + 1,
+        pastCoords,
+        moveHeadingAngle,
       };
     }
     default: {

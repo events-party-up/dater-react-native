@@ -26,11 +26,8 @@ export default function* locationSaga() {
 
     while (true) {
       yield take('GEO_LOCATION_START');
-      if (locationServiceState.enabled) {
-        yield call([BackgroundGeolocation, 'changePace'], true);
-      } else {
-        yield call([BackgroundGeolocation, 'start']);
-      }
+      yield call([BackgroundGeolocation, 'start']);
+      yield call([BackgroundGeolocation, 'changePace'], true);
       const action = yield take('GEO_LOCATION_UPDATED'); // wait for first update!
       yield put({ type: 'GEO_LOCATION_STARTED', payload: action.payload });
       yield take('GEO_LOCATION_STOP');
@@ -56,11 +53,16 @@ function* startGeoLocationOnInit() {
 }
 
 function* locationUpdatedSaga(action) {
-  yield* animateToCurrentLocation(action);
-  yield* call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
-  yield* animateToBearing(action);
+  const isCentered = yield select((state) => state.mapView.centered);
+  if (isCentered) {
+    yield* animateToCurrentLocation(action);
+    yield* call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
+    yield* animateToBearing(action);
+  }
   const firstCoords = yield select((state) => state.location.firstCoords);
   const currentCoords = action.payload;
+  if (!firstCoords || !currentCoords) return;
+
   const distanceFromFirstCoords = GeoUtils.distance(firstCoords, currentCoords);
   if (distanceFromFirstCoords > USERS_AROUND_SEARCH_RADIUS_KM * (1000 / 2)) {
     // restart users around if user travelled distance more than 1/2 of the searchable radius

@@ -29,10 +29,10 @@ const initialState = {
   latitude: null,
   latitudeDelta: DEFAULT_LATITUDE_DELTA,
   longitudeDelta: DEFAULT_LONGITUDE_DELTA,
-  visibleRadiusInMeters: 410,
-  rotationAngle: 0,
-  mapReady: false,
-  centered: false,
+  visibleRadiusInMeters: 410, // how much is map visible in meters by diagonal
+  bearingAngle: 0, // how much the map is rotated compared to north
+  mapReady: false, // has the map been loaded?
+  centered: false, // should map be in centered mode?
 };
 
 const mapViewReducer = (state = initialState, action) => {
