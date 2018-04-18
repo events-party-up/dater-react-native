@@ -1,34 +1,63 @@
-import { call, take, put, select } from 'redux-saga/effects';
-import { delay } from 'redux-saga';
+import { call, take, put, takeEvery, select, cancel } from 'redux-saga/effects';
+import { delay, eventChannel } from 'redux-saga';
+import firebase from 'react-native-firebase';
 
-import MapDirections from '../services/maps-directions';
+import GeoUtils from '../utils/geo-utils';
 
 export default function* routeToUserSaga() {
   try {
     while (true) {
-      const action = yield take('MAPVIEW_BUILD_ROUTE_START');
+      const action = yield take('MAPVIEW_FIND_USER_START');
       const routeToUser = action.payload;
-      const toLocation = {
-        latitude: routeToUser.geoPoint.latitude,
-        longitude: routeToUser.geoPoint.longitude,
-      };
-      const myLocation = yield select((state) => state.location.coords);
-      const route = yield call(MapDirections, myLocation, toLocation);
-      yield put({ type: 'MAPVIEW_BUILD_ROUTE_FINISH', payload: route });
-      yield delay(250);
+      const userCoordsChannel = yield call(trackUserCoordsChannel, routeToUser);
+      const task1 = yield takeEvery(userCoordsChannel, updateUserCoords);
 
+      yield put({ type: 'MAPVIEW_FIND_USER_STARTED' });
+      yield delay(250);
+      const myCoords = yield select((state) => state.location.coords);
       yield put({
         type: 'UI_MAP_PANEL_REPLACE_START',
         payload: {
-          mode: 'routeInfo',
+          mode: 'findUser',
           data: {
-            route,
             routeToUser,
+            distance: GeoUtils.distance(routeToUser.geoPoint, myCoords),
           },
         },
       });
+      yield take('MAPVIEW_FIND_USER_STOP');
+      yield cancel(task1);
+      yield userCoordsChannel.close();
     }
   } catch (error) {
-    yield put({ type: 'MAPVIEW_BUILD_ROUTE_ERROR', payload: error });
+    yield put({ type: 'MAPVIEW_FIND_USER_ERROR', payload: error });
   }
+}
+
+function* updateUserCoords(newCoords) {
+  // TODO: put some logic to store user coords here!
+  yield put({ type: 'MAPVIEW_FIND_USER_NEW_COORDS', payload: newCoords });
+}
+
+function trackUserCoordsChannel(user) {
+  const query = firebase.firestore().collection('geoPoints').doc(user.uid);
+
+  return eventChannel((emit) => {
+    const onSnapshotUpdated = (userSnapshot) => {
+      const userData = userSnapshot.data();
+      emit({
+        latitude: userData.geoPoint.latitude,
+        longitude: userData.geoPoint.longitude,
+      });
+    };
+    const onError = (error) => {
+      emit({
+        error,
+      });
+    };
+
+    const unsubscribe = query.onSnapshot(onSnapshotUpdated, onError);
+
+    return unsubscribe;
+  });
 }

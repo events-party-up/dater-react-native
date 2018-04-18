@@ -70,6 +70,19 @@ class MapPanelComponent extends Component<Props> {
     });
   }
 
+  findUser = (user) => {
+    this.props.dispatch({
+      type: 'MAPVIEW_FIND_USER_START',
+      payload: user,
+    });
+  }
+
+  stopFindUser = () => {
+    this.props.dispatch({
+      type: 'MAPVIEW_FIND_USER_STOP',
+    });
+  }
+
   renderCard() {
     switch (this.props.mapPanel.mode) {
       case 'userCard':
@@ -84,7 +97,7 @@ class MapPanelComponent extends Component<Props> {
               {this.props.mapPanel.data.distance} метров от вас. {' '}
               Был <Moment locale="ru" element={Body} fromNow>{this.props.mapPanel.data.timestamp}</Moment>.
             </Body>
-            <DaterButton style={styles.panelButton} onPress={() => this.buildRoute(this.props.mapPanel.data)}>
+            <DaterButton style={styles.panelButton} onPress={() => this.findUser(this.props.mapPanel.data)}>
               Встретиться
             </DaterButton>
           </View>
@@ -100,6 +113,25 @@ class MapPanelComponent extends Component<Props> {
             >
               Расстояние {this.props.mapPanel.data.route.distance} м. {' '}
               Продолжительность {Math.floor(this.props.mapPanel.data.route.duration / 60)} мин.
+            </Caption2>
+            <DaterButton
+              style={styles.panelButton}
+              onPress={this.letsStart}
+            >
+              Поехали!
+            </DaterButton>
+          </View>
+        );
+      case 'findUser':
+        return (
+          <View>
+            <H2>Поиск пользователя {this.props.mapPanel.data.routeToUser.shortId}</H2>
+            <Caption2 style={{
+              marginBottom: 8,
+              marginTop: 8,
+            }}
+            >
+              Расстояние {this.props.mapPanel.data.distance} м. {' '}
             </Caption2>
             <DaterButton
               style={styles.panelButton}
