@@ -89,6 +89,7 @@ const locationReducer = (state = initialState, action) => {
         stopping: false,
         enabled: false,
         pastCoords: [],
+        coords: null,
       };
     }
     case types.GEO_LOCATION_UPDATE_CHANNEL_UNKNOWN_ERROR:

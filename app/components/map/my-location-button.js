@@ -26,9 +26,11 @@ class MyLocationButton extends Component<Props> {
   rotate = 0;
 
   centerMe = () => {
-    this.props.dispatch({
-      type: 'MAPVIEW_SHOW_MY_LOCATION_START',
-    });
+    if (this.props.location.enabled === true) {
+      this.props.dispatch({
+        type: 'MAPVIEW_SHOW_MY_LOCATION_START',
+      });
+    }
   }
 
   onGeoTogglePress = () => {
@@ -43,15 +45,17 @@ class MyLocationButton extends Component<Props> {
     }
   }
   rotateMap = () => {
-    this.rotate = this.rotate + 90;
-    if (this.rotate >= 360) this.rotate = 0;
-    this.props.dispatch({
-      type: 'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
-      payload: {
-        bearingAngle: this.rotate,
-        duration: 500,
-      },
-    });
+    if (this.props.location.enabled === true) {
+      this.rotate = this.rotate + 90;
+      if (this.rotate >= 360) this.rotate = 0;
+      this.props.dispatch({
+        type: 'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
+        payload: {
+          bearingAngle: this.rotate,
+          duration: 500,
+        },
+      });
+    }
   }
 
   toggleCompass = () => {
