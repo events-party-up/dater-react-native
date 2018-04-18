@@ -16,7 +16,7 @@ const geoOptions = async () => {
     maximumAge: 1000,
     distanceFilter: 2,
     desiredAccuracy: RNBackgroundGeolocation.DESIRED_ACCURACY_HIGH,
-    stopTimeout: 1,
+    // stopTimeout: 1,
     debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
     logLevel: RNBackgroundGeolocation.LOG_LEVEL_DEBUG,
     stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.
@@ -29,6 +29,8 @@ const geoOptions = async () => {
     notificationPriority: RNBackgroundGeolocation.NOTIFICATION_PRIORITY_LOW,
     notificationTitle: 'Dater.com',
     notificationText: 'Dater Mode ON',
+    // disableStopDetection: true,
+    preventSuspend: true, // iOS only
     params: {
       device: {
         platform: Platform.OS,
