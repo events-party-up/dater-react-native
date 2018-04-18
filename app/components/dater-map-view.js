@@ -83,11 +83,6 @@ class DaterMapView extends Component<Props> {
     });
   }
 
-  routeTo = async (user) => {
-    console.log(`Creating route to user: ${user.id}`);
-    console.log(`Userr: ${user}`);
-  }
-
   onPersonMakerPress = (user) => {
     if (this.props.mapPanel.visible) {
       this.props.dispatch({
@@ -131,7 +126,6 @@ class DaterMapView extends Component<Props> {
         style={styles.maker}
         key={user.uid}
         onPress={(event) => { event.stopPropagation(); this.onPersonMakerPress(user); }}
-        // zIndex={1}
       >
         <PersonMaker title={user.shortId} />
       </Marker>

@@ -90,6 +90,7 @@ const locationReducer = (state = initialState, action) => {
         enabled: false,
         pastCoords: [],
         coords: null,
+        moveHeadingAngle: 0,
       };
     }
     case types.GEO_LOCATION_UPDATE_CHANNEL_UNKNOWN_ERROR:
@@ -117,17 +118,17 @@ const locationReducer = (state = initialState, action) => {
       }
 
       if (pastCoords.length > 0 &&
-        GeoUtils.distance(pastCoords[pastCoords.length - 1], state.coords) > MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
-        pastCoords = state.coords ? [...state.pastCoords, {
-          latitude: state.coords.latitude,
-          longitude: state.coords.longitude,
+        GeoUtils.distance(pastCoords[pastCoords.length - 1], payload) > MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
+        pastCoords = [...state.pastCoords, {
+          latitude: payload.latitude,
+          longitude: payload.longitude,
           moveHeadingAngle,
-        }] : [];
+        }];
         // if we just started location tracking
-      } else if (pastCoords.length === 0 && state.coords) {
+      } else if (pastCoords.length === 0) {
         pastCoords.push({
-          latitude: state.coords.latitude,
-          longitude: state.coords.longitude,
+          latitude: payload.latitude,
+          longitude: payload.longitude,
         });
       }
 
