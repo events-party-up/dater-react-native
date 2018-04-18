@@ -26,11 +26,8 @@ export default function* locationSaga() {
 
     while (true) {
       yield take('GEO_LOCATION_START');
-      if (locationServiceState.enabled) {
-        yield call([BackgroundGeolocation, 'changePace'], true);
-      } else {
-        yield call([BackgroundGeolocation, 'start']);
-      }
+      yield call([BackgroundGeolocation, 'start']);
+      yield call([BackgroundGeolocation, 'changePace'], true);
       const action = yield take('GEO_LOCATION_UPDATED'); // wait for first update!
       yield put({ type: 'GEO_LOCATION_STARTED', payload: action.payload });
       yield take('GEO_LOCATION_STOP');
