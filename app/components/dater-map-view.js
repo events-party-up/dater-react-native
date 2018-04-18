@@ -6,7 +6,6 @@ import {
 } from 'react-native';
 import MapView from 'react-native-maps';
 import { connect, Dispatch } from 'react-redux';
-import 'moment/locale/ru';
 
 import { GeoCompass, GeoCoordinates } from '../types';
 import MyLocationOnMovingMap from './map/my-location-on-moving-map';

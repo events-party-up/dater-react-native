@@ -51,7 +51,6 @@ class UsersAroundComponent extends React.Component<Props> {
     ));
   }
 
-
   render() {
     return (
       <React.Fragment>

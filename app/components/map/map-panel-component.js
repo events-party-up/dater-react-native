@@ -7,6 +7,7 @@ import {
   Platform,
 } from 'react-native';
 import Interactable from 'react-native-interactable';
+import 'moment/locale/ru';
 import Moment from 'react-moment';
 import { connect, Dispatch } from 'react-redux';
 
