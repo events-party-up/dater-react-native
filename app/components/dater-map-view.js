@@ -15,6 +15,7 @@ import PersonMaker from './map/person-maker';
 import { GeoCompass, GeoCoordinates } from '../types';
 import MapDirectionsComponent from '../components/map/map-directions-component';
 import PastLocationMarker from '../components/map/past-location-marker';
+import PastLocationPolylines from '../components/map/past-location-polylines';
 
 const mapStateToProps = (state) => ({
   location: state.location,
@@ -191,14 +192,11 @@ class DaterMapView extends Component<Props> {
             /> }
           {this.props.location.enabled && this.renderUsersAround()}
           <MapDirectionsComponent />
-          {this.props.location.coords && this.props.location.pastCoords.length > 0 &&
-            <MapView.Polyline
-              coordinates={[...this.props.location.pastCoords, this.props.location.coords]}
-              strokeWidth={3}
-              strokeColor="green"
-            />}
+          <PastLocationPolylines
+            pastCoords={[...this.props.location.pastCoords, this.props.location.coords]}
+          />
           <PastLocationMarker
-            pastCoords={this.props.location.pastCoords}
+            pastCoords={[...this.props.location.pastCoords, this.props.location.coords]}
             mapViewBearingAngle={this.props.mapView.bearingAngle}
           />
         </MapView>

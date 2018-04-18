@@ -1,5 +1,8 @@
 import GeoUtils from '../utils/geo-utils';
-import { MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION } from '../constants';
+import {
+  MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION,
+  MAX_PAST_LOCATIONS,
+} from '../constants';
 
 const types = {
   GEO_PERMISSION_REQUESTED: 'GEO_PERMISSION_REQUESTED',
@@ -111,7 +114,9 @@ const locationReducer = (state = initialState, action) => {
     case types.GEO_LOCATION_UPDATED: {
       let { moveHeadingAngle } = state;
       let pastCoords = [...state.pastCoords];
-
+      if (pastCoords.length > MAX_PAST_LOCATIONS) { // limit number of records
+        pastCoords.shift();
+      }
       // if this is not the first location update
       if (state.coords) {
         moveHeadingAngle = GeoUtils.getRotationAngle(state.coords, payload);

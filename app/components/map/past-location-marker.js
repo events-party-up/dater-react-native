@@ -8,17 +8,19 @@ import {
 import { GeoCoordinates } from '../../types';
 
 type Props = {
-  style: any,
   pastCoords: Array<GeoCoordinates>,
   mapViewBearingAngle: number,
 };
 
 class PastLocationMarker extends React.Component<Props> {
   renderPastLocations() {
-    if (this.props.pastCoords.length < 2) return null; // do not build path if there are too few points
+    const totalPastCoords = this.props.pastCoords.length;
+    if (totalPastCoords < 2) return null; // can't show direction marker just for 1 point
 
     return this.props.pastCoords.map((coord, index) => {
       if (index < 1) return null; // do not show marker for first point
+      const borderBottomOpacity = 1 - ((totalPastCoords - index) / totalPastCoords);
+      const borderBottomColor = `rgba(128, 128, 128, ${borderBottomOpacity})`;
       const styles = StyleSheet.create({
         triangle: {
           backgroundColor: 'transparent',
@@ -28,21 +30,21 @@ class PastLocationMarker extends React.Component<Props> {
           borderBottomWidth: 15,
           borderLeftColor: 'transparent',
           borderRightColor: 'transparent',
-          borderBottomColor: 'darkgray',
+          borderBottomColor,
         },
       });
       const rotation = coord.moveHeadingAngle - this.props.mapViewBearingAngle;
       // console.log(`Rotation in maker: ${coord.moveHeadingAngle} Rotation in map: ${this.props.mapViewBearingAngle} Total rotation: ${rotation}`);
       return (
         <Marker
-          key={`${coord.latitude}-${coord.longitude}`}
+          key={`marker-${coord.latitude}-${coord.longitude}-${index}`} // eslint-disable-line
           coordinate={{
             latitude: coord.latitude,
             longitude: coord.longitude,
           }}
           rotation={rotation}
         >
-          <View style={[styles.triangle, this.props.style]} />
+          <View style={styles.triangle} />
         </Marker>
       );
     });
