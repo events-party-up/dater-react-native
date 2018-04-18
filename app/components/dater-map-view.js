@@ -4,22 +4,20 @@ import {
   Text,
   View,
 } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView from 'react-native-maps';
 import { connect, Dispatch } from 'react-redux';
 import 'moment/locale/ru';
 
+import { GeoCompass, GeoCoordinates } from '../types';
 import MyLocationOnMovingMap from './map/my-location-on-moving-map';
 import MyLocationMapMarker from './map/my-location-map-maker';
-import PersonMaker from './map/person-maker';
-
-import { GeoCompass, GeoCoordinates } from '../types';
-import MapDirectionsComponent from '../components/map/map-directions-component';
-import PastLocationMarker from '../components/map/past-location-marker';
-import PastLocationPolylines from '../components/map/past-location-polylines';
+import UsersAroundComponent from './map/users-around-component';
+import MapDirectionsComponent from './map/map-directions-component';
+import PastLocationMarker from './map/past-location-marker';
+import PastLocationPolylines from './map/past-location-polylines';
 
 const mapStateToProps = (state) => ({
   location: state.location,
-  usersAround: state.usersAround,
   mapView: state.mapView,
   auth: state.auth,
   compass: state.compass,
@@ -35,9 +33,6 @@ function creatMapViewProxy(mapView: MapView) {
 }
 
 type Props = {
-  usersAround: {
-    users: Array<mixed>,
-  },
   auth: {
     uid: string,
   },
@@ -84,26 +79,6 @@ class DaterMapView extends Component<Props> {
     });
   }
 
-  onPersonMakerPress = (user) => {
-    if (this.props.mapPanel.visible) {
-      this.props.dispatch({
-        type: 'UI_MAP_PANEL_REPLACE_START',
-        payload: {
-          mode: 'userCard',
-          data: user,
-        },
-      });
-    } else {
-      this.props.dispatch({
-        type: 'UI_MAP_PANEL_SHOW_START',
-        payload: {
-          mode: 'userCard',
-          data: user,
-        },
-      });
-    }
-  }
-
   onMapPressed = () => {
     if (this.props.mapPanel.visible) {
       this.props.dispatch({
@@ -115,22 +90,6 @@ class DaterMapView extends Component<Props> {
   onRegionChange = (region) => {
     console.log('Region updated');
     console.log(region);
-  }
-
-  renderUsersAround() {
-    return this.props.usersAround.users.map((user) => (
-      <Marker
-        coordinate={{
-          latitude: user.geoPoint.latitude,
-          longitude: user.geoPoint.longitude,
-        }}
-        style={styles.maker}
-        key={user.uid}
-        onPress={(event) => { event.stopPropagation(); this.onPersonMakerPress(user); }}
-      >
-        <PersonMaker title={user.shortId} />
-      </Marker>
-    ));
   }
 
   onMapDragStart = (event) => {
@@ -190,7 +149,7 @@ class DaterMapView extends Component<Props> {
               moveHeadingAngle={this.props.location.moveHeadingAngle}
               mapViewBearingAngle={this.props.mapView.bearingAngle}
             /> }
-          {this.props.location.enabled && this.renderUsersAround()}
+          <UsersAroundComponent />
           <MapDirectionsComponent />
           <PastLocationPolylines
             pastCoords={[...this.props.location.pastCoords, this.props.location.coords]}
@@ -217,9 +176,6 @@ const styles = StyleSheet.create({
   mapView: {
     flex: 1,
     zIndex: -1,
-  },
-  makerCallout: {
-    width: 150,
   },
   debugText: {
     position: 'absolute',
