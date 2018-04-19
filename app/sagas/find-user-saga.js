@@ -4,15 +4,19 @@ import firebase from 'react-native-firebase';
 
 import GeoUtils from '../utils/geo-utils';
 
-export default function* routeToUserSaga() {
+export default function* findUserSaga() {
   try {
     while (true) {
       const action = yield take('MAPVIEW_FIND_USER_START');
       const routeToUser = action.payload;
-      const userCoordsChannel = yield call(trackUserCoordsChannel, routeToUser);
-      const task1 = yield takeEvery(userCoordsChannel, updateUserCoords);
-
-      yield put({ type: 'MAPVIEW_FIND_USER_STARTED' });
+      const targetUserCoordsChannel = yield call(trackTargetUserCoordsChannel, routeToUser);
+      const task1 = yield takeEvery(targetUserCoordsChannel, updateTargetUserCoords);
+      yield put({
+        type: 'MAPVIEW_FIND_USER_STARTED',
+        payload: {
+          uid: routeToUser.uid,
+        },
+      });
       yield delay(250);
       const myCoords = yield select((state) => state.location.coords);
       yield put({
@@ -27,19 +31,19 @@ export default function* routeToUserSaga() {
       });
       yield take('MAPVIEW_FIND_USER_STOP');
       yield cancel(task1);
-      yield userCoordsChannel.close();
+      yield targetUserCoordsChannel.close();
     }
   } catch (error) {
     yield put({ type: 'MAPVIEW_FIND_USER_ERROR', payload: error });
   }
 }
 
-function* updateUserCoords(newCoords) {
+function* updateTargetUserCoords(newCoords) {
   // TODO: put some logic to store user coords here!
   yield put({ type: 'MAPVIEW_FIND_USER_NEW_COORDS', payload: newCoords });
 }
 
-function trackUserCoordsChannel(user) {
+function trackTargetUserCoordsChannel(user) {
   const query = firebase.firestore().collection('geoPoints').doc(user.uid);
 
   return eventChannel((emit) => {

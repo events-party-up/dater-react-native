@@ -8,8 +8,7 @@ import startGeolocationOnFirstUpdate from './location-start-saga';
 import mapPanelSaga from './map-panel-saga';
 // import mapDirectionsSaga from './map-directions-saga';
 import usersAroundSaga from './users-around-saga';
-import routeToUserSaga from './route-to-user-saga';
-
+import findUserSaga from './find-user-saga';
 
 export default function* rootSaga() {
   yield all([
@@ -22,6 +21,6 @@ export default function* rootSaga() {
     mapPanelSaga(),
     // mapDirectionsSaga(),
     usersAroundSaga(),
-    routeToUserSaga(),
+    findUserSaga(),
   ]);
 }
