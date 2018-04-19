@@ -21,6 +21,7 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
   compass: state.compass,
   mapPanel: state.mapPanel,
+  findUser: state.findUser,
 });
 
 function creatMapViewProxy(mapView: MapView) {
@@ -45,6 +46,7 @@ type Props = {
   },
   mapView: MapView,
   mapPanel: any,
+  findUser: any,
 };
 
 class DaterMapView extends Component<Props> {
@@ -151,10 +153,10 @@ class DaterMapView extends Component<Props> {
           <UsersAroundComponent />
           <MapDirectionsComponent />
           <PastLocationPolylines
-            pastCoords={[...this.props.location.pastCoords, this.props.location.coords]}
+            pastCoords={this.props.findUser.pastCoords}
           />
           <PastLocationMarker
-            pastCoords={[...this.props.location.pastCoords, this.props.location.coords]}
+            pastCoords={this.props.findUser.pastCoords}
             mapViewBearingAngle={this.props.mapView.bearingAngle}
           />
         </MapView>

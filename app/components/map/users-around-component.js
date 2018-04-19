@@ -14,7 +14,7 @@ type Props = {
   usersAround: Array<mixed>,
   dispatch: Dispatch,
   mapPanelIsVisible: boolean,
-  findUser: any;
+  findUser: any,
 };
 
 class UsersAroundComponent extends React.Component<Props> {
