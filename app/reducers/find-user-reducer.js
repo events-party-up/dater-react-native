@@ -7,8 +7,9 @@ import {
 const types = {
   FIND_USER_START: 'FIND_USER_START',
   FIND_USER_STARTED: 'FIND_USER_STARTED',
-  FIND_USER_STARTED_STOP: 'FIND_USER_STARTED_STOP',
+  FIND_USER_STOP: 'FIND_USER_STOP',
   FIND_USER_NEW_MOVE: 'FIND_USER_NEW_MOVE',
+  FIND_USER_STOPPED: 'FIND_USER_STOPPED',
   FIND_USER_ERROR: 'FIND_USER_ERROR',
 };
 
@@ -38,7 +39,7 @@ const findUserReducer = (state = initialState, action) => {
         enabled: true,
       };
     }
-    case types.FIND_USER_STOP: {
+    case types.FIND_USER_STOPPED: {
       return {
         ...state,
         enabled: false,

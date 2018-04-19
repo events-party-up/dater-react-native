@@ -88,16 +88,16 @@ class MapPanelComponent extends Component<Props> {
       case 'userCard':
         return (
           <View>
-            <H2>Пользователь ({this.props.mapPanel.data.shortId} )</H2>
+            <H2>Пользователь ({this.props.mapPanel.user.shortId} )</H2>
             <Body style={{
               marginBottom: 8,
               marginTop: 8,
             }}
             >
-              {this.props.mapPanel.data.distance} метров от вас. {' '}
-              Был <Moment locale="ru" element={Body} fromNow>{this.props.mapPanel.data.timestamp}</Moment>.
+              {this.props.mapPanel.user.distance} метров от вас. {' '}
+              Был <Moment locale="ru" element={Body} fromNow>{this.props.mapPanel.user.timestamp}</Moment>.
             </Body>
-            <DaterButton style={styles.panelButton} onPress={() => this.findUser(this.props.mapPanel.data)}>
+            <DaterButton style={styles.panelButton} onPress={() => this.findUser(this.props.mapPanel.user)}>
               Встретиться
             </DaterButton>
           </View>
@@ -105,14 +105,14 @@ class MapPanelComponent extends Component<Props> {
       case 'routeInfo':
         return (
           <View>
-            <H2>Маршрут до {this.props.mapPanel.data.routeToUser.shortId}</H2>
+            <H2>Маршрут до {this.props.mapPanel.user.shortId}</H2>
             <Caption2 style={{
               marginBottom: 8,
               marginTop: 8,
             }}
             >
-              Расстояние {this.props.mapPanel.data.route.distance} м. {' '}
-              Продолжительность {Math.floor(this.props.mapPanel.data.route.duration / 60)} мин.
+              Расстояние {this.props.mapPanel.user.distance} м. {' '}
+              Продолжительность {Math.floor(this.props.mapPanel.user.duration / 60)} мин.
             </Caption2>
             <DaterButton
               style={styles.panelButton}
@@ -125,19 +125,38 @@ class MapPanelComponent extends Component<Props> {
       case 'findUser':
         return (
           <View>
-            <H2>Поиск пользователя {this.props.mapPanel.data.routeToUser.shortId}</H2>
+            <H2>Поиск пользователя {this.props.mapPanel.user.shortId}</H2>
             <Caption2 style={{
               marginBottom: 8,
               marginTop: 8,
             }}
             >
-              Расстояние {this.props.mapPanel.data.distance} м. {' '}
+              Расстояние {this.props.mapPanel.user.distance} м. {' '}
             </Caption2>
             <DaterButton
               style={styles.panelButton}
               onPress={this.letsStart}
             >
               Поехали!
+            </DaterButton>
+          </View>
+        );
+      case 'findUserActive':
+        return (
+          <View>
+            <H2>Найдите пользователя {this.props.mapPanel.user.shortId}</H2>
+            <Caption2 style={{
+              marginBottom: 8,
+              marginTop: 8,
+            }}
+            >
+              Расстояние {this.props.mapPanel.user.distance} м. {' '}
+            </Caption2>
+            <DaterButton
+              style={styles.panelButton}
+              onPress={this.stopFindUser}
+            >
+              Остановить
             </DaterButton>
           </View>
         );

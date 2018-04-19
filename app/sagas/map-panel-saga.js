@@ -28,6 +28,7 @@ function* showPanel(mapPanelSnapper, action) {
   yield take('UI_MAP_PANEL_HIDE_START');
   yield cancel(task2);
   yield call(mapPanelSnapper, { index: 2 }); // hide
+  yield delay(defaultAnimationDuration);
   yield put({ type: 'UI_MAP_PANEL_HIDE_FINISH' });
 }
 

@@ -13,7 +13,7 @@ const types = {
 const initialState = {
   mode: '',
   visible: false,
-  data: {},
+  user: {},
   error: null,
 };
 
@@ -21,25 +21,19 @@ const mapPanelReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
+    case types.UI_MAP_PANEL_REPLACE_START:
     case types.UI_MAP_PANEL_SHOW_START: {
       return {
         ...state,
-        mode: payload.mode,
-        data: payload.data,
-      };
-    }
-    case types.UI_MAP_PANEL_REPLACE_START: {
-      return {
-        ...state,
+        visible: true,
       };
     }
     case types.UI_MAP_PANEL_REPLACE_FINISH:
     case types.UI_MAP_PANEL_SHOW_FINISH: {
       return {
         ...state,
-        visible: true,
         mode: payload.mode,
-        data: payload.data,
+        user: payload.user,
       };
     }
     case types.UI_MAP_PANEL_HIDE_START: {
@@ -51,7 +45,7 @@ const mapPanelReducer = (state = initialState, action) => {
     case types.UI_MAP_PANEL_HIDE_FINISH: {
       return {
         ...state,
-        visible: false,
+        user: {},
       };
     }
     case types.UI_MAP_PANEL_ERROR: {
