@@ -7,16 +7,11 @@ import GeoUtils from '../utils/geo-utils';
 export default function* findUserSaga() {
   try {
     while (true) {
-      const action = yield take('MAPVIEW_FIND_USER_START');
+      const action = yield take('FIND_USER_START');
       const routeToUser = action.payload;
       const targetUserCoordsChannel = yield call(trackTargetUserCoordsChannel, routeToUser);
       const task1 = yield takeEvery(targetUserCoordsChannel, updateTargetUserCoords);
-      yield put({
-        type: 'MAPVIEW_FIND_USER_STARTED',
-        payload: {
-          uid: routeToUser.uid,
-        },
-      });
+      yield put({ type: 'FIND_USER_STARTED' });
       yield delay(250);
       const myCoords = yield select((state) => state.location.coords);
       yield put({
@@ -29,18 +24,18 @@ export default function* findUserSaga() {
           },
         },
       });
-      yield take('MAPVIEW_FIND_USER_STOP');
+      yield take('FIND_USER_STOP');
       yield cancel(task1);
       yield targetUserCoordsChannel.close();
     }
   } catch (error) {
-    yield put({ type: 'MAPVIEW_FIND_USER_ERROR', payload: error });
+    yield put({ type: 'FIND_USER_ERROR', payload: error });
   }
 }
 
 function* updateTargetUserCoords(newCoords) {
   // TODO: put some logic to store user coords here!
-  yield put({ type: 'MAPVIEW_FIND_USER_NEW_COORDS', payload: newCoords });
+  yield put({ type: 'FIND_USER_NEW_MOVE', payload: newCoords });
 }
 
 function trackTargetUserCoordsChannel(user) {

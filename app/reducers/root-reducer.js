@@ -7,6 +7,7 @@ import mapViewReducer from './mapview-reducer';
 import mapDirectionsReducer from './map-directions-reducer';
 import compassReducer from './compass-reducer';
 import mapPanelReducer from './map-panel-reducer';
+import findUserReducer from './find-user-reducer';
 
 export const rootReducer = combineReducers({
   auth: authReducer,
@@ -16,6 +17,7 @@ export const rootReducer = combineReducers({
   compass: compassReducer,
   mapPanel: mapPanelReducer,
   mapDirections: mapDirectionsReducer,
+  findUser: findUserReducer,
 });
 
 export default rootReducer;

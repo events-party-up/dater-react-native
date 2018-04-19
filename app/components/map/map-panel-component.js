@@ -72,14 +72,14 @@ class MapPanelComponent extends Component<Props> {
 
   findUser = (user) => {
     this.props.dispatch({
-      type: 'MAPVIEW_FIND_USER_START',
+      type: 'FIND_USER_START',
       payload: user,
     });
   }
 
   stopFindUser = () => {
     this.props.dispatch({
-      type: 'MAPVIEW_FIND_USER_STOP',
+      type: 'FIND_USER_STOP',
     });
   }
 
