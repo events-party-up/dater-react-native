@@ -125,7 +125,7 @@ class MapPanelComponent extends Component<Props> {
       case 'findUser':
         return (
           <View>
-            <H2>Поиск пользователя {this.props.mapPanel.user.shortId}</H2>
+            <H2>Найти {this.props.mapPanel.user.shortId}</H2>
             <Caption2 style={{
               marginBottom: 8,
               marginTop: 8,
@@ -144,7 +144,7 @@ class MapPanelComponent extends Component<Props> {
       case 'findUserActive':
         return (
           <View>
-            <H2>Найдите пользователя {this.props.mapPanel.user.shortId}</H2>
+            <H2>Вы в поиске {this.props.mapPanel.user.shortId}</H2>
             <Caption2 style={{
               marginBottom: 8,
               marginTop: 8,

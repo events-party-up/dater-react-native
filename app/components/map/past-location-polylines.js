@@ -21,6 +21,7 @@ class PastLocationPolylines extends React.Component<Props> {
           key={`polyline-${startingPoint.latitude}-${startingPoint.longitude}-${endingPoint.latitude}-${endingPoint.longitude}`} // eslint-disable-line
           strokeWidth={3}
           strokeColor={strokeColor}
+          lineJoin="round"
           coordinates={[startingPoint, endingPoint]}
         />
       );
