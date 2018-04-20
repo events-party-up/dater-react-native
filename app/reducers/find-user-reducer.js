@@ -1,7 +1,7 @@
 import GeoUtils from '../utils/geo-utils';
 import {
   MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION,
-  MAX_PAST_LOCATIONS,
+  // MAX_PAST_LOCATIONS,
 } from '../constants';
 
 const types = {
@@ -68,9 +68,9 @@ const findUserReducer = (state = initialState, action) => {
         });
       }
 
-      if (pastCoords.length > MAX_PAST_LOCATIONS) { // limit number of records
-        pastCoords.shift();
-      }
+      // if (pastCoords.length > MAX_PAST_LOCATIONS) { // limit number of records
+      //   pastCoords.shift();
+      // }
 
       return {
         ...state,
