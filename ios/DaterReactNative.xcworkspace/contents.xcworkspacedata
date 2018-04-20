@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:../../../Dropbox/OS X/Downloads/gpx/pedestrian-from-kochn-to-gallery-aeroport.gpx">
+   </FileRef>
+   <FileRef
       location = "group:DaterReactNative.xcodeproj">
    </FileRef>
    <FileRef

@@ -76,6 +76,7 @@ function* showMyLocation(mapView) {
 
     yield call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
     yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
+    yield put({ type: 'GEO_LOCATION_FORCE_UPDATE' });
   } catch (error) {
     yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_ERROR', payload: error });
   }

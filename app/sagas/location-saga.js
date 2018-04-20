@@ -16,6 +16,7 @@ export default function* locationSaga() {
     const locationChannel = yield call(createLocationChannel);
     yield takeEvery(locationChannel, updateLocation);
     yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
+    yield takeEvery('GEO_LOCATION_FORCE_UPDATE', forceUpdate);
     yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeGeoLocationToFirestore);
     yield take('MAPVIEW_READY');
 
@@ -141,6 +142,10 @@ function* writeGeoLocationToFirestore() {
   } catch (error) {
     yield put({ type: 'GEO_LOCATION_UPDATE_FIRESTORE_ERROR', payload: error });
   }
+}
+
+function* forceUpdate() {
+  yield call([BackgroundGeolocation, 'changePace'], true);
 }
 
 function createLocationChannel() {
