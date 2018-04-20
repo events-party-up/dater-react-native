@@ -45,6 +45,7 @@ function createChannelToTackCoordsForTarget(user) {
       emit({
         latitude: userData.geoPoint.latitude,
         longitude: userData.geoPoint.longitude,
+        timestamp: Date.now(),
       });
     };
     const onError = (error) => {

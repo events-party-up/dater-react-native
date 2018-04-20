@@ -14,6 +14,7 @@ import UsersAroundComponent from './map/users-around-component';
 import MapDirectionsComponent from './map/map-directions-component';
 import PastLocationMarker from './map/past-location-marker';
 import PastLocationPolylines from './map/past-location-polylines';
+import GeoUtils from '../utils/geo-utils';
 
 const mapStateToProps = (state) => ({
   location: state.location,
@@ -164,6 +165,13 @@ class DaterMapView extends Component<Props> {
           GeoUpdates: {this.props.location && this.props.location.geoUpdates}{'\n'}
           UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
         </Text>
+        {this.props.findUser.enabled &&
+          <Text style={styles.findUserText} pointerEvents="none">
+            Distance: {GeoUtils.distance(this.props.findUser.lastCoords, this.props.location.coords)}{'\n'}
+            {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}: 0{'\n'}
+            {this.props.findUser.findUserUid && this.props.findUser.findUserUid.substring(0, 4)}: 0{'\n'}
+          </Text>
+        }
       </View>
 
     );
@@ -179,7 +187,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 40,
     left: 20,
-    zIndex: 2,
+    opacity: 0.8,
+  },
+  findUserText: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
     opacity: 0.8,
   },
 });

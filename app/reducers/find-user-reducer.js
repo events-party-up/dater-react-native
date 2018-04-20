@@ -2,6 +2,8 @@ import GeoUtils from '../utils/geo-utils';
 import {
   MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION,
   // MAX_PAST_LOCATIONS,
+  MAX_DISTANCE_FROM_PREVIOUS_PAST_LOCATION,
+  MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION,
 } from '../constants';
 
 const types = {
@@ -15,7 +17,8 @@ const types = {
 
 const initialState = {
   error: null,
-  pastCoords: [],
+  pastCoords: [], // all past coorinates
+  lastCoords: {}, // the latest coorinate
   enabled: false,
   findUserUid: null,
   starting: false,
@@ -49,32 +52,39 @@ const findUserReducer = (state = initialState, action) => {
     }
     case types.FIND_USER_NEW_MOVE: {
       let pastCoords = [...state.pastCoords];
-      // if this is not the first location update
       const previousLocation = pastCoords.length > 0 ? pastCoords[pastCoords.length - 1] : null;
-      if (previousLocation &&
-        GeoUtils.distance(previousLocation, payload) > MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
-        const moveHeadingAngle = GeoUtils.getRotationAngle(previousLocation, payload);
+      const distance = previousLocation ? GeoUtils.distance(previousLocation, payload) : 0;
 
-        pastCoords = [...state.pastCoords, {
-          latitude: payload.latitude,
-          longitude: payload.longitude,
-          moveHeadingAngle,
-        }];
+      // if this is not the first location update && not too small update
+      if (previousLocation && distance > MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
+        const moveHeadingAngle = GeoUtils.getRotationAngle(previousLocation, payload);
+        const timeDelta = (payload.timestamp - previousLocation.timestamp) / 1000; // in seconds
+        const velocity = Math.floor(distance / timeDelta); // in seconds
+
+        // discard too fast moves, probably a noise from location services
+        if (velocity < MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION) {
+          pastCoords = [...state.pastCoords, {
+            latitude: payload.latitude,
+            longitude: payload.longitude,
+            moveHeadingAngle,
+            timestamp: payload.timestamp,
+            velocity,
+          }];
+        }
+        // if new coordinate is too far away from the previous one, reset pastCoords
+        // probably user had location services turned off for too long time
+        if (distance > MAX_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
+          pastCoords = [];
+        }
         // if we just started location tracking
       } else if (pastCoords.length === 0) {
-        pastCoords.push({
-          latitude: payload.latitude,
-          longitude: payload.longitude,
-        });
+        pastCoords.push(payload);
       }
-
-      // if (pastCoords.length > MAX_PAST_LOCATIONS) { // limit number of records
-      //   pastCoords.shift();
-      // }
 
       return {
         ...state,
         pastCoords,
+        lastCoords: payload,
       };
     }
     case types.FIND_USER_ERROR: {
