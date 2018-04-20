@@ -37,7 +37,8 @@ const findUserReducer = (state = initialState, action) => {
       return {
         ...state,
         starting: true,
-        findUserUid: payload.uid,
+        findUserUid: payload.user.uid,
+        myPastCoords: [payload.myCurrentCoords],
       };
     }
     case types.FIND_USER_STARTED: {
@@ -52,26 +53,42 @@ const findUserReducer = (state = initialState, action) => {
       return initialState;
     }
     case types.FIND_USER_TARGET_MOVE: {
+      let { targetScore } = state;
       const targetPastCoords = buildPastCoords(state.targetPastCoords, payload);
+      const myLastLocation = state.myPastCoords.length > 0 ?
+        state.myPastCoords[state.myPastCoords.length - 1] : null;
+      const currentDistance = myLastLocation ?
+        GeoUtils.distance(payload, myLastLocation) : state.currentDistance;
+      if (targetPastCoords.length > 1 && myLastLocation) {
+        const previousDistance = GeoUtils.distance(myLastLocation, targetPastCoords[targetPastCoords.length - 2]);
+        const distanceDelta = previousDistance - currentDistance;
+        targetScore += distanceDelta;
+      }
 
       return {
         ...state,
         targetPastCoords,
         currentDistance: payload.distanceFromMe,
-        // targetUserScore,
+        targetScore,
       };
     }
     case types.FIND_USER_MY_MOVE: {
+      let { myScore } = state;
       const myPastCoords = buildPastCoords(state.myPastCoords, payload);
       const lastTargetLocation = state.targetPastCoords.length > 0 ?
         state.targetPastCoords[state.targetPastCoords.length - 1] : null;
       const currentDistance = lastTargetLocation ?
         GeoUtils.distance(payload, lastTargetLocation) : state.currentDistance;
+      if (myPastCoords.length > 1 && lastTargetLocation) {
+        const previousDistance = GeoUtils.distance(lastTargetLocation, myPastCoords[myPastCoords.length - 2]);
+        const distanceDelta = previousDistance - currentDistance;
+        myScore += distanceDelta;
+      }
       return {
         ...state,
         myPastCoords,
         currentDistance,
-        // targetUserScore,
+        myScore,
       };
     }
     case types.FIND_USER_ERROR: {

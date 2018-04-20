@@ -167,9 +167,10 @@ class DaterMapView extends Component<Props> {
         {this.props.findUser.enabled &&
           <Text style={styles.findUserText} pointerEvents="none">
             Distance: {this.props.findUser.currentDistance}{'\n'}
-            {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}: 0{'\n'}
+            My Score:
+            {` ${this.props.findUser.myScore}`}{'\n'}
             {this.props.findUser.findUserUid && this.props.findUser.findUserUid.substring(0, 4)}:
-            {this.props.findUser.targetUserScore}{'\n'}
+            {` ${this.props.findUser.targetScore}`}{'\n'}
           </Text>
         }
       </View>

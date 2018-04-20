@@ -13,9 +13,11 @@ import { connect, Dispatch } from 'react-redux';
 
 import { H2, Body, Caption2 } from '../../components/ui-kit/typography';
 import DaterButton from '../../components/ui-kit/dater-button';
+import { GeoCoordinates } from '../../types';
 
 const mapStateToProps = (state) => ({
   mapPanel: state.mapPanel,
+  myCurrentCoords: state.location.coords,
 });
 
 const Screen = {
@@ -26,6 +28,7 @@ const Screen = {
 type Props = {
   mapPanel: any,
   dispatch: Dispatch,
+  myCurrentCoords: GeoCoordinates,
 };
 
 class MapPanelComponent extends Component<Props> {
@@ -73,7 +76,14 @@ class MapPanelComponent extends Component<Props> {
   findUser = (user) => {
     this.props.dispatch({
       type: 'FIND_USER_START',
-      payload: user,
+      payload: {
+        user,
+        myCurrentCoords: {
+          latitude: this.props.myCurrentCoords.latitude,
+          longitude: this.props.myCurrentCoords.longitude,
+          timestamp: Date.now(),
+        },
+      },
     });
   }
 

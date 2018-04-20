@@ -9,9 +9,9 @@ export default function* findUserSaga() {
     while (true) {
       const action = yield take('FIND_USER_START');
       const myCoords = yield select((state) => state.location.coords);
-      const userToFind = action.payload;
-      const startDistance = GeoUtils.distance(userToFind.geoPoint, myCoords);
-      const targetUserCoordsChannel = yield call(createChannelToTackCoordsForTarget, userToFind);
+      const targetUser = action.payload.user;
+      const startDistance = GeoUtils.distance(targetUser.geoPoint, myCoords);
+      const targetUserCoordsChannel = yield call(createChannelToTackCoordsForTarget, targetUser);
       const task1 = yield takeEvery(targetUserCoordsChannel, updateTargetUserCoords);
       yield put({
         type: 'FIND_USER_STARTED',
@@ -23,7 +23,7 @@ export default function* findUserSaga() {
         type: 'UI_MAP_PANEL_REPLACE_START',
         payload: {
           mode: 'findUser',
-          user: userToFind,
+          user: targetUser,
           startDistance,
         },
       });

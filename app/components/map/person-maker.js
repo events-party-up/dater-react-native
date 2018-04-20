@@ -14,7 +14,17 @@ class PersonMaker extends React.Component<Props> {
   render() {
     const { title } = this.props;
     return (
-      <View style={styles.container}>
+      <View
+        style={styles.container}
+        hitSlop={
+          {
+            top: 10,
+            bottom: 10,
+            left: 10,
+            right: 10,
+          }
+        }
+      >
         <View style={styles.bubble}>
           <Text style={styles.title}>{title}</Text>
         </View>
