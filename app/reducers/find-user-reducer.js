@@ -74,7 +74,7 @@ const findUserReducer = (state = initialState, action) => {
         // if new coordinate is too far away from the previous one, reset pastCoords
         // probably user had location services turned off for too long time
         if (distance > MAX_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
-          pastCoords = [];
+          pastCoords = [payload];
         }
         // if we just started location tracking
       } else if (pastCoords.length === 0) {
