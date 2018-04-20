@@ -59,13 +59,24 @@ function* startGeoLocationOnInit() {
 
 function* locationUpdatedSaga(action) {
   const isCentered = yield select((state) => state.mapView.centered);
+  const isFindUserEnabled = yield select((state) => state.findUser.enabled);
+  const currentCoords = action.payload;
+  const firstCoords = yield select((state) => state.location.firstCoords);
   if (isCentered) {
     yield* animateToCurrentLocation(action);
     yield* call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
     yield* animateToBearing(action);
   }
-  const firstCoords = yield select((state) => state.location.firstCoords);
-  const currentCoords = action.payload;
+  if (isFindUserEnabled) {
+    yield put({
+      type: 'FIND_USER_MY_MOVE',
+      payload: {
+        latitude: currentCoords.latitude,
+        longitude: currentCoords.longitude,
+        timestamp: Date.now(),
+      },
+    });
+  }
   if (!firstCoords || !currentCoords) return;
 
   const distanceFromFirstCoords = GeoUtils.distance(firstCoords, currentCoords);

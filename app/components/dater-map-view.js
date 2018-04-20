@@ -14,7 +14,6 @@ import UsersAroundComponent from './map/users-around-component';
 import MapDirectionsComponent from './map/map-directions-component';
 import PastLocationMarker from './map/past-location-marker';
 import PastLocationPolylines from './map/past-location-polylines';
-import GeoUtils from '../utils/geo-utils';
 
 const mapStateToProps = (state) => ({
   location: state.location,
@@ -151,10 +150,10 @@ class DaterMapView extends Component<Props> {
           <UsersAroundComponent />
           <MapDirectionsComponent />
           <PastLocationPolylines
-            pastCoords={this.props.findUser.pastCoords}
+            pastCoords={this.props.findUser.targetPastCoords}
           />
           <PastLocationMarker
-            pastCoords={this.props.findUser.pastCoords}
+            pastCoords={this.props.findUser.targetPastCoords}
             mapViewBearingAngle={this.props.mapView.bearingAngle}
           />
         </MapView>
@@ -167,9 +166,10 @@ class DaterMapView extends Component<Props> {
         </Text>
         {this.props.findUser.enabled &&
           <Text style={styles.findUserText} pointerEvents="none">
-            Distance: {GeoUtils.distance(this.props.findUser.lastCoords, this.props.location.coords)}{'\n'}
+            Distance: {this.props.findUser.currentDistance}{'\n'}
             {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}: 0{'\n'}
-            {this.props.findUser.findUserUid && this.props.findUser.findUserUid.substring(0, 4)}: 0{'\n'}
+            {this.props.findUser.findUserUid && this.props.findUser.findUserUid.substring(0, 4)}:
+            {this.props.findUser.targetUserScore}{'\n'}
           </Text>
         }
       </View>
