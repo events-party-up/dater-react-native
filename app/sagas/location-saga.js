@@ -21,6 +21,7 @@ export default function* locationSaga() {
     yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeGeoLocationToFirestore);
     // yield take('MAPVIEW_READY');
 
+    yield take('AUTH_SUCCESS'); // user must be authorized
     const locationServiceState = yield call([BackgroundGeolocation, 'init']);
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
     yield throttle(500, 'GEO_LOCATION_UPDATED', locationUpdatedSaga);
@@ -32,7 +33,7 @@ export default function* locationSaga() {
       yield call([BackgroundGeolocation, 'changePace'], true);
       const action = yield take('GEO_LOCATION_UPDATED'); // wait for first update!
       yield put({ type: 'GEO_LOCATION_STARTED', payload: action.payload });
-      // yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_START' });
+      yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_START', payload: { caller: 'locationSaga' } });
 
       yield take('GEO_LOCATION_STOP');
       yield call([BackgroundGeolocation, 'stop']);

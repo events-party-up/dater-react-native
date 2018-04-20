@@ -5,13 +5,12 @@ import { take, put, select } from 'redux-saga/effects';
 
 export default function* mapViewInitializeRegionSaga() {
   try {
+    yield take('MAPVIEW_MAIN_SAGA_READY'); // make sure the main saga is ready
     const coords = yield select((state) => state.location.coords);
-    if (coords) {
-      yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_START' });
-    } else { // if we don't yet have user coords in the store!
+    if (!coords) {
       yield take('GEO_LOCATION_UPDATED'); // get first geo update
-      yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_START' });
     }
+    yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_START', payload: { caller: 'mapViewInitializeRegionSaga' } });
   } catch (error) {
     yield put({ type: 'MAPVIEW_INIT_REGION_ERROR', payload: error });
   }

@@ -17,6 +17,7 @@ export default function* mapViewSaga() {
         'MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING',
         'MAPVIEW_ANIMATE_TO_BEARING_COMPASS_HEADING'], animateToBearing, mapView);
       const task4 = yield takeEvery('MAPVIEW_SHOW_MY_LOCATION_START', showMyLocation, mapView);
+      yield put({ type: 'MAPVIEW_MAIN_SAGA_READY' });
       yield take('MAPVIEW_UNLOAD');
       yield cancel(task1, task2, task3, task4);
     }
