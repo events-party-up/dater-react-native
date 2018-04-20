@@ -12,7 +12,7 @@ import findUserSaga from './find-user-saga';
 
 export default function* rootSaga() {
   yield all([
-    takeEvery('GEO_LOCATION_INITIALIZE', mapViewInitializeRegionSaga),
+    takeEvery('MAPVIEW_READY', mapViewInitializeRegionSaga),
     compassSaga(),
     mapViewSaga(),
     locationSaga(),

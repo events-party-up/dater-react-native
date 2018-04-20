@@ -13,12 +13,13 @@ import {
 
 export default function* locationSaga() {
   try {
+    yield put({ type: 'GEO_LOCATION_INITIALIZE' });
     const locationChannel = yield call(createLocationChannel);
     yield takeEvery(locationChannel, updateLocation);
     yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
     yield takeEvery('GEO_LOCATION_FORCE_UPDATE', forceUpdate);
     yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeGeoLocationToFirestore);
-    yield take('MAPVIEW_READY');
+    // yield take('MAPVIEW_READY');
 
     const locationServiceState = yield call([BackgroundGeolocation, 'init']);
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
@@ -31,6 +32,8 @@ export default function* locationSaga() {
       yield call([BackgroundGeolocation, 'changePace'], true);
       const action = yield take('GEO_LOCATION_UPDATED'); // wait for first update!
       yield put({ type: 'GEO_LOCATION_STARTED', payload: action.payload });
+      // yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_START' });
+
       yield take('GEO_LOCATION_STOP');
       yield call([BackgroundGeolocation, 'stop']);
       locationServiceState.enabled = false;

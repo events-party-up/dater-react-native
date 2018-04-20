@@ -75,9 +75,6 @@ class DaterMapView extends Component<Props> {
       type: 'MAPVIEW_READY',
       mapView: creatMapViewProxy(this.mapView),
     });
-    this.props.dispatch({
-      type: 'GEO_LOCATION_INITIALIZE',
-    });
   }
 
   onMapPressed = () => {
@@ -160,7 +157,7 @@ class DaterMapView extends Component<Props> {
             mapViewBearingAngle={this.props.mapView.bearingAngle}
           />
         </MapView>
-        <Text style={styles.debugText}>
+        <Text style={styles.debugText} pointerEvents="none">
           Accuracy: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
           GPS Heading: {this.props.location.coords && this.props.location.coords.heading}{'\n'}
           Compass Heading: {this.props.compass.heading}{'\n'}
