@@ -4,6 +4,7 @@ import {
   // MAX_PAST_LOCATIONS,
   MAX_DISTANCE_FROM_PREVIOUS_PAST_LOCATION,
   MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION,
+  MINIMUM_ACCURACY_PAST_LOCATION,
 } from '../constants';
 
 const types = {
@@ -113,12 +114,12 @@ function buildPastCoords(pastCoordsInState, newCoords) {
     const timeDelta = (newCoords.timestamp - previousLocation.timestamp) / 1000; // in seconds
     const velocity = Math.floor(distance / timeDelta); // in seconds
 
-    // discard too fast moves, probably a noise from location services
-    if (velocity < MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION) {
+    if (
+      velocity < MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION && // discard too fast moves, probably a noise from location services
+      newCoords.accuracy < MINIMUM_ACCURACY_PAST_LOCATION // discard not accurate enough locations
+    ) {
       pastCoords = [...pastCoordsInState, {
-        latitude: newCoords.latitude,
-        longitude: newCoords.longitude,
-        timestamp: newCoords.timestamp,
+        ...newCoords,
         moveHeadingAngle,
         velocity,
       }];

@@ -51,6 +51,7 @@ function createChannelToTackCoordsForTarget(user) {
     const onSnapshotUpdated = (userSnapshot) => {
       const userData = userSnapshot.data();
       emit({
+        accuracy: userData.accuracy,
         latitude: userData.geoPoint.latitude,
         longitude: userData.geoPoint.longitude,
         timestamp: Date.now(),

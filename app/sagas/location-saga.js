@@ -73,6 +73,7 @@ function* locationUpdatedSaga(action) {
       payload: {
         latitude: currentCoords.latitude,
         longitude: currentCoords.longitude,
+        accuracy: currentCoords.accuracy,
         timestamp: Date.now(),
       },
     });
