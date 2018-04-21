@@ -4,6 +4,7 @@ import {
   StyleSheet,
   View,
   Text,
+  TouchableOpacity,
 } from 'react-native';
 
 type Props = {
@@ -14,23 +15,15 @@ class PersonMaker extends React.Component<Props> {
   render() {
     const { title } = this.props;
     return (
-      <View
+      <TouchableOpacity
         style={styles.container}
-        hitSlop={
-          {
-            top: 10,
-            bottom: 10,
-            left: 10,
-            right: 10,
-          }
-        }
       >
         <View style={styles.bubble}>
           <Text style={styles.title}>{title}</Text>
         </View>
         <View style={styles.arrowBorder} />
         <View style={styles.arrow} />
-      </View>
+      </TouchableOpacity>
     );
   }
 }
@@ -50,6 +43,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     borderColor: '#006400',
     borderWidth: 0.5,
+    margin: 10,
   },
   title: {
     color: '#FFFFFF',
