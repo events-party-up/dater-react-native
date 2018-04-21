@@ -10,6 +10,8 @@ import { GeoCoordinates } from '../../types';
 type Props = {
   pastCoords: Array<GeoCoordinates>,
   mapViewBearingAngle: number,
+  uid: string;
+  mode: 'target' | 'own',
 };
 
 class PastLocationMarker extends React.Component<Props> {
@@ -20,7 +22,8 @@ class PastLocationMarker extends React.Component<Props> {
     return this.props.pastCoords.map((coord, index) => {
       if (index < 1) return null; // do not show marker for first point
       const borderBottomOpacity = 1 - ((totalPastCoords - index) / totalPastCoords);
-      const borderBottomColor = `rgba(128, 128, 128, ${borderBottomOpacity})`;
+      const borderBottomColor = this.props.mode ===
+        'own' ? `rgba(128, 128, 128, ${borderBottomOpacity})` : `rgba(0, 128, 0, ${borderBottomOpacity})`;
       const styles = StyleSheet.create({
         triangle: {
           backgroundColor: 'transparent',
@@ -37,7 +40,7 @@ class PastLocationMarker extends React.Component<Props> {
       // console.log(`Rotation in maker: ${coord.moveHeadingAngle} Rotation in map: ${this.props.mapViewBearingAngle} Total rotation: ${rotation}`);
       return (
         <Marker
-          key={`marker-${coord.latitude}-${coord.longitude}-${index}`} // eslint-disable-line
+          key={`marker-${this.props.uid}-${coord.latitude}-${coord.longitude}-${index}`} // eslint-disable-line
           coordinate={{
             latitude: coord.latitude,
             longitude: coord.longitude,

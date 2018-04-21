@@ -22,7 +22,7 @@ const initialState = {
   targetPastCoords: [], // all past coorinates
   myPastCoords: [], // all past coorinates
   enabled: false,
-  findUserUid: null,
+  targetUserUid: null,
   starting: false,
   startDistance: 0,
   currentDistance: 0,
@@ -38,7 +38,7 @@ const findUserReducer = (state = initialState, action) => {
       return {
         ...state,
         starting: true,
-        findUserUid: payload.user.uid,
+        targetUserUid: payload.user.uid,
         myPastCoords: [payload.myCurrentCoords],
       };
     }

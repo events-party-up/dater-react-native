@@ -5,6 +5,8 @@ import { GeoCoordinates } from '../../types';
 
 type Props = {
   pastCoords: Array<GeoCoordinates>,
+  uid: string;
+  mode: 'target' | 'own',
 };
 
 class PastLocationPolylines extends React.Component<Props> {
@@ -15,10 +17,11 @@ class PastLocationPolylines extends React.Component<Props> {
       // if (index >= totalPastCoords - 1) return null; // do not show marker for the last point
       const startingPoint = this.props.pastCoords[index - 1];
       const strokeColorOpacity = 1 - ((totalPastCoords - index) / totalPastCoords);
-      const strokeColor = `rgba(128, 128, 128, ${strokeColorOpacity})`;
+      const strokeColor = this.props.mode ===
+        'own' ? `rgba(128, 128, 128, ${strokeColorOpacity})` : `rgba(0, 128, 0, ${strokeColorOpacity})`;
       return (
         <Polyline
-          key={`polyline-${startingPoint.latitude}-${startingPoint.longitude}-${endingPoint.latitude}-${endingPoint.longitude}`} // eslint-disable-line
+          key={`polyline-${this.props.uid}-${startingPoint.latitude}-${startingPoint.longitude}-${endingPoint.latitude}-${endingPoint.longitude}`} // eslint-disable-line
           strokeWidth={3}
           strokeColor={strokeColor}
           lineJoin="round"

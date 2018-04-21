@@ -151,10 +151,25 @@ class DaterMapView extends Component<Props> {
           <MapDirectionsComponent />
           <PastLocationPolylines
             pastCoords={this.props.findUser.targetPastCoords}
+            uid={this.props.findUser.targetUserUid}
+            mode="target"
           />
           <PastLocationMarker
             pastCoords={this.props.findUser.targetPastCoords}
             mapViewBearingAngle={this.props.mapView.bearingAngle}
+            uid={this.props.findUser.targetUserUid}
+            mode="target"
+          />
+          <PastLocationPolylines
+            pastCoords={this.props.findUser.myPastCoords}
+            uid={this.props.auth.uid && this.props.auth.uid}
+            mode="own"
+          />
+          <PastLocationMarker
+            pastCoords={this.props.findUser.myPastCoords}
+            mapViewBearingAngle={this.props.mapView.bearingAngle}
+            uid={this.props.auth.uid && this.props.auth.uid}
+            mode="own"
           />
         </MapView>
         <Text style={styles.debugText} pointerEvents="none">
@@ -169,7 +184,7 @@ class DaterMapView extends Component<Props> {
             Distance: {this.props.findUser.currentDistance}{'\n'}
             My Score:
             {` ${this.props.findUser.myScore}`}{'\n'}
-            {this.props.findUser.findUserUid && this.props.findUser.findUserUid.substring(0, 4)}:
+            {this.props.findUser.targetUserUid && this.props.findUser.targetUserUid.substring(0, 4)}:
             {` ${this.props.findUser.targetScore}`}{'\n'}
           </Text>
         }
