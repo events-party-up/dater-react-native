@@ -19,11 +19,14 @@ export default function* locationSaga() {
     yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
     yield takeEvery('GEO_LOCATION_FORCE_UPDATE', forceUpdate);
     yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeCoordsToFirestore);
-    yield take('AUTH_SUCCESS'); // user must be authorized
+    const isUserAuthenticated = select((state) => state.auth.isAuthenticated);
+    if (!isUserAuthenticated) { // user must be authorized
+      yield take('AUTH_SUCCESS');
+    }
     const locationServiceState = yield call([BackgroundGeolocation, 'init']);
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
     yield throttle(500, 'GEO_LOCATION_UPDATED', locationUpdatedSaga);
-    yield throttle(2000, 'GEO_LOCATION_UPDATED', writeCoordsToFirestore);
+    // yield throttle(2000, 'GEO_LOCATION_UPDATED', writeCoordsToFirestore);
 
     while (true) {
       yield take('GEO_LOCATION_START');
@@ -141,6 +144,7 @@ function* writeCoordsToFirestore() {
     const uid = yield select((state) => state.auth.uid);
     const coords = yield select((state) => state.location.coords);
     if (!uid || !coords) return;
+
     yield call(updateFirestore, {
       collection: 'geoPoints',
       doc: uid,
