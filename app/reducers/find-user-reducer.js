@@ -64,6 +64,7 @@ const findUserReducer = (state = initialState, action) => {
         const previousDistance = GeoUtils.distance(myLastLocation, targetPastCoords[targetPastCoords.length - 2]);
         const distanceDelta = previousDistance - currentDistance;
         targetScore += distanceDelta;
+        targetPastCoords[targetPastCoords.length - 1].distancceDelta = distanceDelta;
       }
 
       return {
@@ -84,6 +85,7 @@ const findUserReducer = (state = initialState, action) => {
         const previousDistance = GeoUtils.distance(lastTargetLocation, myPastCoords[myPastCoords.length - 2]);
         const distanceDelta = previousDistance - currentDistance;
         myScore += distanceDelta;
+        myPastCoords[myPastCoords.length - 1].distancceDelta = distanceDelta;
       }
       return {
         ...state,

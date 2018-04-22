@@ -13,7 +13,6 @@ const geoOptions = async () => {
   return {
     useSignificantChanges: false,
     enableHighAccuracy: true,
-    maximumAge: 1000,
     distanceFilter: 2,
     desiredAccuracy: RNBackgroundGeolocation.DESIRED_ACCURACY_HIGH,
     // stopTimeout: 1,

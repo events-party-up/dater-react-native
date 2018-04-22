@@ -11,7 +11,7 @@ import 'moment/locale/ru';
 import Moment from 'react-moment';
 import { connect, Dispatch } from 'react-redux';
 
-import { H2, Body, Caption2 } from '../../components/ui-kit/typography';
+import { H2, Caption2 } from '../../components/ui-kit/typography';
 import DaterButton from '../../components/ui-kit/dater-button';
 import { GeoCoordinates } from '../../types';
 
@@ -99,14 +99,14 @@ class MapPanelComponent extends Component<Props> {
         return (
           <View>
             <H2>Пользователь ({this.props.mapPanel.user.shortId} )</H2>
-            <Body style={{
+            <Caption2 style={{
               marginBottom: 8,
               marginTop: 8,
             }}
             >
               {this.props.mapPanel.user.distance} метров от вас. {' '}
-              Был <Moment locale="ru" element={Body} fromNow>{this.props.mapPanel.user.timestamp}</Moment>.
-            </Body>
+              Был <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.user.timestamp}</Moment>.
+            </Caption2>
             <DaterButton style={styles.panelButton} onPress={() => this.findUser(this.props.mapPanel.user)}>
               Встретиться
             </DaterButton>
