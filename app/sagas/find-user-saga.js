@@ -39,9 +39,13 @@ export default function* findUserSaga() {
 }
 
 function* updateTargetUserCoords(newTargetUserCoords) {
-  const myCoords = yield select((state) => state.location.coords);
-  const distanceFromMe = GeoUtils.distance(newTargetUserCoords, myCoords);
-  yield put({ type: 'FIND_USER_TARGET_MOVE', payload: { ...newTargetUserCoords, distanceFromMe } });
+  try {
+    const myCoords = yield select((state) => state.location.coords);
+    const distanceFromMe = GeoUtils.distance(newTargetUserCoords, myCoords);
+    yield put({ type: 'FIND_USER_TARGET_MOVE', payload: { ...newTargetUserCoords, distanceFromMe } });
+  } catch (error) {
+    yield put({ type: 'FIND_USER_TARGET_MOVE_ERROR', payload: error });
+  }
 }
 
 function createChannelToTackCoordsForTarget(user) {

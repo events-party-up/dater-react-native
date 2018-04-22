@@ -2,6 +2,33 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:../../../Dropbox/OS X/Documents/gpx/pedestrian-from-kochn-to-gallery-aeroport.gpx">
+   </FileRef>
+   <FileRef
+      location = "group:../../../Dropbox/OS X/Documents/gpx/test.gpx">
+   </FileRef>
+   <FileRef
+      location = "group:../../../Dropbox/OS X/Documents/gpx/City Bicycle Ride.gpx">
+   </FileRef>
+   <FileRef
+      location = "group:../../../Dropbox/OS X/Documents/gpx/City Run.gpx">
+   </FileRef>
+   <FileRef
+      location = "group:../../../Dropbox/OS X/Documents/gpx/City_Run_Starting_Point.gpx">
+   </FileRef>
+   <FileRef
+      location = "group:../../../Dropbox/OS X/Documents/gpx/City_Run_Starting_Poing.gpx">
+   </FileRef>
+   <FileRef
+      location = "group:../../../Dropbox/OS X/Downloads/gpx/City Run.gpx">
+   </FileRef>
+   <FileRef
+      location = "group:../../../Dropbox/OS X/Downloads/gpx/City Bicycle Ride.gpx">
+   </FileRef>
+   <FileRef
+      location = "group:../../../Dropbox/OS X/Downloads/gpx/test.gpx">
+   </FileRef>
+   <FileRef
       location = "group:../../../Dropbox/OS X/Downloads/gpx/pedestrian-from-kochn-to-gallery-aeroport.gpx">
    </FileRef>
    <FileRef
