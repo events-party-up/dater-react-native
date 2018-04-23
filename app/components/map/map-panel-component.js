@@ -55,13 +55,56 @@ class MapPanelComponent extends Component<Props> {
   }
 
   onSnap = (event) => {
+    // if (event && event.nativeEvent) {
+    //   console.log(event.nativeEvent);
+    // }
+
     if (event && event.nativeEvent &&
-      (event.nativeEvent.id === 'close_manual' || event.nativeEvent.id === 'close_auto') &&
-      this.props.mapPanel.visible) {
+      (event.nativeEvent.id === 'close')) {
+      // this.props.dispatch({
+      //   type: 'UI_MAP_PANEL_HIDE_START',
+      //   payload: {
+      //     source: 'mapPanelComponentOnSnap',
+      //     snapEvent: event.nativeEvent,
+      //   },
+      // });
+    //   this.props.dispatch({
+    //     type: 'UI_MAP_PANEL_SNAP_CLOSE_FINISHED',
+    //     payload: {
+    //       source: 'mapPanelComponentOnSnap',
+    //       snapEvent: event.nativeEvent,
+    //     },
+    //   });
+    // }
+      this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_START' });
       this.props.dispatch({
-        type: 'UI_MAP_PANEL_HIDE_START',
+        type: 'UI_MAP_PANEL_HIDE_FINISHED',
+        payload: {
+          source: 'mapPanelComponentOnSnap',
+          snapEvent: event.nativeEvent,
+        },
       });
     }
+
+    if (event && event.nativeEvent && event.nativeEvent.id === 'show') {
+      this.props.dispatch({
+        type: 'UI_MAP_PANEL_SHOW_FINISHED',
+        payload: {
+          source: 'mapPanelComponentOnSnap',
+          snapEvent: event.nativeEvent,
+        },
+      });
+    }
+
+    // if (event && event.nativeEvent && event.nativeEvent.id === 'close_auto') {
+    //   this.props.dispatch({
+    //     type: 'UI_MAP_PANEL_SNAP_CLOSE_AUTO_FINISHED',
+    //     payload: {
+    //       source: 'mapPanelComponentOnSnap',
+    //       snapEvent: event.nativeEvent,
+    //     },
+    //   });
+    // }
   };
 
   buildRoute = (user) => {
@@ -72,7 +115,12 @@ class MapPanelComponent extends Component<Props> {
   }
 
   letsStart = () => {
-    this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_START' });
+    this.props.dispatch({
+      type: 'UI_MAP_PANEL_HIDE_START',
+      payload: {
+        source: 'mapPanelComponentLetsStart',
+      },
+    });
     this.props.dispatch({
       type: 'MAPVIEW_SHOW_MY_LOCATION_START',
     });
@@ -192,8 +240,8 @@ class MapPanelComponent extends Component<Props> {
           snapPoints={
             [
               { y: this.showSnapPosition, id: 'show' }, // open card snap point
-              { y: Screen.height + 80, id: 'close_manual' }, // close card snap point, manual
-              { y: Screen.height + 195, id: 'close_auto' }, // close card snap point, auto
+              { y: Screen.height + 80, id: 'close' }, // close card snap point, manual
+              // { y: Screen.height + 81, id: 'close_auto' }, // close card snap point, auto
             ]}
           boundaries={{ top: -300 }}
           initialPosition={{ y: Screen.height + 80 }}

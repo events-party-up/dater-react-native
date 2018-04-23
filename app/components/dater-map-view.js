@@ -81,6 +81,9 @@ class DaterMapView extends Component<Props> {
     if (this.props.mapPanel.visible) {
       this.props.dispatch({
         type: 'UI_MAP_PANEL_HIDE_START',
+        payload: {
+          source: 'onMapPressed',
+        },
       });
     }
   }
@@ -180,8 +183,8 @@ class DaterMapView extends Component<Props> {
           UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}
         </Caption2>
         {this.props.findUser.enabled &&
-        <View style={styles.findUserContainer}>
-          <Caption2 style={styles.findUserText} pointerEvents="none">
+        <View style={styles.findUserContainer} pointerEvents="none">
+          <Caption2 style={styles.findUserText}>
             Distance: {this.props.findUser.currentDistance}{'\n'}
             My Score:
             {` ${this.props.findUser.myScore}`}{'\n'}

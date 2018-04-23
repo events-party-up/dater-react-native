@@ -36,6 +36,21 @@ const CircleButton = (props) => {
   }
 
   switch (props.size) {
+    case 'smallest': {
+      width = 16;
+      height = 16;
+      break;
+    }
+    case 'small': {
+      width = 24;
+      height = 24;
+      break;
+    }
+    case 'medium-small': {
+      width = 32;
+      height = 32;
+      break;
+    }
     case 'medium': {
       width = 48;
       height = 48;

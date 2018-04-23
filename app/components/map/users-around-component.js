@@ -13,39 +13,41 @@ const mapStateToProps = (state) => ({
 type Props = {
   usersAround: Array<mixed>,
   dispatch: Dispatch,
-  mapPanel: any,
+  // mapPanel: any,
   findUser: any,
 };
 
 class UsersAroundComponent extends React.Component<Props> {
   onPersonMakerPress = (user) => {
-    if (this.props.mapPanel.visible) {
-      if (this.props.findUser.enabled) {
-        if (this.props.findUser.targetUserUid === user.uid) {
-          return;
-        }
+    // if (this.props.mapPanel.visible) {
+    //   if (this.props.findUser.enabled) {
+    //     if (this.props.findUser.targetUserUid === user.uid) {
+    //       return;
+    //     }
 
-        this.props.dispatch({
-          type: 'UI_MAP_PANEL_REPLACE_START',
-          payload: {
-            mode: 'findUserActive',
-            user,
-          },
-        });
-      } else {
-        if (this.props.mapPanel.user && this.props.mapPanel.user.uid === user.uid) {
-          return;
-        }
+    //     this.props.dispatch({
+    //       type: 'UI_MAP_PANEL_REPLACE_START',
+    //       payload: {
+    //         mode: 'findUserActive',
+    //         user,
+    //       },
+    //     });
+    //   } else {
+    //     if (this.props.mapPanel.user && this.props.mapPanel.user.uid === user.uid) {
+    //       return;
+    //     }
 
-        this.props.dispatch({
-          type: 'UI_MAP_PANEL_REPLACE_START',
-          payload: {
-            mode: 'userCard',
-            user,
-          },
-        });
-      }
-    } else if (this.props.findUser.enabled) {
+    //     this.props.dispatch({
+    //       type: 'UI_MAP_PANEL_REPLACE_START',
+    //       payload: {
+    //         mode: 'userCard',
+    //         user,
+    //       },
+    //     });
+    //   }
+    // }
+
+    if (this.props.findUser.enabled) {
       this.props.dispatch({
         type: 'UI_MAP_PANEL_SHOW_START',
         payload: {
@@ -73,6 +75,8 @@ class UsersAroundComponent extends React.Component<Props> {
         }}
         key={user.uid}
         onPress={(event) => { event.stopPropagation(); this.onPersonMakerPress(user); }}
+        zIndex={2}
+        stopPropagation
       >
         <PersonMaker title={user.shortId} />
       </Marker>

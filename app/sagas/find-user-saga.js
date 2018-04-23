@@ -17,20 +17,12 @@ export default function* findUserSaga() {
         type: 'FIND_USER_STARTED',
         payload: {
           startDistance,
-        },
-      });
-      yield put({
-        type: 'UI_MAP_PANEL_REPLACE_START',
-        payload: {
-          mode: 'findUser',
           user: targetUser,
-          startDistance,
         },
       });
       yield take('FIND_USER_STOP');
       yield cancel(task1);
       yield targetUserCoordsChannel.close();
-      yield put({ type: 'UI_MAP_PANEL_HIDE_START' });
       yield put({ type: 'FIND_USER_STOPPED' });
     }
   } catch (error) {
