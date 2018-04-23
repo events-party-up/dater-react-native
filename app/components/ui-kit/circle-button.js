@@ -12,7 +12,9 @@ const backIcon = require('../../assets/icons/back/back.png');
 const CircleButton = (props) => {
   let backgroundColor = '#4F4F4F';
   let shadowColor = '#4F4F4F';
-  let image = closeIcon;
+  let image;
+  let width = 64;
+  let height = 64;
 
   switch (props.type) {
     case 'close': {
@@ -27,6 +29,26 @@ const CircleButton = (props) => {
       break;
     }
     default:
+      backgroundColor = '#fff';
+      shadowColor = 'rgba(0, 0, 0, 0.11)';
+      image = props.image; // eslint-disable-line
+      break;
+  }
+
+  switch (props.size) {
+    case 'medium': {
+      width = 48;
+      height = 48;
+      break;
+    }
+    case 'large': {
+      width = 64;
+      height = 64;
+      break;
+    }
+    default:
+      width = 64;
+      height = 64;
       break;
   }
 
@@ -34,9 +56,9 @@ const CircleButton = (props) => {
     buttonContainer: {
       elevation: 1,
       backgroundColor,
-      width: 64,
-      height: 64,
-      borderRadius: 64 / 2,
+      width,
+      height,
+      borderRadius: width / 2,
       alignItems: 'center',
       justifyContent: 'center',
       shadowColor,
@@ -63,7 +85,7 @@ const CircleButton = (props) => {
 
   return (
     <TouchableOpacity
-      style={styles.buttonContainer}
+      style={[styles.buttonContainer, props.style]}
       onPress={() => onPress()}
       hitSlop={{
         top: 10,
