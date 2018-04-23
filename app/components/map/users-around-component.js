@@ -6,21 +6,25 @@ import PersonMaker from './person-maker';
 
 const mapStateToProps = (state) => ({
   usersAround: state.usersAround.users,
-  mapPanelIsVisible: state.mapPanel.visible,
+  mapPanel: state.mapPanel,
   findUser: state.findUser,
 });
 
 type Props = {
   usersAround: Array<mixed>,
   dispatch: Dispatch,
-  mapPanelIsVisible: boolean,
+  mapPanel: any,
   findUser: any,
 };
 
 class UsersAroundComponent extends React.Component<Props> {
   onPersonMakerPress = (user) => {
-    if (this.props.mapPanelIsVisible) {
+    if (this.props.mapPanel.visible) {
       if (this.props.findUser.enabled) {
+        if (this.props.findUser.targetUserUid === user.uid) {
+          return;
+        }
+
         this.props.dispatch({
           type: 'UI_MAP_PANEL_REPLACE_START',
           payload: {
@@ -29,6 +33,10 @@ class UsersAroundComponent extends React.Component<Props> {
           },
         });
       } else {
+        if (this.props.mapPanel.user && this.props.mapPanel.user.uid === user.uid) {
+          return;
+        }
+
         this.props.dispatch({
           type: 'UI_MAP_PANEL_REPLACE_START',
           payload: {

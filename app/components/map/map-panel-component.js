@@ -51,8 +51,9 @@ class MapPanelComponent extends Component<Props> {
   }
 
   onSnap = (event) => {
-    // console.log('On Snap: ', event.nativeEvent);
-    if (event && event.nativeEvent && event.nativeEvent.id === 'close_manual' && this.props.mapPanel.visible) {
+    if (event && event.nativeEvent &&
+      (event.nativeEvent.id === 'close_manual' || event.nativeEvent.id === 'close_auto') &&
+      this.props.mapPanel.visible) {
       this.props.dispatch({
         type: 'UI_MAP_PANEL_HIDE_START',
       });

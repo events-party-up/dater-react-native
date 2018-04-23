@@ -45,7 +45,7 @@ const mapPanelReducer = (state = initialState, action) => {
     case types.UI_MAP_PANEL_HIDE_FINISH: {
       return {
         ...state,
-        user: {},
+        // user: {},
       };
     }
     case types.UI_MAP_PANEL_ERROR: {

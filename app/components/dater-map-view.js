@@ -215,10 +215,10 @@ const styles = StyleSheet.create({
   findUserContainer: {
     opacity: 0.8,
     position: 'absolute',
-    top: 20,
-    right: 0,
+    top: 40,
+    right: 20,
     padding: 8,
-    margin: 8,
+    // margin: 8,
     flex: 1,
     shadowColor: 'rgba(0, 0, 0, 0.1)',
     backgroundColor: '#ffffff',
