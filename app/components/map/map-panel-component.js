@@ -18,6 +18,8 @@ import { GeoCoordinates } from '../../types';
 const mapStateToProps = (state) => ({
   mapPanel: state.mapPanel,
   myCurrentCoords: state.location.coords,
+  findUserUid: state.findUser.targetUserUid,
+  findUserDistance: state.findUser.currentDistance,
 });
 
 const Screen = {
@@ -29,6 +31,8 @@ type Props = {
   mapPanel: any,
   dispatch: Dispatch,
   myCurrentCoords: GeoCoordinates,
+  findUserUid: string,
+  findUserDistance: string,
 };
 
 class MapPanelComponent extends Component<Props> {
@@ -155,13 +159,13 @@ class MapPanelComponent extends Component<Props> {
       case 'findUserActive':
         return (
           <View>
-            <H2>Вы в поиске {this.props.mapPanel.user.shortId}</H2>
+            <H2>Вы уже в поиске {this.props.findUserUid ? this.props.findUserUid.substring(0, 4) : ''}</H2>
             <Caption2 style={{
               marginBottom: 8,
               marginTop: 8,
             }}
             >
-              Расстояние {this.props.mapPanel.user.distance} м. {' '}
+              Расстояние {this.props.findUserDistance} м. {' '}
             </Caption2>
             <DaterButton
               style={styles.panelButton}
