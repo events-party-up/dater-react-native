@@ -1,4 +1,4 @@
-import { throttle, takeEvery, call, take, put, cancel, select } from 'redux-saga/effects';
+import { throttle, takeLatest, call, take, put, cancel, select } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import {
   DEFAULT_MAPVIEW_ANIMATION_DURATION,
@@ -10,14 +10,14 @@ export default function* mapViewSaga() {
   try {
     while (true) {
       const { mapView } = yield take('MAPVIEW_READY');
-      const task1 = yield takeEvery('MAPVIEW_ANIMATE_TO_REGION', animateToRegion, mapView);
-      const task2 = yield takeEvery('MAPVIEW_ANIMATE_TO_COORDINATE', animateToCoordinate, mapView);
+      const task1 = yield takeLatest('MAPVIEW_ANIMATE_TO_REGION', animateToRegion, mapView);
+      const task2 = yield takeLatest('MAPVIEW_ANIMATE_TO_COORDINATE', animateToCoordinate, mapView);
       const task3 = yield throttle(1000, [
         'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
         'MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING',
         'MAPVIEW_ANIMATE_TO_BEARING_COMPASS_HEADING'], animateToBearing, mapView);
-      const task4 = yield takeEvery('MAPVIEW_SHOW_MY_LOCATION_START', showMyLocation, mapView);
-      const task5 = yield takeEvery('MAPVIEW_SHOW_ME_AND_TARTET_FIND_USER', showMeAndTargetFindUser, mapView);
+      const task4 = yield takeLatest('MAPVIEW_SHOW_MY_LOCATION_START', showMyLocation, mapView);
+      const task5 = yield takeLatest('MAPVIEW_SHOW_ME_AND_TARTET_FIND_USER', showMeAndTargetFindUser, mapView);
       yield put({ type: 'MAPVIEW_MAIN_SAGA_READY' });
       yield take('MAPVIEW_UNLOAD');
       yield cancel(task1, task2, task3, task4, task5);

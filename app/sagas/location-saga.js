@@ -19,7 +19,7 @@ export default function* locationSaga() {
     yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
     yield takeEvery('GEO_LOCATION_FORCE_UPDATE', forceUpdate);
     yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeCoordsToFirestore);
-    const isUserAuthenticated = select((state) => state.auth.isAuthenticated);
+    const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
     if (!isUserAuthenticated) { // user must be authorized
       yield take('AUTH_SUCCESS');
     }

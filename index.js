@@ -23,6 +23,17 @@ if (Platform.OS === 'android') {
         });
         break;
       }
+      case 'heartbeat': {
+        console.log('[BackgroundGeolocation HeadlessTask] -', event.name, params);
+        const { coords } = params;
+        const { extras } = params;
+        await BackgroundGeolocation.updateGeoPointInFirestore({
+          uid: extras.uid,
+          apiKey: extras.firebaseAuthToken,
+          coords,
+        });
+        break;
+      }
       default:
     }
   };
