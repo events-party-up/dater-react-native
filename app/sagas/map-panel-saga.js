@@ -1,8 +1,8 @@
 import { call, take, put, cancel, select, takeLatest } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 
-const mapPanelReplaceDelay = 350;
-const mapPanelHideDelay = 500;
+const mapPanelReplaceDelay = 250;
+const mapPanelHideDelay = 400;
 
 export default function* mapPanelSaga() {
   try {

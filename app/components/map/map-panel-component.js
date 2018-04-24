@@ -54,6 +54,13 @@ class MapPanelComponent extends Component<Props> {
     });
   }
 
+  onSnap = (event) => {
+    if (event && event.nativeEvent &&
+      (event.nativeEvent.id === 'close') && this.props.mapPanel.visible === true) {
+      this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_FINISHED' });
+    }
+  }
+
   buildRoute = (user) => {
     this.props.dispatch({
       type: 'MAPVIEW_BUILD_ROUTE_START',
@@ -170,6 +177,12 @@ class MapPanelComponent extends Component<Props> {
             </Caption2>
             <DaterButton
               style={styles.panelButton}
+              onPress={this.buildRoute}
+            >
+              Маршрут
+            </DaterButton>
+            <DaterButton
+              style={styles.panelButton}
               onPress={this.stopFindUser}
             >
               Остановить
@@ -198,6 +211,7 @@ class MapPanelComponent extends Component<Props> {
           boundaries={{ top: -300 }}
           initialPosition={{ y: Screen.height + 80 }}
           animatedValueY={this._deltaY}
+          onSnap={this.onSnap}
         >
           <View style={styles.panel}>
             <View style={styles.panelHeader}>
