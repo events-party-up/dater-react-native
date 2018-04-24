@@ -2,7 +2,6 @@ package com.daterreactnative;
 
 import android.app.Application;
 
-// Firebase packages
 import com.facebook.react.ReactApplication;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.wix.interactable.Interactable;
@@ -11,6 +10,7 @@ import com.transistorsoft.rnbackgroundfetch.RNBackgroundFetchPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.joshblour.reactnativeheading.ReactNativeHeadingPackage;
 
+// Firebase packages
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
 import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
@@ -40,8 +40,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new SplashScreenReactPackage(),
-            new Interactable(),
+          new SplashScreenReactPackage(),
+          new Interactable(),
           new RNBackgroundGeolocation(),
           new RNBackgroundFetchPackage(),
           new RNDeviceInfo(),
