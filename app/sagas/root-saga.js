@@ -6,7 +6,7 @@ import authSaga from './auth-saga';
 import mapViewInitializeRegionSaga from './mapview-init-region-saga';
 import startGeolocationOnFirstUpdate from './location-start-saga';
 import mapPanelSaga from './map-panel-saga';
-// import mapDirectionsSaga from './map-directions-saga';
+import mapDirectionsSaga from './map-directions-saga';
 import usersAroundSaga from './users-around-saga';
 import findUserSaga from './find-user-saga';
 
@@ -19,7 +19,7 @@ export default function* rootSaga() {
     authSaga(),
     startGeolocationOnFirstUpdate(),
     mapPanelSaga(),
-    // mapDirectionsSaga(),
+    mapDirectionsSaga(),
     usersAroundSaga(),
     findUserSaga(),
   ]);

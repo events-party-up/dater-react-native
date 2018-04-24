@@ -26,7 +26,15 @@ function* showPanel(mapPanelSnapper, action) {
       yield* hidePanel(mapPanelSnapper, action);
     }
     yield put({ type: 'UI_MAP_PANEL_SHOW_FINISHED', payload: action.payload });
-    yield call(mapPanelSnapper, { index: 0 }); // show
+    const mapPanelMode = yield select((state) => state.mapPanel.mode);
+    switch (mapPanelMode) {
+      case 'findUserActive':
+        yield call(mapPanelSnapper, { index: 1 }); // show
+        break;
+      default:
+        yield call(mapPanelSnapper, { index: 0 }); // show
+        break;
+    }
   } catch (error) {
     yield put({ type: 'UI_MAP_PANEL_ERROR', payload: error });
   }
@@ -35,7 +43,7 @@ function* showPanel(mapPanelSnapper, action) {
 function* hidePanel(mapPanelSnapper, action) {
   try {
     const mapPanelVisible = yield select((state) => state.mapPanel.visible);
-    yield call(mapPanelSnapper, { index: 1 }); // hide
+    yield call(mapPanelSnapper, { index: 2 }); // hide
     if (mapPanelVisible) {
       yield call(delay, mapPanelReplaceDelay);
     } else {

@@ -61,10 +61,16 @@ class MapPanelComponent extends Component<Props> {
     }
   }
 
-  buildRoute = (user) => {
+  buildRoute = () => {
     this.props.dispatch({
       type: 'MAPVIEW_BUILD_ROUTE_START',
-      payload: user,
+      payload: this.props.findUserUid,
+    });
+    this.props.dispatch({
+      type: 'UI_MAP_PANEL_HIDE',
+      payload: {
+        source: 'mapPanelComponentLetsStart',
+      },
     });
   }
 
@@ -95,9 +101,8 @@ class MapPanelComponent extends Component<Props> {
   }
 
   stopFindUser = () => {
-    this.props.dispatch({
-      type: 'FIND_USER_STOP',
-    });
+    this.props.dispatch({ type: 'FIND_USER_STOP' });
+    this.props.dispatch({ type: 'MAPVIEW_BUILD_ROUTE_CLEAR' });
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE',
       payload: {
@@ -205,7 +210,8 @@ class MapPanelComponent extends Component<Props> {
           verticalOnly
           snapPoints={
             [
-              { y: this.showSnapPosition, id: 'show' }, // open map panel snap point
+              { y: this.showSnapPosition, id: 'show' },
+              { y: this.showSnapPosition - 60, id: 'show_findUserActive' },
               { y: Screen.height + 80, id: 'close' }, // close map panel snap point
             ]}
           boundaries={{ top: -300 }}
