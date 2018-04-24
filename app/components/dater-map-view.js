@@ -80,7 +80,7 @@ class DaterMapView extends Component<Props> {
   onMapPressed = () => {
     if (this.props.mapPanel.visible) {
       this.props.dispatch({
-        type: 'UI_MAP_PANEL_HIDE_START',
+        type: 'UI_MAP_PANEL_HIDE',
         payload: {
           source: 'onMapPressed',
         },

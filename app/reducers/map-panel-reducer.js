@@ -1,9 +1,9 @@
-const types = {
+export const types = {
   UI_MAP_PANEL_READY: 'UI_MAP_PANEL_READY',
   UI_MAP_PANEL_UNLOAD: 'UI_MAP_PANEL_UNLOAD',
-  UI_MAP_PANEL_SHOW_START: 'UI_MAP_PANEL_SHOW_START',
+  UI_MAP_PANEL_SHOW: 'UI_MAP_PANEL_SHOW',
   UI_MAP_PANEL_SHOW_FINISHED: 'UI_MAP_PANEL_SHOW_FINISHED',
-  UI_MAP_PANEL_HIDE_START: 'UI_MAP_PANEL_HIDE_START',
+  UI_MAP_PANEL_HIDE: 'UI_MAP_PANEL_HIDE',
   UI_MAP_PANEL_HIDE_FINISHED: 'UI_MAP_PANEL_HIDE_FINISHED',
   UI_MAP_PANEL_SET_MODE: 'UI_MAP_PANEL_SET_MODE',
   UI_MAP_PANEL_ERROR: 'UI_MAP_PANEL_ERROR',
@@ -20,8 +20,7 @@ const mapPanelReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
-    case types.UI_MAP_PANEL_SET_MODE:
-    case types.UI_MAP_PANEL_SHOW_START: {
+    case types.UI_MAP_PANEL_SET_MODE: {
       return {
         ...state,
         mode: payload.mode,
@@ -31,6 +30,8 @@ const mapPanelReducer = (state = initialState, action) => {
     case types.UI_MAP_PANEL_SHOW_FINISHED: {
       return {
         ...state,
+        mode: payload.mode,
+        user: payload.user,
         visible: true,
       };
     }

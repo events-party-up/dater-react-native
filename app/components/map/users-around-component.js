@@ -19,37 +19,9 @@ type Props = {
 
 class UsersAroundComponent extends React.Component<Props> {
   onPersonMakerPress = (user) => {
-    // if (this.props.mapPanel.visible) {
-    //   if (this.props.findUser.enabled) {
-    //     if (this.props.findUser.targetUserUid === user.uid) {
-    //       return;
-    //     }
-
-    //     this.props.dispatch({
-    //       type: 'UI_MAP_PANEL_REPLACE_START',
-    //       payload: {
-    //         mode: 'findUserActive',
-    //         user,
-    //       },
-    //     });
-    //   } else {
-    //     if (this.props.mapPanel.user && this.props.mapPanel.user.uid === user.uid) {
-    //       return;
-    //     }
-
-    //     this.props.dispatch({
-    //       type: 'UI_MAP_PANEL_REPLACE_START',
-    //       payload: {
-    //         mode: 'userCard',
-    //         user,
-    //       },
-    //     });
-    //   }
-    // }
-
     if (this.props.findUser.enabled) {
       this.props.dispatch({
-        type: 'UI_MAP_PANEL_SHOW_START',
+        type: 'UI_MAP_PANEL_SHOW',
         payload: {
           mode: 'findUserActive',
           user,
@@ -57,7 +29,7 @@ class UsersAroundComponent extends React.Component<Props> {
       });
     } else {
       this.props.dispatch({
-        type: 'UI_MAP_PANEL_SHOW_START',
+        type: 'UI_MAP_PANEL_SHOW',
         payload: {
           mode: 'userCard',
           user,
