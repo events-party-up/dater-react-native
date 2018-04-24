@@ -17,9 +17,10 @@ export default function* mapViewSaga() {
         'MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING',
         'MAPVIEW_ANIMATE_TO_BEARING_COMPASS_HEADING'], animateToBearing, mapView);
       const task4 = yield takeEvery('MAPVIEW_SHOW_MY_LOCATION_START', showMyLocation, mapView);
+      const task5 = yield takeEvery('MAPVIEW_SHOW_ME_AND_TARTET_FIND_USER', showMeAndTargetFindUser, mapView);
       yield put({ type: 'MAPVIEW_MAIN_SAGA_READY' });
       yield take('MAPVIEW_UNLOAD');
-      yield cancel(task1, task2, task3, task4);
+      yield cancel(task1, task2, task3, task4, task5);
     }
   } catch (error) {
     yield put({ type: 'MAPVIEW_MAINSAGA_ERROR', payload: error });
@@ -53,6 +54,32 @@ function* animateToCoordinate(mapView, action) {
     yield call(mapView.animateToCoordinate, coords, animationDuration);
   } catch (error) {
     yield put({ type: 'MAPVIEW_ANIMATE_TO_COORDINATE_ERROR', payload: error });
+  }
+}
+
+function* showMeAndTargetFindUser(mapView) {
+  try {
+    const lastTargetUserCoords = yield select((state) => state.findUser.targetPastCoords.pop());
+    const myLastCoords = yield select((state) => state.location.coords);
+    yield call(fitToCoordinates, mapView, [lastTargetUserCoords, myLastCoords]);
+  } catch (error) {
+    yield put({ type: 'MAPVIEW_FIT_TO_COORDS_ERROR', payload: error });
+  }
+}
+
+function* fitToCoordinates(mapView, coords) {
+  try {
+    yield call(mapView.fitToCoordinates, coords, {
+      animated: false,
+      edgePadding: {
+        top: 50,
+        right: 50,
+        bottom: 50,
+        left: 50,
+      },
+    });
+  } catch (error) {
+    yield put({ type: 'MAPVIEW_FIT_TO_COORDS_ERROR', payload: error });
   }
 }
 

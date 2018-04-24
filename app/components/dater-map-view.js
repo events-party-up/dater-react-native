@@ -29,6 +29,7 @@ function creatMapViewProxy(mapView: MapView) {
     animateToBearing: (bearing, duration) => mapView.animateToBearing(bearing, duration),
     animateToRegion: (region, duration) => mapView.animateToRegion(region, duration),
     animateToCoordinate: (coords, duration) => mapView.animateToCoordinate(coords, duration),
+    fitToCoordinates: (coords, options) => mapView.fitToCoordinates(coords, options),
   };
 }
 
