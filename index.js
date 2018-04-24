@@ -9,21 +9,8 @@ AppRegistry.registerComponent('DaterReactNative', () => App);
 if (Platform.OS === 'android') {
   const HeadlessTask = async (event) => {
     const { params } = event;
-    // console.log('[BackgroundGeolocation HeadlessTask] -', event.name, params);
-
     switch (event.name) {
       case 'location': {
-        console.log('[BackgroundGeolocation HeadlessTask] -', event.name, params);
-        const { coords } = params;
-        const { extras } = params;
-        await BackgroundGeolocation.updateGeoPointInFirestore({
-          uid: extras.uid,
-          apiKey: extras.firebaseAuthToken,
-          coords,
-        });
-        break;
-      }
-      case 'heartbeat': {
         console.log('[BackgroundGeolocation HeadlessTask] -', event.name, params);
         const { coords } = params;
         const { extras } = params;
