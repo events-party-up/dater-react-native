@@ -1,15 +1,18 @@
-import { takeEvery, call, take, put, cancel } from 'redux-saga/effects';
+import { call, take, put, cancel, select, takeLatest } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 
-const defaultAnimationDuration = 300;
+const mapPanelReplaceDelay = 250;
+const mapPanelHideDelay = 400;
 
 export default function* mapPanelSaga() {
   try {
     while (true) {
       const { mapPanelSnapper } = yield take('UI_MAP_PANEL_READY');
-      const task1 = yield takeEvery('UI_MAP_PANEL_SHOW_START', showPanel, mapPanelSnapper);
+      const task1 = yield takeLatest('UI_MAP_PANEL_SHOW', showPanel, mapPanelSnapper);
+      const task2 = yield takeLatest('UI_MAP_PANEL_HIDE', hidePanel, mapPanelSnapper);
+      const task3 = yield takeLatest('FIND_USER_START', showFindUserPanel, mapPanelSnapper);
       yield take('UI_MAP_PANEL_UNLOAD');
-      yield cancel(task1);
+      yield cancel(task1, task2, task3);
     }
   } catch (error) {
     yield put({ type: 'UI_MAP_PANEL_ERROR', payload: error });
@@ -17,26 +20,55 @@ export default function* mapPanelSaga() {
 }
 
 function* showPanel(mapPanelSnapper, action) {
-  yield call(mapPanelSnapper, { index: 0 }); // show
-  yield put({
-    type: 'UI_MAP_PANEL_SHOW_FINISH',
-    payload: action.payload,
-  });
-
-  const task2 = yield takeEvery('UI_MAP_PANEL_REPLACE_START', replacePanel, mapPanelSnapper);
-
-  yield take('UI_MAP_PANEL_HIDE_START');
-  yield cancel(task2);
-  yield call(mapPanelSnapper, { index: 2 }); // hide
-  yield put({ type: 'UI_MAP_PANEL_HIDE_FINISH' });
+  try {
+    const mapPanelVisible = yield select((state) => state.mapPanel.visible);
+    if (mapPanelVisible) {
+      yield* hidePanel(mapPanelSnapper, action);
+    }
+    yield put({ type: 'UI_MAP_PANEL_SHOW_FINISHED', payload: action.payload });
+    const mapPanelMode = yield select((state) => state.mapPanel.mode);
+    switch (mapPanelMode) {
+      case 'findUserActive':
+        yield call(mapPanelSnapper, { index: 1 }); // show
+        break;
+      default:
+        yield call(mapPanelSnapper, { index: 0 }); // show
+        break;
+    }
+  } catch (error) {
+    yield put({ type: 'UI_MAP_PANEL_ERROR', payload: error });
+  }
 }
 
-function* replacePanel(mapPanelSnapper, action) {
-  yield call(mapPanelSnapper, { index: 2 }); // first hide
-  yield delay(defaultAnimationDuration);
-  yield put({
-    type: 'UI_MAP_PANEL_REPLACE_FINISH',
-    payload: action.payload,
-  });
-  yield call(mapPanelSnapper, { index: 0 }); // and show again
+function* hidePanel(mapPanelSnapper, action) {
+  try {
+    const mapPanelVisible = yield select((state) => state.mapPanel.visible);
+    yield call(mapPanelSnapper, { index: 2 }); // hide
+    if (mapPanelVisible) {
+      yield call(delay, mapPanelReplaceDelay);
+    } else {
+      yield call(delay, mapPanelHideDelay);
+    }
+    yield put({ type: 'UI_MAP_PANEL_HIDE_FINISHED', payload: action.payload });
+  } catch (error) {
+    yield put({ type: 'UI_MAP_PANEL_ERROR', payload: error });
+  }
+}
+
+function* showFindUserPanel(mapPanelSnapper, action) {
+  try {
+    yield* hidePanel(mapPanelSnapper, action);
+    const nextAction = {
+      type: 'UI_MAP_PANEL_SET_MODE',
+      payload: {
+        mode: 'findUser',
+        user: action.payload.user,
+        startDistance: action.payload.startDistance,
+      },
+    };
+    yield put(nextAction);
+    yield* showPanel(mapPanelSnapper, nextAction);
+  } catch (error) {
+    yield put({ type: 'UI_MAP_PANEL_ERROR', payload: error });
+  }
 }

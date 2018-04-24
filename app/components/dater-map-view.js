@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import MapView from 'react-native-maps';
 import { connect, Dispatch } from 'react-redux';
-import 'moment/locale/ru';
 
 import { GeoCompass, GeoCoordinates } from '../types';
 import MyLocationOnMovingMap from './map/my-location-on-moving-map';
@@ -15,6 +13,7 @@ import UsersAroundComponent from './map/users-around-component';
 import MapDirectionsComponent from './map/map-directions-component';
 import PastLocationMarker from './map/past-location-marker';
 import PastLocationPolylines from './map/past-location-polylines';
+import { Caption2 } from './ui-kit/typography';
 
 const mapStateToProps = (state) => ({
   location: state.location,
@@ -22,6 +21,7 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
   compass: state.compass,
   mapPanel: state.mapPanel,
+  findUser: state.findUser,
 });
 
 function creatMapViewProxy(mapView: MapView) {
@@ -29,6 +29,7 @@ function creatMapViewProxy(mapView: MapView) {
     animateToBearing: (bearing, duration) => mapView.animateToBearing(bearing, duration),
     animateToRegion: (region, duration) => mapView.animateToRegion(region, duration),
     animateToCoordinate: (coords, duration) => mapView.animateToCoordinate(coords, duration),
+    fitToCoordinates: (coords, options) => mapView.fitToCoordinates(coords, options),
   };
 }
 
@@ -46,6 +47,7 @@ type Props = {
   },
   mapView: MapView,
   mapPanel: any,
+  findUser: any,
 };
 
 class DaterMapView extends Component<Props> {
@@ -74,15 +76,15 @@ class DaterMapView extends Component<Props> {
       type: 'MAPVIEW_READY',
       mapView: creatMapViewProxy(this.mapView),
     });
-    this.props.dispatch({
-      type: 'GEO_LOCATION_INITIALIZE',
-    });
   }
 
   onMapPressed = () => {
     if (this.props.mapPanel.visible) {
       this.props.dispatch({
-        type: 'UI_MAP_PANEL_HIDE_START',
+        type: 'UI_MAP_PANEL_HIDE',
+        payload: {
+          source: 'onMapPressed',
+        },
       });
     }
   }
@@ -152,20 +154,46 @@ class DaterMapView extends Component<Props> {
           <UsersAroundComponent />
           <MapDirectionsComponent />
           <PastLocationPolylines
-            pastCoords={[...this.props.location.pastCoords, this.props.location.coords]}
+            pastCoords={this.props.findUser.targetPastCoords}
+            uid={this.props.findUser.targetUserUid}
+            mode="target"
           />
           <PastLocationMarker
-            pastCoords={[...this.props.location.pastCoords, this.props.location.coords]}
+            pastCoords={this.props.findUser.targetPastCoords}
             mapViewBearingAngle={this.props.mapView.bearingAngle}
+            uid={this.props.findUser.targetUserUid}
+            mode="target"
+          />
+          <PastLocationPolylines
+            pastCoords={this.props.findUser.myPastCoords}
+            uid={this.props.auth.uid && this.props.auth.uid}
+            mode="own"
+          />
+          <PastLocationMarker
+            pastCoords={this.props.findUser.myPastCoords}
+            mapViewBearingAngle={this.props.mapView.bearingAngle}
+            uid={this.props.auth.uid && this.props.auth.uid}
+            mode="own"
           />
         </MapView>
-        <Text style={styles.debugText}>
+        <Caption2 style={styles.debugText} pointerEvents="none">
           Accuracy: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
           GPS Heading: {this.props.location.coords && this.props.location.coords.heading}{'\n'}
           Compass Heading: {this.props.compass.heading}{'\n'}
           GeoUpdates: {this.props.location && this.props.location.geoUpdates}{'\n'}
-          UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
-        </Text>
+          UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}
+        </Caption2>
+        {this.props.findUser.enabled &&
+        <View style={styles.findUserContainer} pointerEvents="none">
+          <Caption2 style={styles.findUserText}>
+            Distance: {this.props.findUser.currentDistance}{'\n'}
+            My Score:
+            {` ${this.props.findUser.myScore}`}{'\n'}
+            {this.props.findUser.targetUserUid && this.props.findUser.targetUserUid.substring(0, 4)}:
+            {` ${this.props.findUser.targetScore}`}
+          </Caption2>
+        </View>
+        }
       </View>
 
     );
@@ -178,11 +206,33 @@ const styles = StyleSheet.create({
     zIndex: -1,
   },
   debugText: {
+    opacity: 0.8,
+    color: 'rgba(0, 0, 0, 0.9)',
     position: 'absolute',
     top: 40,
     left: 20,
-    zIndex: 2,
+  },
+  findUserText: {
     opacity: 0.8,
+    color: 'rgba(0, 0, 0, 0.9)',
+  },
+  findUserContainer: {
+    opacity: 0.8,
+    position: 'absolute',
+    top: 40,
+    right: 20,
+    padding: 8,
+    // margin: 8,
+    flex: 1,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#ffffff',
+    borderRadius: 4,
+    shadowRadius: 16,
+    shadowOpacity: 1,
+    shadowOffset: {
+      width: 0, height: 4,
+    },
+    elevation: 1,
   },
 });
 

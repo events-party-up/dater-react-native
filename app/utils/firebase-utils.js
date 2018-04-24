@@ -23,3 +23,12 @@ export function deleteFirestoreDoc({
 }) {
   return firebase.firestore().collection(collection).doc(doc).delete();
 }
+
+
+export async function getFirestore({
+  collection,
+  doc,
+}) {
+  const docSnapshot = await firebase.firestore().collection(collection).doc(doc).get();
+  return docSnapshot.data();
+}

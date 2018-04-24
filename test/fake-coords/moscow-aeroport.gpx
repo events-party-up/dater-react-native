@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" creator="mapstogpx.com" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd">
+  <metadata>
+    <link href="http://www.mapstogpx.com">
+      <text>Sverrir Sigmundarson</text>
+    </link>
+    <!--desc>Map data ©2018 Google</desc-->
+    <!--copyright author="Google Inc">
+    	<year>2018</year>
+    	<license>https://developers.google.com/maps/terms</license>
+    </copyright-->
+    <!--url>https://www.google.co.uk/maps/dir/55.8061002,37.5432961/55.7996661,37.5346916/@55.8028724,37.5346236,16z/data=!3m1!4b1!4m2!4m1!3e2?hl=en</url-->
+    <time>2018-04-18T11:04:13Z</time>
+  </metadata>
+  <wpt lat="55.8061002" lon="37.5432961">
+    <name>Moskva</name>
+    <desc>Ulitsa Akademika Il'yushina, 11, Moskva, Russia, 125319</desc>
+  </wpt>
+  <wpt lat="55.7996661" lon="37.5346916">
+    <name>Moskva</name>
+    <desc>1-Ya Aeroportovskaya Ulitsa, 60, Moskva, Russia, 125167</desc>
+  </wpt>
+<trk>
+  <name>Moskva to Moskva</name>
+  <number>1</number>
+  <trkseg>
+  <trkpt lat="55.8060718" lon="37.5433194">
+    <name>TP001</name>
+  </trkpt>
+  <trkpt lat="55.80603" lon="37.54321">
+    <name>TP002</name>
+  </trkpt>
+  <trkpt lat="55.80595" lon="37.54298">
+    <name>TP003</name>
+  </trkpt>
+  <trkpt lat="55.80557" lon="37.54204">
+    <name>TP004</name>
+  </trkpt>
+  <trkpt lat="55.80539" lon="37.54165">
+    <name>TP005</name>
+  </trkpt>
+  <trkpt lat="55.80529" lon="37.54149">
+    <name>TP006</name>
+  </trkpt>
+  <trkpt lat="55.80517" lon="37.54135">
+    <name>TP007</name>
+  </trkpt>
+  <trkpt lat="55.8051691" lon="37.5413461">
+    <name>TP008</name>
+  </trkpt>
+  <trkpt lat="55.8051" lon="37.54151">
+    <name>TP009</name>
+  </trkpt>
+  <trkpt lat="55.8050978" lon="37.5415112">
+    <name>TP010</name>
+  </trkpt>
+  <trkpt lat="55.80504" lon="37.54143">
+    <name>TP011</name>
+  </trkpt>
+  <trkpt lat="55.80498" lon="37.5413">
+    <name>TP012</name>
+  </trkpt>
+  <trkpt lat="55.80496" lon="37.54127">
+    <name>TP013</name>
+  </trkpt>
+  <trkpt lat="55.80495" lon="37.54123">
+    <name>TP014</name>
+  </trkpt>
+  <trkpt lat="55.80493" lon="37.54118">
+    <name>TP015</name>
+  </trkpt>
+  <trkpt lat="55.8049" lon="37.54109">
+    <name>TP016</name>
+  </trkpt>
+  <trkpt lat="55.80486" lon="37.54085">
+    <name>TP017</name>
+  </trkpt>
+  <trkpt lat="55.8048564" lon="37.5408485">
+    <name>TP018</name>
+  </trkpt>
+  <trkpt lat="55.80482" lon="37.54086">
+    <name>TP019</name>
+  </trkpt>
+  <trkpt lat="55.8048" lon="37.54084">
+    <name>TP020</name>
+  </trkpt>
+  <trkpt lat="55.8044" lon="37.54025">
+    <name>TP021</name>
+  </trkpt>
+  <trkpt lat="55.80433" lon="37.54014">
+    <name>TP022</name>
+  </trkpt>
+  <trkpt lat="55.8043311" lon="37.5401429">
+    <name>TP023</name>
+  </trkpt>
+  <trkpt lat="55.80435" lon="37.54005">
+    <name>TP024</name>
+  </trkpt>
+  <trkpt lat="55.80435" lon="37.53997">
+    <name>TP025</name>
+  </trkpt>
+  <trkpt lat="55.80434" lon="37.5399">
+    <name>TP026</name>
+  </trkpt>
+  <trkpt lat="55.8043434" lon="37.5398967">
+    <name>TP027</name>
+  </trkpt>
+  <trkpt lat="55.80419" lon="37.53971">
+    <name>TP028</name>
+  </trkpt>
+  <trkpt lat="55.80375" lon="37.53908">
+    <name>TP029</name>
+  </trkpt>
+  <trkpt lat="55.8037462" lon="37.5390828">
+    <name>TP030</name>
+  </trkpt>
+  <trkpt lat="55.80373" lon="37.53883">
+    <name>TP031</name>
+  </trkpt>
+  <trkpt lat="55.80374" lon="37.53876">
+    <name>TP032</name>
+  </trkpt>
+  <trkpt lat="55.80375" lon="37.5387">
+    <name>TP033</name>
+  </trkpt>
+  <trkpt lat="55.80394" lon="37.53815">
+    <name>TP034</name>
+  </trkpt>
+  <trkpt lat="55.80395" lon="37.53813">
+    <name>TP035</name>
+  </trkpt>
+  <trkpt lat="55.80395" lon="37.53811">
+    <name>TP036</name>
+  </trkpt>
+  <trkpt lat="55.80395" lon="37.5381">
+    <name>TP037</name>
+  </trkpt>
+  <trkpt lat="55.80395" lon="37.53808">
+    <name>TP038</name>
+  </trkpt>
+  <trkpt lat="55.80395" lon="37.53806">
+    <name>TP039</name>
+  </trkpt>
+  <trkpt lat="55.80383" lon="37.53772">
+    <name>TP040</name>
+  </trkpt>
+  <trkpt lat="55.8038" lon="37.5374">
+    <name>TP041</name>
+  </trkpt>
+  <trkpt lat="55.8037984" lon="37.5374025">
+    <name>TP042</name>
+  </trkpt>
+  <trkpt lat="55.80316" lon="37.53661">
+    <name>TP043</name>
+  </trkpt>
+  <trkpt lat="55.8031559" lon="37.5366108">
+    <name>TP044</name>
+  </trkpt>
+  <trkpt lat="55.803" lon="37.537">
+    <name>TP045</name>
+  </trkpt>
+  <trkpt lat="55.8030047" lon="37.5369983">
+    <name>TP046</name>
+  </trkpt>
+  <trkpt lat="55.80288" lon="37.53686">
+    <name>TP047</name>
+  </trkpt>
+  <trkpt lat="55.8028845" lon="37.5368607">
+    <name>TP048</name>
+  </trkpt>
+  <trkpt lat="55.80279" lon="37.53712">
+    <name>TP049</name>
+  </trkpt>
+  <trkpt lat="55.8027926" lon="37.5371184">
+    <name>TP050</name>
+  </trkpt>
+  <trkpt lat="55.80263" lon="37.53704">
+    <name>TP051</name>
+  </trkpt>
+  <trkpt lat="55.80251" lon="37.53697">
+    <name>TP052</name>
+  </trkpt>
+  <trkpt lat="55.80218" lon="37.53679">
+    <name>TP053</name>
+  </trkpt>
+  <trkpt lat="55.80153" lon="37.53644">
+    <name>TP054</name>
+  </trkpt>
+  <trkpt lat="55.80094" lon="37.53618">
+    <name>TP055</name>
+  </trkpt>
+  <trkpt lat="55.80071" lon="37.53607">
+    <name>TP056</name>
+  </trkpt>
+  <trkpt lat="55.80059" lon="37.53598">
+    <name>TP057</name>
+  </trkpt>
+  <trkpt lat="55.80054" lon="37.53593">
+    <name>TP058</name>
+  </trkpt>
+  <trkpt lat="55.8001" lon="37.53526">
+    <name>TP059</name>
+  </trkpt>
+  <trkpt lat="55.79998" lon="37.53511">
+    <name>TP060</name>
+  </trkpt>
+  <trkpt lat="55.79978" lon="37.53484">
+    <name>TP061</name>
+  </trkpt>
+  <trkpt lat="55.79966" lon="37.53468">
+    <name>TP062</name>
+  </trkpt>
+  <trkpt lat="55.799661" lon="37.5346826">
+    <name>TP063</name>
+  </trkpt>
+  </trkseg>
+</trk>
+</gpx>

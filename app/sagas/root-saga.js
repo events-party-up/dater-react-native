@@ -8,11 +8,11 @@ import startGeolocationOnFirstUpdate from './location-start-saga';
 import mapPanelSaga from './map-panel-saga';
 import mapDirectionsSaga from './map-directions-saga';
 import usersAroundSaga from './users-around-saga';
-
+import findUserSaga from './find-user-saga';
 
 export default function* rootSaga() {
   yield all([
-    takeEvery('GEO_LOCATION_INITIALIZE', mapViewInitializeRegionSaga),
+    takeEvery('MAPVIEW_READY', mapViewInitializeRegionSaga),
     compassSaga(),
     mapViewSaga(),
     locationSaga(),
@@ -21,5 +21,6 @@ export default function* rootSaga() {
     mapPanelSaga(),
     mapDirectionsSaga(),
     usersAroundSaga(),
+    findUserSaga(),
   ]);
 }

@@ -41,7 +41,6 @@ class MyLocationMapMarker extends React.PureComponent<Props> {
 
     return (
       <View
-        style={styles.locationContainer}
         key={`coord${this.props.coordinate.latitude}-${this.props.coordinate.longitude}`}
       >
         <Circle
@@ -59,7 +58,7 @@ class MyLocationMapMarker extends React.PureComponent<Props> {
           {...this.props}
           coordinate={coordinate}
         >
-          <View style={styles.container}>
+          <View style={styles.container} pointerEvents="none">
             <View style={styles.markerHalo} />
             {rotate &&
               <View style={[styles.heading, { transform: [{ rotate }] }]}>

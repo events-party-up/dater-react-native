@@ -65,6 +65,10 @@ function createUsersAroundChannel(userCoords, currentUser) {
 
   return eventChannel((emit) => {
     const onSnapshotUpdated = (snapshot) => {
+      if (snapshot.metadata.hasPendingWrites) { // do not process local updates triggered by local writes
+        return;
+      }
+
       const usersAround = [];
       snapshot.forEach((userSnapshot) => {
         const userData = userSnapshot.data();
@@ -83,24 +87,27 @@ function createUsersAroundChannel(userCoords, currentUser) {
       });
       emit(usersAround);
 
-      // snapshot.docChanges.forEach(function (change) {
-      //   if (change.type === "added") {
-      //     console.log("New locaiton: ", change.doc.data());
-      //   }
-      //   if (change.type === "modified") {
-      //     console.log("Modified locaiton: ", change.doc.data());
-      //   }
-      //   if (change.type === "removed") {
-      //     console.log("Removed location: ", change.doc.data());
-      //   }
-      // });
+    //   snapshot.docChanges.forEach((change) => {
+    //     if (change.type === 'added') {
+    //       console.log('New locaiton: ', change.doc.data());
+    //     }
+    //     if (change.type === 'modified') {
+    //       console.log('Modified locaiton: ', change.doc.data());
+    //     }
+    //     if (change.type === 'removed') {
+    //       console.log('Removed location: ', change.doc.data());
+    //     }
+    //     if (change.type) {
+    //       console.log('User ID: ', change.doc.id);
+    //     }
+    //   });
     };
+
     const onError = (error) => {
       emit({
         error,
       });
     };
-
     const unsubscribe = query.onSnapshot(onSnapshotUpdated, onError);
 
     return unsubscribe;

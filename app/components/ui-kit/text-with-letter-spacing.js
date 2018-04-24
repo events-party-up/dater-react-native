@@ -42,7 +42,7 @@ const Letter = (props) => {
     { paddingRight: spacing },
   ];
 
-  return <Text style={letterStyles}>{children}</Text>;
+  return <Text style={letterStyles} allowFontScaling={false}>{children}</Text>;
 };
 
 export default TextWithLetterSpacing;

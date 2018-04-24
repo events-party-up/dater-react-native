@@ -13,16 +13,20 @@ import {
 
 export default function* locationSaga() {
   try {
+    yield put({ type: 'GEO_LOCATION_INITIALIZE' });
     const locationChannel = yield call(createLocationChannel);
     yield takeEvery(locationChannel, updateLocation);
     yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
-    yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeGeoLocationToFirestore);
-    yield take('MAPVIEW_READY');
-
+    yield takeEvery('GEO_LOCATION_FORCE_UPDATE', forceUpdate);
+    yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeCoordsToFirestore);
+    const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
+    if (!isUserAuthenticated) { // user must be authorized
+      yield take('AUTH_SUCCESS');
+    }
     const locationServiceState = yield call([BackgroundGeolocation, 'init']);
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
     yield throttle(500, 'GEO_LOCATION_UPDATED', locationUpdatedSaga);
-    yield throttle(2000, 'GEO_LOCATION_UPDATED', writeGeoLocationToFirestore);
+    // yield throttle(2000, 'GEO_LOCATION_UPDATED', writeCoordsToFirestore);
 
     while (true) {
       yield take('GEO_LOCATION_START');
@@ -30,6 +34,8 @@ export default function* locationSaga() {
       yield call([BackgroundGeolocation, 'changePace'], true);
       const action = yield take('GEO_LOCATION_UPDATED'); // wait for first update!
       yield put({ type: 'GEO_LOCATION_STARTED', payload: action.payload });
+      yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_START', payload: { caller: 'locationSaga' } });
+
       yield take('GEO_LOCATION_STOP');
       yield call([BackgroundGeolocation, 'stop']);
       locationServiceState.enabled = false;
@@ -54,13 +60,25 @@ function* startGeoLocationOnInit() {
 
 function* locationUpdatedSaga(action) {
   const isCentered = yield select((state) => state.mapView.centered);
+  const isFindUserEnabled = yield select((state) => state.findUser.enabled);
+  const currentCoords = action.payload;
+  const firstCoords = yield select((state) => state.location.firstCoords);
   if (isCentered) {
     yield* animateToCurrentLocation(action);
     yield* call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
     yield* animateToBearing(action);
   }
-  const firstCoords = yield select((state) => state.location.firstCoords);
-  const currentCoords = action.payload;
+  if (isFindUserEnabled) {
+    yield put({
+      type: 'FIND_USER_MY_MOVE',
+      payload: {
+        latitude: currentCoords.latitude,
+        longitude: currentCoords.longitude,
+        accuracy: currentCoords.accuracy,
+        timestamp: Date.now(),
+      },
+    });
+  }
   if (!firstCoords || !currentCoords) return;
 
   const distanceFromFirstCoords = GeoUtils.distance(firstCoords, currentCoords);
@@ -108,6 +126,7 @@ function* updateLocation(coords) {
       type: 'GEO_LOCATION_UPDATED',
       payload: coords,
     });
+    yield* writeCoordsToFirestore();
   } else if (coords.error) {
     yield put({
       type: 'GEO_LOCATION_UPDATE_CHANNEL_ERROR',
@@ -120,10 +139,10 @@ function* updateLocation(coords) {
   }
 }
 
-function* writeGeoLocationToFirestore() {
+function* writeCoordsToFirestore() {
   try {
-    const coords = yield select((state) => state.location.coords);
     const uid = yield select((state) => state.auth.uid);
+    const coords = yield select((state) => state.location.coords);
     if (!uid || !coords) return;
 
     yield call(updateFirestore, {
@@ -143,10 +162,15 @@ function* writeGeoLocationToFirestore() {
   }
 }
 
+function* forceUpdate() {
+  yield call([BackgroundGeolocation, 'changePace'], true);
+}
+
 function createLocationChannel() {
   return eventChannel((emit) => {
     const onLocation = (location) => {
-      emit(location.coords);
+      const coords = location.location ? location.location.coords : location.coords; // handle location & heartbeat callback params
+      emit(coords);
     };
 
     const onError = (error) => {
@@ -156,10 +180,12 @@ function createLocationChannel() {
     };
 
     RNBackgroundGeolocation.on('location', onLocation, onError);
+    RNBackgroundGeolocation.on('heartbeat', onLocation, onError);
 
     // this will be invoked when the saga calls `channel.close` method
     const unsubscribe = () => {
       RNBackgroundGeolocation.un('location', onLocation);
+      RNBackgroundGeolocation.un('heartbeat', onLocation);
     };
     return unsubscribe;
   });

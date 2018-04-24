@@ -7,14 +7,19 @@ import {
   Platform,
 } from 'react-native';
 import Interactable from 'react-native-interactable';
+import 'moment/locale/ru';
 import Moment from 'react-moment';
 import { connect, Dispatch } from 'react-redux';
 
-import { H2, Body, Caption2 } from '../../components/ui-kit/typography';
+import { H2, Caption2 } from '../../components/ui-kit/typography';
 import DaterButton from '../../components/ui-kit/dater-button';
+import { GeoCoordinates } from '../../types';
 
 const mapStateToProps = (state) => ({
   mapPanel: state.mapPanel,
+  myCurrentCoords: state.location.coords,
+  findUserUid: state.findUser.targetUserUid,
+  findUserDistance: state.findUser.currentDistance,
 });
 
 const Screen = {
@@ -25,6 +30,9 @@ const Screen = {
 type Props = {
   mapPanel: any,
   dispatch: Dispatch,
+  myCurrentCoords: GeoCoordinates,
+  findUserUid: string,
+  findUserDistance: string,
 };
 
 class MapPanelComponent extends Component<Props> {
@@ -47,25 +55,57 @@ class MapPanelComponent extends Component<Props> {
   }
 
   onSnap = (event) => {
-    // console.log('On Snap: ', event.nativeEvent);
-    if (event && event.nativeEvent && event.nativeEvent.id === 'close_manual' && this.props.mapPanel.visible) {
-      this.props.dispatch({
-        type: 'UI_MAP_PANEL_HIDE_START',
-      });
+    if (event && event.nativeEvent &&
+      (event.nativeEvent.id === 'close') && this.props.mapPanel.visible === true) {
+      this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_FINISHED' });
     }
-  };
+  }
 
-  buildRoute = (user) => {
+  buildRoute = () => {
     this.props.dispatch({
       type: 'MAPVIEW_BUILD_ROUTE_START',
-      payload: user,
+      payload: this.props.findUserUid,
+    });
+    this.props.dispatch({
+      type: 'UI_MAP_PANEL_HIDE',
+      payload: {
+        source: 'mapPanelComponentLetsStart',
+      },
     });
   }
 
   letsStart = () => {
-    this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_START' });
     this.props.dispatch({
-      type: 'MAPVIEW_SHOW_MY_LOCATION_START',
+      type: 'UI_MAP_PANEL_HIDE',
+      payload: {
+        source: 'mapPanelComponentLetsStart',
+      },
+    });
+    this.props.dispatch({ type: 'MAPVIEW_SHOW_ME_AND_TARTET_FIND_USER' });
+  }
+
+  findUser = (user) => {
+    this.props.dispatch({
+      type: 'FIND_USER_START',
+      payload: {
+        user,
+        myCurrentCoords: {
+          latitude: this.props.myCurrentCoords.latitude,
+          longitude: this.props.myCurrentCoords.longitude,
+          timestamp: Date.now(),
+        },
+      },
+    });
+  }
+
+  stopFindUser = () => {
+    this.props.dispatch({ type: 'FIND_USER_STOP' });
+    this.props.dispatch({ type: 'MAPVIEW_BUILD_ROUTE_CLEAR' });
+    this.props.dispatch({
+      type: 'UI_MAP_PANEL_HIDE',
+      payload: {
+        source: 'mapPanelComponentLetsStart',
+      },
     });
   }
 
@@ -74,16 +114,16 @@ class MapPanelComponent extends Component<Props> {
       case 'userCard':
         return (
           <View>
-            <H2>Пользователь ({this.props.mapPanel.data.shortId} )</H2>
-            <Body style={{
+            <H2>Пользователь ({this.props.mapPanel.user.shortId} )</H2>
+            <Caption2 style={{
               marginBottom: 8,
               marginTop: 8,
             }}
             >
-              {this.props.mapPanel.data.distance} метров от вас. {' '}
-              Был <Moment locale="ru" element={Body} fromNow>{this.props.mapPanel.data.timestamp}</Moment>.
-            </Body>
-            <DaterButton style={styles.panelButton} onPress={() => this.buildRoute(this.props.mapPanel.data)}>
+              {this.props.mapPanel.user.distance} метров от вас. {' '}
+              Был <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.user.timestamp}</Moment>.
+            </Caption2>
+            <DaterButton style={styles.panelButton} onPress={() => this.findUser(this.props.mapPanel.user)}>
               Встретиться
             </DaterButton>
           </View>
@@ -91,20 +131,64 @@ class MapPanelComponent extends Component<Props> {
       case 'routeInfo':
         return (
           <View>
-            <H2>Маршрут до {this.props.mapPanel.data.routeToUser.shortId}</H2>
+            <H2>Маршрут до {this.props.mapPanel.user.shortId}</H2>
             <Caption2 style={{
               marginBottom: 8,
               marginTop: 8,
             }}
             >
-              Расстояние {this.props.mapPanel.data.route.distance} м. {' '}
-              Продолжительность {Math.floor(this.props.mapPanel.data.route.duration / 60)} мин.
+              Расстояние {this.props.mapPanel.user.distance} м. {' '}
+              Продолжительность {Math.floor(this.props.mapPanel.user.duration / 60)} мин.
             </Caption2>
             <DaterButton
               style={styles.panelButton}
               onPress={this.letsStart}
             >
               Поехали!
+            </DaterButton>
+          </View>
+        );
+      case 'findUser':
+        return (
+          <View>
+            <H2>Найти {this.props.mapPanel.user.shortId}</H2>
+            <Caption2 style={{
+              marginBottom: 8,
+              marginTop: 8,
+            }}
+            >
+              Расстояние {this.props.mapPanel.user.distance} м. {' '}
+            </Caption2>
+            <DaterButton
+              style={styles.panelButton}
+              onPress={this.letsStart}
+            >
+              Поехали!
+            </DaterButton>
+          </View>
+        );
+      case 'findUserActive':
+        return (
+          <View>
+            <H2>Вы уже в поиске {this.props.findUserUid ? this.props.findUserUid.substring(0, 4) : ''}</H2>
+            <Caption2 style={{
+              marginBottom: 8,
+              marginTop: 8,
+            }}
+            >
+              Расстояние {this.props.findUserDistance} м. {' '}
+            </Caption2>
+            <DaterButton
+              style={styles.panelButton}
+              onPress={this.buildRoute}
+            >
+              Маршрут
+            </DaterButton>
+            <DaterButton
+              style={styles.panelButton}
+              onPress={this.stopFindUser}
+            >
+              Остановить
             </DaterButton>
           </View>
         );
@@ -124,9 +208,9 @@ class MapPanelComponent extends Component<Props> {
           verticalOnly
           snapPoints={
             [
-              { y: this.showSnapPosition, id: 'show' }, // open card snap point
-              { y: Screen.height + 80, id: 'close_manual' }, // close card snap point, manual
-              { y: Screen.height + 195, id: 'close_auto' }, // close card snap point, auto
+              { y: this.showSnapPosition, id: 'show' },
+              { y: this.showSnapPosition - 60, id: 'show_findUserActive' },
+              { y: Screen.height + 80, id: 'close' }, // close map panel snap point
             ]}
           boundaries={{ top: -300 }}
           initialPosition={{ y: Screen.height + 80 }}

@@ -1,13 +1,18 @@
 import React, { Component } from 'react';
 import {
-  TouchableOpacity,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import { connect, Dispatch } from 'react-redux';
 
 import { GeoCoordinates, GeoCompass } from '../../types';
+import CircleButton from '../ui-kit/circle-button';
+
+const myLocationIcon = require('../../assets/icons/my-location/48/my-location.png');
+const playIcon = require('../../assets/icons/play/play.png');
+const stopIcon = require('../../assets/icons/stop/stop.png');
+const rotateIcon = require('../../assets/icons/rotate-map/rotate-map.png');
+const compassIcon = require('../../assets/icons/compass-colored/compass-colored.png');
 
 type Props = {
   dispatch: Dispatch,
@@ -71,55 +76,32 @@ class MyLocationButton extends Component<Props> {
   }
 
   render() {
-    const hitSlop = {
-      top: 15,
-      bottom: 15,
-      left: 15,
-      right: 15,
-    };
-
     return (
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          hitSlop={hitSlop}
-          activeOpacity={0.7}
-          style={styles.mapButton}
+        <CircleButton
+          style={styles.button}
           onPress={this.toggleCompass}
-        >
-          <Text style={{ fontWeight: 'bold', color: 'black' }}>
-            C
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          hitSlop={hitSlop}
-          activeOpacity={0.7}
-          style={styles.mapButton}
+          image={compassIcon}
+          size="medium"
+        />
+        <CircleButton
+          style={styles.button}
           onPress={this.rotateMap}
-        >
-          <Text style={{ fontWeight: 'bold', color: 'black' }}>
-            R
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          hitSlop={hitSlop}
-          activeOpacity={0.7}
-          style={styles.mapButton}
+          image={rotateIcon}
+          size="medium"
+        />
+        <CircleButton
+          style={styles.button}
           onPress={this.onGeoTogglePress}
-        >
-          <Text style={{ fontWeight: 'bold', color: 'black' }}>
-            {this.props.location.enabled ? 'OFF' : 'ON'}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          hitSlop={hitSlop}
-          activeOpacity={0.7}
-          style={styles.mapButton}
+          image={this.props.location.enabled ? stopIcon : playIcon}
+          size="medium"
+        />
+        <CircleButton
+          style={styles.button}
           onPress={this.centerMe}
-        >
-          <Text style={{ fontWeight: 'bold', color: 'black' }}>
-            Me
-          </Text>
-        </TouchableOpacity>
+          image={myLocationIcon}
+          size="medium"
+        />
       </View>
     );
   }
@@ -144,13 +126,16 @@ const styles = StyleSheet.create({
     opacity: 0.6,
     margin: 5,
   },
+  button: {
+    opacity: 0.6,
+    margin: 4,
+  },
   buttonContainer: {
     position: 'absolute',
     bottom: 30,
     right: 10,
     backgroundColor: 'transparent',
     alignItems: 'center',
-    zIndex: 2,
   },
 });
 

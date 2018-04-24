@@ -4,13 +4,13 @@ import { Text } from 'react-native';
 import TextWithLetterSpacing from './text-with-letter-spacing';
 
 export const H1 = (props) => (
-  <Text style={{ ...props.style, ...styles.h1 }}>
+  <Text style={[styles.h1, props.style]} allowFontScaling={false}>
     {props.children}
   </Text>
 );
 
 export const H2 = (props) => (
-  <Text style={{ ...props.style, ...styles.h2 }}>
+  <Text style={[styles.h2, props.style]} allowFontScaling={false}>
     {props.children}
   </Text>
 );
@@ -25,7 +25,7 @@ export const H3 = (props) => {
   };
 
   return (
-    <Text style={{ ...props.style, ...styleH3 }}>
+    <Text style={[styleH3, props.style]} allowFontScaling={false}>
       {props.children}
     </Text>
   );
@@ -41,20 +41,20 @@ export const Body = (props) => {
   };
 
   return (
-    <Text style={{ ...props.style, ...styleBody }}>
+    <Text style={[styleBody, props.style]} allowFontScaling={false}>
       {props.children}
     </Text>
   );
 };
 
 export const Caption1 = (props) => (
-  <TextWithLetterSpacing spacing={1.2} textStyle={{ ...props.style, ...styles.caption1 }}>
+  <TextWithLetterSpacing spacing={1.2} textStyle={[styles.caption1, props.style]}>
     {props.children.toUpperCase()}
   </TextWithLetterSpacing>
 );
 
 export const Caption2 = (props) => (
-  <Text style={{ ...props.style, ...styles.caption2 }}>
+  <Text style={[styles.caption2, props.style]} allowFontScaling={false}>
     {props.children}
   </Text>
 );

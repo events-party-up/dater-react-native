@@ -1,8 +1,4 @@
 import GeoUtils from '../utils/geo-utils';
-import {
-  MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION,
-  MAX_PAST_LOCATIONS,
-} from '../constants';
 
 const types = {
   GEO_PERMISSION_REQUESTED: 'GEO_PERMISSION_REQUESTED',
@@ -16,6 +12,7 @@ const types = {
   GEO_LOCATION_STOPPED: 'GEO_LOCATION_STOPPED',
   GEO_LOCATION_UPDATE: 'GEO_LOCATION_UPDATE',
   GEO_LOCATION_UPDATED: 'GEO_LOCATION_UPDATED',
+  GEO_LOCATION_FORCE_UPDATE: 'GEO_LOCATION_FORCE_UPDATE',
   GEO_LOCATION_SET_FIRST_COORDS: 'GEO_LOCATION_SET_FIRST_COORDS',
   GEO_LOCATION_MAINSAGA_ERROR: 'GEO_LOCATION_MAINSAGA_ERROR',
   GEO_LOCATION_UPDATE_FIRESTORE_ERROR: 'GEO_LOCATION_UPDATE_FIRESTORE_ERROR',
@@ -25,7 +22,7 @@ const types = {
 
 const initialState = {
   coords: null,
-  firstCoords: null,
+  firstCoords: null, // used to track of users around query should be reset in case we moved too far from first location
   geoUpdates: 0,
   error: null,
   geoGranted: false,
@@ -34,7 +31,6 @@ const initialState = {
   stopping: false,
   updating: false,
   initializing: false,
-  pastCoords: [],
   moveHeadingAngle: 0,
 };
 
@@ -113,36 +109,15 @@ const locationReducer = (state = initialState, action) => {
     }
     case types.GEO_LOCATION_UPDATED: {
       let { moveHeadingAngle } = state;
-      let pastCoords = [...state.pastCoords];
       // if this is not the first location update
       if (state.coords) {
         moveHeadingAngle = GeoUtils.getRotationAngle(state.coords, payload);
-      }
-
-      if (pastCoords.length > 0 &&
-        GeoUtils.distance(pastCoords[pastCoords.length - 1], payload) > MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
-        pastCoords = [...state.pastCoords, {
-          latitude: payload.latitude,
-          longitude: payload.longitude,
-          moveHeadingAngle,
-        }];
-        // if we just started location tracking
-      } else if (pastCoords.length === 0) {
-        pastCoords.push({
-          latitude: payload.latitude,
-          longitude: payload.longitude,
-        });
-      }
-
-      if (pastCoords.length > MAX_PAST_LOCATIONS) { // limit number of records
-        pastCoords.shift();
       }
 
       return {
         ...state,
         coords: payload,
         geoUpdates: state.geoUpdates + 1,
-        pastCoords,
         moveHeadingAngle,
       };
     }

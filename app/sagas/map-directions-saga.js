@@ -2,12 +2,17 @@ import { call, take, put, select } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 
 import MapDirections from '../services/maps-directions';
+import { getFirestore } from '../utils/firebase-utils';
 
 export default function* mapDirectionsSaga() {
   try {
     while (true) {
       const action = yield take('MAPVIEW_BUILD_ROUTE_START');
-      const routeToUser = action.payload;
+      const routeToUserUid = action.payload;
+      const routeToUser = yield call(getFirestore, {
+        collection: 'geoPoints',
+        doc: routeToUserUid,
+      });
       const toLocation = {
         latitude: routeToUser.geoPoint.latitude,
         longitude: routeToUser.geoPoint.longitude,

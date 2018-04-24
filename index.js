@@ -9,8 +9,6 @@ AppRegistry.registerComponent('DaterReactNative', () => App);
 if (Platform.OS === 'android') {
   const HeadlessTask = async (event) => {
     const { params } = event;
-    // console.log('[BackgroundGeolocation HeadlessTask] -', event.name, params);
-
     switch (event.name) {
       case 'location': {
         console.log('[BackgroundGeolocation HeadlessTask] -', event.name, params);
