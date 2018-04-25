@@ -5,21 +5,6 @@
       location = "group:../test/fake-coords/city-run-start.gpx">
    </FileRef>
    <FileRef
-      location = "group:../test/fake-coords/city-run.gpx">
-   </FileRef>
-   <FileRef
-      location = "group:../test/fake-coords/city-run-start.gpx">
-   </FileRef>
-   <FileRef
-      location = "group:../../../Dropbox/OS X/Documents/gpx/City Bicycle Ride.gpx">
-   </FileRef>
-   <FileRef
-      location = "group:../../../Dropbox/OS X/Documents/gpx/City Run.gpx">
-   </FileRef>
-   <FileRef
-      location = "group:../../../Dropbox/OS X/Documents/gpx/City_Run_Starting_Point.gpx">
-   </FileRef>
-   <FileRef
       location = "group:DaterReactNative.xcodeproj">
    </FileRef>
    <FileRef

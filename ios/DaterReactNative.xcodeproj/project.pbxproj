@@ -607,6 +607,13 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		7CBB8CDA2090FB6B00BB3292 /* simulated-locations */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "simulated-locations";
+			sourceTree = "<group>";
+		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -641,6 +648,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				7CBB8CDA2090FB6B00BB3292 /* simulated-locations */,
 				13B07FAE1A68108700A75B9A /* DaterReactNative */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* DaterReactNativeTests */,
