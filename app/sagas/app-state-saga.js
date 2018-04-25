@@ -1,9 +1,17 @@
 import { put, takeEvery, call } from 'redux-saga/effects';
-import { AppState } from 'react-native';
+import {
+  AppState,
+  Platform,
+} from 'react-native';
 import { eventChannel } from 'redux-saga';
 
 export default function* appStateSaga() {
   const appStateChannel = yield call(createAppStateChannel);
+  if (Platform.OS === 'android') {
+    yield* updateStateSaga('unknown'); // initialize state on app start
+  } else {
+    yield* updateStateSaga(AppState.currentState); // initialize state on app start
+  }
   yield takeEvery(appStateChannel, updateStateSaga);
 }
 
@@ -29,7 +37,6 @@ function createAppStateChannel() {
     const onStateChanged = (nextAppState) => {
       emit(nextAppState);
     };
-
     AppState.addEventListener('change', onStateChanged);
     const unsubscribe = () => AppState.removeEventListener('change', onStateChanged);
 

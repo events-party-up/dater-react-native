@@ -17,13 +17,26 @@ export default function* usersAroundSaga() {
     yield take('GEO_LOCATION_STARTED');
 
     while (true) {
+      // only start when app state is active
+      const appState = yield select((state) => state.appState.state);
+      if (appState !== 'active') {
+        yield take('APP_STATE_ACTIVE');
+      }
+
       const userCoords = yield select((state) => state.location.coords);
       const { currentUser } = yield call(firebase.auth);
       const usersAroundChannel = yield call(createUsersAroundChannel, userCoords, currentUser);
       const task1 = yield takeEvery(usersAroundChannel, updateUsersAround);
-      yield take('USERS_AROUND_RESTART');
+      yield put({ type: 'USERS_AROUND_START' });
+
+      yield take([
+        'USERS_AROUND_RESTART',
+        'APP_STATE_BACKGROUND', // stop if app is in background
+      ]);
+
       yield cancel(task1);
       yield usersAroundChannel.close();
+      yield put({ type: 'USERS_AROUND_STOP' });
     }
   } catch (error) {
     yield put({ type: 'USERS_AROUND_SAGA_ERROR', payload: error });

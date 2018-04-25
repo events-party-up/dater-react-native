@@ -7,7 +7,7 @@ const types = {
 };
 
 const initialState = {
-  state: 'unknown',
+  state: 'init',
 };
 
 const appStateReducer = (state = initialState, action) => {
@@ -30,10 +30,7 @@ const appStateReducer = (state = initialState, action) => {
       };
     }
     default: {
-      return {
-        ...state,
-        state: 'unknown',
-      };
+      return state;
     }
   }
 };
