@@ -17,26 +17,47 @@ export default function* usersAroundSaga() {
     yield take('GEO_LOCATION_STARTED');
 
     while (true) {
+      let isManuallyStopped = false;
+
       // only start when app state is active
       const appState = yield select((state) => state.appState.state);
       if (appState !== 'active') {
         yield take('APP_STATE_ACTIVE');
       }
 
-      const userCoords = yield select((state) => state.location.coords);
+      if (isManuallyStopped) {
+        yield take('USERS_AROUND_START');
+        isManuallyStopped = false;
+      }
+
+      let userCoords = yield select((state) => state.location.coords);
+
+      // if there are no location coords, wait for the first coords
+      if (!userCoords) {
+        const newLocationAction = yield take('GEO_LOCATION_UPDATED');
+        userCoords = newLocationAction.payload;
+      }
+
       const { currentUser } = yield call(firebase.auth);
       const usersAroundChannel = yield call(createUsersAroundChannel, userCoords, currentUser);
       const task1 = yield takeEvery(usersAroundChannel, updateUsersAround);
-      yield put({ type: 'USERS_AROUND_START' });
 
-      yield take([
+      yield put({ type: 'USERS_AROUND_STARTED' });
+
+      const stopAction = yield take([
         'USERS_AROUND_RESTART',
         'APP_STATE_BACKGROUND', // stop if app is in background
+        'GEO_LOCATION_STOPPED', // stop if location services are disabled
+        'USERS_AROUND_STOP',
       ]);
+
+      if (stopAction.type === 'USERS_AROUND_STOP') {
+        isManuallyStopped = true;
+      }
 
       yield cancel(task1);
       yield usersAroundChannel.close();
-      yield put({ type: 'USERS_AROUND_STOP' });
+      yield put({ type: 'USERS_AROUND_STOPPED' });
     }
   } catch (error) {
     yield put({ type: 'USERS_AROUND_SAGA_ERROR', payload: error });

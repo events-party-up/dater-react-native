@@ -17,7 +17,10 @@ export default function* locationSaga() {
     const locationChannel = yield call(createLocationChannel);
     yield takeEvery(locationChannel, updateLocation);
     yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
-    yield takeEvery('GEO_LOCATION_FORCE_UPDATE', forceUpdate);
+    yield takeEvery([
+      'GEO_LOCATION_FORCE_UPDATE',
+      'APP_STATE_ACTIVE',
+    ], forceUpdate);
     yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeCoordsToFirestore);
     const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
     if (!isUserAuthenticated) { // user must be authorized
