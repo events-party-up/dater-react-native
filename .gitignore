@@ -53,3 +53,5 @@ buck-out/
 */fastlane/screenshots
 package-lock.json
 .vscode/.react
+ios/Pods
+
