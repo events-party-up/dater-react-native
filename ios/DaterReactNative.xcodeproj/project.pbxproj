@@ -42,7 +42,6 @@
 		7C0AAEEB205FF1C00021D04C /* RNBackgroundFetch+AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C0AAEC4205FF1C00021D04C /* RNBackgroundFetch+AppDelegate.m */; };
 		7C8569D02065104D00F73867 /* libReactNativeHeading.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C8569CE2065103500F73867 /* libReactNativeHeading.a */; };
 		7C933D762050480F00E097E7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7C933D4F2050480F00E097E7 /* GoogleService-Info.plist */; };
-		7CAF4F72208F29CE00CDF97B /* libSplashScreen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7CAF4F71208F29AB00CDF97B /* libSplashScreen.a */; };
 		80601FF3439041AC59C3D52A /* libPods-DaterReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5D6C29C0D1F4022F9029135 /* libPods-DaterReactNative.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		A0741949908649E7A4CBB072 /* OpenSans-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5CF1191EFC85455ABFC09B2D /* OpenSans-SemiBoldItalic.ttf */; };
@@ -413,7 +412,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7CAF4F72208F29CE00CDF97B /* libSplashScreen.a in Frameworks */,
 				7C8569D02065104D00F73867 /* libReactNativeHeading.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,

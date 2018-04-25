@@ -123,6 +123,8 @@ PODS:
     - React
   - react-native-maps (0.20.1):
     - React
+  - react-native-splash-screen (3.0.6):
+    - React
   - React/Core (0.53.3):
     - yoga (= 0.53.3.React)
   - React/fishhook (0.53.3)
@@ -172,6 +174,7 @@ DEPENDENCIES:
   - Interactable (from `../node_modules/react-native-interactable`)
   - react-native-google-maps (from `../node_modules/react-native-maps`)
   - react-native-maps (from `../node_modules/react-native-maps`)
+  - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - React/Core (from `../node_modules/react-native`)
   - React/RCTActionSheet (from `../node_modules/react-native`)
   - React/RCTAnimation (from `../node_modules/react-native`)
@@ -197,6 +200,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-maps
   react-native-maps:
     :path: ../node_modules/react-native-maps
+  react-native-splash-screen:
+    :path: ../node_modules/react-native-splash-screen
   RNBackgroundFetch:
     :path: ../node_modules/react-native-background-fetch
   RNBackgroundGeolocation:
@@ -235,11 +240,12 @@ SPEC CHECKSUMS:
   React: af66244a7d630be2aef03b4ddfe3570e4eff39fc
   react-native-google-maps: 963fc78a5ac32dad3a726e4fa08b5307faa5cab2
   react-native-maps: 066c2afcc89e18726377bcc685315f989ca22449
+  react-native-splash-screen: 8e3f866dc79bfe533baeffd0a38c33f7a7eae7f8
   RNBackgroundFetch: 8c4f77f83c398c659bce82af2f0a885079417b9e
   RNBackgroundGeolocation: c9bbf69b9aa277f0b46754cc5f853bd26051a18f
   RNDeviceInfo: 45f04a9c291b639308a8459a83fced0ec69f9367
   yoga: 55da126afc384965b96bff46652464373b330add
 
-PODFILE CHECKSUM: 8f493fd7571a22558a4dafef58c5f2f91b2b0fc8
+PODFILE CHECKSUM: f1a74cc5c43765411e3b683357c5228e4fbb2230
 
 COCOAPODS: 1.4.0
