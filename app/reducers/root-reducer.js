@@ -8,6 +8,7 @@ import mapDirectionsReducer from './map-directions-reducer';
 import compassReducer from './compass-reducer';
 import mapPanelReducer from './map-panel-reducer';
 import findUserReducer from './find-user-reducer';
+import appStateReducer from './app-state-reducer';
 
 export const rootReducer = combineReducers({
   auth: authReducer,
@@ -18,6 +19,7 @@ export const rootReducer = combineReducers({
   mapPanel: mapPanelReducer,
   mapDirections: mapDirectionsReducer,
   findUser: findUserReducer,
+  appState: appStateReducer,
 });
 
 export default rootReducer;

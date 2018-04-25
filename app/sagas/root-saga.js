@@ -9,6 +9,7 @@ import mapPanelSaga from './map-panel-saga';
 import mapDirectionsSaga from './map-directions-saga';
 import usersAroundSaga from './users-around-saga';
 import findUserSaga from './find-user-saga';
+import appStateSaga from './app-state-saga';
 
 export default function* rootSaga() {
   yield all([
@@ -22,5 +23,6 @@ export default function* rootSaga() {
     mapDirectionsSaga(),
     usersAroundSaga(),
     findUserSaga(),
+    appStateSaga(),
   ]);
 }
