@@ -1339,9 +1339,12 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-DaterReactNative/Pods-DaterReactNative-frameworks.sh",
+				"${PODS_ROOT}/../../node_modules/@mapbox/react-native-mapbox-gl/ios/Mapbox.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1481,11 +1484,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 				);
-				"HEADER_SEARCH_PATHS[arch=*]" = (
-					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
-					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
-				);
+				"HEADER_SEARCH_PATHS[arch=*]" = "$(inherited) $(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/** $(SRCROOT)/../node_modules/react-native-splash-screen/ios";
 				INFOPLIST_FILE = DaterReactNative/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1510,11 +1509,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 				);
-				"HEADER_SEARCH_PATHS[arch=*]" = (
-					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
-					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
-				);
+				"HEADER_SEARCH_PATHS[arch=*]" = "$(inherited) $(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/** $(SRCROOT)/../node_modules/react-native-splash-screen/ios";
 				INFOPLIST_FILE = DaterReactNative/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

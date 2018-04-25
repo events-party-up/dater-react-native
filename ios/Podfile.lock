@@ -121,6 +121,8 @@ PODS:
   - react-native-google-maps (0.20.1):
     - GoogleMaps (= 2.5.0)
     - React
+  - react-native-mapbox-gl (6.1.2-beta):
+    - React
   - react-native-maps (0.20.1):
     - React
   - react-native-splash-screen (3.0.6):
@@ -173,6 +175,7 @@ DEPENDENCIES:
   - GoogleMaps
   - Interactable (from `../node_modules/react-native-interactable`)
   - react-native-google-maps (from `../node_modules/react-native-maps`)
+  - react-native-mapbox-gl (from `../node_modules/@mapbox/react-native-mapbox-gl`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - React/Core (from `../node_modules/react-native`)
@@ -198,6 +201,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native
   react-native-google-maps:
     :path: ../node_modules/react-native-maps
+  react-native-mapbox-gl:
+    :path: ../node_modules/@mapbox/react-native-mapbox-gl
   react-native-maps:
     :path: ../node_modules/react-native-maps
   react-native-splash-screen:
@@ -239,6 +244,7 @@ SPEC CHECKSUMS:
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
   React: af66244a7d630be2aef03b4ddfe3570e4eff39fc
   react-native-google-maps: 963fc78a5ac32dad3a726e4fa08b5307faa5cab2
+  react-native-mapbox-gl: b42480060cdcc515dfa3d8e403fb4dd32466a1b9
   react-native-maps: 066c2afcc89e18726377bcc685315f989ca22449
   react-native-splash-screen: 8e3f866dc79bfe533baeffd0a38c33f7a7eae7f8
   RNBackgroundFetch: 8c4f77f83c398c659bce82af2f0a885079417b9e
@@ -246,6 +252,6 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 45f04a9c291b639308a8459a83fced0ec69f9367
   yoga: 55da126afc384965b96bff46652464373b330add
 
-PODFILE CHECKSUM: f1a74cc5c43765411e3b683357c5228e4fbb2230
+PODFILE CHECKSUM: f42d90940d9c2edd12c86012c3898eee3feb9ddf
 
 COCOAPODS: 1.4.0
