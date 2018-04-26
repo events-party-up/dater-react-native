@@ -145,6 +145,14 @@ class DaterMapView extends Component<Props> {
           pitch={20}
           onWillStartLoadingMap={this.onMapReady}
         >
+          <PastLocationPolylines
+            pastCoords={this.props.findUser.myPastCoords}
+            mode="own"
+          />
+          <PastLocationPolylines
+            pastCoords={this.props.findUser.targetPastCoords}
+            mode="target"
+          />
           <UsersAroundComponent />
         </MapboxGL.MapView>
         {/* <MapView

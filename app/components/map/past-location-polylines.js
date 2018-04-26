@@ -1,40 +1,54 @@
 import * as React from 'react';
-import { Polyline } from 'react-native-maps';
+import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
 import { GeoCoordinates } from '../../types';
 
 type Props = {
   pastCoords: Array<GeoCoordinates>,
-  uid: string;
   mode: 'target' | 'own',
 };
 
 class PastLocationPolylines extends React.Component<Props> {
-  renderPastLocationsPolylines() {
-    const totalPastCoords = this.props.pastCoords.length;
-    return this.props.pastCoords.map((endingPoint, index) => {
-      if (index < 1) return null; // cannot build polylines from one point
-      // if (index >= totalPastCoords - 1) return null; // do not show marker for the last point
-      const startingPoint = this.props.pastCoords[index - 1];
-      const strokeColorOpacity = 1 - ((totalPastCoords - index) / totalPastCoords);
-      const strokeColor = this.props.mode ===
-        'own' ? `rgba(128, 128, 128, ${strokeColorOpacity})` : `rgba(0, 128, 0, ${strokeColorOpacity})`;
-      return (
-        <Polyline
-          key={`polyline-${this.props.uid}-${startingPoint.latitude}-${startingPoint.longitude}-${endingPoint.latitude}-${endingPoint.longitude}`} // eslint-disable-line
-          strokeWidth={3}
-          strokeColor={strokeColor}
-          lineJoin="round"
-          coordinates={[startingPoint, endingPoint]}
-        />
-      );
-    });
-  }
+  strokeColorOpacity = 1;
+  layerStyles = MapboxGL.StyleSheet.create({
+    route: {
+      lineColor: this.props.mode ===
+        'own' ? `rgba(128, 128, 128, ${this.strokeColorOpacity})` : `rgba(0, 128, 0, ${this.strokeColorOpacity})`,
+      lineWidth: 5,
+      lineOpacity: 0.84,
+    },
+  });
 
   render() {
+    if (this.props.pastCoords.length <= 1) return null;
+    const shapeGeoJson = {
+      route:
+        {
+          type: 'FeatureCollection',
+          features: [
+            {
+              type: 'Feature',
+              properties: {
+                color: '#F7455D', // red
+              },
+              geometry: {
+                type: 'LineString',
+                coordinates: this.props.pastCoords.map((coords) => [coords.longitude, coords.latitude]),
+              },
+            },
+          ],
+        },
+    };
+
     return (
       <React.Fragment>
-        {this.renderPastLocationsPolylines()}
+        <MapboxGL.ShapeSource id={`routeSource-${this.props.mode}`} shape={shapeGeoJson.route}>
+          <MapboxGL.LineLayer
+            id={`routeFill-${this.props.mode}`}
+            style={this.layerStyles.route}
+            // style={layerStyles.route}
+          />
+        </MapboxGL.ShapeSource>
       </React.Fragment>
     );
   }
