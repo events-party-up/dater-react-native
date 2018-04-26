@@ -9,6 +9,7 @@ import {
 
 type Props = {
   title: string,
+  onPress: () => void,
 };
 
 class PersonMaker extends React.Component<Props> {
@@ -17,6 +18,7 @@ class PersonMaker extends React.Component<Props> {
     return (
       <TouchableOpacity
         style={styles.container}
+        onPress={this.props.onPress}
       >
         <View style={styles.bubble}>
           <Text style={styles.title}>{title}</Text>

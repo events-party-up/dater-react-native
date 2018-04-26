@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Marker } from 'react-native-maps';
 import { connect, Dispatch } from 'react-redux';
+import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
 import PersonMaker from './person-maker';
 
@@ -13,12 +13,12 @@ const mapStateToProps = (state) => ({
 type Props = {
   usersAround: Array<mixed>,
   dispatch: Dispatch,
-  // mapPanel: any,
+  mapPanel: any,
   findUser: any,
 };
 
 class UsersAroundComponent extends React.Component<Props> {
-  onPersonMakerPress = (user) => {
+  onPress = (user) => {
     if (this.props.findUser.enabled) {
       this.props.dispatch({
         type: 'UI_MAP_PANEL_SHOW',
@@ -38,20 +38,54 @@ class UsersAroundComponent extends React.Component<Props> {
     }
   }
 
+  onSelected = (user) => {
+    if (this.props.findUser.enabled) {
+      this.props.dispatch({
+        type: 'UI_MAP_PANEL_SHOW',
+        payload: {
+          mode: 'findUserActive',
+          user,
+        },
+      });
+    } else {
+      this.props.dispatch({
+        type: 'UI_MAP_PANEL_SHOW',
+        payload: {
+          mode: 'userCard',
+          user,
+        },
+      });
+    }
+  }
+
+  onDeselected = () => {
+    if (this.props.mapPanel.visible) {
+      this.props.dispatch({
+        type: 'UI_MAP_PANEL_HIDE',
+        payload: {
+          source: 'userAround-onDeselected',
+        },
+      });
+    }
+  }
+
   renderUsersAround() {
     return this.props.usersAround.map((user) => (
-      <Marker
-        coordinate={{
-          latitude: user.geoPoint.latitude,
-          longitude: user.geoPoint.longitude,
-        }}
+      <MapboxGL.PointAnnotation
+        coordinate={[
+          user.geoPoint.longitude,
+          user.geoPoint.latitude,
+        ]}
         key={user.uid}
-        onPress={(event) => { event.stopPropagation(); this.onPersonMakerPress(user); }}
-        zIndex={2}
-        stopPropagation
+        id={user.uid}
+        onDeselected={() => { this.onDeselected(); }}
+        selected={false}
       >
-        <PersonMaker title={user.shortId} />
-      </Marker>
+        <PersonMaker
+          onPress={() => { this.onPress(user); }}
+          title={user.shortId}
+        />
+      </MapboxGL.PointAnnotation>
     ));
   }
 

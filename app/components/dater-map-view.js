@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import MapView from 'react-native-maps';
 import { connect, Dispatch } from 'react-redux';
+import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
 import { GeoCompass, GeoCoordinates } from '../types';
 import MyLocationOnMovingMap from './map/my-location-on-moving-map';
@@ -24,12 +25,16 @@ const mapStateToProps = (state) => ({
   findUser: state.findUser,
 });
 
-function creatMapViewProxy(mapView: MapView) {
+function creatMapViewProxy(mapView: MapboxGL.MapView) {
   return {
-    animateToBearing: (bearing, duration) => mapView.animateToBearing(bearing, duration),
-    animateToRegion: (region, duration) => mapView.animateToRegion(region, duration),
-    animateToCoordinate: (coords, duration) => mapView.animateToCoordinate(coords, duration),
-    fitToCoordinates: (coords, options) => mapView.fitToCoordinates(coords, options),
+    animateToBearing: (heading, duration) => mapView.setCamera({
+      heading,
+      duration,
+    }),
+    animateToRegion: (region, duration) => mapView.moveTo([region.longitude, region.latitude], duration),
+    // animateToCoordinate: (coords, duration) => mapView.animateToCoordinate(coords, duration),
+    animateToCoordinate: (coords, duration) => mapView.moveTo([coords.longitude, coords.latitude], duration),
+    fitToCoordinates: (coords, options) => mapView.fitBounds(coords, options),
   };
 }
 
@@ -45,7 +50,7 @@ type Props = {
     pastCoords: Array<GeoCoordinates>,
     moveHeadingAngle: number,
   },
-  mapView: MapView,
+  mapView: MapboxGL.MapView,
   mapPanel: any,
   findUser: any,
 };
@@ -79,6 +84,7 @@ class DaterMapView extends Component<Props> {
   }
 
   onMapPressed = () => {
+    console.log('Map pressed');
     if (this.props.mapPanel.visible) {
       this.props.dispatch({
         type: 'UI_MAP_PANEL_HIDE',
@@ -118,14 +124,30 @@ class DaterMapView extends Component<Props> {
         }}
         onResponderRelease={this.onMapDragEnd}
       >
-        {this.props.location.enabled && this.props.location.coords && this.props.mapView.centered &&
+        {/* {this.props.location.enabled && this.props.location.coords && this.props.mapView.centered &&
         <MyLocationOnMovingMap
           accuracy={this.props.location.coords.accuracy}
           visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
           moveHeadingAngle={this.props.location.moveHeadingAngle}
           mapViewBearingAngle={this.props.mapView.bearingAngle}
-        />}
-        <MapView
+        />} */}
+        <MapboxGL.MapView
+          ref={(component) => { this.mapView = component; }}
+          showUserLocation
+          zoomLevel={17}
+          userTrackingMode={MapboxGL.UserTrackingModes.Follow}
+          style={styles.mapView}
+          animated
+          logoEnabled={false}
+          compassEnabled
+          localizeLabels
+          onPress={() => { this.onMapPressed(); }}
+          pitch={20}
+          onWillStartLoadingMap={this.onMapReady}
+        >
+          <UsersAroundComponent />
+        </MapboxGL.MapView>
+        {/* <MapView
           ref={(component) => { this.mapView = component; }}
           style={styles.mapView}
           onRegionChangeComplete={(region) => this.onRegionChangeComplete(region, this.props.mapView)}
@@ -175,7 +197,7 @@ class DaterMapView extends Component<Props> {
             uid={this.props.auth.uid && this.props.auth.uid}
             mode="own"
           />
-        </MapView>
+        </MapView> */}
         <Caption2 style={styles.debugText} pointerEvents="none">
           Accuracy: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
           GPS Heading: {this.props.location.coords && this.props.location.coords.heading}{'\n'}
