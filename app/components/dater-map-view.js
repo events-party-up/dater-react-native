@@ -8,10 +8,10 @@ import { connect, Dispatch } from 'react-redux';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
 import { GeoCompass, GeoCoordinates } from '../types';
-import MyLocationOnMovingMap from './map/my-location-on-moving-map';
-import MyLocationMapMarker from './map/my-location-map-maker';
+// import MyLocationOnMovingMap from './map/my-location-on-moving-map';
+// import MyLocationMapMarker from './map/my-location-map-maker';
 import UsersAroundComponent from './map/users-around-component';
-import MapDirectionsComponent from './map/map-directions-component';
+// import MapDirectionsComponent from './map/map-directions-component';
 import PastLocationMarker from './map/past-location-marker';
 import PastLocationPolylines from './map/past-location-polylines';
 import { Caption2 } from './ui-kit/typography';
@@ -118,10 +118,10 @@ class DaterMapView extends Component<Props> {
     return (
       <View
         style={styles.mapView}
-        onMoveShouldSetResponder={(event) => {
-          this.onMapDragStart(event);
-          return true;
-        }}
+        // onMoveShouldSetResponder={(event) => {
+        //   this.onMapDragStart(event);
+        //   return true;
+        // }}
         onResponderRelease={this.onMapDragEnd}
       >
         {/* {this.props.location.enabled && this.props.location.coords && this.props.mapView.centered &&
@@ -151,6 +151,18 @@ class DaterMapView extends Component<Props> {
           />
           <PastLocationPolylines
             pastCoords={this.props.findUser.targetPastCoords}
+            mode="target"
+          />
+          <PastLocationMarker
+            pastCoords={this.props.findUser.myPastCoords}
+            mapViewBearingAngle={this.props.mapView.bearingAngle}
+            uid={this.props.auth.uid && this.props.auth.uid}
+            mode="own"
+          />
+          <PastLocationMarker
+            pastCoords={this.props.findUser.targetPastCoords}
+            mapViewBearingAngle={this.props.mapView.bearingAngle}
+            uid={this.props.findUser.targetUserUid}
             mode="target"
           />
           <UsersAroundComponent />

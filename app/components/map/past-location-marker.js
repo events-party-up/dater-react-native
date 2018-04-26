@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Marker } from 'react-native-maps';
+import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
 import {
   View,
@@ -24,6 +24,7 @@ class PastLocationMarker extends React.Component<Props> {
       const borderBottomOpacity = 1 - ((totalPastCoords - index) / totalPastCoords);
       const borderBottomColor = this.props.mode ===
         'own' ? `rgba(128, 128, 128, ${borderBottomOpacity})` : `rgba(0, 128, 0, ${borderBottomOpacity})`;
+      const rotation = coord.moveHeadingAngle - this.props.mapViewBearingAngle;
       const styles = StyleSheet.create({
         triangle: {
           backgroundColor: 'transparent',
@@ -34,21 +35,23 @@ class PastLocationMarker extends React.Component<Props> {
           borderLeftColor: 'transparent',
           borderRightColor: 'transparent',
           borderBottomColor,
+          transform: [{ rotate: `${rotation}deg` }],
         },
       });
-      const rotation = coord.moveHeadingAngle - this.props.mapViewBearingAngle;
       // console.log(`Rotation in maker: ${coord.moveHeadingAngle} Rotation in map: ${this.props.mapViewBearingAngle} Total rotation: ${rotation}`);
       return (
-        <Marker
+        <MapboxGL.PointAnnotation
+          coordinate={[
+            coord.longitude,
+            coord.latitude,
+          ]}
           key={`marker-${this.props.uid}-${coord.latitude}-${coord.longitude}-${index}`} // eslint-disable-line
-          coordinate={{
-            latitude: coord.latitude,
-            longitude: coord.longitude,
-          }}
-          rotation={rotation}
+          id={`marker-${this.props.uid}-${coord.latitude}-${coord.longitude}-${index}`} // eslint-disable-line
+          // onDeselected={() => { this.onDeselected(); }}
+          selected={false}
         >
           <View style={styles.triangle} />
-        </Marker>
+        </MapboxGL.PointAnnotation>
       );
     });
   }

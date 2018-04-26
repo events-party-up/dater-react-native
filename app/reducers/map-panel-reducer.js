@@ -35,7 +35,7 @@ const mapPanelReducer = (state = initialState, action) => {
         visible: true,
       };
     }
-    case types.UI_MAP_PANEL_HIDE_FINISHED: {
+    case types.UI_MAP_PANEL_HIDE: {
       return {
         ...state,
         visible: false,

@@ -1,7 +1,7 @@
 import GeoUtils from '../utils/geo-utils';
 import {
   MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION,
-  // MAX_PAST_LOCATIONS,
+  MAX_PAST_LOCATIONS,
   MAX_DISTANCE_FROM_PREVIOUS_PAST_LOCATION,
   MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION,
   MINIMUM_ACCURACY_PAST_LOCATION,
@@ -64,6 +64,9 @@ const findUserReducer = (state = initialState, action) => {
       if (targetPastCoords.length > 1 && currentUserLastLocation) {
         targetScore += targetPastCoords[targetPastCoords.length - 1].opponentDistanceDelta;
       }
+      if (targetPastCoords.length > MAX_PAST_LOCATIONS) {
+        targetPastCoords.shift();
+      }
 
       return {
         ...state,
@@ -84,6 +87,10 @@ const findUserReducer = (state = initialState, action) => {
       const currentDistance = targetUserLastLocation ?
         GeoUtils.distance(targetUserLastLocation, payload) :
         state.currentDistance;
+
+      if (myPastCoords.length > MAX_PAST_LOCATIONS) {
+        myPastCoords.shift();
+      }
 
       return {
         ...state,
