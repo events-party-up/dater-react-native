@@ -22,10 +22,14 @@ export default function* locationSaga() {
       'APP_STATE_ACTIVE',
     ], forceUpdate);
     yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeCoordsToFirestore);
-    // const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
-    // if (!isUserAuthenticated) { // user must be authorized
-    //   yield take('AUTH_SUCCESS');
-    // }
+
+    const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
+    const appState = yield select((state) => state.appState.state);
+
+    if (!isUserAuthenticated && appState !== 'active') { // user must be authorized
+      yield take('AUTH_SUCCESS');
+    }
+
     const locationServiceState = yield call([BackgroundGeolocation, 'init']);
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
     yield throttle(500, 'GEO_LOCATION_UPDATED', locationUpdatedSaga);

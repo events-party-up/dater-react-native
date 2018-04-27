@@ -144,6 +144,8 @@ class DaterMapView extends Component<Props> {
           onPress={() => { this.onMapPressed(); }}
           pitch={20}
           onWillStartLoadingMap={this.onMapReady}
+          styleURL="mapbox://styles/olegwn/cjggmap8l002u2rmu63wda2nk"
+
         >
           <PastLocationPolylines
             pastCoords={this.props.findUser.myPastCoords}

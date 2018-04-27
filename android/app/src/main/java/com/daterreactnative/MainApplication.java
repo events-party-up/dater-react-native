@@ -23,7 +23,12 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+
+// Maps
 import com.airbnb.android.react.maps.MapsPackage;
+// MapBox
+import com.mapbox.rctmgl.RCTMGLPackage;
+
 
 import java.util.Arrays;
 import java.util.List;
@@ -53,8 +58,9 @@ public class MainApplication extends Application implements ReactApplication {
           new RNFirebaseFirestorePackage(),
           new RNFirebaseRemoteConfigPackage(),
           new RNFirebasePerformancePackage(),
-          new ReactNativeHeadingPackage()
-      );
+          new ReactNativeHeadingPackage(),
+          new RCTMGLPackage()
+        );
     }
 
     @Override

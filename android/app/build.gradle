@@ -188,6 +188,7 @@ dependencies {
         exclude group: 'com.google.android.gms'
     }
     compile project(':react-native-heading')
+    compile project(':mapbox-react-native-mapbox-gl')
 
 }
 
