@@ -9,9 +9,12 @@ import gpxpy.gpx
 import time
 from subprocess import check_output
 
+# pip install gpxpy
+# curl https://bootstrap.pypa.io/get-pip.py | sudo python2
 # python2 playback-gpx.py  -i 1 "./city-run.gpx"
-# python playback-gpx.py -i 1 -r "-r 192.168.56.102" "docs/North On Topanga(1).gpx"
-# python playback-gpx.py -i 1 -r "-r 192.168.56.101" "docs/South On Topanga(1).gpx"
+# python2 playback-gpx.py -i 1 -r "-r 192.168.56.102" "docs/North On Topanga(1).gpx"
+# GPX file generator http://www.gpsvisualizer.com/convert_input
+# Genymotion instructions https://www.genymotion.com/blog/simulate-gps-movements/
 
 # 08/21/2014
 # added returnDefaultPath function so the script is more os independent
