@@ -1,4 +1,4 @@
-import { throttle, takeEvery, select, take, put, call } from 'redux-saga/effects';
+import { throttle, takeEvery, select, take, put, call, cancel } from 'redux-saga/effects';
 import { eventChannel, delay } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
@@ -17,10 +17,6 @@ export default function* locationSaga() {
     const locationChannel = yield call(createLocationChannel);
     yield takeEvery(locationChannel, updateLocation);
     yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
-    yield takeEvery([
-      'GEO_LOCATION_FORCE_UPDATE',
-      'APP_STATE_ACTIVE',
-    ], forceUpdate);
     yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeCoordsToFirestore);
 
     const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
@@ -33,7 +29,6 @@ export default function* locationSaga() {
     const locationServiceState = yield call([BackgroundGeolocation, 'init']);
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
     yield throttle(500, 'GEO_LOCATION_UPDATED', locationUpdatedSaga);
-    // yield throttle(2000, 'GEO_LOCATION_UPDATED', writeCoordsToFirestore);
 
     while (true) {
       yield take('GEO_LOCATION_START');
@@ -42,6 +37,11 @@ export default function* locationSaga() {
       const action = yield take('GEO_LOCATION_UPDATED'); // wait for first update!
       yield put({ type: 'GEO_LOCATION_STARTED', payload: action.payload });
       yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_START', payload: { caller: 'locationSaga' } });
+
+      const task1 = yield takeEvery([
+        'GEO_LOCATION_FORCE_UPDATE',
+        'APP_STATE_ACTIVE',
+      ], forceUpdate);
 
       yield take('GEO_LOCATION_STOP');
       yield call([BackgroundGeolocation, 'stop']);
@@ -54,6 +54,7 @@ export default function* locationSaga() {
           visible: false,
         },
       });
+      yield cancel(task1);
       yield put({ type: 'GEO_LOCATION_STOPPED' });
     }
   } catch (error) {
@@ -170,7 +171,11 @@ function* writeCoordsToFirestore() {
 }
 
 function* forceUpdate() {
-  yield call([BackgroundGeolocation, 'changePace'], true);
+  try {
+    yield call([BackgroundGeolocation, 'changePace'], true);
+  } catch (error) {
+    yield put({ type: 'GEO_LOCATION_MAINSAGA_ERROR', payload: error });
+  }
 }
 
 function createLocationChannel() {
