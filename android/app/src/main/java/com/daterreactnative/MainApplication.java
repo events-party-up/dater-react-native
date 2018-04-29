@@ -24,8 +24,6 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 
-// Maps
-import com.airbnb.android.react.maps.MapsPackage;
 // MapBox
 import com.mapbox.rctmgl.RCTMGLPackage;
 
@@ -51,7 +49,6 @@ public class MainApplication extends Application implements ReactApplication {
           new RNBackgroundFetchPackage(),
           new RNDeviceInfo(),
           new RNFirebasePackage(),
-          new MapsPackage(),
           new RNFirebaseAnalyticsPackage(),
           new RNFirebaseAuthPackage(),
           new RNFirebaseCrashlyticsPackage(),

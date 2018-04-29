@@ -14,9 +14,6 @@
       android:icon="@mipmap/icon"
       android:allowBackup="true"
       android:theme="@style/AppTheme">
-      <meta-data
-      android:name="com.google.android.geo.API_KEY"
-      android:value="AIzaSyCX-Jzqfe8bJ3F8Th46jWh-jZvh_ehz6OA"/>
       <activity
           android:name=".SplashActivity"
           android:theme="@style/SplashTheme"
