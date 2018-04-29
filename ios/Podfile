@@ -3,7 +3,7 @@ platform :ios, '10.0'
 
 target 'DaterReactNative' do
   rn_path = '../node_modules/react-native'
-  rn_maps_path = '../node_modules/react-native-maps'
+  # rn_maps_path = '../node_modules/react-native-maps'
 
   # Firebase React Native
   pod 'Firebase/Core'
@@ -30,10 +30,7 @@ target 'DaterReactNative' do
     # 'BatchedBridge'
   ]
 
-  pod 'react-native-maps', path: rn_maps_path
 
-  pod 'GoogleMaps'  # Remove this line if you don't want to support Google Maps on iOS
-  pod 'react-native-google-maps', path: rn_maps_path  # Remove this line if you don't want to support Google Maps on iOS
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
 
   pod 'RNBackgroundGeolocation', :path => '../node_modules/react-native-background-geolocation'
@@ -48,11 +45,6 @@ end
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
-    if target.name == 'react-native-google-maps'
-      target.build_configurations.each do |config|
-        config.build_settings['CLANG_ENABLE_MODULES'] = 'No'
-      end
-    end
     if target.name == "React"
       target.remove_from_project
     end

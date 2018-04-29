@@ -3,7 +3,6 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import MapView from 'react-native-maps';
 import { connect, Dispatch } from 'react-redux';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
@@ -11,7 +10,7 @@ import { GeoCompass, GeoCoordinates } from '../types';
 // import MyLocationOnMovingMap from './map/my-location-on-moving-map';
 // import MyLocationMapMarker from './map/my-location-map-maker';
 import UsersAroundComponent from './map/users-around-component';
-import MapDirectionsComponent from './map/map-directions-component';
+// import MapDirectionsComponent from './map/map-directions-component';
 import PastLocationMarker from './map/past-location-marker';
 import PastLocationPolylines from './map/past-location-polylines';
 import { Caption2 } from './ui-kit/typography';
@@ -60,7 +59,7 @@ type Props = {
 };
 
 class DaterMapView extends Component<Props> {
-  mapView: MapView;
+  mapView: MapboxGL.MapView;
   directions: null;
 
   onRegionDidChange = (event) => {
@@ -143,7 +142,7 @@ class DaterMapView extends Component<Props> {
           onRegionDidChange={(event) => this.onRegionDidChange(event)}
 
         >
-          <MapDirectionsComponent />
+          {/* <MapDirectionsComponent /> */}
           <PastLocationPolylines
             pastCoords={this.props.findUser.myPastCoords}
             mode="own"
