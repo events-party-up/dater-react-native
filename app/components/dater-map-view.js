@@ -11,7 +11,7 @@ import { GeoCompass, GeoCoordinates } from '../types';
 // import MyLocationOnMovingMap from './map/my-location-on-moving-map';
 // import MyLocationMapMarker from './map/my-location-map-maker';
 import UsersAroundComponent from './map/users-around-component';
-// import MapDirectionsComponent from './map/map-directions-component';
+import MapDirectionsComponent from './map/map-directions-component';
 import PastLocationMarker from './map/past-location-marker';
 import PastLocationPolylines from './map/past-location-polylines';
 import { Caption2 } from './ui-kit/typography';
@@ -37,8 +37,8 @@ function creatMapViewProxy(mapView: MapboxGL.MapView) {
       zoom: options.zoom,
       duration: options.duration,
     }),
-    animateToCoordinate: (coords, duration) => mapView.moveTo([coords.longitude, coords.latitude], duration),
-    fitToCoordinates: (coords, options) => mapView.fitBounds(coords, options),
+    moveTo: (...args) => mapView.moveTo(...args),
+    fitBounds: (...args) => mapView.fitBounds(...args),
   };
 }
 
@@ -95,11 +95,6 @@ class DaterMapView extends Component<Props> {
     }
   }
 
-  onRegionChange = (region) => {
-    console.log('Region updated');
-    console.log(region);
-  }
-
   onMapDragStart = (event) => {
     this.props.dispatch({
       type: 'MAPVIEW_DRAG_START',
@@ -118,10 +113,10 @@ class DaterMapView extends Component<Props> {
     return (
       <View
         style={styles.mapView}
-        // onMoveShouldSetResponder={(event) => {
-        //   this.onMapDragStart(event);
-        //   return true;
-        // }}
+        onMoveShouldSetResponder={(event) => {
+          this.onMapDragStart(event);
+          return true;
+        }}
         onResponderRelease={this.onMapDragEnd}
       >
         {/* {this.props.location.enabled && this.props.location.coords && this.props.mapView.centered &&
@@ -148,6 +143,7 @@ class DaterMapView extends Component<Props> {
           onRegionDidChange={(event) => this.onRegionDidChange(event)}
 
         >
+          <MapDirectionsComponent />
           <PastLocationPolylines
             pastCoords={this.props.findUser.myPastCoords}
             mode="own"
@@ -168,26 +164,7 @@ class DaterMapView extends Component<Props> {
             uid={this.props.findUser.targetUserUid}
             mode="target"
           />
-          <UsersAroundComponent />
-        </MapboxGL.MapView>
-        {/* <MapView
-          ref={(component) => { this.mapView = component; }}
-          style={styles.mapView}
-          onRegionChangeComplete={(region) => this.onRegionChangeComplete(region, this.props.mapView)}
-          onMapReady={this.onMapReady}
-          // onRegionChange={this.onRegionChange}
-          provider="google"
-          showsIndoors
-          showsTraffic={false}
-          showsBuildings={false}
-          // scrollEnabled={false}
-          toolbarEnabled={false}
-          moveOnMarkerPress={false}
-          rotateEnabled={false}
-          mapType="standard"
-          onPress={() => { this.onMapPressed(); }}
-        >
-          {this.props.location.enabled && this.props.location.coords && !this.props.mapView.centered &&
+          {/* {this.props.location.enabled && this.props.location.coords && !this.props.mapView.centered &&
             <MyLocationMapMarker
               accuracy={this.props.location.coords.accuracy}
               coordinate={this.props.location.coords}
@@ -195,32 +172,9 @@ class DaterMapView extends Component<Props> {
               compassHeading={this.props.compass.heading}
               moveHeadingAngle={this.props.location.moveHeadingAngle}
               mapViewheadingAngle={this.props.mapView.headingAngle}
-            /> }
+            />} */}
           <UsersAroundComponent />
-          <MapDirectionsComponent />
-          <PastLocationPolylines
-            pastCoords={this.props.findUser.targetPastCoords}
-            uid={this.props.findUser.targetUserUid}
-            mode="target"
-          />
-          <PastLocationMarker
-            pastCoords={this.props.findUser.targetPastCoords}
-            mapViewheadingAngle={this.props.mapView.headingAngle}
-            uid={this.props.findUser.targetUserUid}
-            mode="target"
-          />
-          <PastLocationPolylines
-            pastCoords={this.props.findUser.myPastCoords}
-            uid={this.props.auth.uid && this.props.auth.uid}
-            mode="own"
-          />
-          <PastLocationMarker
-            pastCoords={this.props.findUser.myPastCoords}
-            mapViewheadingAngle={this.props.mapView.headingAngle}
-            uid={this.props.auth.uid && this.props.auth.uid}
-            mode="own"
-          />
-        </MapView> */}
+        </MapboxGL.MapView>
         <Caption2 style={styles.debugText} pointerEvents="none">
           Accuracy: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
           GPS Heading: {this.props.location.coords && this.props.location.coords.heading}{'\n'}

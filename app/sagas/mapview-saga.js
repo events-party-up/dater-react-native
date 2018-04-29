@@ -1,4 +1,4 @@
-import { throttle, takeLatest, call, take, put, cancel, select } from 'redux-saga/effects';
+import { takeLatest, call, take, put, cancel, select } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import { DEFAULT_MAPVIEW_ANIMATION_DURATION } from '../constants';
 
@@ -7,8 +7,8 @@ export default function* mapViewSaga() {
     while (true) {
       const { mapView } = yield take('MAPVIEW_READY');
       const task1 = yield takeLatest('MAPVIEW_SET_CAMERA', setCamera, mapView);
-      const task2 = yield takeLatest('MAPVIEW_ANIMATE_TO_COORDINATE', animateToCoordinate, mapView);
-      const task3 = yield throttle(1000, [
+      const task2 = yield takeLatest('MAPVIEW_MOVE_TO', moveTo, mapView);
+      const task3 = yield takeLatest([
         'MAPVIEW_ANIMATE_TO_HEADING_MANUALLY',
         'MAPVIEW_ANIMATE_TO_HEADING_GPS_HEADING',
         'MAPVIEW_ANIMATE_TO_HEADING_COMPASS_HEADING'], animateToHeading, mapView);
@@ -46,13 +46,21 @@ function* setCamera(mapView, action) {
   }
 }
 
-function* animateToCoordinate(mapView, action) {
+function* moveTo(mapView, action) {
   try {
     const { coords, duration } = action.payload;
     const animationDuration = duration || DEFAULT_MAPVIEW_ANIMATION_DURATION;
-    yield call(mapView.animateToCoordinate, coords, animationDuration);
+    yield call(mapView.moveTo, [coords.longitude, coords.latitude], animationDuration);
   } catch (error) {
-    yield put({ type: 'MAPVIEW_ANIMATE_TO_COORDINATE_ERROR', payload: error });
+    yield put({ type: 'MAPVIEW_MOVE_TO_ERROR', payload: error });
+  }
+}
+
+function* fitBounds(mapView, coords1: Array<number>, coords2: Array<number>) {
+  try {
+    yield call(mapView.fitBounds, coords1, coords2, 80, DEFAULT_MAPVIEW_ANIMATION_DURATION);
+  } catch (error) {
+    yield put({ type: 'MAPVIEW_FIT_TO_BOUNDS_ERROR', payload: error });
   }
 }
 
@@ -60,25 +68,14 @@ function* showMeAndTargetFindUser(mapView) {
   try {
     const lastTargetUserCoords = yield select((state) => state.findUser.targetPastCoords.pop());
     const myLastCoords = yield select((state) => state.location.coords);
-    yield call(fitToCoordinates, mapView, [lastTargetUserCoords, myLastCoords]);
+    yield call(
+      fitBounds,
+      mapView,
+      [lastTargetUserCoords.longitude, lastTargetUserCoords.latitude],
+      [myLastCoords.longitude, myLastCoords.latitude],
+    );
   } catch (error) {
-    yield put({ type: 'MAPVIEW_FIT_TO_COORDS_ERROR', payload: error });
-  }
-}
-
-function* fitToCoordinates(mapView, coords) {
-  try {
-    yield call(mapView.fitToCoordinates, coords, {
-      animated: false,
-      edgePadding: {
-        top: 50,
-        right: 50,
-        bottom: 50,
-        left: 50,
-      },
-    });
-  } catch (error) {
-    yield put({ type: 'MAPVIEW_FIT_TO_COORDS_ERROR', payload: error });
+    yield put({ type: 'MAPVIEW_SHOW_ME_AND_TARTET_FIND_USER_ERROR', payload: error });
   }
 }
 

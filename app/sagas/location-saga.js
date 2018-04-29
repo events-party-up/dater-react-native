@@ -72,7 +72,6 @@ function* locationUpdatedSaga(action) {
   const currentCoords = action.payload;
   const firstCoords = yield select((state) => state.location.firstCoords);
   if (isCentered) {
-    // yield* animateToCurrentLocation(action);
     yield* call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
     yield* setCamera(action);
   }
@@ -103,26 +102,13 @@ function* locationUpdatedSaga(action) {
   }
 }
 
-// function* animateToCurrentLocation(action) {
-//   yield put({
-//     type: 'MAPVIEW_ANIMATE_TO_COORDINATE',
-//     payload: {
-//       coords: {
-//         latitude: action.payload.latitude,
-//         longitude: action.payload.longitude,
-//       },
-//     },
-//   });
-// }
-
 function* setCamera(action) {
   const currentHeading = yield select((state) => state.mapView.heading);
   const gpsHeading = action.payload.heading || currentHeading;
-  const heading = GeoUtils.wrapCompassHeading(gpsHeading);
   yield put({
     type: 'MAPVIEW_SET_CAMERA',
     payload: {
-      heading,
+      heading: gpsHeading,
       latitude: action.payload.latitude,
       longitude: action.payload.longitude,
     },
