@@ -74,7 +74,7 @@ function* locationUpdatedSaga(action) {
   if (isCentered) {
     // yield* animateToCurrentLocation(action);
     yield* call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
-    yield* animateToBearing(action);
+    yield* setCamera(action);
   }
   if (isFindUserEnabled) {
     yield put({
@@ -115,15 +115,16 @@ function* locationUpdatedSaga(action) {
 //   });
 // }
 
-function* animateToBearing(action) {
-  const gpsHeading = action.payload.heading;
-  if (gpsHeading < 0) return;
-
-  const bearingAngle = GeoUtils.wrapCompassHeading(gpsHeading);
+function* setCamera(action) {
+  const currentHeading = yield select((state) => state.mapView.heading);
+  const gpsHeading = action.payload.heading || currentHeading;
+  const heading = GeoUtils.wrapCompassHeading(gpsHeading);
   yield put({
-    type: 'MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING',
+    type: 'MAPVIEW_SET_CAMERA',
     payload: {
-      bearingAngle,
+      heading,
+      latitude: action.payload.latitude,
+      longitude: action.payload.longitude,
     },
   });
 }

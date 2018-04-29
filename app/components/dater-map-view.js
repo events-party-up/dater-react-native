@@ -27,12 +27,16 @@ const mapStateToProps = (state) => ({
 
 function creatMapViewProxy(mapView: MapboxGL.MapView) {
   return {
-    animateToBearing: (heading, duration) => mapView.setCamera({
+    animateToHeading: (heading, duration) => mapView.setCamera({
       heading,
       duration,
     }),
-    animateToRegion: (region, duration) => mapView.moveTo([region.longitude, region.latitude], duration),
-    // animateToCoordinate: (coords, duration) => mapView.animateToCoordinate(coords, duration),
+    setCamera: (options) => mapView.setCamera({
+      centerCoordinate: [options.longitude, options.latitude],
+      heading: options.heading,
+      zoom: options.zoom,
+      duration: options.duration,
+    }),
     animateToCoordinate: (coords, duration) => mapView.moveTo([coords.longitude, coords.latitude], duration),
     fitToCoordinates: (coords, options) => mapView.fitBounds(coords, options),
   };
@@ -59,14 +63,10 @@ class DaterMapView extends Component<Props> {
   mapView: MapView;
   directions: null;
 
-  onRegionChangeComplete = async (newRegion, prevRegion) => {
-    if (!prevRegion || !newRegion || !prevRegion.latitude) return;
+  onRegionDidChange = (event) => {
     this.props.dispatch({
-      type: 'MAPVIEW_REGION_UPDATED',
-      payload: {
-        newRegion,
-        prevRegion,
-      },
+      type: 'MAPVIEW_REGION_CHANGED',
+      payload: event,
     });
   }
 
@@ -129,22 +129,23 @@ class DaterMapView extends Component<Props> {
           accuracy={this.props.location.coords.accuracy}
           visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
           moveHeadingAngle={this.props.location.moveHeadingAngle}
-          mapViewBearingAngle={this.props.mapView.bearingAngle}
+          mapViewheadingAngle={this.props.mapView.headingAngle}
         />} */}
         <MapboxGL.MapView
           ref={(component) => { this.mapView = component; }}
           showUserLocation
           zoomLevel={17}
-          userTrackingMode={MapboxGL.UserTrackingModes.Follow}
+          userTrackingMode={MapboxGL.UserTrackingModes.None}
           style={styles.mapView}
           animated
           logoEnabled={false}
           compassEnabled
           localizeLabels
           onPress={() => { this.onMapPressed(); }}
-          pitch={20}
+          pitch={0}
           onWillStartLoadingMap={this.onMapReady}
           styleURL="mapbox://styles/olegwn/cjggmap8l002u2rmu63wda2nk"
+          onRegionDidChange={(event) => this.onRegionDidChange(event)}
 
         >
           <PastLocationPolylines
@@ -157,13 +158,13 @@ class DaterMapView extends Component<Props> {
           />
           <PastLocationMarker
             pastCoords={this.props.findUser.myPastCoords}
-            mapViewBearingAngle={this.props.mapView.bearingAngle}
+            mapViewheadingAngle={this.props.mapView.headingAngle}
             uid={this.props.auth.uid && this.props.auth.uid}
             mode="own"
           />
           <PastLocationMarker
             pastCoords={this.props.findUser.targetPastCoords}
-            mapViewBearingAngle={this.props.mapView.bearingAngle}
+            mapViewheadingAngle={this.props.mapView.headingAngle}
             uid={this.props.findUser.targetUserUid}
             mode="target"
           />
@@ -193,7 +194,7 @@ class DaterMapView extends Component<Props> {
               gpsHeading={this.props.location.coords.heading}
               compassHeading={this.props.compass.heading}
               moveHeadingAngle={this.props.location.moveHeadingAngle}
-              mapViewBearingAngle={this.props.mapView.bearingAngle}
+              mapViewheadingAngle={this.props.mapView.headingAngle}
             /> }
           <UsersAroundComponent />
           <MapDirectionsComponent />
@@ -204,7 +205,7 @@ class DaterMapView extends Component<Props> {
           />
           <PastLocationMarker
             pastCoords={this.props.findUser.targetPastCoords}
-            mapViewBearingAngle={this.props.mapView.bearingAngle}
+            mapViewheadingAngle={this.props.mapView.headingAngle}
             uid={this.props.findUser.targetUserUid}
             mode="target"
           />
@@ -215,7 +216,7 @@ class DaterMapView extends Component<Props> {
           />
           <PastLocationMarker
             pastCoords={this.props.findUser.myPastCoords}
-            mapViewBearingAngle={this.props.mapView.bearingAngle}
+            mapViewheadingAngle={this.props.mapView.headingAngle}
             uid={this.props.auth.uid && this.props.auth.uid}
             mode="own"
           />

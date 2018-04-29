@@ -54,9 +54,9 @@ class MyLocationButton extends Component<Props> {
       this.rotate = this.rotate + 90;
       if (this.rotate >= 360) this.rotate = 0;
       this.props.dispatch({
-        type: 'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
+        type: 'MAPVIEW_ANIMATE_TO_HEADING_MANUALLY',
         payload: {
-          bearingAngle: this.rotate,
+          heading: this.rotate,
           duration: 500,
         },
       });

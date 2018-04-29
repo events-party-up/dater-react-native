@@ -9,7 +9,7 @@ import { GeoCoordinates } from '../../types';
 
 type Props = {
   pastCoords: Array<GeoCoordinates>,
-  mapViewBearingAngle: number,
+  mapViewHeadingAngle: number,
   uid: string;
   mode: 'target' | 'own',
 };
@@ -24,7 +24,7 @@ class PastLocationMarker extends React.Component<Props> {
       const borderBottomOpacity = 1 - ((totalPastCoords - index) / totalPastCoords);
       const borderBottomColor = this.props.mode ===
         'own' ? `rgba(128, 128, 128, ${borderBottomOpacity})` : `rgba(0, 128, 0, ${borderBottomOpacity})`;
-      const rotation = coord.moveHeadingAngle - this.props.mapViewBearingAngle;
+      const rotation = coord.moveHeadingAngle - this.props.mapViewHeadingAngle;
       const styles = StyleSheet.create({
         triangle: {
           backgroundColor: 'transparent',
@@ -38,7 +38,7 @@ class PastLocationMarker extends React.Component<Props> {
           transform: [{ rotate: `${rotation}deg` }],
         },
       });
-      // console.log(`Rotation in maker: ${coord.moveHeadingAngle} Rotation in map: ${this.props.mapViewBearingAngle} Total rotation: ${rotation}`);
+      // console.log(`Rotation in maker: ${coord.moveHeadingAngle} Rotation in map: ${this.props.mapViewHeadingAngle} Total rotation: ${rotation}`);
       return (
         <MapboxGL.PointAnnotation
           coordinate={[

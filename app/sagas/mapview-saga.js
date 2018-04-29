@@ -1,21 +1,17 @@
 import { throttle, takeLatest, call, take, put, cancel, select } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
-import {
-  DEFAULT_MAPVIEW_ANIMATION_DURATION,
-  DEFAULT_LATITUDE_DELTA,
-  DEFAULT_LONGITUDE_DELTA,
-} from '../constants';
+import { DEFAULT_MAPVIEW_ANIMATION_DURATION } from '../constants';
 
 export default function* mapViewSaga() {
   try {
     while (true) {
       const { mapView } = yield take('MAPVIEW_READY');
-      const task1 = yield takeLatest('MAPVIEW_ANIMATE_TO_REGION', animateToRegion, mapView);
+      const task1 = yield takeLatest('MAPVIEW_SET_CAMERA', setCamera, mapView);
       const task2 = yield takeLatest('MAPVIEW_ANIMATE_TO_COORDINATE', animateToCoordinate, mapView);
       const task3 = yield throttle(1000, [
-        'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
-        'MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING',
-        'MAPVIEW_ANIMATE_TO_BEARING_COMPASS_HEADING'], animateToBearing, mapView);
+        'MAPVIEW_ANIMATE_TO_HEADING_MANUALLY',
+        'MAPVIEW_ANIMATE_TO_HEADING_GPS_HEADING',
+        'MAPVIEW_ANIMATE_TO_HEADING_COMPASS_HEADING'], animateToHeading, mapView);
       const task4 = yield takeLatest('MAPVIEW_SHOW_MY_LOCATION_START', showMyLocation, mapView);
       const task5 = yield takeLatest('MAPVIEW_SHOW_ME_AND_TARTET_FIND_USER', showMeAndTargetFindUser, mapView);
       yield put({ type: 'MAPVIEW_MAIN_SAGA_READY' });
@@ -27,23 +23,26 @@ export default function* mapViewSaga() {
   }
 }
 
-function* animateToBearing(mapView, action) {
+function* animateToHeading(mapView, action) {
   try {
-    const { duration, bearingAngle } = action.payload;
+    const { duration, heading } = action.payload;
     const animationDuration = duration || DEFAULT_MAPVIEW_ANIMATION_DURATION;
-    yield call(mapView.animateToBearing, bearingAngle, animationDuration);
+    yield call(mapView.animateToHeading, heading, animationDuration);
   } catch (error) {
-    yield put({ type: 'MAPVIEW_ANIMATE_TO_BEARING_ERROR', payload: error });
+    yield put({ type: 'MAPVIEW_ANIMATE_TO_HEADING_ERROR', payload: error });
   }
 }
 
-function* animateToRegion(mapView, action) {
+function* setCamera(mapView, action) {
   try {
-    const { region, duration } = action.payload;
-    const animationDuration = duration || DEFAULT_MAPVIEW_ANIMATION_DURATION;
-    yield call(mapView.animateToRegion, region, animationDuration);
+    const options = action.payload;
+    const duration = options.duration || DEFAULT_MAPVIEW_ANIMATION_DURATION;
+    yield call(mapView.setCamera, {
+      ...options,
+      duration,
+    });
   } catch (error) {
-    yield put({ type: 'MAPVIEW_ANIMATE_TO_REGION_ERROR', payload: error });
+    yield put({ type: 'MAPVIEW_SET_CAMERA_ERROR', payload: error });
   }
 }
 
@@ -83,21 +82,15 @@ function* fitToCoordinates(mapView, coords) {
   }
 }
 
-function* showMyLocation(mapView) {
+function* showMyLocation() {
   try {
     const coords = yield select((state) => state.location.coords);
-    yield call(mapView.animateToCoordinate, coords, DEFAULT_MAPVIEW_ANIMATION_DURATION);
-    yield call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
-
     yield put({
-      type: 'MAPVIEW_ANIMATE_TO_REGION',
+      type: 'MAPVIEW_SET_CAMERA',
       payload: {
-        region: {
-          latitude: coords.latitude,
-          longitude: coords.longitude,
-          latitudeDelta: DEFAULT_LATITUDE_DELTA,
-          longitudeDelta: DEFAULT_LONGITUDE_DELTA,
-        },
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+        zoom: 17,
         duration: DEFAULT_MAPVIEW_ANIMATION_DURATION,
       },
     });

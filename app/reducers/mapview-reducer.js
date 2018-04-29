@@ -1,23 +1,19 @@
 import GeoUtils from '../utils/geo-utils';
-import {
-  DEFAULT_LATITUDE_DELTA,
-  DEFAULT_LONGITUDE_DELTA,
-} from '../constants';
 
 const types = {
-  MAPVIEW_REGION_UPDATED: 'MAPVIEW_REGION_UPDATED',
-  MAPVIEW_ANIMATE_TO_REGION: 'MAPVIEW_ANIMATE_TO_REGION',
+  MAPVIEW_REGION_CHANGED: 'MAPVIEW_REGION_CHANGED',
+  MAPVIEW_SET_CAMERA: 'MAPVIEW_SET_CAMERA',
   MAPVIEW_ANIMATE_TO_COORDINATE: 'MAPVIEW_ANIMATE_TO_COORDINATE',
-  MAPVIEW_ANIMATE_TO_BEARING_MANUALLY: 'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
-  MAPVIEW_ANIMATE_TO_BEARING_COMPASS_HEADING: 'MAPVIEW_ANIMATE_TO_BEARING_COMPASS_HEADING',
-  MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING: 'MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING',
+  MAPVIEW_ANIMATE_TO_HEADING_MANUALLY: 'MAPVIEW_ANIMATE_TO_HEADING_MANUALLY',
+  MAPVIEW_ANIMATE_TO_HEADING_COMPASS_HEADING: 'MAPVIEW_ANIMATE_TO_HEADING_COMPASS_HEADING',
+  MAPVIEW_ANIMATE_TO_HEADING_GPS_HEADING: 'MAPVIEW_ANIMATE_TO_HEADING_GPS_HEADING',
   MAPVIEW_READY: 'MAPVIEW_READY',
   MAPVIEW_UNLOAD: 'MAPVIEW_UNLOAD',
   MAPVIEW_MAIN_SAGA_READY: 'MAPVIEW_MAIN_SAGA_READY',
   MAPVIEW_INIT_REGION_ERROR: 'MAPVIEW_INIT_REGION_ERROR',
   MAPVIEW_MAINSAGA_ERROR: 'MAPVIEW_MAINSAGA_ERROR',
-  MAPVIEW_ANIMATE_TO_BEARING_ERROR: 'MAPVIEW_ANIMATE_TO_BEARING_ERROR',
-  MAPVIEW_ANIMATE_TO_REGION_ERROR: 'MAPVIEW_ANIMATE_TO_REGION_ERROR',
+  MAPVIEW_ANIMATE_TO_HEADING_ERROR: 'MAPVIEW_ANIMATE_TO_HEADING_ERROR',
+  MAPVIEW_SET_CAMERA_ERROR: 'MAPVIEW_SET_CAMERA_ERROR',
   MAPVIEW_ANIMATE_TO_COORDINATE_ERROR: 'MAPVIEW_ANIMATE_TO_COORDINATE_ERROR',
   MAPVIEW_DRAG_START: 'MAPVIEW_DRAG_START',
   MAPVIEW_SHOW_MY_LOCATION_START: 'MAPVIEW_SHOW_MY_LOCATION_START',
@@ -30,10 +26,11 @@ const types = {
 const initialState = {
   longitude: null,
   latitude: null,
-  latitudeDelta: DEFAULT_LATITUDE_DELTA,
-  longitudeDelta: DEFAULT_LONGITUDE_DELTA,
-  visibleRadiusInMeters: 410, // how much is map visible in meters by diagonal
-  bearingAngle: 0, // how much the map is rotated compared to north
+  zoom: 17,
+  visibleRadiusInMeters: 0, // how much is map visible in meters by diagonal
+  heading: 0, // how much the map is rotated compared to north
+  pitch: 0,
+  visibleBounds: [],
   mapReady: false, // has the map been loaded?
   centered: false, // should map be in centered mode?
 };
@@ -42,27 +39,33 @@ const mapViewReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
-    case types.MAPVIEW_REGION_UPDATED: {
-      const center = {
-        latitude: payload.newRegion.latitude,
-        longitude: payload.newRegion.longitude,
+    case types.MAPVIEW_REGION_CHANGED: {
+      const { visibleBounds } = payload.properties;
+      const corner1 = {
+        longitude: visibleBounds[0][0],
+        latitude: visibleBounds[0][1],
       };
-      const corner = {
-        latitude: center.latitude + (payload.newRegion.latitudeDelta / 2),
-        longitude: payload.newRegion.longitude + (payload.newRegion.longitudeDelta / 2),
+      const corner2 = {
+        longitude: visibleBounds[1][0],
+        latitude: visibleBounds[1][1],
       };
-      const visibleRadiusInMeters = GeoUtils.distance(center, corner);
+      const visibleRadiusInMeters = GeoUtils.distance(corner1, corner2);
 
       return {
         ...state,
-        ...payload.newRegion,
+        longitude: payload.geometry.coordinates[0],
+        latitude: payload.geometry.coordinates[1],
+        heading: payload.properties.heading,
+        pitch: payload.properties.pitch,
+        zoom: payload.properties.zoomLevel,
+        visibleBounds: payload.properties.visibleBounds,
         visibleRadiusInMeters,
       };
     }
-    case types.MAPVIEW_ANIMATE_TO_REGION: {
+    case types.MAPVIEW_SET_CAMERA: {
       return {
         ...state,
-        ...payload.region,
+        ...payload,
       };
     }
     case types.MAPVIEW_ANIMATE_TO_COORDINATE: {
@@ -71,9 +74,9 @@ const mapViewReducer = (state = initialState, action) => {
         ...payload.coords,
       };
     }
-    case types.MAPVIEW_ANIMATE_TO_BEARING_COMPASS_HEADING:
-    case types.MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING:
-    case types.MAPVIEW_ANIMATE_TO_BEARING_MANUALLY: {
+    case types.MAPVIEW_ANIMATE_TO_HEADING_COMPASS_HEADING:
+    case types.MAPVIEW_ANIMATE_TO_HEADING_GPS_HEADING:
+    case types.MAPVIEW_ANIMATE_TO_HEADING_MANUALLY: {
       return {
         ...state,
         ...payload,
@@ -105,8 +108,8 @@ const mapViewReducer = (state = initialState, action) => {
     }
     case types.MAPVIEW_ANIMATE_TO_COORDINATE_ERROR:
     case types.MAPVIEW_SHOW_MY_LOCATION_ERROR:
-    case types.MAPVIEW_ANIMATE_TO_REGION_ERROR:
-    case types.MAPVIEW_ANIMATE_TO_BEARING_ERROR:
+    case types.MAPVIEW_SET_CAMERA_ERROR:
+    case types.MAPVIEW_ANIMATE_TO_HEADING_ERROR:
     case types.MAPVIEW_INIT_REGION_ERROR:
     case types.MAPVIEW_MAINSAGA_ERROR: {
       return {
