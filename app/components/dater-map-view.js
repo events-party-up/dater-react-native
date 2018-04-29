@@ -12,7 +12,6 @@ import { GeoCompass, GeoCoordinates } from '../types';
 import UsersAroundComponent from './map/users-around-component';
 // import MapDirectionsComponent from './map/map-directions-component';
 import PastLocationMarker from './map/past-location-marker';
-import PastLocationPolylines from './map/past-location-polylines';
 import { Caption2 } from './ui-kit/typography';
 
 const mapStateToProps = (state) => ({
@@ -143,14 +142,14 @@ class DaterMapView extends Component<Props> {
 
         >
           {/* <MapDirectionsComponent /> */}
-          <PastLocationPolylines
+          {/* <PastLocationPolylines
             pastCoords={this.props.findUser.myPastCoords}
             mode="own"
           />
           <PastLocationPolylines
             pastCoords={this.props.findUser.targetPastCoords}
             mode="target"
-          />
+          /> */}
           <PastLocationMarker
             pastCoords={this.props.findUser.myPastCoords}
             mapViewheadingAngle={this.props.mapView.headingAngle}

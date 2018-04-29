@@ -75,7 +75,7 @@ function* locationUpdatedSaga(action) {
     yield* call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
     yield* setCamera(action);
   }
-  if (isFindUserEnabled) {
+  if (isFindUserEnabled || true) { // TODO: remove, it's temporary hack
     yield put({
       type: 'FIND_USER_MY_MOVE',
       payload: {
