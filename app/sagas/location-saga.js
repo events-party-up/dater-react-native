@@ -1,10 +1,10 @@
-import { throttle, takeEvery, select, take, put, call, cancel } from 'redux-saga/effects';
+import { throttle, takeEvery, select, take, put, call, cancel, all } from 'redux-saga/effects';
 import { eventChannel, delay } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 
 import BackgroundGeolocation from '../services/background-geolocation';
-import { updateFirestore } from '../utils/firebase-utils';
+import { updateFirestore, getFirestore } from '../utils/firebase-utils';
 import GeoUtils from '../utils/geo-utils';
 import {
   DEFAULT_MAPVIEW_ANIMATION_DURATION,
@@ -13,40 +13,58 @@ import {
 
 export default function* locationSaga() {
   try {
-    yield put({ type: 'GEO_LOCATION_INITIALIZE' });
-    const locationChannel = yield call(createLocationChannel);
-    yield takeEvery(locationChannel, updateLocation);
     yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
-    yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeCoordsToFirestore);
+    yield put({ type: 'GEO_LOCATION_INITIALIZE' });
 
     const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
-    const appState = yield select((state) => state.appState.state);
-
-    if (!isUserAuthenticated && appState !== 'active') { // user must be authorized
+    if (!isUserAuthenticated) { // user must be authorized
       yield take('AUTH_SUCCESS');
     }
+    const uid = yield select((state) => state.auth.uid);
 
-    const locationServiceState = yield call([BackgroundGeolocation, 'init']);
+    yield call([BackgroundGeolocation, 'init']);
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
-    yield throttle(500, 'GEO_LOCATION_UPDATED', locationUpdatedSaga);
 
     while (true) {
-      yield take('GEO_LOCATION_START');
+      const startAction = yield take([
+        'GEO_LOCATION_START_AUTO',
+        'GEO_LOCATION_START_MANUALLY',
+      ]);
+
+      if (startAction.type === 'GEO_LOCATION_START_AUTO') {
+        const myStatus = yield call(getFirestore, {
+          collection: 'geoPoints',
+          doc: uid,
+        });
+
+        if (!myStatus.visible) {
+          continue; // eslint-disable-line
+        }
+      }
+
+      const locationChannel = yield call(createLocationChannel);
+      const task1 = yield takeEvery(locationChannel, updateLocation);
+      const task2 = yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeCoordsToFirestore);
+      const task3 = yield throttle(500, 'GEO_LOCATION_UPDATED', locationUpdatedSaga);
+
       yield call([BackgroundGeolocation, 'start']);
-      yield call([BackgroundGeolocation, 'changePace'], true);
-      const action = yield take('GEO_LOCATION_UPDATED'); // wait for first update!
+
+      // start both tasks at the same time since GEO_LOCATION_UPDATED fires right away after changePace
+      const [start, action] = yield all([ // eslint-disable-line
+        call([BackgroundGeolocation, 'changePace'], true),
+        take('GEO_LOCATION_UPDATED'), // wait for first update!
+      ]);
       yield put({ type: 'GEO_LOCATION_STARTED', payload: action.payload });
       yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_START', payload: { caller: 'locationSaga' } });
 
-      const task1 = yield takeEvery([
+      const task4 = yield takeEvery([
         'GEO_LOCATION_FORCE_UPDATE',
         'APP_STATE_ACTIVE',
       ], forceUpdate);
 
       yield take('GEO_LOCATION_STOP');
+
       yield call([BackgroundGeolocation, 'stop']);
-      locationServiceState.enabled = false;
-      const uid = yield select((state) => state.auth.uid);
       yield call(updateFirestore, {
         collection: 'geoPoints',
         doc: uid,
@@ -54,7 +72,9 @@ export default function* locationSaga() {
           visible: false,
         },
       });
-      yield cancel(task1);
+      yield cancel(task1, task2, task3, task4);
+      yield locationChannel.close();
+
       yield put({ type: 'GEO_LOCATION_STOPPED' });
     }
   } catch (error) {
@@ -63,7 +83,7 @@ export default function* locationSaga() {
 }
 
 function* startGeoLocationOnInit() {
-  yield put({ type: 'GEO_LOCATION_START' });
+  yield put({ type: 'GEO_LOCATION_START_AUTO' });
 }
 
 function* locationUpdatedSaga(action) {
@@ -189,3 +209,4 @@ function createLocationChannel() {
     return unsubscribe;
   });
 }
+

@@ -45,7 +45,7 @@ class MyLocationButton extends Component<Props> {
       });
     } else {
       this.props.dispatch({
-        type: 'GEO_LOCATION_START',
+        type: 'GEO_LOCATION_START_MANUALLY',
       });
     }
   }
