@@ -2,10 +2,11 @@ import * as React from 'react';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
 import { GeoCoordinates } from '../../types';
+import GeoUtils from '../../utils/geo-utils';
 
 const triangleLatDelta = 0.000001;
 const triangleLngDelta = 0.00001;
-const lineDelta = 0.000001;
+const lineDelta = 0.000003;
 
 type Props = {
   pastCoords: Array<GeoCoordinates>,
@@ -25,8 +26,14 @@ class PastLocationMarker extends React.Component<Props> {
 
   render() {
     if (this.props.pastCoords.length < 2) return null;
-    const lines = this.props.pastCoords.slice(1).map((coords, index) => (
-      {
+
+    const lines = this.props.pastCoords.slice(1).map((coords, index) => {
+      if (index === (this.props.pastCoords.length - 2)) {
+        const previousCoords = this.props.pastCoords[index];
+        console.log('Rotation angle: ', GeoUtils.getRotationAngle(previousCoords, coords));
+      }
+
+      return {
         type: 'Feature',
         id: `line-${index}`,
         geometry: {
@@ -59,7 +66,8 @@ class PastLocationMarker extends React.Component<Props> {
             ],
           ]],
         },
-      }));
+      };
+    });
 
     const arrows = this.props.pastCoords.slice(1).map((coords, index) => (
       {
