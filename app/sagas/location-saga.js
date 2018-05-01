@@ -13,7 +13,7 @@ import {
 
 export default function* locationSaga() {
   try {
-    yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
+    yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit); // I don't know why it works
     yield put({ type: 'GEO_LOCATION_INITIALIZE' });
 
     const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
