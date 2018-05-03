@@ -4,9 +4,9 @@ import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import { GeoCoordinates } from '../../types';
 import GeoUtils from '../../utils/geo-utils';
 
-const triangleLatDelta = 0.000001;
+const triangleLatDelta = 0.00001;
 const triangleLngDelta = 0.00001;
-const lineDelta = 0.000003;
+const lineDelta = 0.000001;
 
 type Props = {
   pastCoords: Array<GeoCoordinates>,

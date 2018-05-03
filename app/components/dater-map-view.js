@@ -127,7 +127,7 @@ class DaterMapView extends Component<Props> {
         <MapboxGL.MapView
           ref={(component) => { this.mapView = component; }}
           showUserLocation
-          zoomLevel={17}
+          zoomLevel={1}
           userTrackingMode={MapboxGL.UserTrackingModes.None}
           style={styles.mapView}
           animated
