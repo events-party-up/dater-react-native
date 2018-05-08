@@ -4,7 +4,10 @@ const GeoUtils = {
   distance,
   boundingBoxCoordinates,
   getRotationAngle,
+  getBearing,
   wrapCompassHeading,
+  toRad,
+  toDeg,
 };
 
 /**
@@ -29,7 +32,7 @@ function distance(location1, location2) {
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distanceKm = radius * c;
   const distanceM = distanceKm * 1000;
-  return Math.floor(distanceM);
+  return distanceM;
 }
 
 /**
@@ -105,6 +108,14 @@ function degreesToRadians(degrees) {
   return (degrees * Math.PI) / 180;
 }
 
+function toRad(degrees) {
+  return (degrees * Math.PI) / 180;
+}
+
+function toDeg(rad) {
+  return (rad * 180) / Math.PI;
+}
+
 /**
  * Calculates the angle in degrees between two geolocation points
  * @param {GeoCoordinates} previousPosition
@@ -122,6 +133,24 @@ function getRotationAngle(previousPosition: GeoCoordinates, currentPosition: Geo
   return (Math.atan2(yDiff, xDiff) * 180.0) / Math.PI;
 }
 
+/**
+ * Calculate the bearing between two positions as a value from 0-360
+ *
+ * @param lat1 - The latitude of the first position
+ * @param lng1 - The longitude of the first position
+ * @param lat2 - The latitude of the second position
+ * @param lng2 - The longitude of the second position
+ *
+ * @return int - The bearing between 0 and 360
+ */
+function getBearing(previousPosition: GeoCoordinates, currentPosition: GeoCoordinates) {
+  const dLon = toRad(currentPosition.longitude - previousPosition.longitude);
+  const y = Math.sin(dLon) * Math.cos(toRad(currentPosition.latitude));
+  const x = (Math.cos(toRad(previousPosition.latitude)) * Math.sin(toRad(currentPosition.latitude))) -
+    (Math.sin(toRad(previousPosition.latitude)) * Math.cos(toRad(currentPosition.latitude)) * Math.cos(dLon));
+  const brng = toDeg(Math.atan2(y, x));
+  return 360 - ((brng + 360) % 360);
+}
 
 function wrapCompassHeading(heading) {
   if (heading > 180) {

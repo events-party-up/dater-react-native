@@ -129,7 +129,8 @@ function buildPastCoords(
 
   // if this is not the first location update && not too small update
   if (previousLocation && distance > MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
-    const moveHeadingAngle = GeoUtils.getRotationAngle(previousLocation, myCoords);
+    const heading = GeoUtils.getRotationAngle(previousLocation, myCoords);
+    // const heading = GeoUtils.getBearing(previousLocation, myCoords);
     const timeDelta = (myCoords.timestamp - previousLocation.timestamp) / 1000; // in seconds
     const velocity = Math.floor(distance / timeDelta); // in seconds
 
@@ -139,7 +140,9 @@ function buildPastCoords(
     ) {
       pastCoords = [...pastCoordsInState, {
         ...myCoords,
-        moveHeadingAngle,
+        heading,
+        // heading2,
+        distance,
         velocity,
         opponentDistanceDelta,
       }];

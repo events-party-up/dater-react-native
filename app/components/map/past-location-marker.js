@@ -96,9 +96,63 @@ class PastLocationMarker extends React.Component<Props> {
         },
       }));
 
+    const newArrows = this.props.pastCoords.slice(1).map((coords, index) => {
+      const startLat = this.props.pastCoords[index].latitude;
+      const startLon = this.props.pastCoords[index].longitude;
+      const startLatRad = GeoUtils.toRad(startLat);
+      const startLonRad = GeoUtils.toRad(startLon);
+      const { distance, heading } = coords;
+      const earthR = 6371000;
+
+      const endLatRad1 = (Math.asin(Math.sin(startLatRad) * Math.cos(distance / earthR)) +
+        (Math.cos(startLatRad) * Math.sin(distance / earthR) * Math.cos(GeoUtils.toRad(heading - 5))));
+      const endLonRad1 = startLonRad + Math.atan2(
+        Math.sin(GeoUtils.toRad(heading - 5)) * Math.sin(distance / earthR) * Math.cos(startLatRad),
+        Math.cos(distance / earthR) - (Math.sin(startLatRad) * Math.sin(endLatRad1)),
+      );
+
+      const endLatRad2 = (Math.asin(Math.sin(startLatRad) * Math.cos(distance / earthR)) +
+        (Math.cos(startLatRad) * Math.sin(distance / earthR) * Math.cos(GeoUtils.toRad(heading + 5))));
+      const endLonRad2 = startLonRad + Math.atan2(
+        Math.sin(GeoUtils.toRad(heading + 5)) * Math.sin(distance / earthR) * Math.cos(startLatRad),
+        Math.cos(distance / earthR) - (Math.sin(startLatRad) * Math.sin(endLatRad2)),
+      );
+      // const endLatDeg = GeoUtils.toDeg(endLatRad);
+      // const endLonDeg = GeoUtils.toDeg(endLonRad);
+      // console.log(`endLatRad: ${endLatRad} endLonRad: ${endLonRad}`);
+      console.log(`distance: ${distance} heading: ${heading}`);
+      
+      return {
+        type: 'Feature',
+        id: `arrow-${index}`,
+        geometry: {
+          type: 'Polygon',
+          coordinates: [[
+            // arrow
+            [
+              this.props.pastCoords[index].longitude,
+              this.props.pastCoords[index].latitude,
+            ],
+            [
+              GeoUtils.toDeg(endLonRad1),
+              GeoUtils.toDeg(endLatRad1),
+            ],
+            [
+              GeoUtils.toDeg(endLonRad2),
+              GeoUtils.toDeg(endLatRad2),
+            ],
+            [
+              this.props.pastCoords[index].longitude,
+              this.props.pastCoords[index].latitude,
+            ],
+          ]],
+        },
+      };
+    });
+
     const shapeGeoJson = {
       type: 'FeatureCollection',
-      features: [...lines, ...arrows],
+      features: [...newArrows],
     };
 
     return (
