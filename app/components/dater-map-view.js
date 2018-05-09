@@ -134,10 +134,13 @@ class DaterMapView extends Component<Props> {
           localizeLabels
           onPress={() => { this.onMapPressed(); }}
           pitch={0}
+          pitchEnabled={false}
           onWillStartLoadingMap={this.onMapReady}
           styleURL="mapbox://styles/olegwn/cjggmap8l002u2rmu63wda2nk"
           onRegionDidChange={(event) => this.onRegionDidChange(event)}
           scrollEnabled
+          minZoomLevel={11}
+          maxZoomLevel={18}
         >
           <PastLocationsPath
             pastCoords={this.props.findUser.myPastCoords}

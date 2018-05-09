@@ -31,7 +31,7 @@ export default function* mapPanelSaga() {
       const mapPanelMode = yield select((state) => state.mapPanel.mode);
       switch (mapPanelMode) {
         case 'findUserActive':
-          yield call(mapPanelSnapper, { index: 1 }); // show
+          yield call(mapPanelSnapper, { index: 0 }); // show
           break;
         default:
           yield call(mapPanelSnapper, { index: 0 }); // show
