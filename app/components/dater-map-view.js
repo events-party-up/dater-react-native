@@ -8,9 +8,7 @@ import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
 import { GeoCompass, GeoCoordinates } from '../types';
 import MyLocationOnMovingMap from './map/my-location-on-moving-map';
-// import MyLocationMapMarker from './map/my-location-map-maker';
 import UsersAroundComponent from './map/users-around-component';
-// import MapDirectionsComponent from './map/map-directions-component';
 import PastLocationsPath from './map/past-locations-path';
 import { Caption2 } from './ui-kit/typography';
 
@@ -126,22 +124,21 @@ class DaterMapView extends Component<Props> {
         />}
         <MapboxGL.MapView
           ref={(component) => { this.mapView = component; }}
-          showUserLocation={false}
+          showUserLocation={!this.props.mapView.centered}
           zoomLevel={1}
           userTrackingMode={MapboxGL.UserTrackingModes.None}
           style={styles.mapView}
           animated
           logoEnabled={false}
-          compassEnabled
+          compassEnabled={false}
           localizeLabels
           onPress={() => { this.onMapPressed(); }}
           pitch={0}
           onWillStartLoadingMap={this.onMapReady}
           styleURL="mapbox://styles/olegwn/cjggmap8l002u2rmu63wda2nk"
           onRegionDidChange={(event) => this.onRegionDidChange(event)}
-          scrollEnabled={false}
+          scrollEnabled
         >
-          {/* <MapDirectionsComponent /> */}
           <PastLocationsPath
             pastCoords={this.props.findUser.myPastCoords}
             mapViewheadingAngle={this.props.mapView.headingAngle}
@@ -154,15 +151,6 @@ class DaterMapView extends Component<Props> {
             uid={this.props.findUser.targetUserUid}
             mode="target"
           />
-          {/* {this.props.location.enabled && this.props.location.coords && !this.props.mapView.centered &&
-            <MyLocationMapMarker
-              accuracy={this.props.location.coords.accuracy}
-              coordinate={this.props.location.coords}
-              gpsHeading={this.props.location.coords.heading}
-              compassHeading={this.props.compass.heading}
-              moveHeadingAngle={this.props.location.moveHeadingAngle}
-              mapViewheadingAngle={this.props.mapView.headingAngle}
-            />} */}
           <UsersAroundComponent />
         </MapboxGL.MapView>
         <Caption2 style={styles.debugText} pointerEvents="none">

@@ -180,12 +180,6 @@ class MapPanelComponent extends Component<Props> {
             </Caption2>
             <DaterButton
               style={styles.panelButton}
-              onPress={this.buildRoute}
-            >
-              Маршрут
-            </DaterButton>
-            <DaterButton
-              style={styles.panelButton}
               onPress={this.stopFindUser}
             >
               Остановить
