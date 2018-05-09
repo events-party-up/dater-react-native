@@ -1,11 +1,16 @@
 import { GeoCoordinates } from '../types';
+import { EARTH_RADIUS_M } from '../constants';
 
 const GeoUtils = {
   distance,
   boundingBoxCoordinates,
-  getRotationAngle,
+  getBearing,
   wrapCompassHeading,
+  toRad,
+  toDeg,
+  destinationPoint,
 };
+
 
 /**
  * Calculates the distance, in meters, between two locations, via the
@@ -14,22 +19,21 @@ const GeoUtils = {
  *
  * @param {Object} location1 The first location given as .latitude and .longitude
  * @param {Object} location2 The second location given as .latitude and .longitude
- * @return {number} The distance, in kilometers, between the inputted locations.
+ * @return {number} The distance, in meters, between the locations.
  */
-function distance(location1, location2) {
-  const radius = 6371; // Earth's radius in kilometers
-  const latDelta = degreesToRadians(location2.latitude - location1.latitude);
-  const lonDelta = degreesToRadians(location2.longitude - location1.longitude);
+function distance(location1: GeoCoordinates, location2: GeoCoordinates) {
+  const φ1 = toRad(location1.latitude);
+  const φ2 = toRad(location2.latitude);
+  const Δφ = toRad(location2.latitude - location1.latitude);
+  const Δλ = toRad(location2.longitude - location1.longitude);
 
-  const a = (Math.sin(latDelta / 2) * Math.sin(latDelta / 2)) +
-    (Math.cos(degreesToRadians(location1.latitude)) *
-      Math.cos(degreesToRadians(location2.latitude)) *
-      Math.sin(lonDelta / 2) * Math.sin(lonDelta / 2));
-
+  const a = (Math.sin(Δφ / 2) * Math.sin(Δφ / 2)) +
+    (Math.cos(φ1) * Math.cos(φ2) *
+    Math.sin(Δλ / 2) * Math.sin(Δλ / 2));
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distanceKm = radius * c;
-  const distanceM = distanceKm * 1000;
-  return Math.floor(distanceM);
+
+  const dist = EARTH_RADIUS_M * c;
+  return dist;
 }
 
 /**
@@ -68,12 +72,11 @@ function boundingBoxCoordinates(center, radius) {
  * @return {number} The number of degrees the distance corresponds to.
  */
 function metersToLongitudeDegrees(distance1, latitude) {
-  const EARTH_EQ_RADIUS = 6378137.0;
   // this is a super, fancy magic number that the GeoFire lib can explain (maybe)
   const E2 = 0.00669447819799;
   const EPSILON = 1e-12;
-  const radians = degreesToRadians(latitude);
-  const num = (Math.cos(radians) * EARTH_EQ_RADIUS * Math.PI) / 180;
+  const radians = toRad(latitude);
+  const num = (Math.cos(radians) * EARTH_RADIUS_M * Math.PI) / 180;
   const denom = 1 / Math.sqrt(1 - (E2 * Math.sin(radians) * Math.sin(radians)));
   const deltaDeg = num * denom;
   if (deltaDeg < EPSILON) {
@@ -101,33 +104,77 @@ function wrapLongitude(longitude) {
   return 180 - (-adjusted % 360);
 }
 
-function degreesToRadians(degrees) {
+function toRad(degrees) {
   return (degrees * Math.PI) / 180;
 }
 
-/**
- * Calculates the angle in degrees between two geolocation points
- * @param {GeoCoordinates} previousPosition
- * @param {GeoCoordinates} currentPosition
- */
-function getRotationAngle(previousPosition: GeoCoordinates, currentPosition: GeoCoordinates) {
-  const x1 = previousPosition.latitude;
-  const y1 = previousPosition.longitude;
-  const x2 = currentPosition.latitude;
-  const y2 = currentPosition.longitude;
-
-  const xDiff = x2 - x1;
-  const yDiff = y2 - y1;
-
-  return (Math.atan2(yDiff, xDiff) * 180.0) / Math.PI;
+function toDeg(rad) {
+  return (rad * 180) / Math.PI;
 }
 
+/**
+ * Calculate the bearing between two positions as a value from 0-360
+ *
+ * @param   {startPosition} fromPoint - Starting point.
+ * @param   {nextPosition} fromPoint - Final point.
+ *
+ * @return int - The bearing between 0 and 360
+ */
+function getBearing(startPosition: GeoCoordinates, nextPosition: GeoCoordinates) {
+  const φ1 = toRad(startPosition.latitude);
+  const φ2 = toRad(nextPosition.latitude);
+  const λ1 = toRad(startPosition.longitude);
+  const λ2 = toRad(nextPosition.longitude);
+
+  const y = Math.sin(λ2 - λ1) * Math.cos(φ2);
+  const x = (Math.cos(φ1) * Math.sin(φ2)) -
+    (Math.sin(φ1) * Math.cos(φ2) * Math.cos(λ2 - λ1));
+  const bearing = toDeg(Math.atan2(y, x));
+  // return bearing;
+  return (bearing + 360) % 360;
+}
 
 function wrapCompassHeading(heading) {
   if (heading > 180) {
     return -(360 - heading);
   }
   return heading;
+}
+
+/**
+ * Returns the destination point from fromPoint point having travelled the given distance on the
+ * given initial bearing (bearing normally varies around path followed).
+ *
+ * @param   {GeoCoordinates} fromPoint - Starting point.
+ * @param   {number} dstance - Distance travelled, in same units as earth radius (default: metres).
+ * @param   {number} bearing - Initial bearing in degrees from north.
+ * @returns {GeoCoordinates} Destination point.
+ *
+ */
+function destinationPoint(fromPoint: GeoCoordinates, dstance, bearing) {
+  const δ = Number(dstance) / EARTH_RADIUS_M; // angular distance in radians
+  const θ = toRad(Number(bearing));
+
+  const φ1 = toRad(fromPoint.latitude);
+  const λ1 = toRad(fromPoint.longitude);
+
+  const sinφ1 = Math.sin(φ1);
+  const cosφ1 = Math.cos(φ1);
+  const sinδ = Math.sin(δ);
+  const cosδ = Math.cos(δ);
+  const sinθ = Math.sin(θ);
+  const cosθ = Math.cos(θ);
+
+  const sinφ2 = (sinφ1 * cosδ) + (cosφ1 * sinδ * cosθ);
+  const φ2 = Math.asin(sinφ2);
+  const y = sinθ * sinδ * cosφ1;
+  const x = cosδ - (sinφ1 * sinφ2);
+  const λ2 = λ1 + Math.atan2(y, x);
+
+  return {
+    latitude: toDeg(φ2),
+    longitude: ((toDeg(λ2) + 540) % 360) - 180,
+  };
 }
 
 export default GeoUtils;

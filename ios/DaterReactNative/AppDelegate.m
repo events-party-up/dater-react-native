@@ -9,20 +9,17 @@
 
 #import "AppDelegate.h"
 
-@import GoogleMaps;
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <Firebase.h>
 #import "SplashScreen.h"
 
-@import GoogleMaps;
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   [FIRApp configure];
-  [GMSServices provideAPIKey:@"AIzaSyDmzYqXDgx0VDYfU-f4GEVZv0UwfyHEihM"];
 
   NSURL *jsCodeLocation;
 

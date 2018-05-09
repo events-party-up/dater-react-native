@@ -1,7 +1,7 @@
 import GeoUtils from '../utils/geo-utils';
 import {
   MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION,
-  // MAX_PAST_LOCATIONS,
+  MAX_PAST_LOCATIONS,
   MAX_DISTANCE_FROM_PREVIOUS_PAST_LOCATION,
   MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION,
   MINIMUM_ACCURACY_PAST_LOCATION,
@@ -64,6 +64,9 @@ const findUserReducer = (state = initialState, action) => {
       if (targetPastCoords.length > 1 && currentUserLastLocation) {
         targetScore += targetPastCoords[targetPastCoords.length - 1].opponentDistanceDelta;
       }
+      if (targetPastCoords.length > MAX_PAST_LOCATIONS) {
+        targetPastCoords.shift();
+      }
 
       return {
         ...state,
@@ -84,6 +87,10 @@ const findUserReducer = (state = initialState, action) => {
       const currentDistance = targetUserLastLocation ?
         GeoUtils.distance(targetUserLastLocation, payload) :
         state.currentDistance;
+
+      if (myPastCoords.length > MAX_PAST_LOCATIONS) {
+        myPastCoords.shift();
+      }
 
       return {
         ...state,
@@ -111,8 +118,8 @@ function buildPastCoords(
   opponentCoords: GeoCoordinates,
 ) {
   let opponentDistanceDelta;
-  let pastCoords = [...pastCoordsInState];
-  const previousLocation = pastCoords.length > 0 ? pastCoords[pastCoords.length - 1] : null;
+  let pastCoords = pastCoordsInState;
+  const previousLocation = [...pastCoords].pop();
   const distance = previousLocation ? GeoUtils.distance(previousLocation, myCoords) : 0;
   if (opponentCoords && previousLocation) {
     const currentDistanceFromOpponent = GeoUtils.distance(myCoords, opponentCoords);
@@ -122,7 +129,7 @@ function buildPastCoords(
 
   // if this is not the first location update && not too small update
   if (previousLocation && distance > MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
-    const moveHeadingAngle = GeoUtils.getRotationAngle(previousLocation, myCoords);
+    const heading = GeoUtils.getBearing(previousLocation, myCoords);
     const timeDelta = (myCoords.timestamp - previousLocation.timestamp) / 1000; // in seconds
     const velocity = Math.floor(distance / timeDelta); // in seconds
 
@@ -132,7 +139,8 @@ function buildPastCoords(
     ) {
       pastCoords = [...pastCoordsInState, {
         ...myCoords,
-        moveHeadingAngle,
+        heading,
+        distance,
         velocity,
         opponentDistanceDelta,
       }];
@@ -144,7 +152,7 @@ function buildPastCoords(
     }
     // if we just started location tracking
   } else if (pastCoords.length === 0) {
-    pastCoords.push(myCoords);
+    pastCoords = [myCoords];
   }
   return pastCoords;
 }

@@ -12,7 +12,7 @@ const myLocationIcon = require('../../assets/icons/my-location/48/my-location.pn
 const playIcon = require('../../assets/icons/play/play.png');
 const stopIcon = require('../../assets/icons/stop/stop.png');
 const rotateIcon = require('../../assets/icons/rotate-map/rotate-map.png');
-const compassIcon = require('../../assets/icons/compass-colored/compass-colored.png');
+// const compassIcon = require('../../assets/icons/compass-colored/compass-colored.png');
 
 type Props = {
   dispatch: Dispatch,
@@ -45,7 +45,7 @@ class MyLocationButton extends Component<Props> {
       });
     } else {
       this.props.dispatch({
-        type: 'GEO_LOCATION_START',
+        type: 'GEO_LOCATION_START_MANUALLY',
       });
     }
   }
@@ -54,9 +54,9 @@ class MyLocationButton extends Component<Props> {
       this.rotate = this.rotate + 90;
       if (this.rotate >= 360) this.rotate = 0;
       this.props.dispatch({
-        type: 'MAPVIEW_ANIMATE_TO_BEARING_MANUALLY',
+        type: 'MAPVIEW_ANIMATE_TO_HEADING_MANUALLY',
         payload: {
-          bearingAngle: this.rotate,
+          heading: this.rotate,
           duration: 500,
         },
       });
@@ -78,12 +78,12 @@ class MyLocationButton extends Component<Props> {
   render() {
     return (
       <View style={styles.buttonContainer}>
-        <CircleButton
+        {/* <CircleButton
           style={styles.button}
           onPress={this.toggleCompass}
           image={compassIcon}
           size="medium"
-        />
+        /> */}
         <CircleButton
           style={styles.button}
           onPress={this.rotateMap}

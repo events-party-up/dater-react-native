@@ -19,7 +19,7 @@ type Props = {
   heading: number,
   compassHeading: number,
   moveHeadingAngle: number,
-  mapViewBearingAngle: number,
+  mapViewHeadingAngle: number,
   coordinate: {
     latitude: number,
     longitude: number,
@@ -36,7 +36,7 @@ class MyLocationMapMarker extends React.PureComponent<Props> {
     if (compassHeading < 0 || !compassHeading) {
       compassHeading = 0;
     }
-    const rotation = this.props.moveHeadingAngle - this.props.mapViewBearingAngle;
+    const rotation = this.props.moveHeadingAngle - this.props.mapViewHeadingAngle;
     const rotate = `${rotation}deg`;
 
     return (

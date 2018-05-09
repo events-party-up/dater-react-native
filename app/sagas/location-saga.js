@@ -1,10 +1,10 @@
-import { throttle, takeEvery, select, take, put, call } from 'redux-saga/effects';
+import { throttle, takeEvery, select, take, put, call, cancel, all } from 'redux-saga/effects';
 import { eventChannel, delay } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 
 import BackgroundGeolocation from '../services/background-geolocation';
-import { updateFirestore } from '../utils/firebase-utils';
+import { updateFirestore, getFirestore } from '../utils/firebase-utils';
 import GeoUtils from '../utils/geo-utils';
 import {
   DEFAULT_MAPVIEW_ANIMATION_DURATION,
@@ -13,36 +13,58 @@ import {
 
 export default function* locationSaga() {
   try {
+    yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit); // I don't know why it works
     yield put({ type: 'GEO_LOCATION_INITIALIZE' });
-    const locationChannel = yield call(createLocationChannel);
-    yield takeEvery(locationChannel, updateLocation);
-    yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit);
-    yield takeEvery([
-      'GEO_LOCATION_FORCE_UPDATE',
-      'APP_STATE_ACTIVE',
-    ], forceUpdate);
-    yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeCoordsToFirestore);
+
     const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
     if (!isUserAuthenticated) { // user must be authorized
       yield take('AUTH_SUCCESS');
     }
-    const locationServiceState = yield call([BackgroundGeolocation, 'init']);
+    const uid = yield select((state) => state.auth.uid);
+
+    yield call([BackgroundGeolocation, 'init']);
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
-    yield throttle(500, 'GEO_LOCATION_UPDATED', locationUpdatedSaga);
-    // yield throttle(2000, 'GEO_LOCATION_UPDATED', writeCoordsToFirestore);
 
     while (true) {
-      yield take('GEO_LOCATION_START');
+      const startAction = yield take([
+        'GEO_LOCATION_START_AUTO',
+        'GEO_LOCATION_START_MANUALLY',
+      ]);
+
+      if (startAction.type === 'GEO_LOCATION_START_AUTO') {
+        const myStatus = yield call(getFirestore, {
+          collection: 'geoPoints',
+          doc: uid,
+        });
+
+        if (!myStatus.visible) {
+          continue; // eslint-disable-line
+        }
+      }
+
+      const locationChannel = yield call(createLocationChannel);
+      const task1 = yield takeEvery(locationChannel, updateLocation);
+      const task2 = yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeCoordsToFirestore);
+      const task3 = yield throttle(500, 'GEO_LOCATION_UPDATED', locationUpdatedSaga);
+
       yield call([BackgroundGeolocation, 'start']);
-      yield call([BackgroundGeolocation, 'changePace'], true);
-      const action = yield take('GEO_LOCATION_UPDATED'); // wait for first update!
+
+      // start both tasks at the same time since GEO_LOCATION_UPDATED fires right away after changePace
+      const [start, action] = yield all([ // eslint-disable-line
+        call([BackgroundGeolocation, 'changePace'], true),
+        take('GEO_LOCATION_UPDATED'), // wait for first update!
+      ]);
       yield put({ type: 'GEO_LOCATION_STARTED', payload: action.payload });
       yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_START', payload: { caller: 'locationSaga' } });
 
+      const task4 = yield takeEvery([
+        'GEO_LOCATION_FORCE_UPDATE',
+        'APP_STATE_ACTIVE',
+      ], forceUpdate);
+
       yield take('GEO_LOCATION_STOP');
+
       yield call([BackgroundGeolocation, 'stop']);
-      locationServiceState.enabled = false;
-      const uid = yield select((state) => state.auth.uid);
       yield call(updateFirestore, {
         collection: 'geoPoints',
         doc: uid,
@@ -50,6 +72,9 @@ export default function* locationSaga() {
           visible: false,
         },
       });
+      yield cancel(task1, task2, task3, task4);
+      yield locationChannel.close();
+
       yield put({ type: 'GEO_LOCATION_STOPPED' });
     }
   } catch (error) {
@@ -58,7 +83,7 @@ export default function* locationSaga() {
 }
 
 function* startGeoLocationOnInit() {
-  yield put({ type: 'GEO_LOCATION_START' });
+  yield put({ type: 'GEO_LOCATION_START_AUTO' });
 }
 
 function* locationUpdatedSaga(action) {
@@ -67,11 +92,10 @@ function* locationUpdatedSaga(action) {
   const currentCoords = action.payload;
   const firstCoords = yield select((state) => state.location.firstCoords);
   if (isCentered) {
-    yield* animateToCurrentLocation(action);
     yield* call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
-    yield* animateToBearing(action);
+    yield* setCamera(action);
   }
-  if (isFindUserEnabled) {
+  if (isFindUserEnabled || true) { // TODO: remove, it's temporary hack
     yield put({
       type: 'FIND_USER_MY_MOVE',
       payload: {
@@ -98,27 +122,17 @@ function* locationUpdatedSaga(action) {
   }
 }
 
-function* animateToCurrentLocation(action) {
-  yield put({
-    type: 'MAPVIEW_ANIMATE_TO_COORDINATE',
-    payload: {
-      coords: {
-        latitude: action.payload.latitude,
-        longitude: action.payload.longitude,
-      },
-    },
-  });
-}
+function* setCamera(action) {
+  const mapHeading = yield select((state) => state.mapView.heading);
+  const moveHeadingAngle = yield select((state) => state.location.moveHeadingAngle);
+  const heading = action.payload.heading >= 0 ? action.payload.heading : moveHeadingAngle || mapHeading;
 
-function* animateToBearing(action) {
-  const gpsHeading = action.payload.heading;
-  if (gpsHeading < 0) return;
-
-  const bearingAngle = GeoUtils.wrapCompassHeading(gpsHeading);
   yield put({
-    type: 'MAPVIEW_ANIMATE_TO_BEARING_GPS_HEADING',
+    type: 'MAPVIEW_SET_CAMERA',
     payload: {
-      bearingAngle,
+      heading,
+      latitude: action.payload.latitude,
+      longitude: action.payload.longitude,
     },
   });
 }
@@ -166,7 +180,11 @@ function* writeCoordsToFirestore() {
 }
 
 function* forceUpdate() {
-  yield call([BackgroundGeolocation, 'changePace'], true);
+  try {
+    yield call([BackgroundGeolocation, 'changePace'], true);
+  } catch (error) {
+    yield put({ type: 'GEO_LOCATION_MAINSAGA_ERROR', payload: error });
+  }
 }
 
 function createLocationChannel() {
@@ -193,3 +211,4 @@ function createLocationChannel() {
     return unsubscribe;
   });
 }
+

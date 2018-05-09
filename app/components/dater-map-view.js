@@ -3,16 +3,13 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import MapView from 'react-native-maps';
 import { connect, Dispatch } from 'react-redux';
+import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
 import { GeoCompass, GeoCoordinates } from '../types';
 import MyLocationOnMovingMap from './map/my-location-on-moving-map';
-import MyLocationMapMarker from './map/my-location-map-maker';
 import UsersAroundComponent from './map/users-around-component';
-import MapDirectionsComponent from './map/map-directions-component';
-import PastLocationMarker from './map/past-location-marker';
-import PastLocationPolylines from './map/past-location-polylines';
+import PastLocationsPath from './map/past-locations-path';
 import { Caption2 } from './ui-kit/typography';
 
 const mapStateToProps = (state) => ({
@@ -24,12 +21,20 @@ const mapStateToProps = (state) => ({
   findUser: state.findUser,
 });
 
-function creatMapViewProxy(mapView: MapView) {
+function creatMapViewProxy(mapView: MapboxGL.MapView) {
   return {
-    animateToBearing: (bearing, duration) => mapView.animateToBearing(bearing, duration),
-    animateToRegion: (region, duration) => mapView.animateToRegion(region, duration),
-    animateToCoordinate: (coords, duration) => mapView.animateToCoordinate(coords, duration),
-    fitToCoordinates: (coords, options) => mapView.fitToCoordinates(coords, options),
+    animateToHeading: (heading, duration) => mapView.setCamera({
+      heading,
+      duration,
+    }),
+    setCamera: (options) => mapView.setCamera({
+      centerCoordinate: [options.longitude, options.latitude],
+      heading: options.heading,
+      zoom: options.zoom,
+      duration: options.duration,
+    }),
+    moveTo: (...args) => mapView.moveTo(...args),
+    fitBounds: (...args) => mapView.fitBounds(...args),
   };
 }
 
@@ -45,23 +50,19 @@ type Props = {
     pastCoords: Array<GeoCoordinates>,
     moveHeadingAngle: number,
   },
-  mapView: MapView,
+  mapView: MapboxGL.MapView,
   mapPanel: any,
   findUser: any,
 };
 
 class DaterMapView extends Component<Props> {
-  mapView: MapView;
+  mapView: MapboxGL.MapView;
   directions: null;
 
-  onRegionChangeComplete = async (newRegion, prevRegion) => {
-    if (!prevRegion || !newRegion || !prevRegion.latitude) return;
+  onRegionDidChange = (event) => {
     this.props.dispatch({
-      type: 'MAPVIEW_REGION_UPDATED',
-      payload: {
-        newRegion,
-        prevRegion,
-      },
+      type: 'MAPVIEW_REGION_CHANGED',
+      payload: event,
     });
   }
 
@@ -79,6 +80,7 @@ class DaterMapView extends Component<Props> {
   }
 
   onMapPressed = () => {
+    console.log('Map pressed');
     if (this.props.mapPanel.visible) {
       this.props.dispatch({
         type: 'UI_MAP_PANEL_HIDE',
@@ -87,11 +89,6 @@ class DaterMapView extends Component<Props> {
         },
       });
     }
-  }
-
-  onRegionChange = (region) => {
-    console.log('Region updated');
-    console.log(region);
   }
 
   onMapDragStart = (event) => {
@@ -123,62 +120,46 @@ class DaterMapView extends Component<Props> {
           accuracy={this.props.location.coords.accuracy}
           visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
           moveHeadingAngle={this.props.location.moveHeadingAngle}
-          mapViewBearingAngle={this.props.mapView.bearingAngle}
+          mapViewheadingAngle={this.props.mapView.headingAngle}
         />}
-        <MapView
+        <MapboxGL.MapView
           ref={(component) => { this.mapView = component; }}
+          showUserLocation={!this.props.mapView.centered}
+          zoomLevel={1}
+          userTrackingMode={MapboxGL.UserTrackingModes.None}
           style={styles.mapView}
-          onRegionChangeComplete={(region) => this.onRegionChangeComplete(region, this.props.mapView)}
-          onMapReady={this.onMapReady}
-          // onRegionChange={this.onRegionChange}
-          provider="google"
-          showsIndoors
-          showsTraffic={false}
-          showsBuildings={false}
-          // scrollEnabled={false}
-          toolbarEnabled={false}
-          moveOnMarkerPress={false}
-          rotateEnabled={false}
-          mapType="standard"
+          animated
+          logoEnabled={false}
+          compassEnabled={false}
+          localizeLabels
           onPress={() => { this.onMapPressed(); }}
+          pitch={0}
+          pitchEnabled={false}
+          onWillStartLoadingMap={this.onMapReady}
+          styleURL="mapbox://styles/olegwn/cjggmap8l002u2rmu63wda2nk"
+          onRegionDidChange={(event) => this.onRegionDidChange(event)}
+          scrollEnabled
+          minZoomLevel={11}
+          maxZoomLevel={18}
         >
-          {this.props.location.enabled && this.props.location.coords && !this.props.mapView.centered &&
-            <MyLocationMapMarker
-              accuracy={this.props.location.coords.accuracy}
-              coordinate={this.props.location.coords}
-              gpsHeading={this.props.location.coords.heading}
-              compassHeading={this.props.compass.heading}
-              moveHeadingAngle={this.props.location.moveHeadingAngle}
-              mapViewBearingAngle={this.props.mapView.bearingAngle}
-            /> }
+          <PastLocationsPath
+            pastCoords={this.props.findUser.myPastCoords}
+            mapViewheadingAngle={this.props.mapView.headingAngle}
+            uid={this.props.auth.uid && this.props.auth.uid}
+            mode="own"
+          />
+          <PastLocationsPath
+            pastCoords={this.props.findUser.targetPastCoords}
+            mapViewheadingAngle={this.props.mapView.headingAngle}
+            uid={this.props.findUser.targetUserUid}
+            mode="target"
+          />
           <UsersAroundComponent />
-          <MapDirectionsComponent />
-          <PastLocationPolylines
-            pastCoords={this.props.findUser.targetPastCoords}
-            uid={this.props.findUser.targetUserUid}
-            mode="target"
-          />
-          <PastLocationMarker
-            pastCoords={this.props.findUser.targetPastCoords}
-            mapViewBearingAngle={this.props.mapView.bearingAngle}
-            uid={this.props.findUser.targetUserUid}
-            mode="target"
-          />
-          <PastLocationPolylines
-            pastCoords={this.props.findUser.myPastCoords}
-            uid={this.props.auth.uid && this.props.auth.uid}
-            mode="own"
-          />
-          <PastLocationMarker
-            pastCoords={this.props.findUser.myPastCoords}
-            mapViewBearingAngle={this.props.mapView.bearingAngle}
-            uid={this.props.auth.uid && this.props.auth.uid}
-            mode="own"
-          />
-        </MapView>
+        </MapboxGL.MapView>
         <Caption2 style={styles.debugText} pointerEvents="none">
           Accuracy: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
-          GPS Heading: {this.props.location.coords && this.props.location.coords.heading}{'\n'}
+          GPS Heading: {this.props.location.coords && Math.floor(this.props.location.coords.heading)}{'\n'}
+          Move Heading: {Math.floor(this.props.location.moveHeadingAngle)}{'\n'}
           Compass Heading: {this.props.compass.heading}{'\n'}
           GeoUpdates: {this.props.location && this.props.location.geoUpdates}{'\n'}
           UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}
@@ -186,11 +167,11 @@ class DaterMapView extends Component<Props> {
         {this.props.findUser.enabled &&
         <View style={styles.findUserContainer} pointerEvents="none">
           <Caption2 style={styles.findUserText}>
-            Distance: {this.props.findUser.currentDistance}{'\n'}
+            Distance: {Math.floor(this.props.findUser.currentDistance)}{'\n'}
             My Score:
-            {` ${this.props.findUser.myScore}`}{'\n'}
+            {` ${Math.floor(this.props.findUser.myScore)}`}{'\n'}
             {this.props.findUser.targetUserUid && this.props.findUser.targetUserUid.substring(0, 4)}:
-            {` ${this.props.findUser.targetScore}`}
+            {` ${Math.floor(this.props.findUser.targetScore)}`}
           </Caption2>
         </View>
         }

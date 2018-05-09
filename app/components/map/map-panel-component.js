@@ -32,7 +32,7 @@ type Props = {
   dispatch: Dispatch,
   myCurrentCoords: GeoCoordinates,
   findUserUid: string,
-  findUserDistance: string,
+  findUserDistance: number,
 };
 
 class MapPanelComponent extends Component<Props> {
@@ -120,7 +120,7 @@ class MapPanelComponent extends Component<Props> {
               marginTop: 8,
             }}
             >
-              {this.props.mapPanel.user.distance} метров от вас. {' '}
+              {Math.floor(this.props.mapPanel.user.distance)} метров от вас. {' '}
               Был <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.user.timestamp}</Moment>.
             </Caption2>
             <DaterButton style={styles.panelButton} onPress={() => this.findUser(this.props.mapPanel.user)}>
@@ -137,7 +137,7 @@ class MapPanelComponent extends Component<Props> {
               marginTop: 8,
             }}
             >
-              Расстояние {this.props.mapPanel.user.distance} м. {' '}
+              Расстояние {Math.floor(this.props.mapPanel.user.distance)} м. {' '}
               Продолжительность {Math.floor(this.props.mapPanel.user.duration / 60)} мин.
             </Caption2>
             <DaterButton
@@ -157,7 +157,7 @@ class MapPanelComponent extends Component<Props> {
               marginTop: 8,
             }}
             >
-              Расстояние {this.props.mapPanel.user.distance} м. {' '}
+              Расстояние {Math.floor(this.props.mapPanel.user.distance)} м. {' '}
             </Caption2>
             <DaterButton
               style={styles.panelButton}
@@ -176,14 +176,8 @@ class MapPanelComponent extends Component<Props> {
               marginTop: 8,
             }}
             >
-              Расстояние {this.props.findUserDistance} м. {' '}
+              Расстояние {Math.floor(this.props.findUserDistance)} м. {' '}
             </Caption2>
-            <DaterButton
-              style={styles.panelButton}
-              onPress={this.buildRoute}
-            >
-              Маршрут
-            </DaterButton>
             <DaterButton
               style={styles.panelButton}
               onPress={this.stopFindUser}

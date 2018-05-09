@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@mapbox/polyline": "^1.0.0",
+    "@mapbox/react-native-mapbox-gl": "^6.1.2-beta",
     "@zsajjad/react-native-heading": "https://github.com/zsajjad/react-native-heading.git",
     "moment": "^2.21.0",
     "prop-types": "^15.6.1",
@@ -22,8 +23,7 @@
     "react-native-firebase": "^3.3.0",
     "react-native-heading": "^1.1.1",
     "react-native-interactable": "^0.1.10",
-    "react-native-maps": "^0.20.1",
-    "react-native-splash-screen": "3.0.6",
+    "react-native-splash-screen": "^3.0.6",
     "react-navigation": "^1.5.9",
     "react-redux": "^5.0.7",
     "redux": "^3.7.2",

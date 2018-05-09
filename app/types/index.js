@@ -13,3 +13,8 @@ export type GeoCompass = {
   enabled: boolean,
   error: string,
 };
+
+export type LngLat = [
+  number, number
+];
+

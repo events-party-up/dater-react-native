@@ -6,7 +6,8 @@ const types = {
   GEO_PERMISSION_DENIED: 'GEO_PERMISSION_DENIED',
   GEO_LOCATION_INITIALIZE: 'GEO_LOCATION_INITIALIZE',
   GEO_LOCATION_INITIALIZED: 'GEO_LOCATION_INITIALIZED',
-  GEO_LOCATION_START: 'GEO_LOCATION_START',
+  GEO_LOCATION_START_MANUALLY: 'GEO_LOCATION_START_MANUALLY',
+  GEO_LOCATION_START_AUTO: 'GEO_LOCATION_START_AUTO',
   GEO_LOCATION_STARTED: 'GEO_LOCATION_STARTED',
   GEO_LOCATION_STOP: 'GEO_LOCATION_STOP',
   GEO_LOCATION_STOPPED: 'GEO_LOCATION_STOPPED',
@@ -31,7 +32,7 @@ const initialState = {
   stopping: false,
   updating: false,
   initializing: false,
-  moveHeadingAngle: 0,
+  moveHeadingAngle: -1,
 };
 
 const locationReducer = (state = initialState, action) => {
@@ -50,7 +51,8 @@ const locationReducer = (state = initialState, action) => {
         initializing: false,
       };
     }
-    case types.GEO_LOCATION_START: {
+    case types.GEO_LOCATION_START_AUTO:
+    case types.GEO_LOCATION_START_MANUALLY: {
       return {
         ...state,
         starting: true,
@@ -89,7 +91,7 @@ const locationReducer = (state = initialState, action) => {
         enabled: false,
         pastCoords: [],
         coords: null,
-        moveHeadingAngle: 0,
+        moveHeadingAngle: -1,
       };
     }
     case types.GEO_LOCATION_UPDATE_CHANNEL_UNKNOWN_ERROR:
@@ -111,7 +113,7 @@ const locationReducer = (state = initialState, action) => {
       let { moveHeadingAngle } = state;
       // if this is not the first location update
       if (state.coords) {
-        moveHeadingAngle = GeoUtils.getRotationAngle(state.coords, payload);
+        moveHeadingAngle = GeoUtils.getBearing(state.coords, payload);
       }
 
       return {
