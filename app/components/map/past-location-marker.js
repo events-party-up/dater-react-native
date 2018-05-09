@@ -4,7 +4,7 @@ import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import { GeoCoordinates } from '../../types';
 import GeoUtils from '../../utils/geo-utils';
 
-const triangleLatDelta = 0.00001;
+const triangleLatDelta = 0.000005;
 const triangleLngDelta = 0.00001;
 const lineDelta = 0.000001;
 
@@ -30,7 +30,6 @@ class PastLocationMarker extends React.Component<Props> {
     const lines = this.props.pastCoords.slice(1).map((coords, index) => {
       if (index === (this.props.pastCoords.length - 2)) {
         const previousCoords = this.props.pastCoords[index];
-        console.log('Rotation angle: ', GeoUtils.getRotationAngle(previousCoords, coords));
       }
 
       return {
@@ -96,63 +95,100 @@ class PastLocationMarker extends React.Component<Props> {
         },
       }));
 
-    const newArrows = this.props.pastCoords.slice(1).map((coords, index) => {
-      const startLat = this.props.pastCoords[index].latitude;
-      const startLon = this.props.pastCoords[index].longitude;
-      const startLatRad = GeoUtils.toRad(startLat);
-      const startLonRad = GeoUtils.toRad(startLon);
-      const { distance, heading } = coords;
-      const earthR = 6371000;
+    // const newArrows = this.props.pastCoords.slice(1).map((coords, index) => {
+    //   const startLat = this.props.pastCoords[index].latitude;
+    //   const startLon = this.props.pastCoords[index].longitude;
+    //   const startLatRad = GeoUtils.toRad(startLat);
+    //   const startLonRad = GeoUtils.toRad(startLon);
+    //   const { distance, heading } = coords;
+    //   const earthR = 6371000;
 
-      const endLatRad1 = (Math.asin(Math.sin(startLatRad) * Math.cos(distance / earthR)) +
-        (Math.cos(startLatRad) * Math.sin(distance / earthR) * Math.cos(GeoUtils.toRad(heading - 5))));
-      const endLonRad1 = startLonRad + Math.atan2(
-        Math.sin(GeoUtils.toRad(heading - 5)) * Math.sin(distance / earthR) * Math.cos(startLatRad),
-        Math.cos(distance / earthR) - (Math.sin(startLatRad) * Math.sin(endLatRad1)),
-      );
+    //   const endLatRad1 = (Math.asin(Math.sin(startLatRad) * Math.cos(distance / earthR)) +
+    //     (Math.cos(startLatRad) * Math.sin(distance / earthR) * Math.cos(GeoUtils.toRad(heading - 5))));
+    //   const endLonRad1 = startLonRad + Math.atan2(
+    //     Math.sin(GeoUtils.toRad(heading - 5)) * Math.sin(distance / earthR) * Math.cos(startLatRad),
+    //     Math.cos(distance / earthR) - (Math.sin(startLatRad) * Math.sin(endLatRad1)),
+    //   );
 
-      const endLatRad2 = (Math.asin(Math.sin(startLatRad) * Math.cos(distance / earthR)) +
-        (Math.cos(startLatRad) * Math.sin(distance / earthR) * Math.cos(GeoUtils.toRad(heading + 5))));
-      const endLonRad2 = startLonRad + Math.atan2(
-        Math.sin(GeoUtils.toRad(heading + 5)) * Math.sin(distance / earthR) * Math.cos(startLatRad),
-        Math.cos(distance / earthR) - (Math.sin(startLatRad) * Math.sin(endLatRad2)),
-      );
-      // const endLatDeg = GeoUtils.toDeg(endLatRad);
-      // const endLonDeg = GeoUtils.toDeg(endLonRad);
-      // console.log(`endLatRad: ${endLatRad} endLonRad: ${endLonRad}`);
+    //   const endLatRad2 = (Math.asin(Math.sin(startLatRad) * Math.cos(distance / earthR)) +
+    //     (Math.cos(startLatRad) * Math.sin(distance / earthR) * Math.cos(GeoUtils.toRad(heading + 5))));
+    //   const endLonRad2 = startLonRad + Math.atan2(
+    //     Math.sin(GeoUtils.toRad(heading + 5)) * Math.sin(distance / earthR) * Math.cos(startLatRad),
+    //     Math.cos(distance / earthR) - (Math.sin(startLatRad) * Math.sin(endLatRad2)),
+    //   );
+    //   console.log(`distance: ${distance} heading: ${heading}`);
+
+    //   return {
+    //     type: 'Feature',
+    //     id: `arrow-${index}`,
+    //     geometry: {
+    //       type: 'Polygon',
+    //       coordinates: [[
+    //         // arrow
+    //         [
+    //           this.props.pastCoords[index].longitude,
+    //           this.props.pastCoords[index].latitude,
+    //         ],
+    //         [
+    //           GeoUtils.toDeg(endLonRad1),
+    //           GeoUtils.toDeg(endLatRad1),
+    //         ],
+    //         // [
+    //         //   coords.longitude,
+    //         //   coords.latitude,
+    //         // ],
+    //         [
+    //           GeoUtils.toDeg(endLonRad2),
+    //           GeoUtils.toDeg(endLatRad2),
+    //         ],
+    //         [
+    //           this.props.pastCoords[index].longitude,
+    //           this.props.pastCoords[index].latitude,
+    //         ],
+    //       ]],
+    //     },
+    //   };
+    // });
+
+    const newArrows2 = this.props.pastCoords.slice(1).map((coords, index) => {
+      const { heading } = coords;
+      const distance = 7;
       console.log(`distance: ${distance} heading: ${heading}`);
-      
+      const destinationPoint1 = GeoUtils.destinationPoint(coords, -distance, heading + 4);
+      const destinationPoint2 = GeoUtils.destinationPoint(coords, -distance, heading - 4);
       return {
         type: 'Feature',
         id: `arrow-${index}`,
         geometry: {
           type: 'Polygon',
+          properties: {
+            color: '#33C9EB', // blue
+          },
           coordinates: [[
             // arrow
             [
-              this.props.pastCoords[index].longitude,
-              this.props.pastCoords[index].latitude,
+              coords.longitude,
+              coords.latitude,
             ],
             [
-              GeoUtils.toDeg(endLonRad1),
-              GeoUtils.toDeg(endLatRad1),
+              destinationPoint1.longitude,
+              destinationPoint1.latitude,
             ],
             [
-              GeoUtils.toDeg(endLonRad2),
-              GeoUtils.toDeg(endLatRad2),
+              destinationPoint2.longitude,
+              destinationPoint2.latitude,
             ],
             [
-              this.props.pastCoords[index].longitude,
-              this.props.pastCoords[index].latitude,
+              coords.longitude,
+              coords.latitude,
             ],
           ]],
         },
       };
     });
-
     const shapeGeoJson = {
       type: 'FeatureCollection',
-      features: [...newArrows],
+      features: [...newArrows2, ...lines],
     };
 
     return (

@@ -113,7 +113,7 @@ const locationReducer = (state = initialState, action) => {
       let { moveHeadingAngle } = state;
       // if this is not the first location update
       if (state.coords) {
-        moveHeadingAngle = GeoUtils.getRotationAngle(state.coords, payload);
+        moveHeadingAngle = GeoUtils.getBearing(state.coords, payload);
       }
 
       return {
