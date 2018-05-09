@@ -98,12 +98,12 @@ const mapViewReducer = (state = initialState, action) => {
         mapReady: false,
       };
     }
-    case types.MAPVIEW_DRAG_START: {
-      return {
-        ...state,
-        centered: false,
-      };
-    }
+    // case types.MAPVIEW_DRAG_START: {
+    //   return {
+    //     ...state,
+    //     centered: false,
+    //   };
+    // }
     case types.MAPVIEW_SHOW_MY_LOCATION_FINISH: {
       return {
         ...state,

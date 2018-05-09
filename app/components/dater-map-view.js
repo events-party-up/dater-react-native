@@ -7,11 +7,11 @@ import { connect, Dispatch } from 'react-redux';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
 import { GeoCompass, GeoCoordinates } from '../types';
-// import MyLocationOnMovingMap from './map/my-location-on-moving-map';
+import MyLocationOnMovingMap from './map/my-location-on-moving-map';
 // import MyLocationMapMarker from './map/my-location-map-maker';
 import UsersAroundComponent from './map/users-around-component';
 // import MapDirectionsComponent from './map/map-directions-component';
-import PastLocationMarker from './map/past-location-marker';
+import PastLocationsPath from './map/past-locations-path';
 import { Caption2 } from './ui-kit/typography';
 
 const mapStateToProps = (state) => ({
@@ -117,16 +117,16 @@ class DaterMapView extends Component<Props> {
         }}
         onResponderRelease={this.onMapDragEnd}
       >
-        {/* {this.props.location.enabled && this.props.location.coords && this.props.mapView.centered &&
+        {this.props.location.enabled && this.props.location.coords && this.props.mapView.centered &&
         <MyLocationOnMovingMap
           accuracy={this.props.location.coords.accuracy}
           visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
           moveHeadingAngle={this.props.location.moveHeadingAngle}
           mapViewheadingAngle={this.props.mapView.headingAngle}
-        />} */}
+        />}
         <MapboxGL.MapView
           ref={(component) => { this.mapView = component; }}
-          showUserLocation
+          showUserLocation={false}
           zoomLevel={1}
           userTrackingMode={MapboxGL.UserTrackingModes.None}
           style={styles.mapView}
@@ -139,24 +139,16 @@ class DaterMapView extends Component<Props> {
           onWillStartLoadingMap={this.onMapReady}
           styleURL="mapbox://styles/olegwn/cjggmap8l002u2rmu63wda2nk"
           onRegionDidChange={(event) => this.onRegionDidChange(event)}
-
+          scrollEnabled={false}
         >
           {/* <MapDirectionsComponent /> */}
-          {/* <PastLocationPolylines
-            pastCoords={this.props.findUser.myPastCoords}
-            mode="own"
-          />
-          <PastLocationPolylines
-            pastCoords={this.props.findUser.targetPastCoords}
-            mode="target"
-          /> */}
-          <PastLocationMarker
+          <PastLocationsPath
             pastCoords={this.props.findUser.myPastCoords}
             mapViewheadingAngle={this.props.mapView.headingAngle}
             uid={this.props.auth.uid && this.props.auth.uid}
             mode="own"
           />
-          <PastLocationMarker
+          <PastLocationsPath
             pastCoords={this.props.findUser.targetPastCoords}
             mapViewheadingAngle={this.props.mapView.headingAngle}
             uid={this.props.findUser.targetUserUid}
@@ -175,7 +167,8 @@ class DaterMapView extends Component<Props> {
         </MapboxGL.MapView>
         <Caption2 style={styles.debugText} pointerEvents="none">
           Accuracy: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
-          GPS Heading: {this.props.location.coords && this.props.location.coords.heading}{'\n'}
+          GPS Heading: {this.props.location.coords && Math.floor(this.props.location.coords.heading)}{'\n'}
+          Move Heading: {Math.floor(this.props.location.moveHeadingAngle)}{'\n'}
           Compass Heading: {this.props.compass.heading}{'\n'}
           GeoUpdates: {this.props.location && this.props.location.geoUpdates}{'\n'}
           UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}
@@ -183,11 +176,11 @@ class DaterMapView extends Component<Props> {
         {this.props.findUser.enabled &&
         <View style={styles.findUserContainer} pointerEvents="none">
           <Caption2 style={styles.findUserText}>
-            Distance: {this.props.findUser.currentDistance}{'\n'}
+            Distance: {Math.floor(this.props.findUser.currentDistance)}{'\n'}
             My Score:
-            {` ${this.props.findUser.myScore}`}{'\n'}
+            {` ${Math.floor(this.props.findUser.myScore)}`}{'\n'}
             {this.props.findUser.targetUserUid && this.props.findUser.targetUserUid.substring(0, 4)}:
-            {` ${this.props.findUser.targetScore}`}
+            {` ${Math.floor(this.props.findUser.targetScore)}`}
           </Caption2>
         </View>
         }

@@ -10,7 +10,7 @@ type Props = {
   mode: 'target' | 'own',
 };
 
-class PastLocationMarker extends React.Component<Props> {
+class PastLocationsPath extends React.Component<Props> {
   mapStyles = MapboxGL.StyleSheet.create({
     path: {
       fillAntialias: true,
@@ -96,4 +96,4 @@ class PastLocationMarker extends React.Component<Props> {
   }
 }
 
-export default PastLocationMarker;
+export default PastLocationsPath;

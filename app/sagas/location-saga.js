@@ -123,12 +123,14 @@ function* locationUpdatedSaga(action) {
 }
 
 function* setCamera(action) {
-  const currentHeading = yield select((state) => state.mapView.heading);
-  const gpsHeading = action.payload.heading || currentHeading;
+  const mapHeading = yield select((state) => state.mapView.heading);
+  const moveHeadingAngle = yield select((state) => state.location.moveHeadingAngle);
+  const heading = action.payload.heading >= 0 ? action.payload.heading : moveHeadingAngle || mapHeading;
+
   yield put({
     type: 'MAPVIEW_SET_CAMERA',
     payload: {
-      heading: gpsHeading,
+      heading,
       latitude: action.payload.latitude,
       longitude: action.payload.longitude,
     },

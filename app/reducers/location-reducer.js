@@ -32,7 +32,7 @@ const initialState = {
   stopping: false,
   updating: false,
   initializing: false,
-  moveHeadingAngle: 0,
+  moveHeadingAngle: -1,
 };
 
 const locationReducer = (state = initialState, action) => {
@@ -91,7 +91,7 @@ const locationReducer = (state = initialState, action) => {
         enabled: false,
         pastCoords: [],
         coords: null,
-        moveHeadingAngle: 0,
+        moveHeadingAngle: -1,
       };
     }
     case types.GEO_LOCATION_UPDATE_CHANNEL_UNKNOWN_ERROR:
