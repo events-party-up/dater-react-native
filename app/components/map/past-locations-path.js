@@ -25,14 +25,15 @@ class PastLocationsPath extends React.Component<Props> {
 
     const arrows = this.props.pastCoords.slice(1).map((coords, index) => {
       const { heading, distance } = coords;
-      const arrowLength = 7;
+      const arrowLength = 7; // in meters
 
-      const destinationPoint1 = GeoUtils.destinationPoint(coords, -arrowLength, heading + 4);
-      const destinationPoint2 = GeoUtils.destinationPoint(coords, -arrowLength, heading - 4);
-      const destinationPoint3 = GeoUtils.destinationPoint(coords, -arrowLength, heading + 1);
-      const destinationPoint4 = GeoUtils.destinationPoint(coords, -arrowLength, heading - 1);
-      const destinationPoint5 = GeoUtils.destinationPoint(coords, -distance, heading + 1);
-      const destinationPoint6 = GeoUtils.destinationPoint(coords, -distance, heading - 1);
+      const arrowSkirtLeft = GeoUtils.destinationPoint(coords, -arrowLength, heading + 10);
+      const arrowSkirtRight = GeoUtils.destinationPoint(coords, -arrowLength, heading - 10);
+      const arrowLineStartLeft = GeoUtils.destinationPoint(coords, -arrowLength, heading + 4);
+      const arrowLineStartRight = GeoUtils.destinationPoint(coords, -arrowLength, heading - 4);
+      const arrowLineEndLeft = GeoUtils.destinationPoint(coords, -distance, heading + 2);
+      const arrowLineEndRight = GeoUtils.destinationPoint(coords, -distance, heading - 2);
+
       return {
         type: 'Feature',
         id: `arrow-${index}`,
@@ -42,38 +43,34 @@ class PastLocationsPath extends React.Component<Props> {
             color: '#33C9EB', // blue
           },
           coordinates: [[
-            // arrow
+            // arrow tip
             [
               coords.longitude,
               coords.latitude,
             ],
             [
-              destinationPoint1.longitude,
-              destinationPoint1.latitude,
+              arrowSkirtLeft.longitude,
+              arrowSkirtLeft.latitude,
             ],
             [
-              destinationPoint3.longitude,
-              destinationPoint3.latitude,
+              arrowLineStartLeft.longitude,
+              arrowLineStartLeft.latitude,
             ],
             [
-              destinationPoint5.longitude,
-              destinationPoint5.latitude,
+              arrowLineEndLeft.longitude,
+              arrowLineEndLeft.latitude,
             ],
             [
-              destinationPoint5.longitude,
-              destinationPoint5.latitude,
+              arrowLineEndRight.longitude,
+              arrowLineEndRight.latitude,
             ],
             [
-              destinationPoint6.longitude,
-              destinationPoint6.latitude,
+              arrowLineStartRight.longitude,
+              arrowLineStartRight.latitude,
             ],
             [
-              destinationPoint4.longitude,
-              destinationPoint4.latitude,
-            ],
-            [
-              destinationPoint2.longitude,
-              destinationPoint2.latitude,
+              arrowSkirtRight.longitude,
+              arrowSkirtRight.latitude,
             ],
             [
               coords.longitude,
