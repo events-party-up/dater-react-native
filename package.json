@@ -21,7 +21,7 @@
     "react-native-background-fetch": "^2.4.1",
     "react-native-background-geolocation": "^2.11.0",
     "react-native-device-info": "^0.21.0",
-    "react-native-firebase": "^3.3.0",
+    "react-native-firebase": "^4.1.0",
     "react-native-heading": "^1.1.1",
     "react-native-interactable": "^0.1.10",
     "react-native-splash-screen": "^3.0.6",
