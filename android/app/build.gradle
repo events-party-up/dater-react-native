@@ -141,51 +141,55 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-splash-screen')
-    compile project(':react-native-interactable')
-    compile(project(':react-native-background-geolocation')) {
+    implementation project(':react-native-splash-screen')
+    implementation project(':react-native-interactable')
+    implementation(project(':react-native-background-geolocation')) {
         exclude group: 'com.google.android.gms', module: 'play-services-location'
     }
-    compile project(':react-native-background-fetch')
+    implementation project(':react-native-background-fetch')
 
-    compile(name: 'tslocationmanager', ext: 'aar')
-    compile project(':react-native-device-info')
-    compile 'com.android.support:multidex:1.0.0'
-    compile ("com.google.android.gms:play-services-base:11.8.0") {
+    implementation(name: 'tslocationmanager', ext: 'aar')
+    implementation project(':react-native-device-info')
+    implementation 'com.android.support:multidex:1.0.0'
+    implementation ("com.google.android.gms:play-services-base:15.0.0") {
         force = true;
     }
-    compile ("com.google.android.gms:play-services-maps:11.8.0") {
+    implementation ("com.google.android.gms:play-services-maps:15.0.0") {
         force = true;
     }
-    compile ("com.google.android.gms:play-services-gcm:11.8.0") {
+    implementation ("com.google.android.gms:play-services-gcm:15.0.0") {
         force = true;
     }
-    compile ("com.google.android.gms:play-services-location:11.8.0") {
+    implementation ("com.google.android.gms:play-services-location:15.0.0") {
         force = true;
     }
 
-    compile project(':react-native-firebase')
+    implementation(project(':react-native-firebase')) {
+        transitive = false
+    }
 
     // RNFirebase required dependencies
-    compile ("com.google.firebase:firebase-core:11.8.0")  {
+    implementation ("com.google.firebase:firebase-core:15.0.2")  {
         force = true;
     }
 
     // Optional RNFirebase deps
-    compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
         transitive = true
     }
-    compile "com.google.firebase:firebase-analytics:11.8.0"
-    compile "com.google.firebase:firebase-auth:11.8.0"
-    compile "com.google.firebase:firebase-firestore:11.8.0"
-    compile "com.google.firebase:firebase-config:11.8.0"
-    compile "com.google.firebase:firebase-perf:11.8.0"
+    implementation "com.google.firebase:firebase-analytics:15.0.0"
+    implementation "com.google.firebase:firebase-auth:15.1.0"
+    implementation "com.google.firebase:firebase-firestore:16.0.0"
+    implementation "com.google.firebase:firebase-config:15.0.0"
+    implementation "com.google.firebase:firebase-perf:15.0.0"
 
-    compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:23.0.1"
-    compile "com.facebook.react:react-native:+"  // From node_modules
-    compile project(':react-native-heading')
-    compile project(':mapbox-react-native-mapbox-gl')
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "com.android.support:appcompat-v7:23.0.1"
+    implementation "com.facebook.react:react-native:+"  // From node_modules
+    implementation project(':react-native-heading')
+    implementation project(':mapbox-react-native-mapbox-gl')
+    // implementation 'com.android.support:support-v4:27.0.3'
+    // compile 'com.android.support:support-v4:27.1.0'
 
 }
 

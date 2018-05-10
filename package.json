@@ -1,5 +1,5 @@
 {
-  "name": "DaterReactNative",
+  "name": "dater-react-native",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -15,13 +15,13 @@
     "@zsajjad/react-native-heading": "https://github.com/zsajjad/react-native-heading.git",
     "moment": "^2.21.0",
     "prop-types": "^15.6.1",
-    "react": "^16.3.0-alpha.1",
+    "react": "^16.3.1",
     "react-moment": "^0.7.0",
-    "react-native": "^0.53.3",
+    "react-native": "^0.55.4",
     "react-native-background-fetch": "^2.4.1",
     "react-native-background-geolocation": "^2.11.0",
     "react-native-device-info": "^0.21.0",
-    "react-native-firebase": "^3.3.0",
+    "react-native-firebase": "^4.1.0",
     "react-native-heading": "^1.1.1",
     "react-native-interactable": "^0.1.10",
     "react-native-splash-screen": "^3.0.6",
@@ -29,8 +29,7 @@
     "react-redux": "^5.0.7",
     "redux": "^3.7.2",
     "redux-persist": "^5.9.1",
-    "redux-saga": "^0.16.0",
-    "redux-thunk": "^2.2.0"
+    "redux-saga": "^0.16.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.2",

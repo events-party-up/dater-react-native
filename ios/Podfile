@@ -3,9 +3,9 @@ platform :ios, '10.0'
 
 target 'DaterReactNative' do
   rn_path = '../node_modules/react-native'
-  # rn_maps_path = '../node_modules/react-native-maps'
 
   # Firebase React Native
+  pod 'Firebase', '~> 4.13.0'
   pod 'Firebase/Core'
   pod 'Firebase/Auth'
   pod 'Fabric', '~> 1.7.2'
@@ -27,19 +27,13 @@ target 'DaterReactNative' do
     'RCTText',
     'RCTVibration',
     'RCTWebSocket',
-    # 'BatchedBridge'
   ]
 
-
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
-
   pod 'RNBackgroundGeolocation', :path => '../node_modules/react-native-background-geolocation'
   pod 'RNBackgroundFetch', :path => '../node_modules/react-native-background-fetch'
-
   pod 'Interactable', :path => '../node_modules/react-native-interactable'
-
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
-  # Mapbox
   pod 'react-native-mapbox-gl', :path => '../node_modules/@mapbox/react-native-mapbox-gl'
 end
 

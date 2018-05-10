@@ -1,10 +1,6 @@
 import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 // import { persistStore, autoRehydrate } from 'redux-persist';
-// Thunk middleware allows actions to be chained and waited on by returning
-// a function from that action
-// https://github.com/gaearon/redux-thunk
-import thunk from 'redux-thunk';
 import Reactotron from 'reactotron-react-native';
 // Logs all actions going through redux into console
 // https://github.com/evgenyrodionov/redux-logger
@@ -24,7 +20,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // http://redux.js.org/docs/advanced/Middleware.html
-const middleware = [thunk, sagaMiddleware];
+const middleware = [sagaMiddleware];
 
 if (process.env.NODE_ENV === 'development') {
   middleware.push(createLogger());
