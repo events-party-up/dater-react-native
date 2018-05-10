@@ -30,6 +30,11 @@ export default class UIKitIndexScreen extends Component<Props> {
             Typography
           </DaterButton>
         </View>
+        <View style={styles.row}>
+          <DaterButton type="main" onPress={() => this.props.navigation.navigate('Textinputs')}>
+            Text Inputs
+          </DaterButton>
+        </View>
       </DaterModal>
     );
   }
