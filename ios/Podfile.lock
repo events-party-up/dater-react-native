@@ -37,14 +37,14 @@ PODS:
   - FirebaseAnalytics (4.2.0):
     - FirebaseCore (~> 4.0)
     - FirebaseInstanceID (~> 2.0)
-    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
     - nanopb (~> 0.3)
   - FirebaseAuth (4.6.1):
     - FirebaseAnalytics (~> 4.2)
-    - GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)
+    - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
     - GTMSessionFetcher/Core (~> 1.1)
   - FirebaseCore (4.0.20):
-    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
   - FirebaseFirestore (0.11.0):
     - FirebaseAnalytics (~> 4.1)
     - FirebaseCore (~> 4.0)
@@ -59,7 +59,7 @@ PODS:
     - FirebaseSwizzlingUtilities/ISASwizzling (~> 1.0)
     - FirebaseSwizzlingUtilities/MethodSwizzling (~> 1.0)
     - GoogleToolboxForMac/Logger (~> 2.1)
-    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
     - GTMSessionFetcher/Core (~> 1.1)
     - Protobuf (~> 3.5)
   - FirebaseRemoteConfig (2.1.3):
@@ -67,7 +67,7 @@ PODS:
     - FirebaseAnalytics (~> 4.1)
     - FirebaseCore (~> 4.0)
     - FirebaseInstanceID (~> 2.0)
-    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
     - Protobuf (~> 3.5)
   - FirebaseSwizzlingUtilities/ISASwizzling (1.0.1)
   - FirebaseSwizzlingUtilities/MethodSwizzling (1.0.1):
@@ -77,13 +77,13 @@ PODS:
   - GoogleToolboxForMac/Defines (2.1.4)
   - GoogleToolboxForMac/Logger (2.1.4):
     - GoogleToolboxForMac/Defines (= 2.1.4)
-  - GoogleToolboxForMac/NSData+zlib (2.1.4):
+  - "GoogleToolboxForMac/NSData+zlib (2.1.4)":
     - GoogleToolboxForMac/Defines (= 2.1.4)
-  - GoogleToolboxForMac/NSDictionary+URLArguments (2.1.4):
+  - "GoogleToolboxForMac/NSDictionary+URLArguments (2.1.4)":
     - GoogleToolboxForMac/DebugUtils (= 2.1.4)
     - GoogleToolboxForMac/Defines (= 2.1.4)
-    - GoogleToolboxForMac/NSString+URLArguments (= 2.1.4)
-  - GoogleToolboxForMac/NSString+URLArguments (2.1.4)
+    - "GoogleToolboxForMac/NSString+URLArguments (= 2.1.4)"
+  - "GoogleToolboxForMac/NSString+URLArguments (2.1.4)"
   - gRPC (1.11.0):
     - gRPC-RxLibrary (= 1.11.0)
     - gRPC/Main (= 1.11.0)
@@ -166,7 +166,7 @@ DEPENDENCIES:
   - Firebase/Performance
   - Firebase/RemoteConfig
   - Interactable (from `../node_modules/react-native-interactable`)
-  - react-native-mapbox-gl (from `../node_modules/@mapbox/react-native-mapbox-gl`)
+  - "react-native-mapbox-gl (from `../node_modules/@mapbox/react-native-mapbox-gl`)"
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - React/Core (from `../node_modules/react-native`)
   - React/RCTActionSheet (from `../node_modules/react-native`)
@@ -184,23 +184,49 @@ DEPENDENCIES:
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga/yoga.podspec`)
 
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - BoringSSL
+    - CocoaLumberjack
+    - Crashlytics
+    - Fabric
+    - Firebase
+    - FirebaseABTesting
+    - FirebaseAnalytics
+    - FirebaseAuth
+    - FirebaseCore
+    - FirebaseFirestore
+    - FirebaseInstanceID
+    - FirebasePerformance
+    - FirebaseRemoteConfig
+    - FirebaseSwizzlingUtilities
+    - GoogleToolboxForMac
+    - gRPC
+    - gRPC-Core
+    - gRPC-ProtoRPC
+    - gRPC-RxLibrary
+    - GTMSessionFetcher
+    - leveldb-library
+    - nanopb
+    - Protobuf
+
 EXTERNAL SOURCES:
   Interactable:
-    :path: ../node_modules/react-native-interactable
+    :path: "../node_modules/react-native-interactable"
   React:
-    :path: ../node_modules/react-native
+    :path: "../node_modules/react-native"
   react-native-mapbox-gl:
-    :path: ../node_modules/@mapbox/react-native-mapbox-gl
+    :path: "../node_modules/@mapbox/react-native-mapbox-gl"
   react-native-splash-screen:
-    :path: ../node_modules/react-native-splash-screen
+    :path: "../node_modules/react-native-splash-screen"
   RNBackgroundFetch:
-    :path: ../node_modules/react-native-background-fetch
+    :path: "../node_modules/react-native-background-fetch"
   RNBackgroundGeolocation:
-    :path: ../node_modules/react-native-background-geolocation
+    :path: "../node_modules/react-native-background-geolocation"
   RNDeviceInfo:
-    :path: ../node_modules/react-native-device-info
+    :path: "../node_modules/react-native-device-info"
   yoga:
-    :path: ../node_modules/react-native/ReactCommon/yoga/yoga.podspec
+    :path: "../node_modules/react-native/ReactCommon/yoga/yoga.podspec"
 
 SPEC CHECKSUMS:
   BoringSSL: 60dd24df4af296bf41d78e5841dbb95d75f88c0d
@@ -237,4 +263,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: f860768ddba4739b1414fa01e443367cd40507ba
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.0
