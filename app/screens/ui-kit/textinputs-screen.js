@@ -21,7 +21,17 @@ export default class TextInputsScreen extends Component<Props> {
         headerTitle="Text Inputs"
       >
         <View style={styles.row}>
-          <DaterTextInput placeholder="Type text here..." />
+          <DaterTextInput
+            placeholder="Enter your phone..."
+            keyboardType="phone-pad"
+            returnKeyType="go"
+          />
+        </View>
+        <View style={styles.row}>
+          <DaterTextInput
+            placeholder="Enter your name..."
+            returnKeyType="next"
+          />
         </View>
       </DaterModal>
     );
