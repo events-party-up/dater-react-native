@@ -5,6 +5,7 @@ import {
   View,
   Platform,
   ScrollView,
+  Image,
 } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 
@@ -17,12 +18,24 @@ type Props = {
   closeButtonPress: () => void,
   backButtonPress: () => void,
   headerTitle: string,
+  bgImage: Image,
+  style: typeof StyleSheet,
 };
 
 export default class DaterModal extends React.Component<Props> {
   render() {
     return (
-      <View style={this.props.fullscreen ? styles.fullScreenModalContainer : styles.floatingModalContainer}>
+
+      <View style={this.props.fullscreen ?
+        [styles.fullScreenModalContainer, this.props.style] :
+        [styles.floatingModalContainer, this.props.style]}
+      >
+        {this.props.bgImage && (
+          <Image
+            style={styles.bgImage}
+            source={this.props.bgImage}
+          />)}
+
         {this.props.closeButton && (
         <View style={styles.closeButton}>
           <CircleButton type="close" onPress={() => this.props.closeButtonPress()} />
@@ -114,5 +127,10 @@ const styles = StyleSheet.create({
       width: 0, height: 4,
     },
     elevation: 1,
+  },
+  bgImage: {
+    position: 'absolute',
+    resizeMode: 'cover',
+    zIndex: -1,
   },
 });
