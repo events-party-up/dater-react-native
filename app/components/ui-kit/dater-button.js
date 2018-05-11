@@ -2,7 +2,7 @@ import React from 'react';
 import {
   StyleSheet,
   View,
-  TouchableOpacity,
+  TouchableHighlight,
   Image,
 } from 'react-native';
 
@@ -80,7 +80,7 @@ const DaterButton = (props) => {
   };
 
   return (
-    <TouchableOpacity
+    <TouchableHighlight
       style={[styles.buttonContainer, props.style]}
       onPress={() => onPress()}
       hitSlop={{
@@ -118,7 +118,7 @@ const DaterButton = (props) => {
           {props.children.toUpperCase()}
         </H3>
       </View>
-    </TouchableOpacity>
+    </TouchableHighlight>
   );
 };
 

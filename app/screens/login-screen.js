@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import {
   StyleSheet,
-  View,
   ImageBackground,
 } from 'react-native';
 
@@ -27,7 +26,6 @@ export default class LoginScreen extends React.Component<Props> {
       <ImageBackground
         style={styles.bgImage}
         source={bgImage}
-        resizeMethod="cover"
         resizeMode="cover"
       >
         <DaterModal
@@ -36,21 +34,16 @@ export default class LoginScreen extends React.Component<Props> {
           bgImage={bgImage}
           style={styles.modal}
         >
-          <View style={styles.headersContainer}>
-            <View style={styles.topDividier} />
-            <H1 style={styles.header}>Dater</H1>
-            <Body style={styles.subHeader}>Играй и влюбляйся!</Body>
-          </View>
-          <View style={styles.footerContainer}>
-            <DaterButton
-              style={styles.button}
-              onPress={() => this.props.navigation.navigate('LoginPhone')}
-              type="secondary"
-            >
-              Номер Телефона
-            </DaterButton>
-            <Caption2 style={styles.footer}>Конфиденциальность | Правила использования</Caption2>
-          </View>
+          <H1 style={styles.header}>Dater</H1>
+          <Body style={styles.subHeader}>Играй и влюбляйся!</Body>
+          <DaterButton
+            style={styles.button}
+            onPress={() => this.props.navigation.navigate('LoginPhone')}
+            type="secondary"
+          >
+            Войти
+          </DaterButton>
+          <Caption2 style={styles.footer}>Конфиденциальность | Правила использования</Caption2>
         </DaterModal>
       </ImageBackground>
     );
@@ -66,15 +59,9 @@ const styles = StyleSheet.create({
   },
   modal: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    // justifyContent: 'flex-start',
     alignItems: 'flex-end',
     backgroundColor: 'transparent',
-  },
-  headersContainer: {
-    flex: 1,
-  },
-  topDividier: {
-    height: 320,
   },
   header: {
     color: '#FFFFFF',
@@ -85,12 +72,8 @@ const styles = StyleSheet.create({
   },
   button: {
     alignSelf: 'center',
-    marginBottom: 32,
     width: width - 32,
-  },
-  footerContainer: {
-    justifyContent: 'flex-end',
-    height: 200,
+    borderWidth: 0,
   },
   footer: {
     color: '#FFFFFF',
