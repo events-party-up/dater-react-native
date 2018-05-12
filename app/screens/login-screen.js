@@ -17,10 +17,6 @@ type Props = {
 };
 
 export default class LoginScreen extends React.Component<Props> {
-  signIn = () => {
-    console.log('Signing in');
-  }
-
   render() {
     return (
       <ImageBackground
@@ -31,7 +27,6 @@ export default class LoginScreen extends React.Component<Props> {
         <DaterModal
           fullscreen
           closeButtonPress={() => this.props.navigation.goBack(null)}
-          bgImage={bgImage}
           style={styles.modal}
         >
           <H1 style={styles.header}>Dater</H1>
@@ -58,9 +53,8 @@ const styles = StyleSheet.create({
     height: null,
   },
   modal: {
-    flexDirection: 'row',
-    // justifyContent: 'flex-start',
-    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-start',
     backgroundColor: 'transparent',
   },
   header: {
@@ -74,6 +68,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: width - 32,
     borderWidth: 0,
+    marginBottom: 32,
   },
   footer: {
     color: '#FFFFFF',

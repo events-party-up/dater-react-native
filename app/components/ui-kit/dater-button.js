@@ -14,6 +14,7 @@ const coinImage = require('../../assets/icons/small-coin/small-coin.png');
 const DaterButton = (props) => {
   let buttonTextColor = '#fff';
   let buttonBackgroundColor = '#000';
+  let underlayColor = 'gray';
   let borderWidth = 0;
   let dividerBackgroundColor = 'rgba(242, 242, 242, 0.2)';
 
@@ -21,6 +22,7 @@ const DaterButton = (props) => {
     case 'secondary': {
       buttonTextColor = '#000';
       buttonBackgroundColor = '#fff';
+      underlayColor = 'gray';
       borderWidth = 1;
       dividerBackgroundColor = 'rgba(0,0,0,0.05)';
       break;
@@ -36,7 +38,7 @@ const DaterButton = (props) => {
   }
 
   const styles = StyleSheet.create({
-    buttonContainer: {
+    button: {
       width: 216,
       height: 48,
       backgroundColor: buttonBackgroundColor,
@@ -81,8 +83,9 @@ const DaterButton = (props) => {
 
   return (
     <TouchableHighlight
-      style={[styles.buttonContainer, props.style]}
+      style={[styles.button, props.style]}
       onPress={() => onPress()}
+      underlayColor={underlayColor}
       hitSlop={{
       top: 10,
       bottom: 10,

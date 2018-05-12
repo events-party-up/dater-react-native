@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
-  View,
+  ScrollView,
 } from 'react-native';
 
 import DaterButton from '../../components/ui-kit/dater-button';
@@ -19,31 +19,41 @@ export default class UIKitIndexScreen extends Component<Props> {
         closeButton
         closeButtonPress={() => this.props.navigation.goBack(null)}
         headerTitle="UI Kit Collection"
+        style={styles.modal}
       >
-        <View style={styles.row}>
-          <DaterButton type="main" onPress={() => this.props.navigation.navigate('Buttons')}>
+        <ScrollView>
+          <DaterButton
+            type="main"
+            onPress={() => this.props.navigation.navigate('Buttons')}
+            style={styles.button}
+          >
             Buttons
           </DaterButton>
-        </View>
-        <View style={styles.row}>
-          <DaterButton type="main" onPress={() => this.props.navigation.navigate('Typography')}>
+          <DaterButton
+            type="main"
+            onPress={() => this.props.navigation.navigate('Typography')}
+            style={styles.button}
+          >
             Typography
           </DaterButton>
-        </View>
-        <View style={styles.row}>
-          <DaterButton type="main" onPress={() => this.props.navigation.navigate('TextInputs')}>
+          <DaterButton
+            type="main"
+            onPress={() => this.props.navigation.navigate('TextInputs')}
+            style={styles.button}
+          >
             Text Inputs
           </DaterButton>
-        </View>
+        </ScrollView>
       </DaterModal>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    paddingBottom: 16,
-    justifyContent: 'center',
+  button: {
+    alignSelf: 'center',
+  },
+  modal: {
+    paddingRight: 0,
   },
 });
