@@ -68,6 +68,8 @@ export default class DaterTextInput extends Component<Props, State> {
         onFocus={() => this.setState({ ...this.state, isFocused: true })}
         onBlur={() => this.setState({ ...this.state, isFocused: false })}
         allowFontScaling={false}
+        autoCorrect={false}
+        underlineColorAndroid="transparent"
         {...this.props}
       />
     );

@@ -5,6 +5,8 @@ PODS:
   - BoringSSL/Implementation (10.0.2):
     - BoringSSL/Interface (= 10.0.2)
   - BoringSSL/Interface (10.0.2)
+  - BVLinearGradient (2.4.0):
+    - React
   - CocoaLumberjack (3.4.2):
     - CocoaLumberjack/Default (= 3.4.2)
     - CocoaLumberjack/Extensions (= 3.4.2)
@@ -157,6 +159,7 @@ PODS:
   - yoga (0.55.4.React)
 
 DEPENDENCIES:
+  - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
   - Crashlytics (~> 3.9.3)
   - Fabric (~> 1.7.2)
   - Firebase (~> 4.13.0)
@@ -211,6 +214,8 @@ SPEC REPOS:
     - Protobuf
 
 EXTERNAL SOURCES:
+  BVLinearGradient:
+    :path: "../node_modules/react-native-linear-gradient"
   Interactable:
     :path: "../node_modules/react-native-interactable"
   React:
@@ -230,6 +235,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   BoringSSL: 60dd24df4af296bf41d78e5841dbb95d75f88c0d
+  BVLinearGradient: 4b3f3bdf1ac1a52a5ef5e65c9585d793a7c3f825
   CocoaLumberjack: db7cc9e464771f12054c22ff6947c5a58d43a0fd
   Crashlytics: dbb07d01876c171c5ccbdf7826410380189e452c
   Fabric: f8d42c893bb187326a7968b62abe55c36a987a46
@@ -261,6 +267,6 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 568c5641057313b4912d08a7742ff0b2f753ed5c
   yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: f860768ddba4739b1414fa01e443367cd40507ba
+PODFILE CHECKSUM: 9b6f926bf72914d9710375c414f844c89c8b9867
 
 COCOAPODS: 1.5.0

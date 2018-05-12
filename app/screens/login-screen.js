@@ -4,6 +4,7 @@ import {
   StyleSheet,
   ImageBackground,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 import DaterModal from '../components/ui-kit/dater-modal';
 import DaterButton from '../components/ui-kit/dater-button';
@@ -24,22 +25,31 @@ export default class LoginScreen extends React.Component<Props> {
         source={bgImage}
         resizeMode="cover"
       >
-        <DaterModal
-          fullscreen
-          closeButtonPress={() => this.props.navigation.goBack(null)}
-          style={styles.modal}
+        <LinearGradient
+          colors={['rgba(229, 228, 234, 0)', 'rgba(32, 33, 79, 0.5)']}
+          style={styles.linearGradient}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 0, y: 1 }}
         >
-          <H1 style={styles.header}>Dater</H1>
-          <Body style={styles.subHeader}>Играй и влюбляйся!</Body>
-          <DaterButton
-            style={styles.button}
-            onPress={() => this.props.navigation.navigate('LoginPhone')}
-            type="secondary"
+          <DaterModal
+            fullscreen
+            closeButtonPress={() => this.props.navigation.goBack(null)}
+            style={styles.modal}
           >
-            Войти
-          </DaterButton>
-          <Caption2 style={styles.footer}>Конфиденциальность | Правила использования</Caption2>
-        </DaterModal>
+            <H1 style={styles.header}>Dater</H1>
+            {/* <Body style={styles.subHeader}>Играй и влюбляйся!</Body> */}
+            {/* <Body style={styles.subHeader}>Живи сейчас, встречайся сейчас!</Body> */}
+            <Body style={styles.subHeader}>Играй и знакомься!</Body>
+            <DaterButton
+              style={styles.button}
+              onPress={() => this.props.navigation.navigate('LoginPhone')}
+              type="secondary"
+            >
+              Войти
+            </DaterButton>
+            <Caption2 style={styles.footer}>Конфиденциальность | Правила использования</Caption2>
+          </DaterModal>
+        </LinearGradient>
       </ImageBackground>
     );
   }
@@ -74,5 +84,13 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     alignSelf: 'center',
     marginBottom: 18,
+  },
+  linearGradient: {
+    backgroundColor: 'transparent',
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
 });
