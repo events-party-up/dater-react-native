@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-// import { Keyboard } from 'react-native';
+import { ScrollView } from 'react-native';
 
 import DaterTextInput from '../../components/ui-kit/atoms/dater-text-input';
 import DaterModal from '../../components/ui-kit/dater-modal';
@@ -19,20 +19,25 @@ export default class TextInputsScreen extends Component<Props> {
         headerTitle="Text Inputs"
         keyboardShouldPersistTaps="handled"
       >
-        <DaterTextInput
-          placeholder="Enter your phone..."
-          keyboardType="phone-pad"
-          returnKeyType="go"
-        />
-        <DaterTextInput
-          placeholder="Enter your name..."
-          returnKeyType="next"
-        />
-        <DaterButton
-          onPress={() => this.props.navigation.navigate('LoginPhone')}
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          scrollEnabled={false}
         >
-          Далее
-        </DaterButton>
+          <DaterTextInput
+            placeholder="Enter your phone..."
+            keyboardType="phone-pad"
+            returnKeyType="go"
+          />
+          <DaterTextInput
+            placeholder="Enter your name..."
+            returnKeyType="next"
+          />
+          <DaterButton
+            onPress={() => this.props.navigation.navigate('LoginPhone')}
+          >
+            Далее
+          </DaterButton>
+        </ScrollView>
       </DaterModal>
     );
   }
