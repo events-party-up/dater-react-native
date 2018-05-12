@@ -52,9 +52,10 @@ export default class DaterTextInput extends Component<Props, State> {
         fontFamily: (this.state.isFocused && this.state.text.length > 0) ||
           this.state.text.length > 0 ? 'OpenSans-SemiBold' : 'OpenSans-Regular',
         color: '#000000',
-        lineHeight: 20,
+        lineHeight: 22,
         fontSize: 16,
         textAlign: 'left',
+        marginBottom: 8,
       },
     });
 
