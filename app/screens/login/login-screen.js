@@ -6,12 +6,12 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
-import DaterModal from '../components/ui-kit/dater-modal';
-import DaterButton from '../components/ui-kit/dater-button';
-import { H1, Body, Caption2 } from '../components/ui-kit/typography';
-import { width } from '../constants';
+import DaterModal from '../../components/ui-kit/dater-modal';
+import DaterButton from '../../components/ui-kit/dater-button';
+import { H1, Body, Caption2 } from '../../components/ui-kit/typography';
+import { width } from '../../constants';
 
-const bgImage = require('../assets/images/login-screen/login-selfie.jpg');
+const bgImage = require('../../assets/images/login-screen/login-selfie.jpg');
 
 type Props = {
   navigation: any,
@@ -42,7 +42,7 @@ export default class LoginScreen extends React.Component<Props> {
             <Body style={styles.subHeader}>Играй и знакомься!</Body>
             <DaterButton
               style={styles.button}
-              onPress={() => this.props.navigation.navigate('LoginPhone')}
+              onPress={() => this.props.navigation.navigate('PhoneNumber')}
               type="secondary"
             >
               Войти
@@ -61,6 +61,14 @@ const styles = StyleSheet.create({
     // remove width and height to override fixed static size
     width: null,
     height: null,
+  },
+  linearGradient: {
+    backgroundColor: 'transparent',
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
   modal: {
     justifyContent: 'flex-end',
@@ -84,13 +92,5 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     alignSelf: 'center',
     marginBottom: 18,
-  },
-  linearGradient: {
-    backgroundColor: 'transparent',
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
   },
 });

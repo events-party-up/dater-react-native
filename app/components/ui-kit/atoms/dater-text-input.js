@@ -23,6 +23,7 @@ import { TextInput, StyleSheet } from 'react-native';
 
 type Props = {
   placeholder: string,
+  style: typeof StyleSheet,
   // label: string,
 };
 
@@ -55,14 +56,15 @@ export default class DaterTextInput extends Component<Props, State> {
         lineHeight: 22,
         fontSize: 16,
         textAlign: 'left',
-        marginBottom: 8,
+        marginBottom: 32,
       },
     });
 
     return (
       <TextInput
+        {...this.props}
         ref={(component) => { this.textInput = component; }}
-        style={styles.textInput}
+        style={[styles.textInput, this.props.style]}
         onChangeText={(text) => this.setState({ ...this.state, text })}
         value={this.state.text}
         placeholderTextColor="rgba(0, 0, 0, 0.2)"
@@ -71,7 +73,6 @@ export default class DaterTextInput extends Component<Props, State> {
         allowFontScaling={false}
         autoCorrect={false}
         underlineColorAndroid="transparent"
-        {...this.props}
       />
     );
   }

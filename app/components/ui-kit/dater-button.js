@@ -16,7 +16,7 @@ const DaterButton = (props) => {
   let buttonBackgroundColor = '#000';
   let underlayColor = 'gray';
   let borderWidth = 0;
-  let dividerBackgroundColor = 'rgba(242, 242, 242, 0.2)';
+  let dividerBackgroundColor = 'rgba(242, 242, 242, 0.3)'; // opacity 0.3 is for inactive button
 
   switch (props.type) {
     case 'secondary': {
