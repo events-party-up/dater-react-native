@@ -7,7 +7,7 @@ import { connect, Dispatch } from 'react-redux';
 
 import DaterMapView from '../components/dater-map-view';
 import { GeoCoordinates, GeoCompass } from '../types';
-// import DaterButton from '../components/ui-kit/dater-button';
+import DaterButton from '../components/ui-kit/dater-button';
 import MyLocationButton from '../components/map/my-location-button';
 import MapPanelComponent from '../components/map/map-panel-component';
 
@@ -23,7 +23,7 @@ type Props = {
     coords: GeoCoordinates,
   },
   compass: GeoCompass,
-  // navigation: any,
+  navigation: any,
 };
 
 class MainScreen extends Component<Props> {
@@ -46,13 +46,30 @@ class MainScreen extends Component<Props> {
           location={this.props.location}
           compass={this.props.compass}
         />
+        <View style={styles.buttons}>
+          <DaterButton
+            style={styles.button}
+            onPress={() => this.props.navigation.navigate('Floating')}
+            type="secondary"
+          >
+            Floating Screen
+          </DaterButton>
 
-        {/* <DaterButton style={styles.button1} onPress={() => this.props.navigation.navigate('UIKit')}>
-          UI Kit
-        </DaterButton>
-        <DaterButton style={styles.button2} onPress={() => this.props.navigation.navigate('Login')} type="secondary">
-          Login
-        </DaterButton> */}
+          <DaterButton
+            style={styles.button}
+            onPress={() => this.props.navigation.navigate('Login')}
+            type="secondary"
+          >
+            Login Screen
+          </DaterButton>
+
+          <DaterButton
+            style={styles.button}
+            onPress={() => this.props.navigation.navigate('UIKit')}
+          >
+            UI Kit
+          </DaterButton>
+        </View>
       </View>
     );
   }
@@ -65,25 +82,14 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     flex: 1,
   },
-  button1: {
+  buttons: {
     position: 'absolute',
     bottom: 30,
     left: 0,
     right: 0,
     alignItems: 'center',
   },
-  button2: {
-    position: 'absolute',
-    bottom: 90,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-  loginButton: {
-    position: 'absolute',
-    zIndex: 2,
-    right: 20,
-    top: 20,
+  button: {
   },
   debugText: {
     position: 'absolute',

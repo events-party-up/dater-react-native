@@ -2,7 +2,7 @@ import React from 'react';
 import {
   StyleSheet,
   View,
-  TouchableOpacity,
+  TouchableHighlight,
   Image,
 } from 'react-native';
 
@@ -14,13 +14,15 @@ const coinImage = require('../../assets/icons/small-coin/small-coin.png');
 const DaterButton = (props) => {
   let buttonTextColor = '#fff';
   let buttonBackgroundColor = '#000';
+  let underlayColor = 'gray';
   let borderWidth = 0;
-  let dividerBackgroundColor = 'rgba(242, 242, 242, 0.2)';
+  let dividerBackgroundColor = 'rgba(242, 242, 242, 0.3)'; // opacity 0.3 is for inactive button
 
   switch (props.type) {
     case 'secondary': {
       buttonTextColor = '#000';
       buttonBackgroundColor = '#fff';
+      underlayColor = 'gray';
       borderWidth = 1;
       dividerBackgroundColor = 'rgba(0,0,0,0.05)';
       break;
@@ -36,12 +38,14 @@ const DaterButton = (props) => {
   }
 
   const styles = StyleSheet.create({
-    buttonContainer: {
+    button: {
       width: 216,
       height: 48,
       backgroundColor: buttonBackgroundColor,
       borderRadius: 5,
       borderWidth,
+      marginBottom: 8,
+      flexDirection: 'row',
     },
     textContainer: {
       flex: 1,
@@ -78,47 +82,46 @@ const DaterButton = (props) => {
   };
 
   return (
-    <View style={props.style}>
-      <TouchableOpacity
-        style={styles.buttonContainer}
-        onPress={() => onPress()}
-        hitSlop={{
-        top: 10,
-        bottom: 10,
-        left: 10,
-        right: 10,
-      }}
-      >
-        <View style={styles.textContainer}>
-          {props.xpReward && (
-            <View style={styles.rewardContainer}>
-              <View style={styles.xpContainer}>
-                <Image
-                  style={styles.image}
-                  source={xpImage}
-                />
-                <Body color="#6FCF97">{props.xpReward}</Body>
-              </View>
-              <View style={styles.divider} />
-            </View>)}
-          {props.coinReward && (
-            <View style={styles.rewardContainer}>
-              <View style={styles.xpContainer}>
-                <Image
-                  style={styles.image}
-                  source={coinImage}
-                />
-                <Body color={buttonTextColor}>{props.coinReward}</Body>
-              </View>
-              <View style={styles.divider} />
-            </View>)}
+    <TouchableHighlight
+      style={[styles.button, props.style]}
+      onPress={() => onPress()}
+      underlayColor={underlayColor}
+      hitSlop={{
+      top: 10,
+      bottom: 10,
+      left: 10,
+      right: 10,
+    }}
+    >
+      <View style={styles.textContainer}>
+        {props.xpReward && (
+          <View style={styles.rewardContainer}>
+            <View style={styles.xpContainer}>
+              <Image
+                style={styles.image}
+                source={xpImage}
+              />
+              <Body color="#6FCF97">{props.xpReward}</Body>
+            </View>
+            <View style={styles.divider} />
+          </View>)}
+        {props.coinReward && (
+          <View style={styles.rewardContainer}>
+            <View style={styles.xpContainer}>
+              <Image
+                style={styles.image}
+                source={coinImage}
+              />
+              <Body color={buttonTextColor}>{props.coinReward}</Body>
+            </View>
+            <View style={styles.divider} />
+          </View>)}
 
-          <H3 buttonText color={buttonTextColor} align="center">
-            {props.children.toUpperCase()}
-          </H3>
-        </View>
-      </TouchableOpacity>
-    </View>
+        <H3 buttonText color={buttonTextColor} align="center">
+          {props.children.toUpperCase()}
+        </H3>
+      </View>
+    </TouchableHighlight>
   );
 };
 

@@ -4,7 +4,6 @@ import {
   StyleSheet,
   View,
   Platform,
-  ScrollView,
 } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 
@@ -17,12 +16,17 @@ type Props = {
   closeButtonPress: () => void,
   backButtonPress: () => void,
   headerTitle: string,
+  style: typeof StyleSheet,
 };
 
 export default class DaterModal extends React.Component<Props> {
   render() {
     return (
-      <View style={this.props.fullscreen ? styles.fullScreenModalContainer : styles.floatingModalContainer}>
+
+      <View style={this.props.fullscreen ?
+        [styles.fullScreenModalContainer, this.props.style] :
+        [styles.floatingModalContainer, this.props.style]}
+      >
         {this.props.closeButton && (
         <View style={styles.closeButton}>
           <CircleButton type="close" onPress={() => this.props.closeButtonPress()} />
@@ -35,9 +39,7 @@ export default class DaterModal extends React.Component<Props> {
         <DaterHeader>
           {this.props.headerTitle}
         </DaterHeader>)}
-        <ScrollView style={styles.scrollView}>
-          {this.props.children}
-        </ScrollView>
+        {this.props.children}
       </View>
     );
   }
@@ -53,7 +55,6 @@ const modalTopSpace = () => {
   }
   return 8;
 };
-
 
 const modalBottomMargin = () => {
   if (DeviceInfo.getModel() === 'iPhone X') {
@@ -86,7 +87,7 @@ const styles = StyleSheet.create({
     marginTop: modalTopSpace(),
     marginBottom: modalBottomMargin(),
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     shadowColor: 'rgba(0, 0, 0, 0.1)',
     backgroundColor: '#ffffff',
     borderRadius: 4,
@@ -97,11 +98,9 @@ const styles = StyleSheet.create({
     },
     elevation: 1,
   },
-  scrollView: {
+  fullScreenModalContainer: {
     paddingLeft: 16,
     paddingRight: 16,
-  },
-  fullScreenModalContainer: {
     paddingTop: modalTopSpace(),
     flex: 1,
     justifyContent: 'flex-start',

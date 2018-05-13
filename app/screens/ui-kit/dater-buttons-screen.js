@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
-  View,
+  ScrollView,
 } from 'react-native';
 
 import DaterButton from '../../components/ui-kit/dater-button';
@@ -20,74 +20,52 @@ export default class DaterButtonsScreen extends Component<Props> {
         backButton
         backButtonPress={() => this.props.navigation.goBack()}
         headerTitle="Buttons"
+        style={styles.modal}
       >
-        <View style={styles.row}>
+        <ScrollView>
           <DaterButton type="main">
             button cta
           </DaterButton>
-        </View>
-        <View style={styles.row}>
           <DaterButton type="secondary">
             button sec
           </DaterButton>
-        </View>
-        <View style={styles.row}>
           <DaterButton type="text">
             text button
           </DaterButton>
-        </View>
-        <View style={styles.row}>
           <DaterButton type="main" xpReward={14}>
             награда xp
           </DaterButton>
-        </View>
-        <View style={styles.row}>
           <DaterButton type="secondary" xpReward={14}>
             reward xp
           </DaterButton>
-        </View>
-        <View style={styles.row}>
           <DaterButton type="main" coinReward={2}>
             Coin Reward
           </DaterButton>
-        </View>
-        <View style={styles.row}>
           <DaterButton type="secondary" coinReward={2}>
             Coin Reward
           </DaterButton>
-        </View>
-        <View style={styles.row}>
           <DaterButton type="secondary" coinReward={2}>
             Coin Reward
           </DaterButton>
-        </View>
-        <View style={styles.row}>
           <DaterButton type="secondary" coinReward={2}>
             Coin Reward
           </DaterButton>
-        </View>
-        <View style={styles.row}>
           <DaterButton type="secondary" coinReward={2}>
             Coin Reward
           </DaterButton>
-        </View>
-        <View style={styles.row}>
           <DaterButton type="secondary" coinReward={2}>
             Coin Reward
           </DaterButton>
-        </View>
-        <View style={styles.row}>
           <CircleButton type="close" />
           <CircleButton type="back" />
-        </View>
+        </ScrollView>
       </DaterModal>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    paddingBottom: 16,
+  modal: {
+    paddingRight: 0,
   },
 });

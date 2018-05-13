@@ -7,7 +7,7 @@
     "test": "jest",
     "run:android:debug:standalone": "mkdir -p ./android/app/build/intermediates/assets/debug && react-native bundle --dev false --platform android --entry-file index.js --bundle-output ./android/app/build/intermediates/assets/debug/index.android.bundle --assets-dest ./android/app/build/intermediates/res/merged/debug && cd android && ./gradlew assembleDebug && adb install -r app/build/outputs/apk/debug/app-debug.apk",
     "build:android": "npm run run:android:debug:standalone",
-    "postinstall": "cd ios && pod install && cd .."
+    "postinstall": "cd ios && pod update && cd .."
   },
   "dependencies": {
     "@mapbox/polyline": "^1.0.0",
@@ -24,6 +24,7 @@
     "react-native-firebase": "^4.1.0",
     "react-native-heading": "^1.1.1",
     "react-native-interactable": "^0.1.10",
+    "react-native-linear-gradient": "^2.4.0",
     "react-native-splash-screen": "^3.0.6",
     "react-navigation": "^1.5.9",
     "react-redux": "^5.0.7",

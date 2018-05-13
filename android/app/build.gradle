@@ -188,9 +188,7 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation project(':react-native-heading')
     implementation project(':mapbox-react-native-mapbox-gl')
-    // implementation 'com.android.support:support-v4:27.0.3'
-    // compile 'com.android.support:support-v4:27.1.0'
-
+    implementation project(':react-native-linear-gradient')
 }
 
 repositories {

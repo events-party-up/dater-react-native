@@ -26,7 +26,7 @@ import com.facebook.soloader.SoLoader;
 
 // MapBox
 import com.mapbox.rctmgl.RCTMGLPackage;
-
+import com.BV.LinearGradient.LinearGradientPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -56,7 +56,8 @@ public class MainApplication extends Application implements ReactApplication {
           new RNFirebaseRemoteConfigPackage(),
           new RNFirebasePerformancePackage(),
           new ReactNativeHeadingPackage(),
-          new RCTMGLPackage()
+          new RCTMGLPackage(),
+          new LinearGradientPackage()
         );
     }
 
