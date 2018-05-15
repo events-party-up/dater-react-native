@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
-import PersonMaker from './person-maker';
+import UserOnMapMarker from './user-on-map-marker';
 
 const mapStateToProps = (state) => ({
   usersAround: state.usersAround.users,
@@ -81,9 +81,9 @@ class UsersAroundComponent extends React.Component<Props> {
         onDeselected={() => { this.onDeselected(); }}
         selected={false}
       >
-        <PersonMaker
+        <UserOnMapMarker
           onPress={() => { this.onPress(user); }}
-          title={user.shortId}
+          title={user.shortId && user.shortId.substring(0, 1).toUpperCase()}
         />
       </MapboxGL.PointAnnotation>
     ));
