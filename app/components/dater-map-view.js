@@ -6,12 +6,11 @@ import {
 import { connect, Dispatch } from 'react-redux';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
-import { GeoCoordinates, GeoCompass } from '../types';
+import { GeoCoordinates } from '../types';
 import MyLocationOnCenteredMap from './map/my-location-on-centered-map';
 import UsersAroundComponent from './map/users-around-component';
 import PastLocationsPath from './map/past-locations-path';
 import { Caption2 } from './ui-kit/typography';
-import OnMapRightButtons from '../components/map/on-map-right-buttons';
 
 const mapStateToProps = (state) => ({
   location: state.location,
@@ -32,6 +31,7 @@ function creatMapViewProxy(mapView: MapboxGL.MapView) {
       centerCoordinate: [options.longitude, options.latitude],
       heading: options.heading,
       zoom: options.zoom,
+      duration: 0,
     }),
     zoomTo: (...args) => mapView.zoomTo(...args),
     moveTo: (...args) => mapView.moveTo(...args),
@@ -43,7 +43,6 @@ type Props = {
   auth: {
     uid: string,
   },
-  compass: GeoCompass,
   dispatch: Dispatch,
   location: {
     coords: GeoCoordinates,
@@ -129,7 +128,7 @@ class DaterMapView extends Component<Props> {
           zoomLevel={1}
           userTrackingMode={MapboxGL.UserTrackingModes.None}
           style={styles.mapView}
-          animated
+          // animated
           logoEnabled={false}
           compassEnabled={false}
           localizeLabels
@@ -178,10 +177,6 @@ class DaterMapView extends Component<Props> {
           </Caption2>
         </View>
         }
-        <OnMapRightButtons
-          location={this.props.location}
-          compass={this.props.compass}
-        />
       </View>
 
     );

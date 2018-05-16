@@ -88,7 +88,9 @@ function* locationUpdatedSaga(action) {
   const isFindUserEnabled = yield select((state) => state.findUser.enabled);
   const currentCoords = action.payload;
   const firstCoords = yield select((state) => state.location.firstCoords);
-  if (isCentered) {
+  const appState = yield select((state) => state.appState.state);
+
+  if (isCentered && appState === 'active') {
     yield* setCamera(action);
   }
   if (isFindUserEnabled || true) { // TODO: remove, it's temporary hack
