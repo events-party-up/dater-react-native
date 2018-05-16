@@ -6,7 +6,7 @@ import {
 import { connect, Dispatch } from 'react-redux';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
-import { GeoCompass, GeoCoordinates } from '../types';
+import { GeoCoordinates } from '../types';
 import MyLocationOnCenteredMap from './map/my-location-on-centered-map';
 import UsersAroundComponent from './map/users-around-component';
 import PastLocationsPath from './map/past-locations-path';
@@ -42,7 +42,7 @@ type Props = {
   auth: {
     uid: string,
   },
-  compass: GeoCompass,
+  // compass: GeoCompass,
   dispatch: Dispatch,
   location: {
     coords: GeoCoordinates,
@@ -108,7 +108,7 @@ class DaterMapView extends Component<Props> {
   render() {
     return (
       <View
-        style={styles.mapView}
+        style={styles.mapViewContainer}
         onMoveShouldSetResponder={(event) => {
           this.onMapDragStart(event);
           return true;
@@ -156,14 +156,16 @@ class DaterMapView extends Component<Props> {
           />
           <UsersAroundComponent />
         </MapboxGL.MapView>
-        <Caption2 style={styles.debugText} pointerEvents="none">
-          Accuracy: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
-          GPS Heading: {this.props.location.coords && Math.floor(this.props.location.coords.heading)}{'\n'}
-          Move Heading: {Math.floor(this.props.location.moveHeadingAngle)}{'\n'}
-          Compass Heading: {this.props.compass.heading}{'\n'}
-          GeoUpdates: {this.props.location && this.props.location.geoUpdates}{'\n'}
-          UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}
-        </Caption2>
+        <View style={styles.debugView} pointerEvents="none">
+          <Caption2 style={styles.debugText}>
+            Accuracy: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
+            GPS Heading: {this.props.location.coords && Math.floor(this.props.location.coords.heading)}{'\n'}
+            Move Heading: {Math.floor(this.props.location.moveHeadingAngle)}{'\n'}
+            {/* Compass Heading: {this.props.compass.heading}{'\n'} */}
+            GeoUpdates: {this.props.location && this.props.location.geoUpdates}{'\n'}
+            UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}
+          </Caption2>
+        </View>
         {this.props.findUser.enabled &&
         <View style={styles.findUserContainer} pointerEvents="none">
           <Caption2 style={styles.findUserText}>
@@ -182,16 +184,21 @@ class DaterMapView extends Component<Props> {
 }
 
 const styles = StyleSheet.create({
+  mapViewContainer: {
+    flex: 1,
+  },
   mapView: {
     flex: 1,
-    zIndex: -1,
+    // zIndex: -1,
   },
-  debugText: {
-    opacity: 0.8,
-    color: 'rgba(0, 0, 0, 0.9)',
+  debugView: {
     position: 'absolute',
     top: 40,
     left: 20,
+  },
+  debugText: {
+    opacity: 0.7,
+    color: 'rgba(0, 0, 0, 0.9)',
   },
   findUserText: {
     opacity: 0.8,

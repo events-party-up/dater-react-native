@@ -49,7 +49,6 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props> 
           justifyContent: 'center',
           alignItems: 'center',
           position: 'absolute',
-          zIndex: 1,
         }}
         />
         <View style={styles.container}>
@@ -74,10 +73,10 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 1,
   },
   // The container is necessary to protect the markerHalo shadow from clipping
   container: {
-    zIndex: 2,
     width: HEADING_BOX_SIZE,
     height: HEADING_BOX_SIZE,
   },
