@@ -11,6 +11,7 @@ import MyLocationOnCenteredMap from './map/my-location-on-centered-map';
 import UsersAroundComponent from './map/users-around-component';
 import PastLocationsPath from './map/past-locations-path';
 import { Caption2 } from './ui-kit/typography';
+import OnMapRightButtons from '../components/map/on-map-right-buttons';
 
 const mapStateToProps = (state) => ({
   location: state.location,
@@ -177,6 +178,10 @@ class DaterMapView extends Component<Props> {
           </Caption2>
         </View>
         }
+        <OnMapRightButtons
+          location={this.props.location}
+          compass={this.props.compass}
+        />
       </View>
 
     );

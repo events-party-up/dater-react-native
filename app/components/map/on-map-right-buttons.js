@@ -27,7 +27,7 @@ const mapStateToProps = (state) => ({
   mapView: state.mapView,
 });
 
-class MyLocationButton extends Component<Props> {
+class OnMapRightButtons extends Component<Props> {
   rotate = 0;
 
   centerMe = () => {
@@ -139,4 +139,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps)(MyLocationButton);
+export default connect(mapStateToProps)(OnMapRightButtons);

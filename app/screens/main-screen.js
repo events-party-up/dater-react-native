@@ -6,23 +6,15 @@ import {
 import { connect, Dispatch } from 'react-redux';
 
 import DaterMapView from '../components/dater-map-view';
-import { GeoCoordinates, GeoCompass } from '../types';
 // import DaterButton from '../components/ui-kit/dater-button';
-import MyLocationButton from '../components/map/my-location-button';
 import MapPanelComponent from '../components/map/map-panel-component';
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  location: state.location,
-  compass: state.compass,
 });
 
 type Props = {
   dispatch: Dispatch,
-  location: {
-    coords: GeoCoordinates,
-  },
-  compass: GeoCompass,
   // navigation: any,
 };
 
@@ -42,10 +34,6 @@ class MainScreen extends Component<Props> {
         </View> */}
         <MapPanelComponent />
         <DaterMapView />
-        <MyLocationButton
-          location={this.props.location}
-          compass={this.props.compass}
-        />
         {/* <View style={styles.buttons}>
           <DaterButton
             style={styles.button}
