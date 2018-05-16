@@ -1,15 +1,12 @@
 import { throttle, takeEvery, select, take, put, call, cancel, all } from 'redux-saga/effects';
-import { eventChannel, delay } from 'redux-saga';
+import { eventChannel } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 
 import BackgroundGeolocation from '../services/background-geolocation';
 import { updateFirestore, getFirestore } from '../utils/firebase-utils';
 import GeoUtils from '../utils/geo-utils';
-import {
-  DEFAULT_MAPVIEW_ANIMATION_DURATION,
-  USERS_AROUND_SEARCH_RADIUS_KM,
-} from '../constants';
+import { USERS_AROUND_SEARCH_RADIUS_KM } from '../constants';
 
 export default function* locationSaga() {
   try {
@@ -92,7 +89,6 @@ function* locationUpdatedSaga(action) {
   const currentCoords = action.payload;
   const firstCoords = yield select((state) => state.location.firstCoords);
   if (isCentered) {
-    yield* call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
     yield* setCamera(action);
   }
   if (isFindUserEnabled || true) { // TODO: remove, it's temporary hack

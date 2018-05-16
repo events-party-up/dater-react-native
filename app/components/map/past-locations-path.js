@@ -87,7 +87,12 @@ class PastLocationsPath extends React.Component<Props> {
 
     return (
       <MapboxGL.ShapeSource id={`past-paths-${this.props.uid}`} shape={shapeGeoJson}>
-        <MapboxGL.FillLayer id={`past-paths-fill-${this.props.uid}`} style={this.mapStyles.path} />
+        <MapboxGL.FillLayer
+          id={`past-paths-fill-${this.props.uid}`}
+          style={this.mapStyles.path}
+          minZoomLevel={11}
+          maxZoomLevel={18}
+        />
       </MapboxGL.ShapeSource>
     );
   }

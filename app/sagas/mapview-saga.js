@@ -1,5 +1,4 @@
 import { takeLatest, call, take, put, cancel, select, fork } from 'redux-saga/effects';
-import { delay } from 'redux-saga';
 import { DEFAULT_MAPVIEW_ANIMATION_DURATION } from '../constants';
 
 export default function* mapViewSaga() {
@@ -91,13 +90,9 @@ function* showMyLocation(action) {
         latitude: coords.latitude,
         longitude: coords.longitude,
         zoom: (action.payload && action.payload.zoom) || 17,
-        duration: (action.payload && action.payload.duration) || DEFAULT_MAPVIEW_ANIMATION_DURATION,
       },
     });
-
-    yield call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
     yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
-    // yield put({ type: 'GEO_LOCATION_FORCE_UPDATE' });
   } catch (error) {
     yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_ERROR', payload: error });
   }
@@ -105,34 +100,37 @@ function* showMyLocation(action) {
 
 function* switchMapViewMode(mapView) {
   let myCoords;
-
-  while (true) {
-    // zoom out
-    yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
-    myCoords = yield select((state) => state.location.coords);
-    yield call(mapView.setCamera, {
-      ...myCoords,
-      zoom: 14,
-    });
-    yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'zoomOut' });
-    yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
-
-    // zoom in
-    yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
-    myCoords = yield select((state) => state.location.coords);
-    yield call(mapView.setCamera, {
-      ...myCoords,
-      zoom: 17,
-    });
-    yield put({ type: 'GEO_LOCATION_FORCE_UPDATE' });
-    yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'zoomIn' });
-    yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
-
-    const isFindUserActive = yield select((state) => state.findUser.enabled);
-    if (isFindUserActive) {
+  try {
+    while (true) {
+      // zoom out
       yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
-      yield put({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_FIND_USER' });
-      yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'showTargetFindUser' });
+      myCoords = yield select((state) => state.location.coords);
+      yield call(mapView.setCamera, {
+        ...myCoords,
+        zoom: 14,
+      });
+      yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'zoomOut' });
+      yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
+
+      // zoom in
+      yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
+      myCoords = yield select((state) => state.location.coords);
+      yield call(mapView.setCamera, {
+        ...myCoords,
+        zoom: 17,
+      });
+      yield put({ type: 'GEO_LOCATION_FORCE_UPDATE' });
+      yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'zoomIn' });
+      yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
+
+      const isFindUserActive = yield select((state) => state.findUser.enabled);
+      if (isFindUserActive) {
+        yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
+        yield put({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_FIND_USER' });
+        yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'showTargetFindUser' });
+      }
     }
+  } catch (error) {
+    yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_ERROR', payload: error });
   }
 }
