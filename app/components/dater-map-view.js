@@ -6,7 +6,7 @@ import {
 import { connect, Dispatch } from 'react-redux';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
-import { GeoCoordinates } from '../types';
+import { GeoCoordinates, GeoCompass } from '../types';
 import MyLocationOnCenteredMap from './map/my-location-on-centered-map';
 import UsersAroundComponent from './map/users-around-component';
 import PastLocationsPath from './map/past-locations-path';
@@ -32,8 +32,8 @@ function creatMapViewProxy(mapView: MapboxGL.MapView) {
       centerCoordinate: [options.longitude, options.latitude],
       heading: options.heading,
       zoom: options.zoom,
-      duration: options.duration,
     }),
+    zoomTo: (...args) => mapView.zoomTo(...args),
     moveTo: (...args) => mapView.moveTo(...args),
     fitBounds: (...args) => mapView.fitBounds(...args),
   };
@@ -43,7 +43,7 @@ type Props = {
   auth: {
     uid: string,
   },
-  // compass: GeoCompass,
+  compass: GeoCompass,
   dispatch: Dispatch,
   location: {
     coords: GeoCoordinates,

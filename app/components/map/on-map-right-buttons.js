@@ -33,7 +33,7 @@ class OnMapRightButtons extends Component<Props> {
   centerMe = () => {
     if (this.props.location.enabled === true) {
       this.props.dispatch({
-        type: 'MAPVIEW_SHOW_MY_LOCATION_START',
+        type: 'MAPVIEW_SWITCH_VIEW_MODE_START',
       });
     }
   }
