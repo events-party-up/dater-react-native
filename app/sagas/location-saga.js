@@ -131,6 +131,7 @@ function* setCamera(action) {
       heading,
       latitude: action.payload.latitude,
       longitude: action.payload.longitude,
+      duration: 500,
     },
   });
 }

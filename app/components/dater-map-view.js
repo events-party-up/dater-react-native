@@ -23,16 +23,21 @@ const mapStateToProps = (state) => ({
 });
 
 function creatMapViewProxy(mapView: MapboxGL.MapView) {
+  // modes: ['Flight', 'Ease', 'None']
+  // duration must be > 0 to have effect
+
   return {
     animateToHeading: (heading, duration) => mapView.setCamera({
       heading,
       duration,
+      mode: MapboxGL.CameraModes.Ease,
     }),
     setCamera: (options) => mapView.setCamera({
       centerCoordinate: [options.longitude, options.latitude],
       heading: options.heading,
       zoom: options.zoom,
-      duration: 0,
+      duration: options.duration,
+      mode: MapboxGL.CameraModes.Ease,
     }),
     zoomTo: (...args) => mapView.zoomTo(...args),
     moveTo: (...args) => mapView.moveTo(...args),
@@ -58,7 +63,7 @@ type Props = {
 
 class DaterMapView extends Component<Props> {
   mapView: MapboxGL.MapView;
-  directions: null;
+  defZoomLevel = 17;
 
   onRegionDidChange = (event) => {
     this.props.dispatch({
@@ -107,8 +112,15 @@ class DaterMapView extends Component<Props> {
   }
 
   onGestureEvent = (event) => {
-    console.log('onGestureEvent: ', event);
+    console.log('onGestureEvent: ', event.nativeEvent);
+    console.log('zoomChange: ', zoomChange(event.nativeEvent.velocityY));
+    // this.mapView.zoomTo(this.clampedZoom(event.nativeEvent.translationY, event.nativeEvent.velocityY), 0);
+
+    function zoomChange(velocityY) {
+      console.log(velocityY);
+    }
   }
+
 
   render() {
     return (
@@ -136,12 +148,13 @@ class DaterMapView extends Component<Props> {
           <MapboxGL.MapView
             ref={(component) => { this.mapView = component; }}
             showUserLocation={!this.props.mapView.centered}
-            zoomLevel={1}
-            userTrackingMode={MapboxGL.UserTrackingModes.None}
+            // showUserLocation
+            userTrackingMode={0}
+            zoomLevel={17}
             style={styles.mapView}
-            // animated
+            animated
             logoEnabled={false}
-            compassEnabled={false}
+            // compassEnabled={false}
             localizeLabels
             onPress={() => { this.onMapPressed(); }}
             pitch={0}
@@ -151,7 +164,7 @@ class DaterMapView extends Component<Props> {
             scrollEnabled={false}
             // zoomEnabled={false}
             // rotateEnabled={false}
-            pitchEnabled={false}
+            // pitchEnabled={false}
             minZoomLevel={11}
             maxZoomLevel={18}
           >
