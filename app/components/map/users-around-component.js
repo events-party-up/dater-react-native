@@ -58,11 +58,12 @@ class UsersAroundComponent extends React.Component<Props> {
         ]}
         key={user.uid}
         id={user.uid}
-        onSelected={() => { this.onPress(user); }}
+        // onSelected={() => { this.onPress(user); }}
         onDeselected={() => { this.onDeselected(); }}
         selected={false}
       >
         <UserOnMapMarker
+          onPress={() => { this.onPress(user); }}
           title={user.shortId && user.shortId.substring(0, 1).toUpperCase()}
         />
       </MapboxGL.PointAnnotation>

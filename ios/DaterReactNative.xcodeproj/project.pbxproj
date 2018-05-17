@@ -32,6 +32,7 @@
 		7C933D762050480F00E097E7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7C933D4F2050480F00E097E7 /* GoogleService-Info.plist */; };
 		80601FF3439041AC59C3D52A /* libPods-DaterReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5D6C29C0D1F4022F9029135 /* libPods-DaterReactNative.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		94BEA5034B3345A59F5268E9 /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9759A7CB7DEE4A1481E7E896 /* libRNGestureHandler.a */; };
 		A0741949908649E7A4CBB072 /* OpenSans-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5CF1191EFC85455ABFC09B2D /* OpenSans-SemiBoldItalic.ttf */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		C39DB8E968794595A6D9A3E2 /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5411868A6AF046ECAA976581 /* OpenSans-Bold.ttf */; };
@@ -239,6 +240,13 @@
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RCTLinking;
 		};
+		7C74F26320AD44FC00E40636 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4CA8EC7A55B14C5396D13B33 /* RNGestureHandler.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNGestureHandler;
+		};
 		7C8569CD2065103500F73867 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7C8569A42065103500F73867 /* ReactNativeHeading.xcodeproj */;
@@ -355,6 +363,7 @@
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		32CE7D4599F04E379A410BF3 /* OpenSans-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-ExtraBoldItalic.ttf"; path = "../assets/fonts/OpenSans-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		3952927F30C144DC982C10FE /* OpenSans-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-LightItalic.ttf"; path = "../assets/fonts/OpenSans-LightItalic.ttf"; sourceTree = "<group>"; };
+		4CA8EC7A55B14C5396D13B33 /* RNGestureHandler.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNGestureHandler.xcodeproj; path = "../node_modules/react-native-gesture-handler/ios/RNGestureHandler.xcodeproj"; sourceTree = "<group>"; };
 		51B34DE67DA828D690DD7A8B /* Pods-DaterReactNative.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DaterReactNative.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DaterReactNative/Pods-DaterReactNative.debug.xcconfig"; sourceTree = "<group>"; };
 		537E93988C7947378B438787 /* OpenSans-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-BoldItalic.ttf"; path = "../assets/fonts/OpenSans-BoldItalic.ttf"; sourceTree = "<group>"; };
 		5411868A6AF046ECAA976581 /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Bold.ttf"; path = "../assets/fonts/OpenSans-Bold.ttf"; sourceTree = "<group>"; };
@@ -369,6 +378,7 @@
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		85DEE2F333E54CC891E7F0F1 /* OpenSans-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-ExtraBold.ttf"; path = "../assets/fonts/OpenSans-ExtraBold.ttf"; sourceTree = "<group>"; };
 		8925FF4A2D98495F8B986B72 /* OpenSans-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Light.ttf"; path = "../assets/fonts/OpenSans-Light.ttf"; sourceTree = "<group>"; };
+		9759A7CB7DEE4A1481E7E896 /* libRNGestureHandler.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNGestureHandler.a; sourceTree = "<group>"; };
 		9E5F3D372AB40A32FBBAF21C /* Pods-DaterReactNative.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DaterReactNative.release.xcconfig"; path = "Pods/Target Support Files/Pods-DaterReactNative/Pods-DaterReactNative.release.xcconfig"; sourceTree = "<group>"; };
 		A1F0B4137C67411B968C79A3 /* OpenSans-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Italic.ttf"; path = "../assets/fonts/OpenSans-Italic.ttf"; sourceTree = "<group>"; };
 		A5D6C29C0D1F4022F9029135 /* libPods-DaterReactNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DaterReactNative.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -407,6 +417,7 @@
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				80601FF3439041AC59C3D52A /* libPods-DaterReactNative.a in Frameworks */,
 				674D397DCA7F4ABF93F90970 /* libRNFirebase.a in Frameworks */,
+				94BEA5034B3345A59F5268E9 /* libRNGestureHandler.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -575,6 +586,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		7C74F26020AD44FC00E40636 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7C74F26420AD44FC00E40636 /* libRNGestureHandler.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		7C8569A52065103500F73867 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -587,6 +606,7 @@
 			isa = PBXGroup;
 			children = (
 				5AEC89E0CF23421EA0E9AF92 /* libRNFirebase.a */,
+				9759A7CB7DEE4A1481E7E896 /* libRNGestureHandler.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -625,6 +645,7 @@
 				00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */,
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				A9C8F14F264B4E4BB4C7A991 /* RNFirebase.xcodeproj */,
+				4CA8EC7A55B14C5396D13B33 /* RNGestureHandler.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -815,6 +836,10 @@
 				{
 					ProductGroup = 7C933D3D205043F800E097E7 /* Products */;
 					ProjectRef = A9C8F14F264B4E4BB4C7A991 /* RNFirebase.xcodeproj */;
+				},
+				{
+					ProductGroup = 7C74F26020AD44FC00E40636 /* Products */;
+					ProjectRef = 4CA8EC7A55B14C5396D13B33 /* RNGestureHandler.xcodeproj */;
 				},
 				{
 					ProductGroup = 7CAF4F6D208F29AA00CDF97B /* Products */;
@@ -1017,6 +1042,13 @@
 			fileType = archive.ar;
 			path = libRCTLinking.a;
 			remoteRef = 78C398B81ACF4ADC00677621 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7C74F26420AD44FC00E40636 /* libRNGestureHandler.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNGestureHandler.a;
+			remoteRef = 7C74F26320AD44FC00E40636 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		7C8569CE2065103500F73867 /* libReactNativeHeading.a */ = {
@@ -1267,12 +1299,14 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
+					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 				);
 				INFOPLIST_FILE = DaterReactNativeTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1293,12 +1327,14 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
+					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 				);
 				INFOPLIST_FILE = DaterReactNativeTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1321,6 +1357,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
+					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 				);
 				"HEADER_SEARCH_PATHS[arch=*]" = (
 					"$(inherited)",
@@ -1350,6 +1387,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
+					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 				);
 				"HEADER_SEARCH_PATHS[arch=*]" = (
 					"$(inherited)",

@@ -22,6 +22,7 @@
     "react-native-background-geolocation": "^2.11.0",
     "react-native-device-info": "^0.21.0",
     "react-native-firebase": "^4.1.0",
+    "react-native-gesture-handler": "^1.0.0-alpha.43",
     "react-native-heading": "^1.1.1",
     "react-native-interactable": "^0.1.10",
     "react-native-linear-gradient": "^2.4.0",
