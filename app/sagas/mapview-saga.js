@@ -1,5 +1,4 @@
-import { takeLatest, call, take, put, cancel, select } from 'redux-saga/effects';
-import { delay } from 'redux-saga';
+import { takeLatest, call, take, put, cancel, select, fork } from 'redux-saga/effects';
 import { DEFAULT_MAPVIEW_ANIMATION_DURATION } from '../constants';
 
 export default function* mapViewSaga() {
@@ -12,11 +11,13 @@ export default function* mapViewSaga() {
         'MAPVIEW_ANIMATE_TO_HEADING_MANUALLY',
         'MAPVIEW_ANIMATE_TO_HEADING_GPS_HEADING',
         'MAPVIEW_ANIMATE_TO_HEADING_COMPASS_HEADING'], animateToHeading, mapView);
-      const task4 = yield takeLatest('MAPVIEW_SHOW_MY_LOCATION_START', showMyLocation, mapView);
-      const task5 = yield takeLatest('MAPVIEW_SHOW_ME_AND_TARTET_FIND_USER', showMeAndTargetFindUser, mapView);
+      const task4 = yield takeLatest('MAPVIEW_SHOW_MY_LOCATION_START', showMyLocation);
+      const task5 = yield takeLatest('MAPVIEW_SHOW_ME_AND_TARGET_FIND_USER', showMeAndTargetFindUser, mapView);
+      const task6 = yield fork(switchMapViewMode, mapView);
+
       yield put({ type: 'MAPVIEW_MAIN_SAGA_READY' });
       yield take('MAPVIEW_UNLOAD');
-      yield cancel(task1, task2, task3, task4, task5);
+      yield cancel(task1, task2, task3, task4, task5, task6);
     }
   } catch (error) {
     yield put({ type: 'MAPVIEW_MAINSAGA_ERROR', payload: error });
@@ -66,7 +67,8 @@ function* fitBounds(mapView, coords1: Array<number>, coords2: Array<number>) {
 
 function* showMeAndTargetFindUser(mapView) {
   try {
-    const lastTargetUserCoords = yield select((state) => state.findUser.targetPastCoords.pop());
+    const lastTargetUserCoords = yield select((state) =>
+      state.findUser.targetPastCoords[state.findUser.targetPastCoords.length - 1]);
     const myLastCoords = yield select((state) => state.location.coords);
     yield call(
       fitBounds,
@@ -75,11 +77,11 @@ function* showMeAndTargetFindUser(mapView) {
       [myLastCoords.longitude, myLastCoords.latitude],
     );
   } catch (error) {
-    yield put({ type: 'MAPVIEW_SHOW_ME_AND_TARTET_FIND_USER_ERROR', payload: error });
+    yield put({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_FIND_USER_ERROR', payload: error });
   }
 }
 
-function* showMyLocation() {
+function* showMyLocation(action) {
   try {
     const coords = yield select((state) => state.location.coords);
     yield put({
@@ -87,15 +89,48 @@ function* showMyLocation() {
       payload: {
         latitude: coords.latitude,
         longitude: coords.longitude,
-        zoom: 17,
-        duration: DEFAULT_MAPVIEW_ANIMATION_DURATION,
+        zoom: (action.payload && action.payload.zoom) || 17,
       },
     });
-
-    yield call(delay, DEFAULT_MAPVIEW_ANIMATION_DURATION);
     yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
-    yield put({ type: 'GEO_LOCATION_FORCE_UPDATE' });
   } catch (error) {
     yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_ERROR', payload: error });
+  }
+}
+
+function* switchMapViewMode(mapView) {
+  let myCoords;
+  try {
+    while (true) {
+      // zoom out
+      yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
+      myCoords = yield select((state) => state.location.coords);
+      yield call(mapView.setCamera, {
+        ...myCoords,
+        zoom: 14,
+      });
+      yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'zoomOut' });
+      yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
+
+      // zoom in
+      yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
+      myCoords = yield select((state) => state.location.coords);
+      yield call(mapView.setCamera, {
+        ...myCoords,
+        zoom: 17,
+      });
+      yield put({ type: 'GEO_LOCATION_FORCE_UPDATE' });
+      yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'zoomIn' });
+      yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
+
+      const isFindUserActive = yield select((state) => state.findUser.enabled);
+      if (isFindUserActive) {
+        yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
+        yield put({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_FIND_USER' });
+        yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'showTargetFindUser' });
+      }
+    }
+  } catch (error) {
+    yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_ERROR', payload: error });
   }
 }

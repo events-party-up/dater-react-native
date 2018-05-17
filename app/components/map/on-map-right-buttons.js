@@ -27,13 +27,13 @@ const mapStateToProps = (state) => ({
   mapView: state.mapView,
 });
 
-class MyLocationButton extends Component<Props> {
+class OnMapRightButtons extends Component<Props> {
   rotate = 0;
 
   centerMe = () => {
     if (this.props.location.enabled === true) {
       this.props.dispatch({
-        type: 'MAPVIEW_SHOW_MY_LOCATION_START',
+        type: 'MAPVIEW_SWITCH_VIEW_MODE_START',
       });
     }
   }
@@ -139,4 +139,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps)(MyLocationButton);
+export default connect(mapStateToProps)(OnMapRightButtons);

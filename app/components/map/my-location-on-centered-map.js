@@ -6,13 +6,15 @@ import {
   Dimensions,
 } from 'react-native';
 
-const SIZE: number = 25;
-const HALO_RADIUS = 6;
+const SIZE: number = 17;
+const HALO_RADIUS = 5;
 const ARROW_SIZE = 7;
 const ARROW_DISTANCE = 10;
 const HALO_SIZE = SIZE + HALO_RADIUS;
 const HEADING_BOX_SIZE = HALO_SIZE + ARROW_SIZE + ARROW_DISTANCE;
-const colorOfmyLocationMapMarker = 'blue';
+const colorOfmyLocationMapMarker = '#2c7cf6';
+// const colorOfHalo = '#add0fb';
+const colorOfHalo = 'rgba(30,144,255,0.2)';
 const { width, height } = Dimensions.get('window');
 const DIAGONAL = Math.sqrt((width * width) + (height * height));
 
@@ -23,10 +25,9 @@ type Props = {
   mapViewHeadingAngle: number,
 };
 
-class MyLocationOnMovingMap extends React.PureComponent<Props> {
+export default class MyLocationOnCenteredMap extends React.PureComponent<Props> {
   render() {
     const { accuracy } = this.props;
-    // const accuracy = 80;
     const { visibleRadiusInMeters } = this.props;
     const pixelsPerMeter = DIAGONAL / (visibleRadiusInMeters * 2);
     const RADIUS = pixelsPerMeter * accuracy;
@@ -41,14 +42,13 @@ class MyLocationOnMovingMap extends React.PureComponent<Props> {
         pointerEvents="none"
       >
         <View style={{
-          backgroundColor: 'rgba(30,144,255,0.2)',
+          backgroundColor: colorOfHalo,
           width: RADIUS * 2,
           height: RADIUS * 2,
           borderRadius: Math.ceil(RADIUS),
           justifyContent: 'center',
           alignItems: 'center',
           position: 'absolute',
-          zIndex: 1,
         }}
         />
         <View style={styles.container}>
@@ -73,10 +73,10 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 1,
   },
   // The container is necessary to protect the markerHalo shadow from clipping
   container: {
-    zIndex: 2,
     width: HEADING_BOX_SIZE,
     height: HEADING_BOX_SIZE,
   },
@@ -129,5 +129,3 @@ const styles = StyleSheet.create({
     margin: (HEADING_BOX_SIZE - SIZE) / 2,
   },
 });
-
-export default MyLocationOnMovingMap;

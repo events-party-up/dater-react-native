@@ -3,6 +3,7 @@ package com.daterreactnative;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.wix.interactable.Interactable;
 import com.transistorsoft.rnbackgroundgeolocation.*;
@@ -43,6 +44,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+          new RNGestureHandlerPackage(),
           new SplashScreenReactPackage(),
           new Interactable(),
           new RNBackgroundGeolocation(),

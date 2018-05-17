@@ -102,8 +102,8 @@
       <AdditionalOptions>
       </AdditionalOptions>
       <LocationScenarioReference
-         identifier = "../../test/fake-coords/city-run-reversed.gpx"
-         referenceType = "0">
+         identifier = "com.apple.dt.IDEFoundation.CurrentLocationScenarioIdentifier"
+         referenceType = "1">
       </LocationScenarioReference>
    </LaunchAction>
    <ProfileAction

@@ -6,24 +6,20 @@ import {
 import { connect, Dispatch } from 'react-redux';
 
 import DaterMapView from '../components/dater-map-view';
-import { GeoCoordinates, GeoCompass } from '../types';
-import DaterButton from '../components/ui-kit/dater-button';
-import MyLocationButton from '../components/map/my-location-button';
+// import DaterButton from '../components/ui-kit/dater-button';
 import MapPanelComponent from '../components/map/map-panel-component';
+import OnMapRightButtons from '../components/map/on-map-right-buttons';
+import { GeoCompass, GeoCoordinates } from '../types';
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  location: state.location,
-  compass: state.compass,
 });
 
 type Props = {
   dispatch: Dispatch,
-  location: {
-    coords: GeoCoordinates,
-  },
+  // navigation: any,
   compass: GeoCompass,
-  navigation: any,
+  location: GeoCoordinates,
 };
 
 class MainScreen extends Component<Props> {
@@ -42,11 +38,11 @@ class MainScreen extends Component<Props> {
         </View> */}
         <MapPanelComponent />
         <DaterMapView />
-        <MyLocationButton
+        <OnMapRightButtons
           location={this.props.location}
           compass={this.props.compass}
         />
-        <View style={styles.buttons}>
+        {/* <View style={styles.buttons}>
           <DaterButton
             style={styles.button}
             onPress={() => this.props.navigation.navigate('Floating')}
@@ -69,7 +65,7 @@ class MainScreen extends Component<Props> {
           >
             UI Kit
           </DaterButton>
-        </View>
+        </View> */}
       </View>
     );
   }

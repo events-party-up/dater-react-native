@@ -81,7 +81,7 @@ class MapPanelComponent extends Component<Props> {
         source: 'mapPanelComponentLetsStart',
       },
     });
-    this.props.dispatch({ type: 'MAPVIEW_SHOW_ME_AND_TARTET_FIND_USER' });
+    this.props.dispatch({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_FIND_USER' });
   }
 
   findUser = (user) => {

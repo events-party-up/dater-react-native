@@ -42,6 +42,12 @@ const findUserReducer = (state = initialState, action) => {
         starting: true,
         targetUserUid: payload.user.uid,
         myPastCoords: [payload.myCurrentCoords],
+        targetPastCoords: [{ // init state with first coords of target user
+          accuracy: payload.user.accuracy,
+          latitude: payload.user.geoPoint.latitude,
+          longitude: payload.user.geoPoint.longitude,
+          timestamp: Date.now(),
+        }],
       };
     }
     case types.FIND_USER_STARTED: {
