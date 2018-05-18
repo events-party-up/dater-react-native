@@ -260,6 +260,7 @@ const styles = StyleSheet.create({
   panelButton: {
     alignItems: 'center',
     marginVertical: 8,
+    alignSelf: 'center',
   },
   photo: {
     width: Screen.width - 40,
