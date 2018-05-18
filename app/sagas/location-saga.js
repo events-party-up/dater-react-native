@@ -93,7 +93,7 @@ function* locationUpdatedSaga(action) {
   if (isCentered && appState === 'active') {
     yield* setCamera(action);
   }
-  if (isFindUserEnabled || true) { // TODO: remove, it's temporary hack
+  if (isFindUserEnabled) {
     yield put({
       type: 'FIND_USER_MY_MOVE',
       payload: {
@@ -131,6 +131,7 @@ function* setCamera(action) {
       heading,
       latitude: action.payload.latitude,
       longitude: action.payload.longitude,
+      duration: 500,
     },
   });
 }
