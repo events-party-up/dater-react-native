@@ -43,10 +43,14 @@ class PastLocationsLines extends React.Component<Props> {
 
     return (
       <React.Fragment>
-        <MapboxGL.ShapeSource id={`past-paths-lines-shape-${this.props.mode}`} shape={shapeGeoJson.route}>
+        <MapboxGL.ShapeSource
+          id={`past-paths-lines-shape-${this.props.mode}`}
+          shape={shapeGeoJson.route}
+        >
           <MapboxGL.LineLayer
             id={`past-paths-lines-layer--${this.props.mode}`}
             style={this.layerStyles.route}
+            belowLayerID={`past-paths-arrows-layer-${this.props.mode}`}
           />
         </MapboxGL.ShapeSource>
       </React.Fragment>

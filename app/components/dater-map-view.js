@@ -67,7 +67,7 @@ class DaterMapView extends Component<Props> {
   defZoomLevel = 17;
 
   onRegionDidChange = (event) => {
-    console.log('onRegionDidChange: ', event);
+    // console.log('onRegionDidChange: ', event);
     this.props.dispatch({
       type: 'MAPVIEW_REGION_CHANGED',
       payload: event,
@@ -75,7 +75,7 @@ class DaterMapView extends Component<Props> {
   }
 
   onRegionWillChange = (event) => {
-    console.log('onRegionWillChange: ', event);
+    // console.log('onRegionWillChange: ', event);
     // the only way to tell if it's user guesture because isUserInteraction always says false
     if (event.properties.animated === false) {
       this.props.dispatch({
@@ -177,18 +177,10 @@ class DaterMapView extends Component<Props> {
           // scrollEnabled={false}
           // zoomEnabled={false}
           // rotateEnabled={false}
-          // pitchEnabled={false}
+          pitchEnabled={false}
           minZoomLevel={11}
           maxZoomLevel={18}
         >
-          <PastLocationsLines
-            pastCoords={this.props.findUser.myPastCoords}
-            mode="own"
-          />
-          <PastLocationsLines
-            pastCoords={this.props.findUser.targetPastCoords}
-            mode="target"
-          />
           <PastLocationsPath
             pastCoords={this.props.findUser.myPastCoords}
             mapViewheadingAngle={this.props.mapView.headingAngle}
@@ -199,6 +191,14 @@ class DaterMapView extends Component<Props> {
             pastCoords={this.props.findUser.targetPastCoords}
             mapViewheadingAngle={this.props.mapView.headingAngle}
             uid={this.props.findUser.targetUserUid}
+            mode="target"
+          />
+          <PastLocationsLines
+            pastCoords={this.props.findUser.myPastCoords}
+            mode="own"
+          />
+          <PastLocationsLines
+            pastCoords={this.props.findUser.targetPastCoords}
             mode="target"
           />
           <UsersAroundComponent />

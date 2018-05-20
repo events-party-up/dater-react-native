@@ -6,7 +6,6 @@ import GeoUtils from '../../utils/geo-utils';
 
 type Props = {
   pastCoords: Array<GeoCoordinates>,
-  uid: string;
   mode: 'target' | 'own',
 };
 
@@ -16,7 +15,7 @@ class PastLocationsPath extends React.Component<Props> {
       fillAntialias: true,
       fillColor: this.props.mode === 'own' ? 'rgba(128, 128, 128, 1)' : 'rgba(0, 128, 0, 1)',
       // fillOutlineColor: 'black',
-      fillOpacity: 0.84,
+      // fillOpacity: 0.84,
     },
   });
 
@@ -87,12 +86,15 @@ class PastLocationsPath extends React.Component<Props> {
     };
 
     return (
-      <MapboxGL.ShapeSource id={`past-paths-${this.props.uid}`} shape={shapeGeoJson}>
+      <MapboxGL.ShapeSource
+        id={`past-paths-arrows-shape-${this.props.mode}`}
+        shape={shapeGeoJson}
+      >
         <MapboxGL.FillLayer
-          id={`past-paths-fill-${this.props.uid}`}
+          id={`past-paths-arrows-layer-${this.props.mode}`}
           style={this.mapStyles.path}
           minZoomLevel={0}
-          maxZoomLevel={18}
+          maxZoomLevel={20}
         />
       </MapboxGL.ShapeSource>
     );
