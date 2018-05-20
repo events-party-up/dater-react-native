@@ -8,6 +8,7 @@ const mapStateToProps = (state) => ({
   usersAround: state.usersAround.users,
   mapPanel: state.mapPanel,
   findUser: state.findUser,
+  mapViewBearingAngle: state.mapView.heading,
 });
 
 type Props = {
@@ -15,6 +16,7 @@ type Props = {
   dispatch: Dispatch,
   mapPanel: any,
   findUser: any,
+  mapViewBearingAngle: number,
 };
 
 class UsersAroundComponent extends React.Component<Props> {
@@ -65,6 +67,8 @@ class UsersAroundComponent extends React.Component<Props> {
         <UserOnMapMarker
           onPress={() => { this.onPress(user); }}
           title={user.shortId && user.shortId.substring(0, 1).toUpperCase()}
+          heading={user.heading}
+          mapViewBearingAngle={this.props.mapViewBearingAngle}
         />
       </MapboxGL.PointAnnotation>
     ));
