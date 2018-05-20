@@ -6,7 +6,6 @@ import GeoUtils from '../../utils/geo-utils';
 
 type Props = {
   pastCoords: Array<GeoCoordinates>,
-  uid: string;
   mode: 'target' | 'own',
 };
 
@@ -16,7 +15,7 @@ class PastLocationsPath extends React.Component<Props> {
       fillAntialias: true,
       fillColor: this.props.mode === 'own' ? 'rgba(128, 128, 128, 1)' : 'rgba(0, 128, 0, 1)',
       // fillOutlineColor: 'black',
-      fillOpacity: 0.84,
+      // fillOpacity: 0.84,
     },
   });
 
@@ -25,14 +24,15 @@ class PastLocationsPath extends React.Component<Props> {
 
     const arrows = this.props.pastCoords.slice(1).map((coords, index) => {
       const { heading, distance } = coords;
-      const arrowLength = 7; // in meters
-
-      const arrowSkirtLeft = GeoUtils.destinationPoint(coords, -arrowLength, heading + 10);
-      const arrowSkirtRight = GeoUtils.destinationPoint(coords, -arrowLength, heading - 10);
-      const arrowLineStartLeft = GeoUtils.destinationPoint(coords, -arrowLength, heading + 4);
-      const arrowLineStartRight = GeoUtils.destinationPoint(coords, -arrowLength, heading - 4);
-      const arrowLineEndLeft = GeoUtils.destinationPoint(coords, -distance, heading + 2);
-      const arrowLineEndRight = GeoUtils.destinationPoint(coords, -distance, heading - 2);
+      const arrowHeadLength = 7; // in meters
+      let arrowTailLength = 7;
+      arrowTailLength = arrowTailLength * 2 > distance ? distance : arrowTailLength * 2;
+      const arrowSkirtLeft = GeoUtils.destinationPoint(coords, -arrowHeadLength, heading + 20);
+      const arrowSkirtRight = GeoUtils.destinationPoint(coords, -arrowHeadLength, heading - 20);
+      const arrowLineStartLeft = GeoUtils.destinationPoint(coords, -arrowHeadLength, heading + 4);
+      const arrowLineStartRight = GeoUtils.destinationPoint(coords, -arrowHeadLength, heading - 4);
+      const arrowLineEndLeft = GeoUtils.destinationPoint(coords, -arrowTailLength, heading + 1);
+      const arrowLineEndRight = GeoUtils.destinationPoint(coords, -arrowTailLength, heading - 1);
 
       return {
         type: 'Feature',
@@ -86,12 +86,15 @@ class PastLocationsPath extends React.Component<Props> {
     };
 
     return (
-      <MapboxGL.ShapeSource id={`past-paths-${this.props.uid}`} shape={shapeGeoJson}>
+      <MapboxGL.ShapeSource
+        id={`past-paths-arrows-shape-${this.props.mode}`}
+        shape={shapeGeoJson}
+      >
         <MapboxGL.FillLayer
-          id={`past-paths-fill-${this.props.uid}`}
+          id={`past-paths-arrows-layer-${this.props.mode}`}
           style={this.mapStyles.path}
-          minZoomLevel={11}
-          maxZoomLevel={18}
+          minZoomLevel={0}
+          maxZoomLevel={20}
         />
       </MapboxGL.ShapeSource>
     );
