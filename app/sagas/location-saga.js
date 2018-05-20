@@ -93,7 +93,7 @@ function* locationUpdatedSaga(action) {
   if (isCentered && appState === 'active') {
     yield* setCamera(action);
   }
-  if (isFindUserEnabled) {
+  if (isFindUserEnabled || true) {
     yield put({
       type: 'FIND_USER_MY_MOVE',
       payload: {

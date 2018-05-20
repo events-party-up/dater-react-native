@@ -11,6 +11,7 @@ import { GeoCoordinates } from '../types';
 import MyLocationOnCenteredMap from './map/my-location-on-centered-map';
 import UsersAroundComponent from './map/users-around-component';
 import PastLocationsPath from './map/past-locations-path';
+import PastLocationsLines from './map/past-locations-lines';
 import { Caption2 } from './ui-kit/typography';
 
 const mapStateToProps = (state) => ({
@@ -180,6 +181,14 @@ class DaterMapView extends Component<Props> {
           minZoomLevel={11}
           maxZoomLevel={18}
         >
+          <PastLocationsLines
+            pastCoords={this.props.findUser.myPastCoords}
+            mode="own"
+          />
+          <PastLocationsLines
+            pastCoords={this.props.findUser.targetPastCoords}
+            mode="target"
+          />
           <PastLocationsPath
             pastCoords={this.props.findUser.myPastCoords}
             mapViewheadingAngle={this.props.mapView.headingAngle}
