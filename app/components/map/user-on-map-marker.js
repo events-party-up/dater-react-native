@@ -98,7 +98,6 @@ const styles = StyleSheet.create({
     borderBottomColor: '#2c7cf6',
     borderLeftColor: 'transparent',
   },
-
   outerCircle: {
     elevation: 1,
     backgroundColor: '#fff',
