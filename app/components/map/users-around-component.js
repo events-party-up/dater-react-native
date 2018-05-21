@@ -20,7 +20,7 @@ type Props = {
 };
 
 class UsersAroundComponent extends React.Component<Props> {
-  onPress = (user) => {
+  onPressOrSelect = (user) => {
     if (this.props.findUser.enabled) {
       this.props.dispatch({
         type: 'UI_MAP_PANEL_SHOW',
@@ -60,12 +60,12 @@ class UsersAroundComponent extends React.Component<Props> {
         ]}
         key={user.uid}
         id={user.uid}
-        // onSelected={() => { this.onPress(user); }}
+        onSelected={() => { this.onPressOrSelect(user); }} // TOOD: refactor this, onPress uses same callback
         onDeselected={() => { this.onDeselected(); }}
         selected={false}
       >
         <UserOnMapMarker
-          onPress={() => { this.onPress(user); }}
+          onPress={() => { this.onPressOrSelect(user); }}
           title={user.shortId && user.shortId.substring(0, 1).toUpperCase()}
           heading={user.heading}
           mapViewBearingAngle={this.props.mapViewBearingAngle}

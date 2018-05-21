@@ -13,7 +13,6 @@ import { connect, Dispatch } from 'react-redux';
 
 import { H2, Caption2 } from '../../components/ui-kit/typography';
 import DaterButton from '../../components/ui-kit/dater-button';
-import { GeoCoordinates } from '../../types';
 
 const mapStateToProps = (state) => ({
   mapPanel: state.mapPanel,
@@ -30,7 +29,6 @@ const Screen = {
 type Props = {
   mapPanel: any,
   dispatch: Dispatch,
-  myCurrentCoords: GeoCoordinates,
   findUserUid: string,
   findUserDistance: number,
 };
@@ -61,19 +59,6 @@ class MapPanelComponent extends Component<Props> {
     }
   }
 
-  buildRoute = () => {
-    this.props.dispatch({
-      type: 'MAPVIEW_BUILD_ROUTE_START',
-      payload: this.props.findUserUid,
-    });
-    this.props.dispatch({
-      type: 'UI_MAP_PANEL_HIDE',
-      payload: {
-        source: 'mapPanelComponentLetsStart',
-      },
-    });
-  }
-
   letsStart = () => {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE',
@@ -84,28 +69,46 @@ class MapPanelComponent extends Component<Props> {
     this.props.dispatch({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_FIND_USER' });
   }
 
-  findUser = (user) => {
+  requestDate = (user) => {
     this.props.dispatch({
-      type: 'FIND_USER_START',
+      type: 'FIND_USER_REQUEST',
       payload: {
         user,
-        myCurrentCoords: {
-          latitude: this.props.myCurrentCoords.latitude,
-          longitude: this.props.myCurrentCoords.longitude,
-          timestamp: Date.now(),
-        },
       },
     });
   }
 
   stopFindUser = () => {
     this.props.dispatch({ type: 'FIND_USER_STOP' });
-    this.props.dispatch({ type: 'MAPVIEW_BUILD_ROUTE_CLEAR' });
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE',
       payload: {
         source: 'mapPanelComponentLetsStart',
       },
+    });
+  }
+
+  acceptDateRequest = () => {
+    this.props.dispatch({
+      type: 'FIND_USER_ACCEPT_REQUEST',
+    });
+  }
+
+  declineDateRequest = () => {
+    this.props.dispatch({
+      type: 'FIND_USER_DECLINE_REQUEST',
+    });
+    this.props.dispatch({
+      type: 'UI_MAP_PANEL_HIDE_FORCE',
+      payload: {
+        source: 'declineDateRequest',
+      },
+    });
+  }
+
+  cancelDateRequest = () => {
+    this.props.dispatch({
+      type: 'FIND_USER_CANCEL_REQUEST',
     });
   }
 
@@ -123,28 +126,8 @@ class MapPanelComponent extends Component<Props> {
               {Math.floor(this.props.mapPanel.user.distance)} метров от вас. {' '}
               Был <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.user.timestamp}</Moment>.
             </Caption2>
-            <DaterButton style={styles.panelButton} onPress={() => this.findUser(this.props.mapPanel.user)}>
+            <DaterButton style={styles.panelButton} onPress={() => this.requestDate(this.props.mapPanel.user)}>
               Встретиться
-            </DaterButton>
-          </View>
-        );
-      case 'routeInfo':
-        return (
-          <View>
-            <H2>Маршрут до {this.props.mapPanel.user.shortId}</H2>
-            <Caption2 style={{
-              marginBottom: 8,
-              marginTop: 8,
-            }}
-            >
-              Расстояние {Math.floor(this.props.mapPanel.user.distance)} м. {' '}
-              Продолжительность {Math.floor(this.props.mapPanel.user.duration / 60)} мин.
-            </Caption2>
-            <DaterButton
-              style={styles.panelButton}
-              onPress={this.letsStart}
-            >
-              Поехали!
             </DaterButton>
           </View>
         );
@@ -186,6 +169,58 @@ class MapPanelComponent extends Component<Props> {
             </DaterButton>
           </View>
         );
+      case 'newDateRequest':
+        return (
+          <View>
+            <H2>Запрос от {this.props.mapPanel.user.shortId}</H2>
+            <Caption2 style={{
+              marginBottom: 8,
+              marginTop: 8,
+            }}
+            >
+              Расстояние {Math.floor(this.props.mapPanel.distance)} м. {' '}
+              Date ID: {this.props.mapPanel.requestId.substring(0, 4)}
+            </Caption2>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-evenly',
+            }}
+            >
+              <DaterButton
+                style={[styles.panelButton, { width: 150 }]}
+                onPress={this.declineDateRequest}
+              >
+                Отклонить
+              </DaterButton>
+              <DaterButton
+                style={[styles.panelButton, { width: 150 }]}
+                onPress={this.acceptDateRequest}
+              >
+                Принять
+              </DaterButton>
+            </View>
+          </View>
+        );
+      case 'newDateAwaitingAccept':
+        return (
+          <View>
+            <H2>Ожидание ответа от {this.props.findUserUid ? this.props.findUserUid.substring(0, 4) : ''}</H2>
+            <Caption2 style={{
+              marginBottom: 8,
+              marginTop: 8,
+            }}
+            >
+              Запрос отправлен 5 минут назад
+            </Caption2>
+            <DaterButton
+              style={styles.panelButton}
+              onPress={this.cancelDateRequest}
+            >
+              Отменить
+            </DaterButton>
+          </View>
+        );
       default:
         return null;
     }
@@ -200,8 +235,7 @@ class MapPanelComponent extends Component<Props> {
         <Interactable.View
           ref={(component) => { this.interactableElement = component; }}
           verticalOnly
-          snapPoints={
-            [
+          snapPoints={[
               { y: this.showSnapPosition, id: 'show' },
               { y: this.showSnapPosition - 60, id: 'show_findUserActive' },
               { y: Screen.height + 80, id: 'close' }, // close map panel snap point

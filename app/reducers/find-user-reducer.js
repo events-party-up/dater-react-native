@@ -9,6 +9,10 @@ import {
 import { GeoCoordinates } from '../types';
 
 const types = {
+  FIND_USER_REQUEST: 'FIND_USER_REQUEST',
+  FIND_USER_REQUESTED: 'FIND_USER_REQUESTED',
+  FIND_USER_DECLINE_REQUEST: 'FIND_USER_DECLINE_REQUEST',
+  FIND_USER_ACCEPT_REQUEST: 'FIND_USER_ACCEPT_REQUEST',
   FIND_USER_START: 'FIND_USER_START',
   FIND_USER_STARTED: 'FIND_USER_STARTED',
   FIND_USER_STOP: 'FIND_USER_STOP',
@@ -25,7 +29,6 @@ const initialState = {
   myPastCoords: [], // all past coorinates
   enabled: false,
   targetUserUid: null,
-  starting: false,
   startDistance: 0,
   currentDistance: 0,
   myScore: 0,
@@ -36,6 +39,25 @@ const findUserReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
+    case types.FIND_USER_REQUEST: {
+      return {
+        ...state,
+        targetUserUid: payload.user.uid,
+        myPastCoords: [payload.myCurrentCoords],
+        targetPastCoords: [{ // init state with first coords of target user
+          accuracy: payload.user.accuracy,
+          latitude: payload.user.geoPoint.latitude,
+          longitude: payload.user.geoPoint.longitude,
+          timestamp: Date.now(),
+        }],
+      };
+    }
+    case types.FIND_USER_REQUESTED: {
+      return {
+        ...state,
+        startDistance: payload.startDistance,
+      };
+    }
     case types.FIND_USER_START: {
       return {
         ...state,

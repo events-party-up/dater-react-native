@@ -21,3 +21,6 @@ export const MINIMUM_ACCURACY_PAST_LOCATION = 40;
 export const USERS_AROUND_SEARCH_RADIUS_KM = 25;
 export const USERS_AROUND_SHOW_LAST_SEEN_HOURS_AGO = 12;
 
+// Firebase
+export const MICRO_DATES_COLLECTION = 'microDates';
+
