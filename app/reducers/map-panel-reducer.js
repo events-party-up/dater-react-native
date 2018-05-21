@@ -25,8 +25,7 @@ const mapPanelReducer = (state = initialState, action) => {
     case types.UI_MAP_PANEL_SET_MODE: {
       return {
         ...state,
-        mode: payload.mode,
-        user: payload.user,
+        ...payload,
       };
     }
     case types.UI_MAP_PANEL_SHOW_FINISHED: {

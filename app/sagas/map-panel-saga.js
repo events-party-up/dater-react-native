@@ -78,9 +78,8 @@ export default function* mapPanelSaga() {
       const nextAction = {
         type: 'UI_MAP_PANEL_SET_MODE',
         payload: {
+          ...action.payload,
           mode: 'findUser',
-          user: action.payload.user,
-          startDistance: action.payload.startDistance,
         },
       };
       yield put(nextAction);

@@ -23,4 +23,5 @@ export const USERS_AROUND_SHOW_LAST_SEEN_HOURS_AGO = 12;
 
 // Firebase
 export const MICRO_DATES_COLLECTION = 'microDates';
+export const GEO_POINTS_COLLECTION = 'geoPoints';
 

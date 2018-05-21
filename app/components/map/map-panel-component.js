@@ -30,7 +30,6 @@ type Props = {
   mapPanel: any,
   dispatch: Dispatch,
   findUserUid: string,
-  findUserDistance: number,
 };
 
 class MapPanelComponent extends Component<Props> {
@@ -59,7 +58,7 @@ class MapPanelComponent extends Component<Props> {
     }
   }
 
-  letsStart = () => {
+  showMeTargetUser = () => {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE',
       payload: {
@@ -92,6 +91,12 @@ class MapPanelComponent extends Component<Props> {
     this.props.dispatch({
       type: 'FIND_USER_ACCEPT_REQUEST',
     });
+    this.props.dispatch({
+      type: 'UI_MAP_PANEL_HIDE_FORCE',
+      payload: {
+        source: 'acceptDateRequest',
+      },
+    });
   }
 
   declineDateRequest = () => {
@@ -103,12 +108,6 @@ class MapPanelComponent extends Component<Props> {
       payload: {
         source: 'declineDateRequest',
       },
-    });
-  }
-
-  cancelDateRequest = () => {
-    this.props.dispatch({
-      type: 'FIND_USER_CANCEL_REQUEST',
     });
   }
 
@@ -134,39 +133,34 @@ class MapPanelComponent extends Component<Props> {
       case 'findUser':
         return (
           <View>
-            <H2>Найти {this.props.mapPanel.user.shortId}</H2>
+            <H2>У тебя встреча с {this.props.mapPanel.user.shortId}</H2>
             <Caption2 style={{
               marginBottom: 8,
               marginTop: 8,
             }}
             >
-              Расстояние {Math.floor(this.props.mapPanel.user.distance)} м. {' '}
+              Расстояние {Math.floor(this.props.mapPanel.distance)} м. {' '}
+              Date ID: {this.props.mapPanel.microDateId.substring(0, 4)}
             </Caption2>
-            <DaterButton
-              style={styles.panelButton}
-              onPress={this.letsStart}
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-evenly',
+              }}
             >
-              Поехали!
-            </DaterButton>
-          </View>
-        );
-      case 'findUserActive':
-        return (
-          <View>
-            <H2>Вы уже в поиске {this.props.findUserUid ? this.props.findUserUid.substring(0, 4) : ''}</H2>
-            <Caption2 style={{
-              marginBottom: 8,
-              marginTop: 8,
-            }}
-            >
-              Расстояние {Math.floor(this.props.findUserDistance)} м. {' '}
-            </Caption2>
-            <DaterButton
-              style={styles.panelButton}
-              onPress={this.stopFindUser}
-            >
-              Остановить
-            </DaterButton>
+              <DaterButton
+                style={[styles.panelButton, { width: 150 }]}
+                onPress={this.stopFindUser}
+              >
+                Отменить
+              </DaterButton>
+              <DaterButton
+                style={[styles.panelButton, { width: 150 }]}
+                onPress={this.showMeTargetUser}
+              >
+                Найти
+              </DaterButton>
+            </View>
           </View>
         );
       case 'newDateRequest':
@@ -179,7 +173,7 @@ class MapPanelComponent extends Component<Props> {
             }}
             >
               Расстояние {Math.floor(this.props.mapPanel.distance)} м. {' '}
-              Date ID: {this.props.mapPanel.requestId.substring(0, 4)}
+              Date ID: {this.props.mapPanel.microDateId.substring(0, 4)}
             </Caption2>
             <View
               style={{
@@ -215,7 +209,7 @@ class MapPanelComponent extends Component<Props> {
             </Caption2>
             <DaterButton
               style={styles.panelButton}
-              onPress={this.cancelDateRequest}
+              onPress={this.stopFindUser}
             >
               Отменить
             </DaterButton>
@@ -295,11 +289,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 8,
     alignSelf: 'center',
-  },
-  photo: {
-    width: Screen.width - 40,
-    height: 225,
-    marginTop: 30,
   },
 });
 

@@ -25,7 +25,7 @@ class UsersAroundComponent extends React.Component<Props> {
       this.props.dispatch({
         type: 'UI_MAP_PANEL_SHOW',
         payload: {
-          mode: 'findUserActive',
+          mode: 'findUser',
           user,
         },
       });

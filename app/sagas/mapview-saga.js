@@ -102,17 +102,24 @@ function* switchMapViewMode(mapView) {
   let myCoords;
   try {
     while (true) {
-      // zoom out
       yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
-      myCoords = yield select((state) => state.location.coords);
-      yield call(mapView.setCamera, {
-        ...myCoords,
-        zoom: 14,
-      });
-      yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'zoomOut' });
-      yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
+      const isFindUserActive = yield select((state) => state.findUser.enabled);
+      if (isFindUserActive) {
+        // show me and target user in find user mode
+        yield put({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_FIND_USER' });
+        yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'showTargetFindUser' });
+      } else {
+        // zoom out on myself
+        myCoords = yield select((state) => state.location.coords);
+        yield call(mapView.setCamera, {
+          ...myCoords,
+          zoom: 14,
+        });
+        yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'zoomOut' });
+        yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
+      }
 
-      // zoom in
+      // zoom in on myself
       yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
       myCoords = yield select((state) => state.location.coords);
       yield call(mapView.setCamera, {
@@ -122,13 +129,6 @@ function* switchMapViewMode(mapView) {
       yield put({ type: 'GEO_LOCATION_FORCE_UPDATE' });
       yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'zoomIn' });
       yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
-
-      const isFindUserActive = yield select((state) => state.findUser.enabled);
-      if (isFindUserActive) {
-        yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
-        yield put({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_FIND_USER' });
-        yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'showTargetFindUser' });
-      }
     }
   } catch (error) {
     yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_ERROR', payload: error });

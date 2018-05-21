@@ -42,7 +42,7 @@ const findUserReducer = (state = initialState, action) => {
     case types.FIND_USER_REQUEST: {
       return {
         ...state,
-        targetUserUid: payload.user.uid,
+        targetUserUid: payload.user.id,
         myPastCoords: [payload.myCurrentCoords],
         targetPastCoords: [{ // init state with first coords of target user
           accuracy: payload.user.accuracy,
@@ -61,23 +61,18 @@ const findUserReducer = (state = initialState, action) => {
     case types.FIND_USER_START: {
       return {
         ...state,
-        starting: true,
-        targetUserUid: payload.user.uid,
-        myPastCoords: [payload.myCurrentCoords],
+        targetUserUid: payload.user.id,
+        myPastCoords: [payload.myCoords],
         targetPastCoords: [{ // init state with first coords of target user
           accuracy: payload.user.accuracy,
           latitude: payload.user.geoPoint.latitude,
           longitude: payload.user.geoPoint.longitude,
           timestamp: Date.now(),
         }],
-      };
-    }
-    case types.FIND_USER_STARTED: {
-      return {
-        ...state,
-        starting: false,
         enabled: true,
         startDistance: payload.startDistance,
+        distance: payload.distance,
+        microDateId: payload.microDateId,
       };
     }
     case types.FIND_USER_STOPPED: {
