@@ -38,7 +38,7 @@ class PastLocationsPath extends React.Component<Props> {
     const pastLocationsQuery = firebase.firestore()
       .collection(MICRO_DATES_COLLECTION)
       .doc(this.props.microDateId)
-      .collection(this.props.uid)
+      .collection(`pastLocations_${this.props.uid.substring(0, 8)}`)
       .orderBy('serverTS', 'desc')
       .limit(MAX_VISIBLE_PAST_LOCATIONS);
 

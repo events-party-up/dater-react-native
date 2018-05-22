@@ -18,7 +18,7 @@ const mapStateToProps = (state) => ({
   mapPanel: state.mapPanel,
   myCurrentCoords: state.location.coords,
   findUserUid: state.findUser.targetUserUid,
-  findUserDistance: state.findUser.currentDistance,
+  findUserDistance: state.findUser.distance,
 });
 
 const Screen = {
@@ -139,7 +139,7 @@ class MapPanelComponent extends Component<Props> {
               marginTop: 8,
             }}
             >
-              Расстояние {Math.floor(this.props.mapPanel.distance)} м. {' '}
+              Расстояние {Math.floor(this.props.findUserDistance)} м. {' '}
               Date ID: {this.props.mapPanel.microDateId.substring(0, 4)}
             </Caption2>
             <View

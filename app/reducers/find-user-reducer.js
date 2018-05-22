@@ -1,12 +1,4 @@
 import GeoUtils from '../utils/geo-utils';
-import {
-  MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION,
-  MAX_PAST_LOCATIONS,
-  MAX_DISTANCE_FROM_PREVIOUS_PAST_LOCATION,
-  MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION,
-  MINIMUM_ACCURACY_PAST_LOCATION,
-} from '../constants';
-import { GeoCoordinates } from '../types';
 
 const types = {
   FIND_USER_REQUEST: 'FIND_USER_REQUEST',
@@ -34,8 +26,10 @@ const initialState = {
   currentDistance: 0,
   myScore: 0,
   targetScore: 0,
-  previousCoords: null,
   microDateId: null,
+  targetCurrentCoords: null,
+  targetPreviousCoords: null,
+  myPreviousCoords: null,
 };
 
 const findUserReducer = (state = initialState, action) => {
@@ -82,23 +76,28 @@ const findUserReducer = (state = initialState, action) => {
       return initialState;
     }
     case types.FIND_USER_TARGET_MOVE: {
-      let { targetScore } = state;
-      const currentUserLastLocation = state.myPastCoords.length > 0 ?
-        state.myPastCoords[state.myPastCoords.length - 1] : null;
-      let targetPastCoords = buildPastCoords(state.targetPastCoords, payload, currentUserLastLocation); // eslint-disable-line prefer-const
+      // let { targetScore } = state;
+      // const currentUserLastLocation = state.myPastCoords.length > 0 ?
+      //   state.myPastCoords[state.myPastCoords.length - 1] : null;
+      // let targetPastCoords = buildPastCoords(state.targetPastCoords, payload, currentUserLastLocation); // eslint-disable-line prefer-const
 
-      if (targetPastCoords.length > 1 && currentUserLastLocation) {
-        targetScore += targetPastCoords[targetPastCoords.length - 1].opponentDistanceDelta;
-      }
-      if (targetPastCoords.length > MAX_PAST_LOCATIONS) {
-        targetPastCoords.shift();
-      }
+      // if (targetPastCoords.length > 1 && currentUserLastLocation) {
+      //   targetScore += targetPastCoords[targetPastCoords.length - 1].opponentDistanceDelta;
+      // }
+      // if (targetPastCoords.length > MAX_PAST_LOCATIONS) {
+      //   targetPastCoords.shift();
+      // }
 
       return {
         ...state,
-        targetPastCoords,
-        currentDistance: payload.distanceFromMe,
-        targetScore,
+        targetCurrentCoords: {
+          accuracy: payload.accuracy,
+          latitude: payload.geoPoint.latitude,
+          longitude: payload.geoPoint.longitude,
+        },
+        // targetPastCoords,
+        // currentDistance: payload.distanceFromMe,
+        // targetScore,
       };
     }
     case types.FIND_USER_MY_MOVE: {
@@ -126,9 +125,21 @@ const findUserReducer = (state = initialState, action) => {
       };
     }
     case types.FIND_USER_MY_MOVE_RECORDED: {
+      let { myScore } = state;
+      if (state.targetPreviousCoords) {
+        const currentDistanceFromOpponent = GeoUtils.distance(payload.newCoords, state.targetPreviousCoords);
+        const pastDistanceFromOpponent = GeoUtils.distance(state.myPreviousCoords, state.targetPreviousCoords);
+        const opponentDistanceDelta = pastDistanceFromOpponent - currentDistanceFromOpponent;
+        myScore += opponentDistanceDelta;
+      }
       return {
         ...state,
         myPreviousCoords: payload.newCoords,
+        myScore,
+        distance: GeoUtils.distance(payload.newCoords, state.targetCurrentCoords),
+        targetPreviousCoords: {
+          ...state.targetCurrentCoords,
+        },
       };
     }
     case types.FIND_USER_TARGET_MOVE_ERROR:
@@ -144,49 +155,49 @@ const findUserReducer = (state = initialState, action) => {
   }
 };
 
-function buildPastCoords(
-  pastCoordsInState: Array<GeoCoordinates>,
-  myCoords: GeoCoordinates,
-  opponentCoords: GeoCoordinates,
-) {
-  let opponentDistanceDelta;
-  let pastCoords = pastCoordsInState;
-  const previousLocation = [...pastCoords].pop();
-  const distance = previousLocation ? GeoUtils.distance(previousLocation, myCoords) : 0;
-  if (opponentCoords && previousLocation) {
-    const currentDistanceFromOpponent = GeoUtils.distance(myCoords, opponentCoords);
-    const pastDistanceFromOpponent = GeoUtils.distance(previousLocation, opponentCoords);
-    opponentDistanceDelta = pastDistanceFromOpponent - currentDistanceFromOpponent;
-  }
+// function buildPastCoords(
+//   pastCoordsInState: Array<GeoCoordinates>,
+//   myCoords: GeoCoordinates,
+//   opponentCoords: GeoCoordinates,
+// ) {
+//   let opponentDistanceDelta;
+//   let pastCoords = pastCoordsInState;
+//   const previousLocation = [...pastCoords].pop();
+//   const distance = previousLocation ? GeoUtils.distance(previousLocation, myCoords) : 0;
+//   if (opponentCoords && previousLocation) {
+//     const currentDistanceFromOpponent = GeoUtils.distance(myCoords, opponentCoords);
+//     const pastDistanceFromOpponent = GeoUtils.distance(previousLocation, opponentCoords);
+//     opponentDistanceDelta = pastDistanceFromOpponent - currentDistanceFromOpponent;
+//   }
 
-  // if this is not the first location update && not too small update
-  if (previousLocation && distance > MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
-    const heading = GeoUtils.getBearing(previousLocation, myCoords);
-    const timeDelta = (myCoords.timestamp - previousLocation.timestamp) / 1000; // in seconds
-    const velocity = Math.floor(distance / timeDelta); // in seconds
+//   // if this is not the first location update && not too small update
+//   if (previousLocation && distance > MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
+//     const heading = GeoUtils.getBearing(previousLocation, myCoords);
+//     const timeDelta = (myCoords.timestamp - previousLocation.timestamp) / 1000; // in seconds
+//     const velocity = Math.floor(distance / timeDelta); // in seconds
 
-    if (
-      velocity < MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION && // discard too fast moves, probably a noise from location services
-      myCoords.accuracy < MINIMUM_ACCURACY_PAST_LOCATION // discard not accurate enough locations
-    ) {
-      pastCoords = [...pastCoordsInState, {
-        ...myCoords,
-        heading,
-        distance,
-        velocity,
-        opponentDistanceDelta,
-      }];
-    }
-    // if new coordinate is too far away from the previous one, reset pastCoords
-    // probably user had location services turned off for too long time
-    if (distance > MAX_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
-      pastCoords = [myCoords];
-    }
-    // if we just started location tracking
-  } else if (pastCoords.length === 0) {
-    pastCoords = [myCoords];
-  }
-  return pastCoords;
-}
+//     if (
+//       velocity < MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION && // discard too fast moves, probably a noise from location services
+//       myCoords.accuracy < MINIMUM_ACCURACY_PAST_LOCATION // discard not accurate enough locations
+//     ) {
+//       pastCoords = [...pastCoordsInState, {
+//         ...myCoords,
+//         heading,
+//         distance,
+//         velocity,
+//         opponentDistanceDelta,
+//       }];
+//     }
+//     // if new coordinate is too far away from the previous one, reset pastCoords
+//     // probably user had location services turned off for too long time
+//     if (distance > MAX_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
+//       pastCoords = [myCoords];
+//     }
+//     // if we just started location tracking
+//   } else if (pastCoords.length === 0) {
+//     pastCoords = [myCoords];
+//   }
+//   return pastCoords;
+// }
 
 export default findUserReducer;

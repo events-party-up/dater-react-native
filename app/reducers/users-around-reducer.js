@@ -1,5 +1,6 @@
 const types = {
   USERS_AROUND_UPDATED: 'USERS_AROUND_UPDATED',
+  USERS_AROUND_FIND_USER_UPDATED: 'USERS_AROUND_FIND_USER_UPDATED',
   USERS_AROUND_RESTART: 'USERS_AROUND_RESTART',
   USERS_AROUND_STOP: 'USERS_AROUND_STOP',
   USERS_AROUND_STOPPED: 'USERS_AROUND_STOPPED',
@@ -19,6 +20,7 @@ const usersAroundReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
+    case types.USERS_AROUND_FIND_USER_UPDATED:
     case types.USERS_AROUND_UPDATED: {
       return {
         ...state,

@@ -27,20 +27,23 @@ export default function* findUserSaga() {
     const dateRequestsChannel = yield call(createChannelToMonitorDateRequests, myUid);
     yield takeEvery(dateRequestsChannel, handleDateRequestsSaga);
     yield takeEvery('FIND_USER_MY_MOVE', handleMyMoveSaga);
+    yield takeEvery('FIND_USER_TARGET_MOVE', handleTargetMoveSaga);
 
     while (true) {
       const action = yield take('FIND_USER_REQUEST');
       const targetUser = action.payload.user;
 
-      const microDate = yield firebase.firestore().collection(MICRO_DATES_COLLECTION).add({
-        status: 'REQUEST',
-        requestBy: myUid,
-        requestFor: targetUser.uid,
-        requestByRef: firebase.firestore().collection('geoPoints').doc(myUid),
-        requestForRef: firebase.firestore().collection('geoPoints').doc(targetUser.uid),
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        active: true,
-      });
+      const microDate = yield firebase.firestore()
+        .collection(MICRO_DATES_COLLECTION)
+        .add({
+          status: 'REQUEST',
+          requestBy: myUid,
+          requestFor: targetUser.uid,
+          requestByRef: firebase.firestore().collection('geoPoints').doc(myUid),
+          requestForRef: firebase.firestore().collection('geoPoints').doc(targetUser.uid),
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          active: true,
+        });
 
       const microDateChannel = yield call(createChannelToMicroDate, microDate.id);
       const task1 = yield takeEvery(microDateChannel, microDateUpdatedSaga);
@@ -69,7 +72,9 @@ function* microDateUpdatedSaga(microDateData) {
 }
 
 function createChannelToMicroDate(microDateId) {
-  const query = firebase.firestore().collection(MICRO_DATES_COLLECTION).doc(microDateId);
+  const query = firebase.firestore()
+    .collection(MICRO_DATES_COLLECTION)
+    .doc(microDateId);
   return eventChannel((emit) => {
     const onSnapshotUpdated = (dataSnapshot) => {
       emit(dataSnapshot.data());
@@ -113,15 +118,21 @@ function* handleDateRequestsSaga(microDate) {
     ]);
 
     if (nextAction.type === 'FIND_USER_DECLINE_REQUEST') {
-      yield firebase.firestore().collection(MICRO_DATES_COLLECTION).doc(microDate.id).update({
-        status: 'DECLINE',
-        active: false,
-      });
+      yield firebase.firestore()
+        .collection(MICRO_DATES_COLLECTION)
+        .doc(microDate.id)
+        .update({
+          status: 'DECLINE',
+          active: false,
+        });
     } else if (nextAction.type === 'FIND_USER_ACCEPT_REQUEST') {
-      yield firebase.firestore().collection(MICRO_DATES_COLLECTION).doc(microDate.id).update({
-        status: 'ACCEPT',
-        startDistance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
-      });
+      yield firebase.firestore()
+        .collection(MICRO_DATES_COLLECTION)
+        .doc(microDate.id)
+        .update({
+          status: 'ACCEPT',
+          startDistance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
+        });
     }
   } else if (microDate.status === 'ACCEPT') {
     yield put({
@@ -135,10 +146,13 @@ function* handleDateRequestsSaga(microDate) {
       },
     });
     yield take('FIND_USER_STOP');
-    yield firebase.firestore().collection(MICRO_DATES_COLLECTION).doc(microDate.id).update({
-      status: 'STOP',
-      active: false,
-    });
+    yield firebase.firestore()
+      .collection(MICRO_DATES_COLLECTION)
+      .doc(microDate.id)
+      .update({
+        status: 'STOP',
+        active: false,
+      });
     yield put({ type: 'FIND_USER_STOPPED' });
   }
 }
@@ -147,13 +161,15 @@ function* handleMyMoveSaga(action) {
   yield console.log('handleMyMoveSaga', action);
   const microDateId = yield select((state) => state.findUser.microDateId);
   const myUid = yield select((state) => state.auth.uid);
+  const myUidDB = myUid.substring(0, 8);
   const newCoords = action.payload;
   const myPreviousCoords = yield select((state) => state.findUser.myPreviousCoords);
 
   if (!myPreviousCoords) {
-    yield firebase.firestore().collection(MICRO_DATES_COLLECTION)
+    yield firebase.firestore()
+      .collection(MICRO_DATES_COLLECTION)
       .doc(microDateId)
-      .collection(myUid)
+      .collection(`pastLocations_${myUidDB}`)
       .add({
         geoPoint: new firebase.firestore.GeoPoint(newCoords.latitude, newCoords.longitude),
         serverTS: firebase.firestore.FieldValue.serverTimestamp(),
@@ -170,9 +186,10 @@ function* handleMyMoveSaga(action) {
       newCoords.accuracy < MINIMUM_ACCURACY_PAST_LOCATION && // discard not accurate enough locations
       distance > MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION // discard too nearby updates
     ) {
-      yield firebase.firestore().collection(MICRO_DATES_COLLECTION)
+      yield firebase.firestore()
+        .collection(MICRO_DATES_COLLECTION)
         .doc(microDateId)
-        .collection(myUid)
+        .collection(`pastLocations_${myUidDB}`)
         .add({
           distance,
           velocity,
@@ -185,13 +202,35 @@ function* handleMyMoveSaga(action) {
       return;
     }
   }
+  let myScore = yield select((state) => state.findUser.myScore);
+  const targetPreviousCoords = yield select((state) => state.findUser.targetPreviousCoords);
+
+  if (targetPreviousCoords) {
+    const currentDistanceFromOpponent = GeoUtils.distance(newCoords, targetPreviousCoords);
+    const pastDistanceFromOpponent = GeoUtils.distance(myPreviousCoords, targetPreviousCoords);
+    const opponentDistanceDelta = pastDistanceFromOpponent - currentDistanceFromOpponent;
+    myScore += opponentDistanceDelta;
+    yield firebase.firestore()
+      .collection(MICRO_DATES_COLLECTION)
+      .doc(microDateId)
+      .collection('stats')
+      .doc(myUidDB)
+      .set({
+        score: myScore,
+      }, { merge: true });
+  }
 
   yield put({
     type: 'FIND_USER_MY_MOVE_RECORDED',
     payload: {
       newCoords,
+      myScore,
     },
   });
+}
+
+function* handleTargetMoveSaga(action) {
+  yield console.log('handleTargetMoveSaga', action);
 }
 
 function createChannelToMonitorDateRequests(uid) {
@@ -222,11 +261,13 @@ function createChannelToMonitorDateRequests(uid) {
 }
 
 async function hasActiveDate(uid) {
-  const dateStartedByMeQuery = firebase.firestore().collection(MICRO_DATES_COLLECTION)
+  const dateStartedByMeQuery = firebase.firestore()
+    .collection(MICRO_DATES_COLLECTION)
     .where('requestBy', '==', uid)
     .where('active', '==', true);
   const dateStartedByMeSnapshot = await dateStartedByMeQuery.get();
-  const dateStartedByOthersQuery = firebase.firestore().collection(MICRO_DATES_COLLECTION)
+  const dateStartedByOthersQuery = firebase.firestore()
+    .collection(MICRO_DATES_COLLECTION)
     .where('requestFor', '==', uid)
     .where('active', '==', true);
   const dateStartedByOthersSnapshot = await dateStartedByOthersQuery.get();

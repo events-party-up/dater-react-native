@@ -17,7 +17,8 @@ export default function* usersAroundSaga() {
     yield take('GEO_LOCATION_STARTED');
     let isManuallyStopped = false;
     let isFindUserMode = false;
-    let usersAroundChannel;
+    let channel;
+    let channelTask;
 
     while (true) {
       // only start when app state is active
@@ -42,11 +43,12 @@ export default function* usersAroundSaga() {
       const { currentUser } = yield call(firebase.auth);
       if (isFindUserMode) {
         const findUserState = yield select((state) => state.findUser);
-        usersAroundChannel = yield call(createFindUserChannel, myCoords, currentUser, findUserState);
+        channel = yield call(createFindUserChannel, myCoords, currentUser, findUserState);
+        channelTask = yield takeEvery(channel, updateFindUser);
       } else {
-        usersAroundChannel = yield call(createAllUsersAroundChannel, myCoords, currentUser);
+        channel = yield call(createAllUsersAroundChannel, myCoords, currentUser);
+        channelTask = yield takeEvery(channel, updateUsersAround);
       }
-      const task1 = yield takeEvery(usersAroundChannel, updateUsersAround);
 
       yield put({ type: 'USERS_AROUND_STARTED' });
 
@@ -71,8 +73,8 @@ export default function* usersAroundSaga() {
         isFindUserMode = false;
       }
 
-      yield cancel(task1);
-      yield usersAroundChannel.close();
+      yield cancel(channelTask);
+      yield channel.close();
       yield put({ type: 'USERS_AROUND_STOPPED' });
     }
   } catch (error) {
@@ -90,6 +92,24 @@ function* updateUsersAround(usersAround) {
     yield put({
       type: 'USERS_AROUND_UPDATED',
       payload: usersAround,
+    });
+  }
+}
+
+function* updateFindUser(targetUser) {
+  if (targetUser.error) {
+    yield put({
+      type: 'USERS_AROUND_FIND_USER_CHANNEL_ERROR',
+      payload: targetUser.error,
+    });
+  } else {
+    yield put({
+      type: 'USERS_AROUND_FIND_USER_UPDATED',
+      payload: [targetUser],
+    });
+    yield put({
+      type: 'FIND_USER_TARGET_MOVE',
+      payload: targetUser,
     });
   }
 }
@@ -179,7 +199,7 @@ function createFindUserChannel(myCoords, currentUser, findUserState) {
       targetUser.shortId = snapshot.id.substring(0, 4);
       targetUser.distance = GeoUtils.distance(myCoords, targetUser[geoPointPath]);
 
-      emit([targetUser]);
+      emit(targetUser);
     };
 
     const onError = (error) => {
