@@ -24,8 +24,8 @@ export default function* findUserSaga() {
     const myUid = yield select((state) => state.auth.uid);
     const hasActiveDates = yield hasActiveDate(myUid);
     console.log('hasActiveDates: ', hasActiveDates);
-    const dateRequestsChannel = yield call(createChannelToMonitorDateRequests, myUid);
-    yield takeEvery(dateRequestsChannel, handleDateRequestsSaga);
+    const incomingDateRequestsChannel = yield call(createChannelToMonitorIncomingDateRequests, myUid);
+    yield takeEvery(incomingDateRequestsChannel, handleIncomingDateRequestsSaga);
     yield takeEvery('FIND_USER_MY_MOVE', handleMyMoveSaga);
     yield takeEvery('FIND_USER_TARGET_MOVE', handleTargetMoveSaga);
 
@@ -54,6 +54,20 @@ export default function* findUserSaga() {
           user: targetUser,
         },
       });
+
+      yield put({
+        type: 'UI_MAP_PANEL_SHOW',
+        payload: {
+          mode: 'newDateAwaitingAccept',
+          canHide: false,
+          microDate: {
+            id: microDate.id,
+            requestFor: targetUser.uid,
+            timestamp: Date.now(),
+          },
+        },
+      });
+
       yield take('FIND_USER_STOP');
       yield cancel(task1);
       yield microDateChannel.close();
@@ -91,7 +105,7 @@ function createChannelToMicroDate(microDateId) {
   });
 }
 
-function* handleDateRequestsSaga(microDate) {
+function* handleIncomingDateRequestsSaga(microDate) {
   const myCoords = yield select((state) => state.location.coords);
   const userSnap = yield microDate.requestByRef.get();
   const user = {
@@ -233,7 +247,7 @@ function* handleTargetMoveSaga(action) {
   yield console.log('handleTargetMoveSaga', action);
 }
 
-function createChannelToMonitorDateRequests(uid) {
+function createChannelToMonitorIncomingDateRequests(uid) {
   const dateStartedByOthersQuery = firebase.firestore().collection(MICRO_DATES_COLLECTION)
     .where('requestFor', '==', uid)
     .where('active', '==', true);

@@ -7,8 +7,8 @@ import mapViewInitializeRegionSaga from './mapview-init-region-saga';
 import startGeolocationOnFirstUpdate from './location-start-saga';
 import mapPanelSaga from './map-panel-saga';
 import usersAroundSaga from './users-around-saga';
-import findUserSaga from './find-user-saga';
 import appStateSaga from './app-state-saga';
+import microDatesSaga from './micro-dates/micro-dates-saga';
 
 export default function* rootSaga() {
   yield all([
@@ -20,7 +20,7 @@ export default function* rootSaga() {
     startGeolocationOnFirstUpdate(),
     mapPanelSaga(),
     usersAroundSaga(),
-    findUserSaga(),
     appStateSaga(),
+    microDatesSaga(),
   ]);
 }

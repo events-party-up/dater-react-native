@@ -17,7 +17,6 @@ import DaterButton from '../../components/ui-kit/dater-button';
 const mapStateToProps = (state) => ({
   mapPanel: state.mapPanel,
   myCurrentCoords: state.location.coords,
-  findUserUid: state.findUser.targetUserUid,
   findUserDistance: state.findUser.distance,
 });
 
@@ -29,7 +28,7 @@ const Screen = {
 type Props = {
   mapPanel: any,
   dispatch: Dispatch,
-  findUserUid: string,
+  findUserDistance: number,
 };
 
 class MapPanelComponent extends Component<Props> {
@@ -77,12 +76,22 @@ class MapPanelComponent extends Component<Props> {
     });
   }
 
+  cancelDateRequest = () => {
+    this.props.dispatch({ type: 'FIND_USER_CANCEL_REQUEST' });
+    this.props.dispatch({
+      type: 'UI_MAP_PANEL_HIDE_FORCE',
+      payload: {
+        source: 'mapPanelComponentCancelDateRequest',
+      },
+    });
+  }
+
   stopFindUser = () => {
     this.props.dispatch({ type: 'FIND_USER_STOP' });
     this.props.dispatch({
-      type: 'UI_MAP_PANEL_HIDE',
+      type: 'UI_MAP_PANEL_HIDE_FORCE',
       payload: {
-        source: 'mapPanelComponentLetsStart',
+        source: 'mapPanelComponentStopFindUser',
       },
     });
   }
@@ -149,13 +158,13 @@ class MapPanelComponent extends Component<Props> {
               }}
             >
               <DaterButton
-                style={[styles.panelButton, { width: 150 }]}
+                style={[styles.panelButton, { width: 130 }]}
                 onPress={this.stopFindUser}
               >
                 Отменить
               </DaterButton>
               <DaterButton
-                style={[styles.panelButton, { width: 150 }]}
+                style={[styles.panelButton, { width: 130 }]}
                 onPress={this.showMeTargetUser}
               >
                 Найти
@@ -182,13 +191,13 @@ class MapPanelComponent extends Component<Props> {
             }}
             >
               <DaterButton
-                style={[styles.panelButton, { width: 150 }]}
+                style={[styles.panelButton, { width: 130 }]}
                 onPress={this.declineDateRequest}
               >
                 Отклонить
               </DaterButton>
               <DaterButton
-                style={[styles.panelButton, { width: 150 }]}
+                style={[styles.panelButton, { width: 130 }]}
                 onPress={this.acceptDateRequest}
               >
                 Принять
@@ -199,17 +208,18 @@ class MapPanelComponent extends Component<Props> {
       case 'newDateAwaitingAccept':
         return (
           <View>
-            <H2>Ожидание ответа от {this.props.findUserUid ? this.props.findUserUid.substring(0, 4) : ''}</H2>
+            <H2>Ожидание ответа от {this.props.mapPanel.microDate.requestFor.substring(0, 4)}</H2>
             <Caption2 style={{
               marginBottom: 8,
               marginTop: 8,
             }}
             >
-              Запрос отправлен 5 минут назад
+              Запрос ({this.props.mapPanel.microDate.id.substring(0, 4)}) отправлен{' '}
+              <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.timestamp}</Moment>
             </Caption2>
             <DaterButton
               style={styles.panelButton}
-              onPress={this.stopFindUser}
+              onPress={this.cancelDateRequest}
             >
               Отменить
             </DaterButton>
