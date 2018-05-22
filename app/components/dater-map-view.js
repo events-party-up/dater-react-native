@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import {
   StyleSheet,
   View,
@@ -11,7 +11,6 @@ import { GeoCoordinates } from '../types';
 import MyLocationOnCenteredMap from './map/my-location-on-centered-map';
 import UsersAroundComponent from './map/users-around-component';
 import PastLocationsPath from './map/past-locations-path';
-import PastLocationsLines from './map/past-locations-lines';
 import { Caption2 } from './ui-kit/typography';
 
 const mapStateToProps = (state) => ({
@@ -62,7 +61,7 @@ type Props = {
   findUser: any,
 };
 
-class DaterMapView extends Component<Props> {
+class DaterMapView extends React.Component<Props> {
   mapView: MapboxGL.MapView;
   defZoomLevel = 17;
 
@@ -181,26 +180,24 @@ class DaterMapView extends Component<Props> {
           minZoomLevel={11}
           maxZoomLevel={18}
         >
-          <PastLocationsPath
-            pastCoords={this.props.findUser.myPastCoords}
-            mapViewheadingAngle={this.props.mapView.headingAngle}
-            uid={this.props.auth.uid && this.props.auth.uid}
-            mode="own"
-          />
-          <PastLocationsPath
-            pastCoords={this.props.findUser.targetPastCoords}
-            mapViewheadingAngle={this.props.mapView.headingAngle}
-            uid={this.props.findUser.targetUserUid}
-            mode="target"
-          />
-          <PastLocationsLines
-            pastCoords={this.props.findUser.myPastCoords}
-            mode="own"
-          />
-          <PastLocationsLines
-            pastCoords={this.props.findUser.targetPastCoords}
-            mode="target"
-          />
+          {this.props.findUser.enabled &&
+            <React.Fragment>
+              <PastLocationsPath
+                pastCoords={this.props.findUser.myPastCoords}
+                mapViewheadingAngle={this.props.mapView.headingAngle}
+                uid={this.props.auth.uid && this.props.auth.uid}
+                mode="own"
+                microDateId={this.props.findUser.microDateId}
+              />
+              <PastLocationsPath
+                pastCoords={this.props.findUser.targetPastCoords}
+                mapViewheadingAngle={this.props.mapView.headingAngle}
+                uid={this.props.findUser.targetUserUid}
+                mode="target"
+                microDateId={this.props.findUser.microDateId}
+              />
+            </React.Fragment>
+        }
           <UsersAroundComponent />
         </MapboxGL.MapView>
         <View style={styles.debugView} pointerEvents="none">

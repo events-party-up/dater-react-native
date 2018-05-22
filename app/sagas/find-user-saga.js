@@ -3,8 +3,12 @@ import { eventChannel } from 'redux-saga';
 import firebase from 'react-native-firebase';
 
 import GeoUtils from '../utils/geo-utils';
-
-import { MICRO_DATES_COLLECTION } from '../constants';
+import {
+  MICRO_DATES_COLLECTION,
+  MINIMUM_ACCURACY_PAST_LOCATION,
+  MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION,
+  MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION,
+} from '../constants';
 
 export default function* findUserSaga() {
   try {
@@ -141,6 +145,53 @@ function* handleDateRequestsSaga(microDate) {
 
 function* handleMyMoveSaga(action) {
   yield console.log('handleMyMoveSaga', action);
+  const microDateId = yield select((state) => state.findUser.microDateId);
+  const myUid = yield select((state) => state.auth.uid);
+  const newCoords = action.payload;
+  const myPreviousCoords = yield select((state) => state.findUser.myPreviousCoords);
+
+  if (!myPreviousCoords) {
+    yield firebase.firestore().collection(MICRO_DATES_COLLECTION)
+      .doc(microDateId)
+      .collection(myUid)
+      .add({
+        geoPoint: new firebase.firestore.GeoPoint(newCoords.latitude, newCoords.longitude),
+        serverTS: firebase.firestore.FieldValue.serverTimestamp(),
+        clientTS: newCoords.clientTS,
+      });
+  }
+
+  if (myPreviousCoords) {
+    const timeDelta = (newCoords.clientTS - myPreviousCoords.clientTS) / 1000; // in seconds
+    const distance = GeoUtils.distance(myPreviousCoords, newCoords);
+    const velocity = Math.floor(distance / timeDelta); // in seconds
+    if (
+      velocity < MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION && // discard too fast moves, probably a noise from location services
+      newCoords.accuracy < MINIMUM_ACCURACY_PAST_LOCATION && // discard not accurate enough locations
+      distance > MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION // discard too nearby updates
+    ) {
+      yield firebase.firestore().collection(MICRO_DATES_COLLECTION)
+        .doc(microDateId)
+        .collection(myUid)
+        .add({
+          distance,
+          velocity,
+          geoPoint: new firebase.firestore.GeoPoint(newCoords.latitude, newCoords.longitude),
+          serverTS: firebase.firestore.FieldValue.serverTimestamp(),
+          clientTS: newCoords.clientTS,
+          heading: GeoUtils.getBearing(myPreviousCoords, newCoords),
+        });
+    } else { // discarding
+      return;
+    }
+  }
+
+  yield put({
+    type: 'FIND_USER_MY_MOVE_RECORDED',
+    payload: {
+      newCoords,
+    },
+  });
 }
 
 function createChannelToMonitorDateRequests(uid) {

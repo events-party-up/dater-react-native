@@ -100,7 +100,7 @@ function* locationUpdatedSaga(action) {
         latitude: currentCoords.latitude,
         longitude: currentCoords.longitude,
         accuracy: currentCoords.accuracy,
-        timestamp: Date.now(),
+        clientTS: Date.now(),
       },
     });
   }
@@ -142,7 +142,7 @@ function* updateLocation(coords) {
       type: 'GEO_LOCATION_UPDATED',
       payload: coords,
     });
-    yield* writeCoordsToFirestore();
+    yield* writeCoordsToFirestore(coords);
   } else if (coords.error) {
     yield put({
       type: 'GEO_LOCATION_UPDATE_CHANNEL_ERROR',
@@ -155,10 +155,9 @@ function* updateLocation(coords) {
   }
 }
 
-function* writeCoordsToFirestore() {
+function* writeCoordsToFirestore(coords) {
   try {
     const uid = yield select((state) => state.auth.uid);
-    const coords = yield select((state) => state.location.coords);
     if (!uid || !coords) return;
 
     yield call(updateFirestore, {

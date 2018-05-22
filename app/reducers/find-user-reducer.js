@@ -18,6 +18,7 @@ const types = {
   FIND_USER_STOP: 'FIND_USER_STOP',
   FIND_USER_TARGET_MOVE: 'FIND_USER_TARGET_MOVE',
   FIND_USER_MY_MOVE: 'FIND_USER_MY_MOVE',
+  FIND_USER_MY_MOVE_RECORDED: 'FIND_USER_MY_MOVE_RECORDED',
   FIND_USER_STOPPED: 'FIND_USER_STOPPED',
   FIND_USER_ERROR: 'FIND_USER_ERROR',
   FIND_USER_TARGET_MOVE_ERROR: 'FIND_USER_TARGET_MOVE_ERROR',
@@ -33,6 +34,8 @@ const initialState = {
   currentDistance: 0,
   myScore: 0,
   targetScore: 0,
+  previousCoords: null,
+  microDateId: null,
 };
 
 const findUserReducer = (state = initialState, action) => {
@@ -99,27 +102,33 @@ const findUserReducer = (state = initialState, action) => {
       };
     }
     case types.FIND_USER_MY_MOVE: {
-      let { myScore } = state;
-      const targetUserLastLocation = state.targetPastCoords.length > 0 ?
-        state.targetPastCoords[state.targetPastCoords.length - 1] : null;
-      let myPastCoords = buildPastCoords(state.myPastCoords, payload, targetUserLastLocation); // eslint-disable-line prefer-const
+      // let { myScore } = state;
+      // const targetUserLastLocation = state.targetPastCoords.length > 0 ?
+      //   state.targetPastCoords[state.targetPastCoords.length - 1] : null;
+      // let myPastCoords = buildPastCoords(state.myPastCoords, payload, targetUserLastLocation); // eslint-disable-line prefer-const
 
-      if (myPastCoords.length > 1 && targetUserLastLocation) {
-        myScore += myPastCoords[myPastCoords.length - 1].opponentDistanceDelta;
-      }
-      const currentDistance = targetUserLastLocation ?
-        GeoUtils.distance(targetUserLastLocation, payload) :
-        state.currentDistance;
+      // if (myPastCoords.length > 1 && targetUserLastLocation) {
+      //   myScore += myPastCoords[myPastCoords.length - 1].opponentDistanceDelta;
+      // }
+      // const currentDistance = targetUserLastLocation ?
+      //   GeoUtils.distance(targetUserLastLocation, payload) :
+      //   state.currentDistance;
 
-      if (myPastCoords.length > MAX_PAST_LOCATIONS) {
-        myPastCoords.shift();
-      }
+      // if (myPastCoords.length > MAX_PAST_LOCATIONS) {
+      //   myPastCoords.shift();
+      // }
 
       return {
         ...state,
-        myPastCoords,
-        currentDistance,
-        myScore,
+        // myPastCoords,
+        // currentDistance,
+        // myScore,
+      };
+    }
+    case types.FIND_USER_MY_MOVE_RECORDED: {
+      return {
+        ...state,
+        myPreviousCoords: payload.newCoords,
       };
     }
     case types.FIND_USER_TARGET_MOVE_ERROR:
