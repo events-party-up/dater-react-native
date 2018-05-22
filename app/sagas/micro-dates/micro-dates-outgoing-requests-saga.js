@@ -123,6 +123,7 @@ function createChannelToMicroDate(microDateId) {
       });
     };
     const onError = (error) => {
+      console.error(error);
       emit({
         error,
       });

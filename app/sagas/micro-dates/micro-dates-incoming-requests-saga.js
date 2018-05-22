@@ -8,25 +8,29 @@ import { MICRO_DATES_COLLECTION } from '../../constants';
 export default function* microDatesIncomingRequestsSaga() {
   try {
     const myUid = yield select((state) => state.auth.uid);
-    const hasActiveDates = yield hasActiveDate(myUid);
-    console.log('hasActiveDates: ', hasActiveDates);
+    const activeIncomingDates = yield hasActiveIncomingDates(myUid);
+    console.log('Active incoming dates: ', activeIncomingDates);
     const incomingDateRequestsChannel = yield call(createChannelToMonitorIncomingDateRequests, myUid);
-    yield takeEvery(incomingDateRequestsChannel, handleIncomingDateRequestsSaga);
+    let microDateUpdatesTask;
+    let microDateChannel;
+
+    while (true) { // possible realisation!
+      const nextMicroDate = yield take(incomingDateRequestsChannel);
+      if (microDateUpdatesTask && microDateChannel) {
+        yield cancel(microDateUpdatesTask);
+        yield microDateChannel.close();
+      }
+      microDateChannel = yield call(createChannelToMicroDate, nextMicroDate.id);
+      microDateUpdatesTask = yield takeEvery(microDateChannel, handleIncomingMicroDate, microDateChannel);
+    }
   } catch (error) {
     yield put({ type: 'FIND_USER_ERROR', payload: error });
   }
 }
 
-function* handleIncomingDateRequestsSaga(microDate) {
-  const microDateChannel = yield call(createChannelToMicroDate, microDate.id);
-  const microDateUpdatesTask = yield takeEvery(microDateChannel, handleIncomingMicroDate);
-  // TODO: handle cancellation of tasks and channel!
-  // yield cancel(microDateUpdatesTask);
-  // yield microDateChannel.close();
-}
-
-function* handleIncomingMicroDate(microDate) {
-  console.log('Status changed to: ', microDate.status);
+function* handleIncomingMicroDate(microDateChannel, microDate) {
+  // console.log('Status changed to: ', microDate.status);
+  // console.log('microDateChannel: ', microDateChannel);
   const myCoords = yield select((state) => state.location.coords);
   const userSnap = yield microDate.requestByRef.get();
   const user = {
@@ -61,6 +65,7 @@ function* handleIncomingMicroDate(microDate) {
           declineTS: firebase.firestore.FieldValue.serverTimestamp(),
           active: false,
         });
+      // cancel channel & task here
     } else if (nextAction.type === 'FIND_USER_ACCEPT_REQUEST') {
       yield firebase.firestore()
         .collection(MICRO_DATES_COLLECTION)
@@ -92,7 +97,9 @@ function* handleIncomingMicroDate(microDate) {
         stopTS: firebase.firestore.FieldValue.serverTimestamp(),
       });
     yield put({ type: 'FIND_USER_STOPPED' });
+    // cancel channel & task here
   } else if (microDate.status === 'CANCEL_REQUEST') {
+    // cancel channel & task here
     yield put({
       type: 'UI_MAP_PANEL_SHOW',
       payload: {
@@ -101,6 +108,7 @@ function* handleIncomingMicroDate(microDate) {
         microDate,
       },
     });
+    // yield microDateChannel.close();
   }
 }
 
@@ -108,6 +116,7 @@ function createChannelToMonitorIncomingDateRequests(uid) {
   const dateStartedByOthersQuery = firebase.firestore().collection(MICRO_DATES_COLLECTION)
     .where('requestFor', '==', uid)
     .where('active', '==', true)
+    .orderBy('timestamp')
     .limit(1);
 
   return eventChannel((emit) => {
@@ -121,6 +130,7 @@ function createChannelToMonitorIncomingDateRequests(uid) {
       }
     };
     const onError = (error) => {
+      console.error(error);
       emit({
         error,
       });
@@ -145,6 +155,7 @@ function createChannelToMicroDate(microDateId) {
       });
     };
     const onError = (error) => {
+      console.error(error);
       emit({
         error,
       });
@@ -156,18 +167,11 @@ function createChannelToMicroDate(microDateId) {
   });
 }
 
-async function hasActiveDate(uid) {
-  const dateStartedByMeQuery = firebase.firestore()
-    .collection(MICRO_DATES_COLLECTION)
-    .where('requestBy', '==', uid)
-    .where('active', '==', true);
-  const dateStartedByMeSnapshot = await dateStartedByMeQuery.get();
+async function hasActiveIncomingDates(uid) {
   const dateStartedByOthersQuery = firebase.firestore()
     .collection(MICRO_DATES_COLLECTION)
     .where('requestFor', '==', uid)
     .where('active', '==', true);
   const dateStartedByOthersSnapshot = await dateStartedByOthersQuery.get();
-  console.log('Active dates by me: ', dateStartedByMeSnapshot.docs.length);
-  console.log('Active dates by others: ', dateStartedByOthersSnapshot.docs.length);
-  return dateStartedByMeSnapshot.docs.length > 0 || dateStartedByOthersSnapshot.docs.length > 0;
+  return dateStartedByOthersSnapshot.docs.length;
 }

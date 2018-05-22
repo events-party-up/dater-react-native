@@ -70,7 +70,9 @@ class PastLocationsPath extends React.Component<Props> {
   }
 
   componentWillUnmount() {
-    this.queryUnsubscribe();
+    if (this.queryUnsubscribe) {
+      this.queryUnsubscribe();
+    }
   }
 
   render() {
