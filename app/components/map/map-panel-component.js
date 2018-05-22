@@ -120,6 +120,15 @@ class MapPanelComponent extends Component<Props> {
     });
   }
 
+  closePanel = () => {
+    this.props.dispatch({
+      type: 'UI_MAP_PANEL_HIDE',
+      payload: {
+        source: 'closePanel',
+      },
+    });
+  }
+
   renderCard() {
     switch (this.props.mapPanel.mode) {
       case 'userCard':
@@ -222,6 +231,42 @@ class MapPanelComponent extends Component<Props> {
               onPress={this.cancelDateRequest}
             >
               Отменить
+            </DaterButton>
+          </View>
+        );
+      case 'newDateDeclined':
+        return (
+          <View>
+            <H2>Запрос к {this.props.mapPanel.microDate.requestFor.substring(0, 4)} отклонен
+            </H2>
+            <Caption2 style={{
+              marginBottom: 8,
+              marginTop: 8,
+            }}
+            >
+              Запрос {this.props.mapPanel.microDate.id.substring(0, 4)} был отклонен{' '}
+              <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.declineTS}</Moment>.
+            </Caption2>
+            <DaterButton style={styles.panelButton} onPress={this.closePanel}>
+              ОК
+            </DaterButton>
+          </View>
+        );
+      case 'newDateCancelled':
+        return (
+          <View>
+            <H2>Запрос от {this.props.mapPanel.microDate.requestBy.substring(0, 4)} отменен
+            </H2>
+            <Caption2 style={{
+              marginBottom: 8,
+              marginTop: 8,
+            }}
+            >
+              Запрос {this.props.mapPanel.microDate.id.substring(0, 4)} был отменен{' '}
+              <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.cancelRequestTS}</Moment>.
+            </Caption2>
+            <DaterButton style={styles.panelButton} onPress={this.closePanel}>
+              ОК
             </DaterButton>
           </View>
         );

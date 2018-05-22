@@ -37,8 +37,15 @@ export default function* microDatesOutgoingRequestsSaga() {
 
       microDateChannel = yield call(createChannelToMicroDate, microDate.id);
       microDateUpdatesTask = yield takeEvery(microDateChannel, handleOutgoingRequestsSaga);
-      yield take('FIND_USER_CANCEL_REQUEST');
-      yield* handleCancelRequest(microDateChannel, microDateUpdatesTask, microDate.id);
+      const nextAction = yield take([
+        'FIND_USER_CANCEL_REQUEST',
+        'FIND_USER_DECLINED_BY_TARGET_REQUEST',
+      ]);
+      if (nextAction.type === 'FIND_USER_CANCEL_REQUEST') {
+        yield* handleCancelRequest(microDateChannel, microDateUpdatesTask, microDate.id);
+      } else {
+        yield* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask);
+      }
     }
   } catch (error) {
     yield put({ type: 'FIND_USER_ERROR', payload: error });
@@ -55,41 +62,53 @@ export default function* microDatesOutgoingRequestsSaga() {
             microDate: {
               id: microDate.id,
               requestFor: microDate.requestFor,
-              timestamp: Date.now(),
-            },
-          },
-        });
-
-        yield put({
-          type: 'UI_MAP_PANEL_SHOW',
-          payload: {
-            mode: 'newDateAwaitingAccept',
-            canHide: false,
-            microDate: {
-              id: microDate.id,
-              requestFor: microDate.requestFor,
               timestamp: microDate.timestamp,
             },
           },
         });
         break;
+      case 'DECLINE':
+        yield put({
+          type: 'UI_MAP_PANEL_SHOW',
+          payload: {
+            mode: 'newDateDeclined',
+            canHide: true,
+            microDate: {
+              id: microDate.id,
+              requestFor: microDate.requestFor,
+              declineTS: microDate.declineTS,
+            },
+          },
+        });
+
+        yield put({
+          type: 'FIND_USER_DECLINED_BY_TARGET_REQUEST',
+        });
+
+        break;
       default:
+        console.log('Request removed');
         break;
     }
   }
 }
 
 function* handleCancelRequest(microDateChannel, microDateUpdatesTask, microDateId) {
-  yield cancel(microDateUpdatesTask);
-  yield microDateChannel.close();
+  yield* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask);
   yield firebase.firestore()
     .collection(MICRO_DATES_COLLECTION)
     .doc(microDateId)
     .update({
       status: 'CANCEL_REQUEST',
       active: false,
+      cancelRequestTS: firebase.firestore.FieldValue.serverTimestamp(),
     });
   yield put({ type: 'FIND_USER_CANCELLED_REQUEST' });
+}
+
+function* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask) {
+  yield cancel(microDateUpdatesTask);
+  yield microDateChannel.close();
 }
 
 function createChannelToMicroDate(microDateId) {

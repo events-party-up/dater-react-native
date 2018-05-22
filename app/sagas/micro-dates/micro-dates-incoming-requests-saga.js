@@ -1,4 +1,4 @@
-import { call, take, put, takeEvery, select } from 'redux-saga/effects';
+import { call, take, put, takeEvery, select, cancel } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import firebase from 'react-native-firebase';
 
@@ -18,6 +18,15 @@ export default function* microDatesIncomingRequestsSaga() {
 }
 
 function* handleIncomingDateRequestsSaga(microDate) {
+  const microDateChannel = yield call(createChannelToMicroDate, microDate.id);
+  const microDateUpdatesTask = yield takeEvery(microDateChannel, handleIncomingMicroDate);
+  // TODO: handle cancellation of tasks and channel!
+  // yield cancel(microDateUpdatesTask);
+  // yield microDateChannel.close();
+}
+
+function* handleIncomingMicroDate(microDate) {
+  console.log('Status changed to: ', microDate.status);
   const myCoords = yield select((state) => state.location.coords);
   const userSnap = yield microDate.requestByRef.get();
   const user = {
@@ -49,6 +58,7 @@ function* handleIncomingDateRequestsSaga(microDate) {
         .doc(microDate.id)
         .update({
           status: 'DECLINE',
+          declineTS: firebase.firestore.FieldValue.serverTimestamp(),
           active: false,
         });
     } else if (nextAction.type === 'FIND_USER_ACCEPT_REQUEST') {
@@ -58,6 +68,7 @@ function* handleIncomingDateRequestsSaga(microDate) {
         .update({
           status: 'ACCEPT',
           startDistance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
+          acceptTS: firebase.firestore.FieldValue.serverTimestamp(),
         });
     }
   } else if (microDate.status === 'ACCEPT') {
@@ -78,15 +89,26 @@ function* handleIncomingDateRequestsSaga(microDate) {
       .update({
         status: 'STOP',
         active: false,
+        stopTS: firebase.firestore.FieldValue.serverTimestamp(),
       });
     yield put({ type: 'FIND_USER_STOPPED' });
+  } else if (microDate.status === 'CANCEL_REQUEST') {
+    yield put({
+      type: 'UI_MAP_PANEL_SHOW',
+      payload: {
+        mode: 'newDateCancelled',
+        canHide: true,
+        microDate,
+      },
+    });
   }
 }
 
 function createChannelToMonitorIncomingDateRequests(uid) {
   const dateStartedByOthersQuery = firebase.firestore().collection(MICRO_DATES_COLLECTION)
     .where('requestFor', '==', uid)
-    .where('active', '==', true);
+    .where('active', '==', true)
+    .limit(1);
 
   return eventChannel((emit) => {
     const onSnapshotUpdated = (snapshot) => {
@@ -105,6 +127,30 @@ function createChannelToMonitorIncomingDateRequests(uid) {
     };
 
     const unsubscribe = dateStartedByOthersQuery.onSnapshot(onSnapshotUpdated, onError);
+
+    return unsubscribe;
+  });
+}
+
+
+function createChannelToMicroDate(microDateId) {
+  const query = firebase.firestore()
+    .collection(MICRO_DATES_COLLECTION)
+    .doc(microDateId);
+  return eventChannel((emit) => {
+    const onSnapshotUpdated = (dataSnapshot) => {
+      emit({
+        id: dataSnapshot.id,
+        ...dataSnapshot.data(),
+      });
+    };
+    const onError = (error) => {
+      emit({
+        error,
+      });
+    };
+
+    const unsubscribe = query.onSnapshot(onSnapshotUpdated, onError);
 
     return unsubscribe;
   });
