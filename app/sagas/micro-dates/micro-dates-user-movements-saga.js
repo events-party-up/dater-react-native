@@ -1,4 +1,4 @@
-import { take, put, takeEvery, select } from 'redux-saga/effects';
+import { put, takeEvery, select } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 
 import GeoUtils from '../../utils/geo-utils';
@@ -11,14 +11,6 @@ import {
 
 export default function* microDatesUserMovementsSaga() {
   try {
-    const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
-    if (!isUserAuthenticated) { // user must be authorized
-      yield take('AUTH_SUCCESS');
-    }
-    const isGeolocationEnabled = yield select((state) => state.location.enabled);
-    if (!isGeolocationEnabled) {
-      yield take('GEO_LOCATION_STARTED'); // geo location must be enabled
-    }
     yield takeEvery('FIND_USER_MY_MOVE', handleMyMoveSaga);
     yield takeEvery('FIND_USER_TARGET_MOVE', handleTargetMoveSaga);
   } catch (error) {

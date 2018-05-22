@@ -7,15 +7,6 @@ import { MICRO_DATES_COLLECTION } from '../../constants';
 
 export default function* microDatesIncomingRequestsSaga() {
   try {
-    const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
-    if (!isUserAuthenticated) { // user must be authorized
-      yield take('AUTH_SUCCESS');
-    }
-    const isGeolocationEnabled = yield select((state) => state.location.enabled);
-    if (!isGeolocationEnabled) {
-      yield take('GEO_LOCATION_STARTED'); // geo location must be enabled
-    }
-
     const myUid = yield select((state) => state.auth.uid);
     const hasActiveDates = yield hasActiveDate(myUid);
     console.log('hasActiveDates: ', hasActiveDates);
