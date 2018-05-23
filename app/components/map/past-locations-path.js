@@ -53,7 +53,13 @@ class PastLocationsPath extends React.Component<Props> {
     snapshot.docChanges.forEach((change) => {
       if (change.type === 'added') {
         // console.log('New locaiton added: ', change.doc.data());
-        this.pastLocations.unshift(change.doc.data());
+        if (this.props.mode === 'own') {
+          this.pastLocations.unshift(change.doc.data()); // own
+        } else if (change.newIndex === 0) { // changes with newIndex 0 are new changes
+          this.pastLocations.push(change.doc.data()); // target
+        } else {
+          this.pastLocations.unshift(change.doc.data()); // own
+        }
       }
       if (change.type === 'modified') {
         // console.log('New locaiton modified: ', change.doc.data());
