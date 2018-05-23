@@ -125,7 +125,7 @@ export default function* microDatesOutgoingRequestsSaga() {
           type: 'UI_MAP_PANEL_SHOW',
           payload: {
             mode: 'findUser',
-            canClose: true,
+            canHide: true,
             user,
             myCoords,
             startDistance: microDate.startDistance,

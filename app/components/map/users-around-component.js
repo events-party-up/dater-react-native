@@ -21,16 +21,7 @@ type Props = {
 
 class UsersAroundComponent extends React.Component<Props> {
   onPressOrSelect = (user) => {
-    if (this.props.findUser.enabled) {
-      this.props.dispatch({
-        type: 'UI_MAP_PANEL_SHOW',
-        payload: {
-          mode: 'findUser',
-          user,
-          canClose: true,
-        },
-      });
-    } else if (this.props.findUser.pending) {
+    if (this.props.findUser.enabled || this.props.findUser.pending) {
       this.props.dispatch({
         type: 'UI_MAP_PANEL_SHOW',
         payload: {
@@ -43,7 +34,7 @@ class UsersAroundComponent extends React.Component<Props> {
         payload: {
           mode: 'userCard',
           user,
-          canClose: true,
+          canHide: true,
         },
       });
     }

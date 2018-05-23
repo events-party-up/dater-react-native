@@ -67,8 +67,7 @@ function* fitBounds(mapView, coords1: Array<number>, coords2: Array<number>) {
 
 function* showMeAndTargetFindUser(mapView) {
   try {
-    const lastTargetUserCoords = yield select((state) =>
-      state.findUser.targetPastCoords[state.findUser.targetPastCoords.length - 1]);
+    const lastTargetUserCoords = yield select((state) => state.findUser.targetCurrentCoords);
     const myLastCoords = yield select((state) => state.location.coords);
     yield call(
       fitBounds,
