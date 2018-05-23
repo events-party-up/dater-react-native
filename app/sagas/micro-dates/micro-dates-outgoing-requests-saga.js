@@ -90,6 +90,7 @@ export default function* microDatesOutgoingRequestsSaga() {
             },
           },
         });
+        yield put({ type: 'FIND_USER_REQUESTED' });
         break;
       case 'DECLINE':
         yield put({

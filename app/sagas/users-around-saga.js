@@ -59,6 +59,7 @@ export default function* usersAroundSaga() {
         'USERS_AROUND_STOP',
         'FIND_USER_START', // app mode switched to find user
         'FIND_USER_STOP',
+        'FIND_USER_STOPPED_BY_TARGET',
       ]);
 
       if (stopAction.type === 'USERS_AROUND_STOP') {
@@ -69,7 +70,8 @@ export default function* usersAroundSaga() {
         isFindUserMode = true;
       }
 
-      if (stopAction.type === 'FIND_USER_STOP') {
+      if (stopAction.type === 'FIND_USER_STOP' ||
+        stopAction.type === 'FIND_USER_STOPPED_BY_TARGET') {
         isFindUserMode = false;
       }
 

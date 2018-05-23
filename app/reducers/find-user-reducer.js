@@ -54,18 +54,14 @@ const findUserReducer = (state = initialState, action) => {
         }],
       };
     }
-    case types.FIND_USER_REQUESTED: {
-      return {
-        ...state,
-        startDistance: payload.startDistance,
-      };
-    }
+    case types.FIND_USER_REQUESTED:
     case types.FIND_USER_INCOMING_REQUEST: {
       return {
         ...state,
         pending: true,
       };
     }
+    case types.FIND_USER_DECLINED_BY_TARGET_REQUEST:
     case types.FIND_USER_CANCELLED_REQUEST:
     case types.FIND_USER_DECLINE_REQUEST: {
       return {
