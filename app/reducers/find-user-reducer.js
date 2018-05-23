@@ -3,6 +3,7 @@ import GeoUtils from '../utils/geo-utils';
 const types = {
   FIND_USER_REQUEST: 'FIND_USER_REQUEST',
   FIND_USER_REQUESTED: 'FIND_USER_REQUESTED',
+  FIND_USER_INCOMING_REQUEST: 'FIND_USER_INCOMING_REQUEST',
   FIND_USER_DECLINE_REQUEST: 'FIND_USER_DECLINE_REQUEST',
   FIND_USER_DECLINED_BY_TARGET_REQUEST: 'FIND_USER_DECLINED_BY_TARGET_REQUEST',
   FIND_USER_CANCEL_REQUEST: 'FIND_USER_CANCEL_REQUEST',
@@ -15,15 +16,16 @@ const types = {
   FIND_USER_MY_MOVE: 'FIND_USER_MY_MOVE',
   FIND_USER_MY_MOVE_RECORDED: 'FIND_USER_MY_MOVE_RECORDED',
   FIND_USER_STOPPED: 'FIND_USER_STOPPED',
+  FIND_USER_STOPPED_BY_TARGET: 'FIND_USER_STOPPED_BY_TARGET',
   FIND_USER_ERROR: 'FIND_USER_ERROR',
   FIND_USER_TARGET_MOVE_ERROR: 'FIND_USER_TARGET_MOVE_ERROR',
 };
 
 const initialState = {
-  error: null,
+  enabled: false,
+  pending: false,
   targetPastCoords: [], // all past coorinates
   myPastCoords: [], // all past coorinates
-  enabled: false,
   targetUserUid: null,
   startDistance: 0,
   currentDistance: 0,
@@ -58,6 +60,18 @@ const findUserReducer = (state = initialState, action) => {
         startDistance: payload.startDistance,
       };
     }
+    case types.FIND_USER_INCOMING_REQUEST: {
+      return {
+        ...state,
+        pending: true,
+      };
+    }
+    case types.FIND_USER_DECLINE_REQUEST: {
+      return {
+        ...state,
+        pending: false,
+      };
+    }
     case types.FIND_USER_START: {
       return {
         ...state,
@@ -70,11 +84,13 @@ const findUserReducer = (state = initialState, action) => {
           timestamp: Date.now(),
         }],
         enabled: true,
+        pending: false,
         startDistance: payload.startDistance,
         distance: payload.distance,
         microDateId: payload.microDateId,
       };
     }
+    case types.FIND_USER_STOPPED_BY_TARGET:
     case types.FIND_USER_STOPPED: {
       return initialState;
     }

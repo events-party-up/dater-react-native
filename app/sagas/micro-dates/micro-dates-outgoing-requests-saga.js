@@ -1,6 +1,7 @@
 import { call, take, put, takeEvery, select, cancel } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import firebase from 'react-native-firebase';
+import GeoUtils from '../../utils/geo-utils';
 
 import { MICRO_DATES_COLLECTION } from '../../constants';
 
@@ -16,33 +17,48 @@ export default function* microDatesOutgoingRequestsSaga() {
     if (activeMicroDate) {
       microDateChannel = yield call(createChannelToMicroDate, activeMicroDate.id);
       microDateUpdatesTask = yield takeEvery(microDateChannel, handleOutgoingRequestsSaga);
-      yield take('FIND_USER_CANCEL_REQUEST');
-      yield* handleCancelRequest(microDateChannel, microDateUpdatesTask, activeMicroDate.id);
+      const nextAction = yield take([
+        'FIND_USER_CANCEL_REQUEST',
+        'FIND_USER_DECLINED_BY_TARGET_REQUEST',
+        'FIND_USER_STOPPED_BY_TARGET',
+        'FIND_USER_STOP',
+      ]);
+      if (nextAction.type === 'FIND_USER_CANCEL_REQUEST') {
+        yield* handleCancelRequest(microDateChannel, microDateUpdatesTask, activeMicroDate.id);
+      } else if (nextAction.type === 'FIND_USER_STOP') {
+        yield* handleStopRequest(microDateChannel, microDateUpdatesTask, activeMicroDate);
+      } else {
+        yield* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask);
+      }
     }
     while (true) {
       const action = yield take('FIND_USER_REQUEST');
       const targetUser = action.payload.user;
-
-      const microDate = yield firebase.firestore()
+      const microDate = {
+        status: 'REQUEST',
+        requestBy: myUid,
+        requestFor: targetUser.uid,
+        requestByRef: firebase.firestore().collection('geoPoints').doc(myUid),
+        requestForRef: firebase.firestore().collection('geoPoints').doc(targetUser.uid),
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        active: true,
+      };
+      const microDateRef = yield firebase.firestore()
         .collection(MICRO_DATES_COLLECTION)
-        .add({
-          status: 'REQUEST',
-          requestBy: myUid,
-          requestFor: targetUser.uid,
-          requestByRef: firebase.firestore().collection('geoPoints').doc(myUid),
-          requestForRef: firebase.firestore().collection('geoPoints').doc(targetUser.uid),
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          active: true,
-        });
-
-      microDateChannel = yield call(createChannelToMicroDate, microDate.id);
+        .add(microDate);
+      microDateChannel = yield call(createChannelToMicroDate, microDateRef.id);
       microDateUpdatesTask = yield takeEvery(microDateChannel, handleOutgoingRequestsSaga);
       const nextAction = yield take([
         'FIND_USER_CANCEL_REQUEST',
         'FIND_USER_DECLINED_BY_TARGET_REQUEST',
+        'FIND_USER_STOPPED_BY_TARGET',
+        'FIND_USER_STOP',
       ]);
+      yield console.log(microDate);
       if (nextAction.type === 'FIND_USER_CANCEL_REQUEST') {
-        yield* handleCancelRequest(microDateChannel, microDateUpdatesTask, microDate.id);
+        yield* handleCancelRequest(microDateChannel, microDateUpdatesTask, microDateRef.id);
+      } else if (nextAction.type === 'FIND_USER_STOP') {
+        yield* handleStopRequest(microDateChannel, microDateUpdatesTask, { ...microDate, id: microDateRef.id });
       } else {
         yield* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask);
       }
@@ -52,6 +68,14 @@ export default function* microDatesOutgoingRequestsSaga() {
   }
 
   function* handleOutgoingRequestsSaga(microDate) {
+    const myCoords = yield select((state) => state.location.coords);
+    const userSnap = yield microDate.requestForRef.get();
+    const user = {
+      id: userSnap.id,
+      shortId: userSnap.id.substring(0, 4),
+      ...userSnap.data(),
+    };
+
     switch (microDate.status) {
       case 'REQUEST':
         yield put({
@@ -86,6 +110,43 @@ export default function* microDatesOutgoingRequestsSaga() {
         });
 
         break;
+      case 'ACCEPT':
+        yield put({
+          type: 'FIND_USER_START',
+          payload: {
+            user,
+            myCoords,
+            startDistance: microDate.startDistance,
+            distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
+            microDateId: microDate.id,
+          },
+        });
+        yield put({
+          type: 'UI_MAP_PANEL_SHOW',
+          payload: {
+            mode: 'findUser',
+            canClose: true,
+            user,
+            myCoords,
+            startDistance: microDate.startDistance,
+            distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
+            microDateId: microDate.id,
+          },
+        });
+        break;
+      case 'STOP':
+        if (microDate.stopBy !== microDate.requestBy) {
+          yield put({
+            type: 'UI_MAP_PANEL_SHOW',
+            payload: {
+              mode: 'newDateStopped',
+              canHide: true,
+              microDate,
+            },
+          });
+          yield put({ type: 'FIND_USER_STOPPED_BY_TARGET' });
+        }
+        break;
       default:
         console.log('Request removed');
         break;
@@ -104,6 +165,21 @@ function* handleCancelRequest(microDateChannel, microDateUpdatesTask, microDateI
       cancelRequestTS: firebase.firestore.FieldValue.serverTimestamp(),
     });
   yield put({ type: 'FIND_USER_CANCELLED_REQUEST' });
+}
+
+
+function* handleStopRequest(microDateChannel, microDateUpdatesTask, microDate) {
+  yield* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask);
+  yield firebase.firestore()
+    .collection(MICRO_DATES_COLLECTION)
+    .doc(microDate.id)
+    .update({
+      status: 'STOP',
+      active: false,
+      stopBy: microDate.requestBy,
+      stopTS: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+  yield put({ type: 'FIND_USER_STOPPED' });
 }
 
 function* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask) {

@@ -104,13 +104,13 @@ class MapPanelComponent extends Component<Props> {
 
   acceptDateRequest = () => {
     this.props.dispatch({
-      type: 'FIND_USER_ACCEPT_REQUEST',
-    });
-    this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE_FORCE',
       payload: {
         source: 'mapPanelComponentAcceptDateRequest',
       },
+    });
+    this.props.dispatch({
+      type: 'FIND_USER_ACCEPT_REQUEST',
     });
   }
 
@@ -269,6 +269,24 @@ class MapPanelComponent extends Component<Props> {
             }}
             >
               Запрос {this.props.mapPanel.microDate.id.substring(0, 4)} был отменен{' '}
+              <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.cancelRequestTS}</Moment>.
+            </Caption2>
+            <DaterButton style={styles.panelButton} onPress={this.closePanel}>
+              ОК
+            </DaterButton>
+          </View>
+        );
+      case 'newDateStopped':
+        return (
+          <View>
+            <H2>{this.props.mapPanel.microDate.requestBy.substring(0, 4)} отменил встречу
+            </H2>
+            <Caption2 style={{
+              marginBottom: 8,
+              marginTop: 8,
+            }}
+            >
+              Встреча ({this.props.mapPanel.microDate.id.substring(0, 4)}) отменена {' '}
               <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.cancelRequestTS}</Moment>.
             </Caption2>
             <DaterButton style={styles.panelButton} onPress={this.closePanel}>

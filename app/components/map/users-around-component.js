@@ -27,6 +27,14 @@ class UsersAroundComponent extends React.Component<Props> {
         payload: {
           mode: 'findUser',
           user,
+          canClose: true,
+        },
+      });
+    } else if (this.props.findUser.pending) {
+      this.props.dispatch({
+        type: 'UI_MAP_PANEL_SHOW',
+        payload: {
+          ...this.props.mapPanel,
         },
       });
     } else {
@@ -35,6 +43,7 @@ class UsersAroundComponent extends React.Component<Props> {
         payload: {
           mode: 'userCard',
           user,
+          canClose: true,
         },
       });
     }

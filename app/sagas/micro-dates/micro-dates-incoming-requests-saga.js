@@ -107,6 +107,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
       .update({
         status: 'STOP',
         active: false,
+        stopBy: microDate.requestFor,
         stopTS: firebase.firestore.FieldValue.serverTimestamp(),
       });
     yield put({ type: 'FIND_USER_STOPPED' });
@@ -122,6 +123,18 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
         microDate,
       },
     });
+    yield microDateChannel.close();
+  } else if (microDate.status === 'STOP' && microDate.stopBy !== microDate.requestFor) {
+    // cancel channel & task here
+    yield put({
+      type: 'UI_MAP_PANEL_SHOW',
+      payload: {
+        mode: 'newDateStopped',
+        canHide: true,
+        microDate,
+      },
+    });
+    yield put({ type: 'FIND_USER_STOPPED_BY_TARGET' });
     yield microDateChannel.close();
   }
 }
