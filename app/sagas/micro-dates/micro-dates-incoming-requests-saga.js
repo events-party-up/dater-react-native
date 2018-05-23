@@ -65,6 +65,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
           declineTS: firebase.firestore.FieldValue.serverTimestamp(),
           active: false,
         });
+      yield microDateChannel.close();
       // cancel channel & task here
     } else if (nextAction.type === 'FIND_USER_ACCEPT_REQUEST') {
       yield firebase.firestore()
@@ -87,6 +88,18 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
         microDateId: microDate.id,
       },
     });
+    yield put({
+      type: 'UI_MAP_PANEL_SHOW',
+      payload: {
+        mode: 'findUser',
+        user,
+        myCoords,
+        startDistance: microDate.startDistance,
+        distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
+        microDateId: microDate.id,
+      },
+    });
+
     yield take('FIND_USER_STOP');
     yield firebase.firestore()
       .collection(MICRO_DATES_COLLECTION)
@@ -97,6 +110,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
         stopTS: firebase.firestore.FieldValue.serverTimestamp(),
       });
     yield put({ type: 'FIND_USER_STOPPED' });
+    yield microDateChannel.close();
     // cancel channel & task here
   } else if (microDate.status === 'CANCEL_REQUEST') {
     // cancel channel & task here
@@ -108,7 +122,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
         microDate,
       },
     });
-    // yield microDateChannel.close();
+    yield microDateChannel.close();
   }
 }
 

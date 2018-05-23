@@ -61,13 +61,19 @@ class MapPanelComponent extends Component<Props> {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE',
       payload: {
-        source: 'mapPanelComponentLetsStart',
+        source: 'mapPanelComponentShowMeTargetUser',
       },
     });
     this.props.dispatch({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_FIND_USER' });
   }
 
   requestDate = (user) => {
+    this.props.dispatch({
+      type: 'UI_MAP_PANEL_HIDE',
+      payload: {
+        source: 'requestDate',
+      },
+    });
     this.props.dispatch({
       type: 'FIND_USER_REQUEST',
       payload: {
@@ -103,7 +109,7 @@ class MapPanelComponent extends Component<Props> {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE_FORCE',
       payload: {
-        source: 'acceptDateRequest',
+        source: 'mapPanelComponentAcceptDateRequest',
       },
     });
   }
@@ -115,7 +121,7 @@ class MapPanelComponent extends Component<Props> {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE_FORCE',
       payload: {
-        source: 'declineDateRequest',
+        source: 'mapPanelComponentDeclineDateRequest',
       },
     });
   }
@@ -124,7 +130,7 @@ class MapPanelComponent extends Component<Props> {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE',
       payload: {
-        source: 'closePanel',
+        source: 'mapPanelComponentClosePanel',
       },
     });
   }
