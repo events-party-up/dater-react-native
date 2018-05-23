@@ -91,6 +91,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
     yield put({
       type: 'UI_MAP_PANEL_SHOW',
       payload: {
+        canClose: true,
         mode: 'findUser',
         user,
         myCoords,
@@ -123,6 +124,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
         microDate,
       },
     });
+    yield put({ type: 'FIND_USER_CANCELLED_REQUEST' });
     yield microDateChannel.close();
   } else if (microDate.status === 'STOP' && microDate.stopBy !== microDate.requestFor) {
     // cancel channel & task here

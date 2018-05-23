@@ -66,6 +66,7 @@ const findUserReducer = (state = initialState, action) => {
         pending: true,
       };
     }
+    case types.FIND_USER_CANCELLED_REQUEST:
     case types.FIND_USER_DECLINE_REQUEST: {
       return {
         ...state,
