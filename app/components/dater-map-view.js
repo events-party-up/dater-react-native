@@ -12,6 +12,7 @@ import MyLocationOnCenteredMap from './map/my-location-on-centered-map';
 import UsersAroundComponent from './map/users-around-component';
 import PastLocationsPath from './map/past-locations-path';
 import { Caption2 } from './ui-kit/typography';
+import MicroDateStats from './micro-date/micro-date-stats';
 
 const mapStateToProps = (state) => ({
   location: state.location,
@@ -213,11 +214,21 @@ class DaterMapView extends React.Component<Props> {
         {this.props.findUser.enabled &&
         <View style={styles.findUserContainer} pointerEvents="none">
           <Caption2 style={styles.findUserText}>
+            Date ID: {this.props.findUser.microDateId.substring(0, 4)}{'\n'}
             Distance: {Math.floor(this.props.findUser.distance)}{'\n'}
-            My Score:
-            {` ${Math.floor(this.props.findUser.myScore)}`}{'\n'}
-            {this.props.findUser.targetUserUid && this.props.findUser.targetUserUid.substring(0, 4)}:
-            {` ${Math.floor(this.props.findUser.targetScore)}`}
+            My Score:{' '}
+            <MicroDateStats
+              microDateId={this.props.findUser.microDateId}
+              uid={this.props.auth.uid && this.props.auth.uid}
+              style={styles.findUserText}
+            />
+            {'\n'}
+            {this.props.findUser.targetUserUid && this.props.findUser.targetUserUid.substring(0, 4)}: {' '}
+            <MicroDateStats
+              microDateId={this.props.findUser.microDateId}
+              uid={this.props.findUser.targetUserUid}
+              style={styles.findUserText}
+            />
           </Caption2>
         </View>
         }
