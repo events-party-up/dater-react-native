@@ -26,18 +26,6 @@ function* handleMyMoveSaga(action) {
     const newCoords = action.payload;
     const myPreviousCoords = yield select((state) => state.microDate.myPreviousCoords);
 
-    if (!myPreviousCoords) {
-      yield firebase.firestore()
-        .collection(MICRO_DATES_COLLECTION)
-        .doc(microDateId)
-        .collection(`pastLocations_${myUidDB}`)
-        .add({
-          geoPoint: new firebase.firestore.GeoPoint(newCoords.latitude, newCoords.longitude),
-          serverTS: firebase.firestore.FieldValue.serverTimestamp(),
-          clientTS: newCoords.clientTS,
-        });
-    }
-
     if (myPreviousCoords) {
       const timeDelta = (newCoords.clientTS - myPreviousCoords.clientTS) / 1000; // in seconds
       const distance = GeoUtils.distance(myPreviousCoords, newCoords);
