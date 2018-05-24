@@ -80,7 +80,7 @@ export default function* microDateOutgoingRequestsSaga() {
         yield put({
           type: 'UI_MAP_PANEL_SHOW',
           payload: {
-            mode: 'newDateAwaitingAccept',
+            mode: 'outgoingMicroDateAwaitingAccept',
             canHide: false,
             microDate: {
               id: microDate.id,
@@ -95,7 +95,7 @@ export default function* microDateOutgoingRequestsSaga() {
         yield put({
           type: 'UI_MAP_PANEL_SHOW',
           payload: {
-            mode: 'newDateDeclined',
+            mode: 'outgoingMicroDateDeclined',
             canHide: true,
             microDate: {
               id: microDate.id,
@@ -123,7 +123,7 @@ export default function* microDateOutgoingRequestsSaga() {
         yield put({
           type: 'UI_MAP_PANEL_SHOW',
           payload: {
-            mode: 'microDate',
+            mode: 'activeMicroDate',
             canHide: true,
             user,
             myCoords,
@@ -137,7 +137,7 @@ export default function* microDateOutgoingRequestsSaga() {
           yield put({
             type: 'UI_MAP_PANEL_SHOW',
             payload: {
-              mode: 'newDateStopped',
+              mode: 'microDateStopped',
               canHide: true,
               microDate,
             },
@@ -164,7 +164,6 @@ function* handleCancelRequest(microDateChannel, microDateUpdatesTask, microDateI
     });
   yield put({ type: 'MICRO_DATE_OUTGOING_CANCELLED' });
 }
-
 
 function* handleStopRequest(microDateChannel, microDateUpdatesTask, microDate) {
   yield* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask);

@@ -44,7 +44,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
     yield put({
       type: 'UI_MAP_PANEL_SHOW',
       payload: {
-        mode: 'newDateRequest',
+        mode: 'incomingMicroDateRequest',
         user,
         distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
         canHide: false,
@@ -93,7 +93,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
       type: 'UI_MAP_PANEL_SHOW',
       payload: {
         canClose: true,
-        mode: 'microDate',
+        mode: 'activeMicroDate',
         user,
         myCoords,
         distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
@@ -118,7 +118,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
     yield put({
       type: 'UI_MAP_PANEL_SHOW',
       payload: {
-        mode: 'newDateCancelled',
+        mode: 'incomingMicroDateCancelled',
         canHide: true,
         microDate,
       },
@@ -130,7 +130,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
     yield put({
       type: 'UI_MAP_PANEL_SHOW',
       payload: {
-        mode: 'newDateStopped',
+        mode: 'microDateStopped',
         canHide: true,
         microDate,
       },
@@ -170,7 +170,6 @@ function createChannelToMonitorIncomingDateRequests(uid) {
     return unsubscribe;
   });
 }
-
 
 function createChannelToMicroDate(microDateId) {
   const query = firebase.firestore()

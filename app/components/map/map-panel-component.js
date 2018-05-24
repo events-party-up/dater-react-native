@@ -71,7 +71,7 @@ class MapPanelComponent extends Component<Props> {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE',
       payload: {
-        source: 'requestMicroDate',
+        source: 'mapPanelRequestMicroDate',
       },
     });
     this.props.dispatch({
@@ -87,7 +87,7 @@ class MapPanelComponent extends Component<Props> {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE_FORCE',
       payload: {
-        source: 'mapPanelcancelOutgoingMicroDate',
+        source: 'mapPanelCancelOutgoingMicroDate',
       },
     });
   }
@@ -96,7 +96,7 @@ class MapPanelComponent extends Component<Props> {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE_FORCE',
       payload: {
-        source: 'mapPanelacceptIncomingMicroDate',
+        source: 'mapPanelAcceptIncomingMicroDate',
       },
     });
     this.props.dispatch({
@@ -111,7 +111,7 @@ class MapPanelComponent extends Component<Props> {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE_FORCE',
       payload: {
-        source: 'mapPaneldeclineIncomingMicroDate',
+        source: 'mapPanelDeclineIncomingMicroDate',
       },
     });
   }
@@ -154,7 +154,7 @@ class MapPanelComponent extends Component<Props> {
             </DaterButton>
           </View>
         );
-      case 'microDate':
+      case 'activeMicroDate':
         return (
           <View>
             <H2>У тебя встреча с {this.props.mapPanel.user.shortId}</H2>
@@ -187,7 +187,7 @@ class MapPanelComponent extends Component<Props> {
             </View>
           </View>
         );
-      case 'newDateRequest':
+      case 'incomingMicroDateRequest':
         return (
           <View>
             <H2>Запрос от {this.props.mapPanel.user.shortId}</H2>
@@ -220,7 +220,7 @@ class MapPanelComponent extends Component<Props> {
             </View>
           </View>
         );
-      case 'newDateAwaitingAccept':
+      case 'outgoingMicroDateAwaitingAccept':
         return (
           <View>
             <H2>Ожидание ответа от {this.props.mapPanel.microDate.requestFor.substring(0, 4)}</H2>
@@ -240,7 +240,7 @@ class MapPanelComponent extends Component<Props> {
             </DaterButton>
           </View>
         );
-      case 'newDateDeclined':
+      case 'outgoingMicroDateDeclined':
         return (
           <View>
             <H2>Запрос к {this.props.mapPanel.microDate.requestFor.substring(0, 4)} отклонен
@@ -258,7 +258,7 @@ class MapPanelComponent extends Component<Props> {
             </DaterButton>
           </View>
         );
-      case 'newDateCancelled':
+      case 'incomingMicroDateCancelled':
         return (
           <View>
             <H2>Запрос от {this.props.mapPanel.microDate.requestBy.substring(0, 4)} отменен
@@ -276,10 +276,10 @@ class MapPanelComponent extends Component<Props> {
             </DaterButton>
           </View>
         );
-      case 'newDateStopped':
+      case 'microDateStopped':
         return (
           <View>
-            <H2>{this.props.mapPanel.microDate.requestBy.substring(0, 4)} отменил встречу
+            <H2>{this.props.mapPanel.microDate.stopBy.substring(0, 4)} отменил встречу
             </H2>
             <Caption2 style={{
               marginBottom: 8,
@@ -287,7 +287,7 @@ class MapPanelComponent extends Component<Props> {
             }}
             >
               Встреча ({this.props.mapPanel.microDate.id.substring(0, 4)}) отменена {' '}
-              <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.cancelRequestTS}</Moment>.
+              <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.stopTS}</Moment>.
             </Caption2>
             <DaterButton style={styles.panelButton} onPress={this.closePanel}>
               ОК
