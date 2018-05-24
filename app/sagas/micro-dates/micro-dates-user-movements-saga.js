@@ -12,14 +12,13 @@ import {
 export default function* microDatesUserMovementsSaga() {
   try {
     yield takeEvery('FIND_USER_MY_MOVE', handleMyMoveSaga);
-    yield takeEvery('FIND_USER_TARGET_MOVE', handleTargetMoveSaga);
   } catch (error) {
     yield put({ type: 'FIND_USER_ERROR', payload: error });
   }
 }
 
 function* handleMyMoveSaga(action) {
-  yield console.log('handleMyMoveSaga', action);
+  // yield console.log('handleMyMoveSaga', action);
   const microDateId = yield select((state) => state.findUser.microDateId);
   const myUid = yield select((state) => state.auth.uid);
   const myUidDB = myUid.substring(0, 8);
@@ -88,8 +87,4 @@ function* handleMyMoveSaga(action) {
       myScore,
     },
   });
-}
-
-function* handleTargetMoveSaga(action) {
-  yield console.log('handleTargetMoveSaga', action);
 }

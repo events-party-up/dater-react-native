@@ -40,7 +40,7 @@ export default function* microDatesOutgoingRequestsSaga() {
         requestFor: targetUser.uid,
         requestByRef: firebase.firestore().collection('geoPoints').doc(myUid),
         requestForRef: firebase.firestore().collection('geoPoints').doc(targetUser.uid),
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        requestTS: firebase.firestore.FieldValue.serverTimestamp(),
         active: true,
       };
       const microDateRef = yield firebase.firestore()
@@ -54,7 +54,6 @@ export default function* microDatesOutgoingRequestsSaga() {
         'FIND_USER_STOPPED_BY_TARGET',
         'FIND_USER_STOP',
       ]);
-      yield console.log(microDate);
       if (nextAction.type === 'FIND_USER_CANCEL_REQUEST') {
         yield* handleCancelRequest(microDateChannel, microDateUpdatesTask, microDateRef.id);
       } else if (nextAction.type === 'FIND_USER_STOP') {
@@ -86,7 +85,7 @@ export default function* microDatesOutgoingRequestsSaga() {
             microDate: {
               id: microDate.id,
               requestFor: microDate.requestFor,
-              timestamp: microDate.timestamp,
+              requestTS: microDate.requestTS,
             },
           },
         });
@@ -117,7 +116,6 @@ export default function* microDatesOutgoingRequestsSaga() {
           payload: {
             user,
             myCoords,
-            startDistance: microDate.startDistance,
             distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
             microDateId: microDate.id,
           },
@@ -129,7 +127,6 @@ export default function* microDatesOutgoingRequestsSaga() {
             canHide: true,
             user,
             myCoords,
-            startDistance: microDate.startDistance,
             distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
             microDateId: microDate.id,
           },

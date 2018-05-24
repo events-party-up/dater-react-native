@@ -184,15 +184,11 @@ class DaterMapView extends React.Component<Props> {
           {this.props.findUser.enabled &&
             <React.Fragment>
               <PastLocationsPath
-                pastCoords={this.props.findUser.myPastCoords}
-                mapViewheadingAngle={this.props.mapView.headingAngle}
                 uid={this.props.auth.uid && this.props.auth.uid}
                 mode="own"
                 microDateId={this.props.findUser.microDateId}
               />
               <PastLocationsPath
-                pastCoords={this.props.findUser.targetPastCoords}
-                mapViewheadingAngle={this.props.mapView.headingAngle}
                 uid={this.props.findUser.targetUserUid}
                 mode="target"
                 microDateId={this.props.findUser.microDateId}

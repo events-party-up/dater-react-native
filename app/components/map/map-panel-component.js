@@ -230,7 +230,7 @@ class MapPanelComponent extends Component<Props> {
             }}
             >
               Запрос ({this.props.mapPanel.microDate.id.substring(0, 4)}) отправлен{' '}
-              <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.timestamp}</Moment>
+              <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.requestTS}</Moment>
             </Caption2>
             <DaterButton
               style={styles.panelButton}

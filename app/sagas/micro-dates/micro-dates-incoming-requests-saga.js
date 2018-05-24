@@ -83,7 +83,6 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
       payload: {
         user,
         myCoords,
-        startDistance: microDate.startDistance,
         distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
         microDateId: microDate.id,
       },
@@ -95,7 +94,6 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
         mode: 'findUser',
         user,
         myCoords,
-        startDistance: microDate.startDistance,
         distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
         microDateId: microDate.id,
       },
@@ -145,7 +143,7 @@ function createChannelToMonitorIncomingDateRequests(uid) {
   const dateStartedByOthersQuery = firebase.firestore().collection(MICRO_DATES_COLLECTION)
     .where('requestFor', '==', uid)
     .where('active', '==', true)
-    .orderBy('timestamp')
+    .orderBy('requestTS')
     .limit(1);
 
   return eventChannel((emit) => {
