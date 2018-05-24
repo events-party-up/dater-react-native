@@ -8,7 +8,7 @@ import startGeolocationOnFirstUpdate from './location-start-saga';
 import mapPanelSaga from './map-panel-saga';
 import usersAroundSaga from './users-around-saga';
 import appStateSaga from './app-state-saga';
-import microDatesSaga from './micro-dates/micro-dates-saga';
+import microDateSaga from './micro-date/micro-date-saga';
 
 export default function* rootSaga() {
   yield all([
@@ -21,6 +21,6 @@ export default function* rootSaga() {
     mapPanelSaga(),
     usersAroundSaga(),
     appStateSaga(),
-    microDatesSaga(),
+    microDateSaga(),
   ]);
 }

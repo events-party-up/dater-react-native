@@ -5,7 +5,7 @@ import GeoUtils from '../../utils/geo-utils';
 
 import { MICRO_DATES_COLLECTION } from '../../constants';
 
-export default function* microDatesOutgoingRequestsSaga() {
+export default function* microDateOutgoingRequestsSaga() {
   let microDateChannel;
   let microDateUpdatesTask;
 
@@ -18,21 +18,21 @@ export default function* microDatesOutgoingRequestsSaga() {
       microDateChannel = yield call(createChannelToMicroDate, activeMicroDate.id);
       microDateUpdatesTask = yield takeEvery(microDateChannel, handleOutgoingRequestsSaga);
       const nextAction = yield take([
-        'FIND_USER_CANCEL_REQUEST',
-        'FIND_USER_DECLINED_BY_TARGET_REQUEST',
-        'FIND_USER_STOPPED_BY_TARGET',
-        'FIND_USER_STOP',
+        'MICRO_DATE_CANCEL_REQUEST',
+        'MICRO_DATE_DECLINED_BY_TARGET_REQUEST',
+        'MICRO_DATE_STOPPED_BY_TARGET',
+        'MICRO_DATE_STOP',
       ]);
-      if (nextAction.type === 'FIND_USER_CANCEL_REQUEST') {
+      if (nextAction.type === 'MICRO_DATE_CANCEL_REQUEST') {
         yield* handleCancelRequest(microDateChannel, microDateUpdatesTask, activeMicroDate.id);
-      } else if (nextAction.type === 'FIND_USER_STOP') {
+      } else if (nextAction.type === 'MICRO_DATE_STOP') {
         yield* handleStopRequest(microDateChannel, microDateUpdatesTask, activeMicroDate);
       } else {
         yield* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask);
       }
     }
     while (true) {
-      const action = yield take('FIND_USER_REQUEST');
+      const action = yield take('MICRO_DATE_REQUEST');
       const targetUser = action.payload.user;
       const microDate = {
         status: 'REQUEST',
@@ -49,21 +49,21 @@ export default function* microDatesOutgoingRequestsSaga() {
       microDateChannel = yield call(createChannelToMicroDate, microDateRef.id);
       microDateUpdatesTask = yield takeEvery(microDateChannel, handleOutgoingRequestsSaga);
       const nextAction = yield take([
-        'FIND_USER_CANCEL_REQUEST',
-        'FIND_USER_DECLINED_BY_TARGET_REQUEST',
-        'FIND_USER_STOPPED_BY_TARGET',
-        'FIND_USER_STOP',
+        'MICRO_DATE_CANCEL_REQUEST',
+        'MICRO_DATE_DECLINED_BY_TARGET_REQUEST',
+        'MICRO_DATE_STOPPED_BY_TARGET',
+        'MICRO_DATE_STOP',
       ]);
-      if (nextAction.type === 'FIND_USER_CANCEL_REQUEST') {
+      if (nextAction.type === 'MICRO_DATE_CANCEL_REQUEST') {
         yield* handleCancelRequest(microDateChannel, microDateUpdatesTask, microDateRef.id);
-      } else if (nextAction.type === 'FIND_USER_STOP') {
+      } else if (nextAction.type === 'MICRO_DATE_STOP') {
         yield* handleStopRequest(microDateChannel, microDateUpdatesTask, { ...microDate, id: microDateRef.id });
       } else {
         yield* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask);
       }
     }
   } catch (error) {
-    yield put({ type: 'FIND_USER_ERROR', payload: error });
+    yield put({ type: 'MICRO_DATE_ERROR', payload: error });
   }
 
   function* handleOutgoingRequestsSaga(microDate) {
@@ -89,7 +89,7 @@ export default function* microDatesOutgoingRequestsSaga() {
             },
           },
         });
-        yield put({ type: 'FIND_USER_REQUESTED' });
+        yield put({ type: 'MICRO_DATE_REQUESTED' });
         break;
       case 'DECLINE':
         yield put({
@@ -106,13 +106,13 @@ export default function* microDatesOutgoingRequestsSaga() {
         });
 
         yield put({
-          type: 'FIND_USER_DECLINED_BY_TARGET_REQUEST',
+          type: 'MICRO_DATE_DECLINED_BY_TARGET_REQUEST',
         });
 
         break;
       case 'ACCEPT':
         yield put({
-          type: 'FIND_USER_START',
+          type: 'MICRO_DATE_START',
           payload: {
             user,
             myCoords,
@@ -123,7 +123,7 @@ export default function* microDatesOutgoingRequestsSaga() {
         yield put({
           type: 'UI_MAP_PANEL_SHOW',
           payload: {
-            mode: 'findUser',
+            mode: 'microDate',
             canHide: true,
             user,
             myCoords,
@@ -142,7 +142,7 @@ export default function* microDatesOutgoingRequestsSaga() {
               microDate,
             },
           });
-          yield put({ type: 'FIND_USER_STOPPED_BY_TARGET' });
+          yield put({ type: 'MICRO_DATE_STOPPED_BY_TARGET' });
         }
         break;
       default:
@@ -162,7 +162,7 @@ function* handleCancelRequest(microDateChannel, microDateUpdatesTask, microDateI
       active: false,
       cancelRequestTS: firebase.firestore.FieldValue.serverTimestamp(),
     });
-  yield put({ type: 'FIND_USER_CANCELLED_REQUEST' });
+  yield put({ type: 'MICRO_DATE_CANCELLED_REQUEST' });
 }
 
 
@@ -177,7 +177,7 @@ function* handleStopRequest(microDateChannel, microDateUpdatesTask, microDate) {
       stopBy: microDate.requestBy,
       stopTS: firebase.firestore.FieldValue.serverTimestamp(),
     });
-  yield put({ type: 'FIND_USER_STOPPED' });
+  yield put({ type: 'MICRO_DATE_STOPPED' });
 }
 
 function* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask) {

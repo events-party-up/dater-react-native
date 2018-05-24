@@ -7,7 +7,7 @@ import UserOnMapMarker from './user-on-map-marker';
 const mapStateToProps = (state) => ({
   usersAround: state.usersAround.users,
   mapPanel: state.mapPanel,
-  findUser: state.findUser,
+  microDate: state.microDate,
   mapViewBearingAngle: state.mapView.heading,
 });
 
@@ -15,13 +15,13 @@ type Props = {
   usersAround: Array<mixed>,
   dispatch: Dispatch,
   mapPanel: any,
-  findUser: any,
+  microDate: any,
   mapViewBearingAngle: number,
 };
 
 class UsersAroundComponent extends React.Component<Props> {
   onPressOrSelect = (user) => {
-    if (this.props.findUser.enabled || this.props.findUser.pending) {
+    if (this.props.microDate.enabled || this.props.microDate.pending) {
       this.props.dispatch({
         type: 'UI_MAP_PANEL_SHOW',
         payload: {

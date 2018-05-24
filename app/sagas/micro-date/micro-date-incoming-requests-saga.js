@@ -5,7 +5,7 @@ import firebase from 'react-native-firebase';
 import GeoUtils from '../../utils/geo-utils';
 import { MICRO_DATES_COLLECTION } from '../../constants';
 
-export default function* microDatesIncomingRequestsSaga() {
+export default function* microDateIncomingRequestsSaga() {
   try {
     const myUid = yield select((state) => state.auth.uid);
     const activeIncomingDates = yield hasActiveIncomingDates(myUid);
@@ -24,7 +24,7 @@ export default function* microDatesIncomingRequestsSaga() {
       microDateUpdatesTask = yield takeEvery(microDateChannel, handleIncomingMicroDate, microDateChannel);
     }
   } catch (error) {
-    yield put({ type: 'FIND_USER_ERROR', payload: error });
+    yield put({ type: 'MICRO_DATE_ERROR', payload: error });
   }
 }
 
@@ -40,7 +40,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
   };
 
   if (microDate.status === 'REQUEST') {
-    yield put({ type: 'FIND_USER_INCOMING_REQUEST', payload: microDate });
+    yield put({ type: 'MICRO_DATE_INCOMING_REQUEST', payload: microDate });
     yield put({
       type: 'UI_MAP_PANEL_SHOW',
       payload: {
@@ -52,11 +52,11 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
       },
     });
     const nextAction = yield take([
-      'FIND_USER_DECLINE_REQUEST',
-      'FIND_USER_ACCEPT_REQUEST',
+      'MICRO_DATE_DECLINE_REQUEST',
+      'MICRO_DATE_ACCEPT_REQUEST',
     ]);
 
-    if (nextAction.type === 'FIND_USER_DECLINE_REQUEST') {
+    if (nextAction.type === 'MICRO_DATE_DECLINE_REQUEST') {
       yield firebase.firestore()
         .collection(MICRO_DATES_COLLECTION)
         .doc(microDate.id)
@@ -67,7 +67,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
         });
       yield microDateChannel.close();
       // cancel channel & task here
-    } else if (nextAction.type === 'FIND_USER_ACCEPT_REQUEST') {
+    } else if (nextAction.type === 'MICRO_DATE_ACCEPT_REQUEST') {
       yield firebase.firestore()
         .collection(MICRO_DATES_COLLECTION)
         .doc(microDate.id)
@@ -79,7 +79,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
     }
   } else if (microDate.status === 'ACCEPT') {
     yield put({
-      type: 'FIND_USER_START',
+      type: 'MICRO_DATE_START',
       payload: {
         user,
         myCoords,
@@ -91,7 +91,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
       type: 'UI_MAP_PANEL_SHOW',
       payload: {
         canClose: true,
-        mode: 'findUser',
+        mode: 'microDate',
         user,
         myCoords,
         distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
@@ -99,7 +99,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
       },
     });
 
-    yield take('FIND_USER_STOP');
+    yield take('MICRO_DATE_STOP');
     yield firebase.firestore()
       .collection(MICRO_DATES_COLLECTION)
       .doc(microDate.id)
@@ -109,7 +109,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
         stopBy: microDate.requestFor,
         stopTS: firebase.firestore.FieldValue.serverTimestamp(),
       });
-    yield put({ type: 'FIND_USER_STOPPED' });
+    yield put({ type: 'MICRO_DATE_STOPPED' });
     yield microDateChannel.close();
     // cancel channel & task here
   } else if (microDate.status === 'CANCEL_REQUEST') {
@@ -122,7 +122,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
         microDate,
       },
     });
-    yield put({ type: 'FIND_USER_CANCELLED_REQUEST' });
+    yield put({ type: 'MICRO_DATE_CANCELLED_REQUEST' });
     yield microDateChannel.close();
   } else if (microDate.status === 'STOP' && microDate.stopBy !== microDate.requestFor) {
     // cancel channel & task here
@@ -134,7 +134,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
         microDate,
       },
     });
-    yield put({ type: 'FIND_USER_STOPPED_BY_TARGET' });
+    yield put({ type: 'MICRO_DATE_STOPPED_BY_TARGET' });
     yield microDateChannel.close();
   }
 }

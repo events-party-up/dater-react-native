@@ -12,7 +12,7 @@ export default function* mapViewSaga() {
         'MAPVIEW_ANIMATE_TO_HEADING_GPS_HEADING',
         'MAPVIEW_ANIMATE_TO_HEADING_COMPASS_HEADING'], animateToHeading, mapView);
       const task4 = yield takeLatest('MAPVIEW_SHOW_MY_LOCATION_START', showMyLocation);
-      const task5 = yield takeLatest('MAPVIEW_SHOW_ME_AND_TARGET_FIND_USER', showMeAndTargetFindUser, mapView);
+      const task5 = yield takeLatest('MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE', showMeAndTargetMicroDate, mapView);
       const task6 = yield fork(switchMapViewMode, mapView);
 
       yield put({ type: 'MAPVIEW_MAIN_SAGA_READY' });
@@ -65,9 +65,9 @@ function* fitBounds(mapView, coords1: Array<number>, coords2: Array<number>) {
   }
 }
 
-function* showMeAndTargetFindUser(mapView) {
+function* showMeAndTargetMicroDate(mapView) {
   try {
-    const lastTargetUserCoords = yield select((state) => state.findUser.targetCurrentCoords);
+    const lastTargetUserCoords = yield select((state) => state.microDate.targetCurrentCoords);
     const myLastCoords = yield select((state) => state.location.coords);
     yield call(
       fitBounds,
@@ -76,7 +76,7 @@ function* showMeAndTargetFindUser(mapView) {
       [myLastCoords.longitude, myLastCoords.latitude],
     );
   } catch (error) {
-    yield put({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_FIND_USER_ERROR', payload: error });
+    yield put({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE_ERROR', payload: error });
   }
 }
 
@@ -102,11 +102,11 @@ function* switchMapViewMode(mapView) {
   try {
     while (true) {
       yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
-      const isFindUserActive = yield select((state) => state.findUser.enabled);
-      if (isFindUserActive) {
+      const isMicroDateActive = yield select((state) => state.microDate.enabled);
+      if (isMicroDateActive) {
         // show me and target user in find user mode
-        yield put({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_FIND_USER' });
-        yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'showTargetFindUser' });
+        yield put({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE' });
+        yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'showTargetMicroDate' });
       } else {
         // zoom out on myself
         myCoords = yield select((state) => state.location.coords);

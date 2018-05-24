@@ -85,7 +85,7 @@ function* startGeoLocationOnInit() {
 
 function* locationUpdatedSaga(action) {
   const isCentered = yield select((state) => state.mapView.centered);
-  const isFindUserEnabled = yield select((state) => state.findUser.enabled);
+  const isMicroDateEnabled = yield select((state) => state.microDate.enabled);
   const currentCoords = action.payload;
   const firstCoords = yield select((state) => state.location.firstCoords);
   const appState = yield select((state) => state.appState.state);
@@ -93,9 +93,9 @@ function* locationUpdatedSaga(action) {
   if (isCentered && appState === 'active') {
     yield* setCamera(action);
   }
-  if (isFindUserEnabled) {
+  if (isMicroDateEnabled) {
     yield put({
-      type: 'FIND_USER_MY_MOVE',
+      type: 'MICRO_DATE_MY_MOVE',
       payload: {
         latitude: currentCoords.latitude,
         longitude: currentCoords.longitude,

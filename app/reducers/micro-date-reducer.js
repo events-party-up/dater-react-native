@@ -1,30 +1,30 @@
 import GeoUtils from '../utils/geo-utils';
 
 const types = {
-  FIND_USER_REQUEST: 'FIND_USER_REQUEST',
-  FIND_USER_REQUESTED: 'FIND_USER_REQUESTED',
-  FIND_USER_INCOMING_REQUEST: 'FIND_USER_INCOMING_REQUEST',
+  MICRO_DATE_REQUEST: 'MICRO_DATE_REQUEST',
+  MICRO_DATE_REQUESTED: 'MICRO_DATE_REQUESTED',
+  MICRO_DATE_INCOMING_REQUEST: 'MICRO_DATE_INCOMING_REQUEST',
 
-  FIND_USER_DECLINE_REQUEST: 'FIND_USER_DECLINE_REQUEST', // should be DECLINE_INCOMING
-  FIND_USER_DECLINED_BY_TARGET_REQUEST: 'FIND_USER_DECLINED_BY_TARGET_REQUEST',
+  MICRO_DATE_DECLINE_REQUEST: 'MICRO_DATE_DECLINE_REQUEST', // should be DECLINE_INCOMING
+  MICRO_DATE_DECLINED_BY_TARGET_REQUEST: 'MICRO_DATE_DECLINED_BY_TARGET_REQUEST',
 
-  FIND_USER_CANCEL_REQUEST: 'FIND_USER_CANCEL_REQUEST',
-  FIND_USER_CANCELLED_REQUEST: 'FIND_USER_CANCELLED_REQUEST',
-  FIND_USER_ACCEPT_REQUEST: 'FIND_USER_ACCEPT_REQUEST',
+  MICRO_DATE_CANCEL_REQUEST: 'MICRO_DATE_CANCEL_REQUEST',
+  MICRO_DATE_CANCELLED_REQUEST: 'MICRO_DATE_CANCELLED_REQUEST',
+  MICRO_DATE_ACCEPT_REQUEST: 'MICRO_DATE_ACCEPT_REQUEST',
 
-  FIND_USER_START: 'FIND_USER_START',
-  FIND_USER_STARTED: 'FIND_USER_STARTED',
+  MICRO_DATE_START: 'MICRO_DATE_START',
+  MICRO_DATE_STARTED: 'MICRO_DATE_STARTED',
 
-  FIND_USER_STOP: 'FIND_USER_STOP',
-  FIND_USER_STOPPED: 'FIND_USER_STOPPED',
-  FIND_USER_STOPPED_BY_TARGET: 'FIND_USER_STOPPED_BY_TARGET',
+  MICRO_DATE_STOP: 'MICRO_DATE_STOP',
+  MICRO_DATE_STOPPED: 'MICRO_DATE_STOPPED',
+  MICRO_DATE_STOPPED_BY_TARGET: 'MICRO_DATE_STOPPED_BY_TARGET',
 
-  FIND_USER_MY_MOVE: 'FIND_USER_MY_MOVE',
-  FIND_USER_MY_MOVE_RECORDED: 'FIND_USER_MY_MOVE_RECORDED',
-  FIND_USER_TARGET_MOVE: 'FIND_USER_TARGET_MOVE',
+  MICRO_DATE_MY_MOVE: 'MICRO_DATE_MY_MOVE',
+  MICRO_DATE_MY_MOVE_RECORDED: 'MICRO_DATE_MY_MOVE_RECORDED',
+  MICRO_DATE_TARGET_MOVE: 'MICRO_DATE_TARGET_MOVE',
 
-  FIND_USER_ERROR: 'FIND_USER_ERROR',
-  FIND_USER_TARGET_MOVE_ERROR: 'FIND_USER_TARGET_MOVE_ERROR',
+  MICRO_DATE_ERROR: 'MICRO_DATE_ERROR',
+  MICRO_DATE_TARGET_MOVE_ERROR: 'MICRO_DATE_TARGET_MOVE_ERROR',
 };
 
 const initialState = {
@@ -39,32 +39,32 @@ const initialState = {
   myScore: 0,
 };
 
-const findUserReducer = (state = initialState, action) => {
+const microDateReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
-    case types.FIND_USER_REQUEST: {
+    case types.MICRO_DATE_REQUEST: {
       return {
         ...state,
         targetUserUid: payload.user.id,
       };
     }
-    case types.FIND_USER_REQUESTED:
-    case types.FIND_USER_INCOMING_REQUEST: {
+    case types.MICRO_DATE_REQUESTED:
+    case types.MICRO_DATE_INCOMING_REQUEST: {
       return {
         ...state,
         pending: true,
       };
     }
-    case types.FIND_USER_DECLINED_BY_TARGET_REQUEST:
-    case types.FIND_USER_CANCELLED_REQUEST:
-    case types.FIND_USER_DECLINE_REQUEST: {
+    case types.MICRO_DATE_DECLINED_BY_TARGET_REQUEST:
+    case types.MICRO_DATE_CANCELLED_REQUEST:
+    case types.MICRO_DATE_DECLINE_REQUEST: {
       return {
         ...state,
         pending: false,
       };
     }
-    case types.FIND_USER_START: {
+    case types.MICRO_DATE_START: {
       return {
         ...state,
         targetUserUid: payload.user.id,
@@ -74,11 +74,11 @@ const findUserReducer = (state = initialState, action) => {
         microDateId: payload.microDateId,
       };
     }
-    case types.FIND_USER_STOPPED_BY_TARGET:
-    case types.FIND_USER_STOPPED: {
+    case types.MICRO_DATE_STOPPED_BY_TARGET:
+    case types.MICRO_DATE_STOPPED: {
       return initialState;
     }
-    case types.FIND_USER_TARGET_MOVE: {
+    case types.MICRO_DATE_TARGET_MOVE: {
       return {
         ...state,
         targetCurrentCoords: {
@@ -88,7 +88,7 @@ const findUserReducer = (state = initialState, action) => {
         },
       };
     }
-    case types.FIND_USER_MY_MOVE_RECORDED: {
+    case types.MICRO_DATE_MY_MOVE_RECORDED: {
       let { myScore } = state;
       if (state.targetPreviousCoords) {
         const currentDistanceFromOpponent = GeoUtils.distance(payload.newCoords, state.targetPreviousCoords);
@@ -107,8 +107,8 @@ const findUserReducer = (state = initialState, action) => {
         } : state.targetPreviousCoords,
       };
     }
-    case types.FIND_USER_TARGET_MOVE_ERROR:
-    case types.FIND_USER_ERROR: {
+    case types.MICRO_DATE_TARGET_MOVE_ERROR:
+    case types.MICRO_DATE_ERROR: {
       return {
         ...state,
         error: payload,
@@ -120,4 +120,4 @@ const findUserReducer = (state = initialState, action) => {
   }
 };
 
-export default findUserReducer;
+export default microDateReducer;

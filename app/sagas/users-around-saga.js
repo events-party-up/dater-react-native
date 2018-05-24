@@ -16,7 +16,7 @@ export default function* usersAroundSaga() {
   try {
     yield take('GEO_LOCATION_STARTED');
     let isManuallyStopped = false;
-    let isFindUserMode = false;
+    let isMicroDateMode = false;
     let channel;
     let channelTask;
 
@@ -41,10 +41,10 @@ export default function* usersAroundSaga() {
       }
 
       const { currentUser } = yield call(firebase.auth);
-      if (isFindUserMode) {
-        const findUserState = yield select((state) => state.findUser);
-        channel = yield call(createFindUserChannel, myCoords, currentUser, findUserState);
-        channelTask = yield takeEvery(channel, updateFindUser);
+      if (isMicroDateMode) {
+        const microDateState = yield select((state) => state.microDate);
+        channel = yield call(createMicroDateChannel, myCoords, currentUser, microDateState);
+        channelTask = yield takeEvery(channel, updateMicroDate);
       } else {
         channel = yield call(createAllUsersAroundChannel, myCoords, currentUser);
         channelTask = yield takeEvery(channel, updateUsersAround);
@@ -57,22 +57,22 @@ export default function* usersAroundSaga() {
         'APP_STATE_BACKGROUND', // stop if app is in background
         'GEO_LOCATION_STOPPED', // stop if location services are disabled
         'USERS_AROUND_STOP',
-        'FIND_USER_START', // app mode switched to find user
-        'FIND_USER_STOP',
-        'FIND_USER_STOPPED_BY_TARGET',
+        'MICRO_DATE_START', // app mode switched to find user
+        'MICRO_DATE_STOP',
+        'MICRO_DATE_STOPPED_BY_TARGET',
       ]);
 
       if (stopAction.type === 'USERS_AROUND_STOP') {
         isManuallyStopped = true;
       }
 
-      if (stopAction.type === 'FIND_USER_START') {
-        isFindUserMode = true;
+      if (stopAction.type === 'MICRO_DATE_START') {
+        isMicroDateMode = true;
       }
 
-      if (stopAction.type === 'FIND_USER_STOP' ||
-        stopAction.type === 'FIND_USER_STOPPED_BY_TARGET') {
-        isFindUserMode = false;
+      if (stopAction.type === 'MICRO_DATE_STOP' ||
+        stopAction.type === 'MICRO_DATE_STOPPED_BY_TARGET') {
+        isMicroDateMode = false;
       }
 
       yield cancel(channelTask);
@@ -98,19 +98,19 @@ function* updateUsersAround(usersAround) {
   }
 }
 
-function* updateFindUser(targetUser) {
+function* updateMicroDate(targetUser) {
   if (targetUser.error) {
     yield put({
-      type: 'USERS_AROUND_FIND_USER_CHANNEL_ERROR',
+      type: 'USERS_AROUND_MICRO_DATE_CHANNEL_ERROR',
       payload: targetUser.error,
     });
   } else {
     yield put({
-      type: 'USERS_AROUND_FIND_USER_UPDATED',
+      type: 'USERS_AROUND_MICRO_DATE_UPDATED',
       payload: [targetUser],
     });
     yield put({
-      type: 'FIND_USER_TARGET_MOVE',
+      type: 'MICRO_DATE_TARGET_MOVE',
       payload: targetUser,
     });
   }
@@ -187,8 +187,8 @@ function createAllUsersAroundChannel(userCoords, currentUser) {
 }
 
 
-function createFindUserChannel(myCoords, currentUser, findUserState) {
-  const query = firebase.firestore().collection(GEO_POINTS_COLLECTION).doc(findUserState.targetUserUid);
+function createMicroDateChannel(myCoords, currentUser, microDateState) {
+  const query = firebase.firestore().collection(GEO_POINTS_COLLECTION).doc(microDateState.targetUserUid);
 
   return eventChannel((emit) => {
     const onSnapshotUpdated = (snapshot) => {

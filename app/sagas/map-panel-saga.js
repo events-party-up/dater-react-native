@@ -41,7 +41,7 @@ export default function* mapPanelSaga() {
       yield put({ type: 'UI_MAP_PANEL_SHOW_FINISHED', payload: action.payload });
       const mapPanelMode = yield select((state) => state.mapPanel.mode);
       switch (mapPanelMode) {
-        case 'findUserActive':
+        case 'microDateActive':
           yield call(mapPanelSnapper, { index: 0 }); // show
           break;
         default:

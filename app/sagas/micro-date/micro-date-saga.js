@@ -1,9 +1,9 @@
 import { take, put, select, all } from 'redux-saga/effects';
-import microDatesIncomingRequestsSaga from './micro-dates-incoming-requests-saga';
-import microDatesOutgoingRequestsSaga from './micro-dates-outgoing-requests-saga';
-import microDatesUserMovementsSaga from './micro-dates-user-movements-saga';
+import microDateIncomingRequestsSaga from './micro-date-incoming-requests-saga';
+import microDateOutgoingRequestsSaga from './micro-date-outgoing-requests-saga';
+import microDateUserMovementsSaga from './micro-date-user-movements-saga';
 
-export default function* microDatesSaga() {
+export default function* microDateSaga() {
   try {
     const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
     if (!isUserAuthenticated) { // user must be authorized
@@ -14,11 +14,11 @@ export default function* microDatesSaga() {
       yield take('GEO_LOCATION_STARTED'); // geo location must be enabled
     }
     yield all([
-      microDatesIncomingRequestsSaga(),
-      microDatesOutgoingRequestsSaga(),
-      microDatesUserMovementsSaga(),
+      microDateIncomingRequestsSaga(),
+      microDateOutgoingRequestsSaga(),
+      microDateUserMovementsSaga(),
     ]);
   } catch (error) {
-    yield put({ type: 'FIND_USER_ERROR', payload: error });
+    yield put({ type: 'MICRO_DATE_ERROR', payload: error });
   }
 }

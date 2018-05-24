@@ -9,21 +9,21 @@ import {
   MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION,
 } from '../../constants';
 
-export default function* microDatesUserMovementsSaga() {
+export default function* microDateUserMovementsSaga() {
   try {
-    yield takeEvery('FIND_USER_MY_MOVE', handleMyMoveSaga);
+    yield takeEvery('MICRO_DATE_MY_MOVE', handleMyMoveSaga);
   } catch (error) {
-    yield put({ type: 'FIND_USER_ERROR', payload: error });
+    yield put({ type: 'MICRO_DATE_ERROR', payload: error });
   }
 }
 
 function* handleMyMoveSaga(action) {
   // yield console.log('handleMyMoveSaga', action);
-  const microDateId = yield select((state) => state.findUser.microDateId);
+  const microDateId = yield select((state) => state.microDate.microDateId);
   const myUid = yield select((state) => state.auth.uid);
   const myUidDB = myUid.substring(0, 8);
   const newCoords = action.payload;
-  const myPreviousCoords = yield select((state) => state.findUser.myPreviousCoords);
+  const myPreviousCoords = yield select((state) => state.microDate.myPreviousCoords);
 
   if (!myPreviousCoords) {
     yield firebase.firestore()
@@ -62,8 +62,8 @@ function* handleMyMoveSaga(action) {
       return;
     }
   }
-  let myScore = yield select((state) => state.findUser.myScore);
-  const targetPreviousCoords = yield select((state) => state.findUser.targetPreviousCoords);
+  let myScore = yield select((state) => state.microDate.myScore);
+  const targetPreviousCoords = yield select((state) => state.microDate.targetPreviousCoords);
 
   if (targetPreviousCoords) {
     const currentDistanceFromOpponent = GeoUtils.distance(newCoords, targetPreviousCoords);
@@ -81,7 +81,7 @@ function* handleMyMoveSaga(action) {
   }
 
   yield put({
-    type: 'FIND_USER_MY_MOVE_RECORDED',
+    type: 'MICRO_DATE_MY_MOVE_RECORDED',
     payload: {
       newCoords,
       myScore,

@@ -17,7 +17,7 @@ import DaterButton from '../../components/ui-kit/dater-button';
 const mapStateToProps = (state) => ({
   mapPanel: state.mapPanel,
   myCurrentCoords: state.location.coords,
-  findUserDistance: state.findUser.distance,
+  microDateDistance: state.microDate.distance,
 });
 
 const Screen = {
@@ -28,7 +28,7 @@ const Screen = {
 type Props = {
   mapPanel: any,
   dispatch: Dispatch,
-  findUserDistance: number,
+  microDateDistance: number,
 };
 
 class MapPanelComponent extends Component<Props> {
@@ -64,7 +64,7 @@ class MapPanelComponent extends Component<Props> {
         source: 'mapPanelComponentShowMeTargetUser',
       },
     });
-    this.props.dispatch({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_FIND_USER' });
+    this.props.dispatch({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE' });
   }
 
   requestDate = (user) => {
@@ -75,7 +75,7 @@ class MapPanelComponent extends Component<Props> {
       },
     });
     this.props.dispatch({
-      type: 'FIND_USER_REQUEST',
+      type: 'MICRO_DATE_REQUEST',
       payload: {
         user,
       },
@@ -83,7 +83,7 @@ class MapPanelComponent extends Component<Props> {
   }
 
   cancelDateRequest = () => {
-    this.props.dispatch({ type: 'FIND_USER_CANCEL_REQUEST' });
+    this.props.dispatch({ type: 'MICRO_DATE_CANCEL_REQUEST' });
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE_FORCE',
       payload: {
@@ -92,12 +92,12 @@ class MapPanelComponent extends Component<Props> {
     });
   }
 
-  stopFindUser = () => {
-    this.props.dispatch({ type: 'FIND_USER_STOP' });
+  stopMicroDate = () => {
+    this.props.dispatch({ type: 'MICRO_DATE_STOP' });
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE_FORCE',
       payload: {
-        source: 'mapPanelComponentStopFindUser',
+        source: 'mapPanelComponentStopMicroDate',
       },
     });
   }
@@ -110,13 +110,13 @@ class MapPanelComponent extends Component<Props> {
       },
     });
     this.props.dispatch({
-      type: 'FIND_USER_ACCEPT_REQUEST',
+      type: 'MICRO_DATE_ACCEPT_REQUEST',
     });
   }
 
   declineDateRequest = () => {
     this.props.dispatch({
-      type: 'FIND_USER_DECLINE_REQUEST',
+      type: 'MICRO_DATE_DECLINE_REQUEST',
     });
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE_FORCE',
@@ -154,7 +154,7 @@ class MapPanelComponent extends Component<Props> {
             </DaterButton>
           </View>
         );
-      case 'findUser':
+      case 'microDate':
         return (
           <View>
             <H2>У тебя встреча с {this.props.mapPanel.user.shortId}</H2>
@@ -163,7 +163,7 @@ class MapPanelComponent extends Component<Props> {
               marginTop: 8,
             }}
             >
-              Расстояние {Math.floor(this.props.findUserDistance)} м. {' '}
+              Расстояние {Math.floor(this.props.microDateDistance)} м. {' '}
               Date ID: {this.props.mapPanel.microDateId.substring(0, 4)}
             </Caption2>
             <View
@@ -174,7 +174,7 @@ class MapPanelComponent extends Component<Props> {
             >
               <DaterButton
                 style={[styles.panelButton, { width: 130 }]}
-                onPress={this.stopFindUser}
+                onPress={this.stopMicroDate}
               >
                 Отменить
               </DaterButton>
@@ -310,7 +310,7 @@ class MapPanelComponent extends Component<Props> {
           verticalOnly
           snapPoints={[
               { y: this.showSnapPosition, id: 'show' },
-              { y: this.showSnapPosition - 60, id: 'show_findUserActive' },
+              { y: this.showSnapPosition - 60, id: 'show_microDateActive' },
               { y: Screen.height + 80, id: 'close' }, // close map panel snap point
             ]}
           boundaries={{ top: -300 }}
