@@ -61,33 +61,57 @@ class MapPanelComponent extends Component<Props> {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE',
       payload: {
-        source: 'mapPanelComponentShowMeTargetUser',
+        source: 'mapPanelShowMeTargetUser',
       },
     });
     this.props.dispatch({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE' });
   }
 
-  requestDate = (user) => {
+  requestMicroDate = (user) => {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE',
       payload: {
-        source: 'requestDate',
+        source: 'requestMicroDate',
       },
     });
     this.props.dispatch({
-      type: 'MICRO_DATE_REQUEST',
+      type: 'MICRO_DATE_OUTGOING_REQUEST',
       payload: {
         user,
       },
     });
   }
 
-  cancelDateRequest = () => {
-    this.props.dispatch({ type: 'MICRO_DATE_CANCEL_REQUEST' });
+  cancelOutgoingMicroDate = () => {
+    this.props.dispatch({ type: 'MICRO_DATE_OUTGOING_CANCEL' });
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE_FORCE',
       payload: {
-        source: 'mapPanelComponentCancelDateRequest',
+        source: 'mapPanelcancelOutgoingMicroDate',
+      },
+    });
+  }
+
+  acceptIncomingMicroDate = () => {
+    this.props.dispatch({
+      type: 'UI_MAP_PANEL_HIDE_FORCE',
+      payload: {
+        source: 'mapPanelacceptIncomingMicroDate',
+      },
+    });
+    this.props.dispatch({
+      type: 'MICRO_DATE_INCOMING_ACCEPT',
+    });
+  }
+
+  declineIncomingMicroDate = () => {
+    this.props.dispatch({
+      type: 'MICRO_DATE_INCOMING_DECLINE_BY_ME',
+    });
+    this.props.dispatch({
+      type: 'UI_MAP_PANEL_HIDE_FORCE',
+      payload: {
+        source: 'mapPaneldeclineIncomingMicroDate',
       },
     });
   }
@@ -97,31 +121,7 @@ class MapPanelComponent extends Component<Props> {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE_FORCE',
       payload: {
-        source: 'mapPanelComponentStopMicroDate',
-      },
-    });
-  }
-
-  acceptDateRequest = () => {
-    this.props.dispatch({
-      type: 'UI_MAP_PANEL_HIDE_FORCE',
-      payload: {
-        source: 'mapPanelComponentAcceptDateRequest',
-      },
-    });
-    this.props.dispatch({
-      type: 'MICRO_DATE_ACCEPT_REQUEST',
-    });
-  }
-
-  declineDateRequest = () => {
-    this.props.dispatch({
-      type: 'MICRO_DATE_DECLINE_REQUEST',
-    });
-    this.props.dispatch({
-      type: 'UI_MAP_PANEL_HIDE_FORCE',
-      payload: {
-        source: 'mapPanelComponentDeclineDateRequest',
+        source: 'mapPanelStopMicroDate',
       },
     });
   }
@@ -130,7 +130,7 @@ class MapPanelComponent extends Component<Props> {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE',
       payload: {
-        source: 'mapPanelComponentClosePanel',
+        source: 'mapPanelClosePanel',
       },
     });
   }
@@ -149,7 +149,7 @@ class MapPanelComponent extends Component<Props> {
               {Math.floor(this.props.mapPanel.user.distance)} метров от вас. {' '}
               Был <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.user.timestamp}</Moment>.
             </Caption2>
-            <DaterButton style={styles.panelButton} onPress={() => this.requestDate(this.props.mapPanel.user)}>
+            <DaterButton style={styles.panelButton} onPress={() => this.requestMicroDate(this.props.mapPanel.user)}>
               Встретиться
             </DaterButton>
           </View>
@@ -207,13 +207,13 @@ class MapPanelComponent extends Component<Props> {
             >
               <DaterButton
                 style={[styles.panelButton, { width: 130 }]}
-                onPress={this.declineDateRequest}
+                onPress={this.declineIncomingMicroDate}
               >
                 Отклонить
               </DaterButton>
               <DaterButton
                 style={[styles.panelButton, { width: 130 }]}
-                onPress={this.acceptDateRequest}
+                onPress={this.acceptIncomingMicroDate}
               >
                 Принять
               </DaterButton>
@@ -234,7 +234,7 @@ class MapPanelComponent extends Component<Props> {
             </Caption2>
             <DaterButton
               style={styles.panelButton}
-              onPress={this.cancelDateRequest}
+              onPress={this.cancelOutgoingMicroDate}
             >
               Отменить
             </DaterButton>

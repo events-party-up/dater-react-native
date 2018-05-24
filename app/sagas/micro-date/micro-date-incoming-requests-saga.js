@@ -52,11 +52,11 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
       },
     });
     const nextAction = yield take([
-      'MICRO_DATE_DECLINE_REQUEST',
-      'MICRO_DATE_ACCEPT_REQUEST',
+      'MICRO_DATE_INCOMING_DECLINE_BY_ME',
+      'MICRO_DATE_INCOMING_ACCEPT',
     ]);
 
-    if (nextAction.type === 'MICRO_DATE_DECLINE_REQUEST') {
+    if (nextAction.type === 'MICRO_DATE_INCOMING_DECLINE_BY_ME') {
       yield firebase.firestore()
         .collection(MICRO_DATES_COLLECTION)
         .doc(microDate.id)
@@ -65,9 +65,10 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
           declineTS: firebase.firestore.FieldValue.serverTimestamp(),
           active: false,
         });
-      yield microDateChannel.close();
+      yield put({ type: 'MICRO_DATE_INCOMING_DECLINED_BY_ME' });
       // cancel channel & task here
-    } else if (nextAction.type === 'MICRO_DATE_ACCEPT_REQUEST') {
+      yield microDateChannel.close();
+    } else if (nextAction.type === 'MICRO_DATE_INCOMING_ACCEPT') {
       yield firebase.firestore()
         .collection(MICRO_DATES_COLLECTION)
         .doc(microDate.id)
@@ -78,8 +79,9 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
         });
     }
   } else if (microDate.status === 'ACCEPT') {
+    yield put({ type: 'MICRO_DATE_INCOMING_ACCEPTED' });
     yield put({
-      type: 'MICRO_DATE_START',
+      type: 'MICRO_DATE_INCOMING_START',
       payload: {
         user,
         myCoords,
@@ -110,10 +112,9 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
         stopTS: firebase.firestore.FieldValue.serverTimestamp(),
       });
     yield put({ type: 'MICRO_DATE_STOPPED' });
+    // cancel channel & task here
     yield microDateChannel.close();
-    // cancel channel & task here
   } else if (microDate.status === 'CANCEL_REQUEST') {
-    // cancel channel & task here
     yield put({
       type: 'UI_MAP_PANEL_SHOW',
       payload: {
@@ -122,10 +123,10 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
         microDate,
       },
     });
-    yield put({ type: 'MICRO_DATE_CANCELLED_REQUEST' });
+    yield put({ type: 'MICRO_DATE_INCOMING_CANCELLED' });
+    // cancel channel & task here
     yield microDateChannel.close();
   } else if (microDate.status === 'STOP' && microDate.stopBy !== microDate.requestFor) {
-    // cancel channel & task here
     yield put({
       type: 'UI_MAP_PANEL_SHOW',
       payload: {
@@ -135,6 +136,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
       },
     });
     yield put({ type: 'MICRO_DATE_STOPPED_BY_TARGET' });
+    // cancel channel & task here
     yield microDateChannel.close();
   }
 }

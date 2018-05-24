@@ -18,12 +18,12 @@ export default function* microDateOutgoingRequestsSaga() {
       microDateChannel = yield call(createChannelToMicroDate, activeMicroDate.id);
       microDateUpdatesTask = yield takeEvery(microDateChannel, handleOutgoingRequestsSaga);
       const nextAction = yield take([
-        'MICRO_DATE_CANCEL_REQUEST',
-        'MICRO_DATE_DECLINED_BY_TARGET_REQUEST',
+        'MICRO_DATE_OUTGOING_CANCEL',
+        'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
         'MICRO_DATE_STOPPED_BY_TARGET',
         'MICRO_DATE_STOP',
       ]);
-      if (nextAction.type === 'MICRO_DATE_CANCEL_REQUEST') {
+      if (nextAction.type === 'MICRO_DATE_OUTGOING_CANCEL') {
         yield* handleCancelRequest(microDateChannel, microDateUpdatesTask, activeMicroDate.id);
       } else if (nextAction.type === 'MICRO_DATE_STOP') {
         yield* handleStopRequest(microDateChannel, microDateUpdatesTask, activeMicroDate);
@@ -32,7 +32,7 @@ export default function* microDateOutgoingRequestsSaga() {
       }
     }
     while (true) {
-      const action = yield take('MICRO_DATE_REQUEST');
+      const action = yield take('MICRO_DATE_OUTGOING_REQUEST');
       const targetUser = action.payload.user;
       const microDate = {
         status: 'REQUEST',
@@ -49,12 +49,12 @@ export default function* microDateOutgoingRequestsSaga() {
       microDateChannel = yield call(createChannelToMicroDate, microDateRef.id);
       microDateUpdatesTask = yield takeEvery(microDateChannel, handleOutgoingRequestsSaga);
       const nextAction = yield take([
-        'MICRO_DATE_CANCEL_REQUEST',
-        'MICRO_DATE_DECLINED_BY_TARGET_REQUEST',
+        'MICRO_DATE_OUTGOING_CANCEL',
+        'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
         'MICRO_DATE_STOPPED_BY_TARGET',
         'MICRO_DATE_STOP',
       ]);
-      if (nextAction.type === 'MICRO_DATE_CANCEL_REQUEST') {
+      if (nextAction.type === 'MICRO_DATE_OUTGOING_CANCEL') {
         yield* handleCancelRequest(microDateChannel, microDateUpdatesTask, microDateRef.id);
       } else if (nextAction.type === 'MICRO_DATE_STOP') {
         yield* handleStopRequest(microDateChannel, microDateUpdatesTask, { ...microDate, id: microDateRef.id });
@@ -89,7 +89,7 @@ export default function* microDateOutgoingRequestsSaga() {
             },
           },
         });
-        yield put({ type: 'MICRO_DATE_REQUESTED' });
+        yield put({ type: 'MICRO_DATE_OUTGOING_REQUESTED' });
         break;
       case 'DECLINE':
         yield put({
@@ -106,13 +106,13 @@ export default function* microDateOutgoingRequestsSaga() {
         });
 
         yield put({
-          type: 'MICRO_DATE_DECLINED_BY_TARGET_REQUEST',
+          type: 'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
         });
 
         break;
       case 'ACCEPT':
         yield put({
-          type: 'MICRO_DATE_START',
+          type: 'MICRO_DATE_OUTGOING_START',
           payload: {
             user,
             myCoords,
@@ -162,7 +162,7 @@ function* handleCancelRequest(microDateChannel, microDateUpdatesTask, microDateI
       active: false,
       cancelRequestTS: firebase.firestore.FieldValue.serverTimestamp(),
     });
-  yield put({ type: 'MICRO_DATE_CANCELLED_REQUEST' });
+  yield put({ type: 'MICRO_DATE_OUTGOING_CANCELLED' });
 }
 
 

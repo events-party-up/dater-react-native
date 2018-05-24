@@ -19,6 +19,6 @@ export default function* microDateSaga() {
       microDateUserMovementsSaga(),
     ]);
   } catch (error) {
-    yield put({ type: 'MICRO_DATE_ERROR', payload: error });
+    yield put({ type: 'MICRO_DATE_ROOT_SAGA_ERROR', payload: error });
   }
 }

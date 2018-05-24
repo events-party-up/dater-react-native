@@ -57,7 +57,8 @@ export default function* usersAroundSaga() {
         'APP_STATE_BACKGROUND', // stop if app is in background
         'GEO_LOCATION_STOPPED', // stop if location services are disabled
         'USERS_AROUND_STOP',
-        'MICRO_DATE_START', // app mode switched to find user
+        'MICRO_DATE_INCOMING_START', // app mode switched to find user
+        'MICRO_DATE_OUTGOING_START', // app mode switched to find user
         'MICRO_DATE_STOP',
         'MICRO_DATE_STOPPED_BY_TARGET',
       ]);
@@ -66,7 +67,8 @@ export default function* usersAroundSaga() {
         isManuallyStopped = true;
       }
 
-      if (stopAction.type === 'MICRO_DATE_START') {
+      if (stopAction.type === 'MICRO_DATE_INCOMING_START' ||
+          stopAction.type === 'MICRO_DATE_OUTGOING_START') {
         isMicroDateMode = true;
       }
 
