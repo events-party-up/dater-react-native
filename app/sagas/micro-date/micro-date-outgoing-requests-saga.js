@@ -12,17 +12,18 @@ export default function* microDateOutgoingRequestsSaga() {
   try {
     const myUid = yield select((state) => state.auth.uid);
     const activeMicroDate = yield getActiveOutgoingDate(myUid);
-    console.log('Has active outgoing date: ', activeMicroDate);
 
     if (activeMicroDate) {
       microDateChannel = yield call(createChannelToMicroDate, activeMicroDate.id);
       microDateUpdatesTask = yield takeEvery(microDateChannel, handleOutgoingRequestsSaga);
+
       const nextAction = yield take([
         'MICRO_DATE_OUTGOING_CANCEL',
         'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
         'MICRO_DATE_STOPPED_BY_TARGET',
         'MICRO_DATE_STOP',
       ]);
+
       if (nextAction.type === 'MICRO_DATE_OUTGOING_CANCEL') {
         yield* handleCancelRequest(microDateChannel, microDateUpdatesTask, activeMicroDate.id);
       } else if (nextAction.type === 'MICRO_DATE_STOP') {
@@ -31,6 +32,7 @@ export default function* microDateOutgoingRequestsSaga() {
         yield* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask);
       }
     }
+
     while (true) {
       const action = yield take('MICRO_DATE_OUTGOING_REQUEST');
       const targetUser = action.payload.user;
@@ -46,14 +48,17 @@ export default function* microDateOutgoingRequestsSaga() {
       const microDateRef = yield firebase.firestore()
         .collection(MICRO_DATES_COLLECTION)
         .add(microDate);
+
       microDateChannel = yield call(createChannelToMicroDate, microDateRef.id);
       microDateUpdatesTask = yield takeEvery(microDateChannel, handleOutgoingRequestsSaga);
+
       const nextAction = yield take([
         'MICRO_DATE_OUTGOING_CANCEL',
         'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
         'MICRO_DATE_STOPPED_BY_TARGET',
         'MICRO_DATE_STOP',
       ]);
+
       if (nextAction.type === 'MICRO_DATE_OUTGOING_CANCEL') {
         yield* handleCancelRequest(microDateChannel, microDateUpdatesTask, microDateRef.id);
       } else if (nextAction.type === 'MICRO_DATE_STOP') {
@@ -63,10 +68,14 @@ export default function* microDateOutgoingRequestsSaga() {
       }
     }
   } catch (error) {
-    yield put({ type: 'MICRO_DATE_ERROR', payload: error });
+    yield put({ type: 'MICRO_DATE_OUTGOING_ERROR', payload: error });
   }
 
   function* handleOutgoingRequestsSaga(microDate) {
+    if (microDate.error) {
+      throw new Error(microDate.error);
+    }
+
     const myCoords = yield select((state) => state.location.coords);
     const userSnap = yield microDate.requestForRef.get();
     const user = {
@@ -89,7 +98,9 @@ export default function* microDateOutgoingRequestsSaga() {
             },
           },
         });
+
         yield put({ type: 'MICRO_DATE_OUTGOING_REQUESTED' });
+
         break;
       case 'DECLINE':
         yield put({
@@ -105,9 +116,7 @@ export default function* microDateOutgoingRequestsSaga() {
           },
         });
 
-        yield put({
-          type: 'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
-        });
+        yield put({ type: 'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET' });
 
         break;
       case 'ACCEPT':
@@ -120,6 +129,7 @@ export default function* microDateOutgoingRequestsSaga() {
             microDateId: microDate.id,
           },
         });
+
         yield put({
           type: 'UI_MAP_PANEL_SHOW',
           payload: {
@@ -142,6 +152,7 @@ export default function* microDateOutgoingRequestsSaga() {
               microDate,
             },
           });
+
           yield put({ type: 'MICRO_DATE_STOPPED_BY_TARGET' });
         }
         break;
@@ -188,6 +199,7 @@ function createChannelToMicroDate(microDateId) {
   const query = firebase.firestore()
     .collection(MICRO_DATES_COLLECTION)
     .doc(microDateId);
+
   return eventChannel((emit) => {
     const onSnapshotUpdated = (dataSnapshot) => {
       emit({
@@ -195,8 +207,8 @@ function createChannelToMicroDate(microDateId) {
         ...dataSnapshot.data(),
       });
     };
+
     const onError = (error) => {
-      console.error(error);
       emit({
         error,
       });
@@ -214,8 +226,9 @@ async function getActiveOutgoingDate(uid) {
     .where('requestBy', '==', uid)
     .where('active', '==', true);
   const dateStartedByMeSnapshot = await dateStartedByMeQuery.get();
-  console.log('Active dates by me: ', dateStartedByMeSnapshot.docs.length);
+  // console.log('Active dates by me: ', dateStartedByMeSnapshot.docs.length);
   const activeDateSnapshot = dateStartedByMeSnapshot.docs[0];
+
   return activeDateSnapshot ? {
     id: activeDateSnapshot.id,
     ...activeDateSnapshot.data(),
