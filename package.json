@@ -20,6 +20,7 @@
     "react-native": "^0.55.4",
     "react-native-background-fetch": "^2.4.1",
     "react-native-background-geolocation": "^2.11.0",
+    "react-native-camera": "^1.1.4",
     "react-native-device-info": "^0.21.0",
     "react-native-firebase": "^4.1.0",
     "react-native-gesture-handler": "^1.0.0-alpha.43",
