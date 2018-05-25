@@ -13,6 +13,7 @@ import DaterHeader from '../../components/ui-kit/dater-header';
 type Props = {
   children: React.Node,
   closeButton: boolean,
+  backButton: boolean,
   closeButtonPress: () => void,
   backButtonPress: () => void,
   headerTitle: string,

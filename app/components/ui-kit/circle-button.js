@@ -24,7 +24,7 @@ const CircleButton = (props) => {
     }
     case 'back': {
       backgroundColor = '#fff';
-      shadowColor = 'rgba(0, 0, 0, 0.11)';
+      shadowColor = 'rgba(0, 0, 0, 0.21)';
       image = backIcon;
       break;
     }

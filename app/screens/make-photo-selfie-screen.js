@@ -3,11 +3,15 @@ import {
   StyleSheet,
   View,
   Text,
+  Image,
 } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 
-import DaterButton from '../components/ui-kit/dater-button';
 import DaterModal from '../components/ui-kit/dater-modal';
+import CircleButton from '../components/ui-kit/circle-button';
+
+const takePhotoIcon = require('../assets/icons/take-photo/take-photo-white.png');
+const checkmarkIcon = require('../assets/icons/checkmark/checkmark-white.png');
 
 type Props = {
   navigation: any,
@@ -15,28 +19,50 @@ type Props = {
 
 type State = {
   faces: [],
+  photoURI: string,
 }
 
 export default class MakePhotoSelfieScreen extends Component<Props, State> {
   camera: RNCamera;
+  styles: typeof StyleSheet;
+
   constructor(props: any) {
     super(props);
     this.state = {
       faces: [],
+      photoURI: '',
     };
   }
 
   takePicture = async () => {
     if (this.camera) {
-      const options = { quality: 0.5, base64: true };
+      const options = {
+        quality: 0.75,
+        base64: false,
+        mirrorImage: true,
+      };
       const data = await this.camera.takePictureAsync(options);
-      console.log(data.uri);
+      this.setState({
+        ...this.state,
+        photoURI: data.uri,
+      });
     }
   };
 
   onFacesDetected = ({ faces }) => this.setState({ faces });
 
   onFaceDetectionError = (error) => console.log(error);
+
+  onBackButton = () => {
+    if (this.state.photoURI) {
+      this.setState({
+        ...this.state,
+        photoURI: '',
+      });
+    } else {
+      this.props.navigation.goBack();
+    }
+  }
 
   renderFaces() {
     return (
@@ -50,35 +76,66 @@ export default class MakePhotoSelfieScreen extends Component<Props, State> {
     return (
       <DaterModal
         fullscreen
-        backButton
-        backButtonPress={() => this.props.navigation.goBack()}
+        backButton={this.state.photoURI === '' || false}
+        backButtonPress={() => this.onBackButton()}
         style={styles.container}
       >
-        <RNCamera
-          ref={(ref) => {
-            this.camera = ref;
-          }}
-          style={styles.preview}
-          type={RNCamera.Constants.Type.front}
-          flashMode={RNCamera.Constants.FlashMode.auto}
-          // onFacesDetected={this.onFacesDetected}
-          // onFaceDetectionError={this.onFaceDetectionError}
-          permissionDialogTitle="Please allow access to cameral"
-          permissionDialogMessage="Needed to take selfie or adding photo to your profile."
-        >
-          {this.renderFaces()}
-        </RNCamera>
-        <DaterButton
-          onPress={() => this.takePicture()}
-          style={styles.capture}
-          type="secondary"
-        >
-          SNAP
-        </DaterButton>
+        {!this.state.photoURI &&
+          <RNCamera
+            ref={(ref) => {
+              this.camera = ref;
+            }}
+            style={styles.preview}
+            type={RNCamera.Constants.Type.front}
+            flashMode={RNCamera.Constants.FlashMode.auto}
+            // onFacesDetected={this.onFacesDetected}
+            // onFaceDetectionError={this.onFaceDetectionError}
+            permissionDialogTitle="Please allow access to cameral"
+            permissionDialogMessage="Needed to take selfie or adding photo to your profile."
+          >
+            {this.renderFaces()}
+          </RNCamera>
+        }
+        {this.state.photoURI &&
+          <Image
+            style={styles.preview}
+            source={{ uri: this.state.photoURI }}
+          />
+        }
+        <View style={styles.bottomButtonsContainer}>
+          {!this.state.photoURI &&
+            <CircleButton
+              image={takePhotoIcon}
+              onPress={() => this.takePicture()}
+              style={styles.takePhotoButton}
+            />
+          }
+          {this.state.photoURI &&
+            <CircleButton
+              onPress={() => this.setState({
+                ...this.state,
+                photoURI: '',
+              })}
+              style={styles.removePhotoButton}
+              type="close"
+            />
+          }
+          {this.state.photoURI &&
+            <CircleButton
+              image={checkmarkIcon}
+              onPress={() => this.setState({
+                ...this.state,
+                photoURI: '',
+              })}
+              style={styles.savePhotoButton}
+            />
+          }
+        </View>
       </DaterModal>
     );
   }
 }
+
 
 function renderFace({
   bounds,
@@ -110,6 +167,7 @@ function renderFace({
   );
 }
 
+
 const styles = StyleSheet.create({
   button: {
     alignSelf: 'center',
@@ -117,7 +175,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: 'yellow',
+    backgroundColor: 'white',
     paddingLeft: 0,
     paddingRight: 0,
     paddingTop: 0,
@@ -127,8 +185,31 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
-  capture: {
-    alignSelf: 'center',
-    bottom: 32,
+  bottomButtonsContainer: {
+    height: 96,
+    bottom: 0,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.05)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  takePhotoButton: {
+    alignContent: 'center',
+    // backgroundColor: '#fff',
+    shadowColor: '#4F4F4F',
+    backgroundColor: '#4F4F4F',
+  },
+  removePhotoButton: {
+    alignContent: 'center',
+  },
+  savePhotoButton: {
+    backgroundColor: 'rgba(39, 174, 96, 0.9)',
+    shadowColor: '#4F4F4F',
+    position: 'absolute',
+    right: 20,
+    bottom: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
