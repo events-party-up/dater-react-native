@@ -157,7 +157,7 @@ class MapPanelComponent extends Component<Props> {
       case 'activeMicroDate':
         return (
           <View>
-            <H2>У тебя встреча с {this.props.mapPanel.user.shortId}</H2>
+            <H2>Встеча с {this.props.mapPanel.user.shortId} активна</H2>
             <Caption2 style={{
               marginBottom: 8,
               marginTop: 8,
@@ -223,13 +223,14 @@ class MapPanelComponent extends Component<Props> {
       case 'outgoingMicroDateAwaitingAccept':
         return (
           <View>
-            <H2>Ожидание ответа от {this.props.mapPanel.microDate.requestFor.substring(0, 4)}</H2>
+            <H2>Ожидание ответа</H2>
             <Caption2 style={{
               marginBottom: 8,
               marginTop: 8,
             }}
             >
-              Запрос ({this.props.mapPanel.microDate.id.substring(0, 4)}) отправлен{' '}
+              Запрос {this.props.mapPanel.microDate.id.substring(0, 4)} к{' '}
+              {this.props.mapPanel.microDate.requestFor.substring(0, 4)} отправлен{' '}
               <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.requestTS}</Moment>
             </Caption2>
             <DaterButton

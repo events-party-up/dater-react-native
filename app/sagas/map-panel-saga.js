@@ -39,7 +39,6 @@ export default function* mapPanelSaga() {
         yield call(mapPanelSnapper, { index: 2 }); // hide
         yield call(delay, mapPanelReplaceDelay);
       }
-      yield put({ type: 'UI_MAP_PANEL_SHOW_FINISHED', payload: action.payload });
       const mapPanelMode = yield select((state) => state.mapPanel.mode);
       switch (mapPanelMode) {
         case 'microDateActive':
@@ -50,6 +49,7 @@ export default function* mapPanelSaga() {
           break;
       }
       showingInProgress = false;
+      yield put({ type: 'UI_MAP_PANEL_SHOW_FINISHED', payload: action.payload });
     } catch (error) {
       showingInProgress = false;
       yield put({ type: 'UI_MAP_PANEL_ERROR', payload: error });
