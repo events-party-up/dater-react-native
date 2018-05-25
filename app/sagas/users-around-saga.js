@@ -6,19 +6,21 @@ import GeoUtils from '../utils/geo-utils';
 import {
   USERS_AROUND_SEARCH_RADIUS_KM,
   USERS_AROUND_SHOW_LAST_SEEN_HOURS_AGO,
+  GEO_POINTS_COLLECTION,
 } from '../constants';
 
 const ONE_HOUR = 1000 * 60 * 60;
-const collectionPath = 'geoPoints';
 const geoPointPath = 'geoPoint';
 
 export default function* usersAroundSaga() {
   try {
     yield take('GEO_LOCATION_STARTED');
+    let isManuallyStopped = false;
+    let isMicroDateMode = false;
+    let channel;
+    let channelTask;
 
     while (true) {
-      let isManuallyStopped = false;
-
       // only start when app state is active
       const appState = yield select((state) => state.appState.state);
       if (appState !== 'active') {
@@ -30,17 +32,23 @@ export default function* usersAroundSaga() {
         isManuallyStopped = false;
       }
 
-      let userCoords = yield select((state) => state.location.coords);
+      let myCoords = yield select((state) => state.location.coords);
 
       // if there are no location coords, wait for the first coords
-      if (!userCoords) {
+      if (!myCoords) {
         const newLocationAction = yield take('GEO_LOCATION_UPDATED');
-        userCoords = newLocationAction.payload;
+        myCoords = newLocationAction.payload;
       }
 
       const { currentUser } = yield call(firebase.auth);
-      const usersAroundChannel = yield call(createUsersAroundChannel, userCoords, currentUser);
-      const task1 = yield takeEvery(usersAroundChannel, updateUsersAround);
+      if (isMicroDateMode) {
+        const microDateState = yield select((state) => state.microDate);
+        channel = yield call(createMicroDateChannel, myCoords, currentUser, microDateState);
+        channelTask = yield takeEvery(channel, updateMicroDate);
+      } else {
+        channel = yield call(createAllUsersAroundChannel, myCoords, currentUser);
+        channelTask = yield takeEvery(channel, updateUsersAround);
+      }
 
       yield put({ type: 'USERS_AROUND_STARTED' });
 
@@ -49,14 +57,28 @@ export default function* usersAroundSaga() {
         'APP_STATE_BACKGROUND', // stop if app is in background
         'GEO_LOCATION_STOPPED', // stop if location services are disabled
         'USERS_AROUND_STOP',
+        'MICRO_DATE_INCOMING_START', // app mode switched to find user
+        'MICRO_DATE_OUTGOING_START', // app mode switched to find user
+        'MICRO_DATE_STOP',
+        'MICRO_DATE_STOPPED_BY_TARGET',
       ]);
 
       if (stopAction.type === 'USERS_AROUND_STOP') {
         isManuallyStopped = true;
       }
 
-      yield cancel(task1);
-      yield usersAroundChannel.close();
+      if (stopAction.type === 'MICRO_DATE_INCOMING_START' ||
+          stopAction.type === 'MICRO_DATE_OUTGOING_START') {
+        isMicroDateMode = true;
+      }
+
+      if (stopAction.type === 'MICRO_DATE_STOP' ||
+        stopAction.type === 'MICRO_DATE_STOPPED_BY_TARGET') {
+        isMicroDateMode = false;
+      }
+
+      yield cancel(channelTask);
+      yield channel.close();
       yield put({ type: 'USERS_AROUND_STOPPED' });
     }
   } catch (error) {
@@ -78,7 +100,25 @@ function* updateUsersAround(usersAround) {
   }
 }
 
-function createUsersAroundChannel(userCoords, currentUser) {
+function* updateMicroDate(targetUser) {
+  if (targetUser.error) {
+    yield put({
+      type: 'USERS_AROUND_MICRO_DATE_CHANNEL_ERROR',
+      payload: targetUser.error,
+    });
+  } else {
+    yield put({
+      type: 'USERS_AROUND_MICRO_DATE_UPDATED',
+      payload: [targetUser],
+    });
+    yield put({
+      type: 'MICRO_DATE_TARGET_MOVE',
+      payload: targetUser,
+    });
+  }
+}
+
+function createAllUsersAroundChannel(userCoords, currentUser) {
   const queryArea = {
     center: {
       latitude: userCoords.latitude,
@@ -92,7 +132,7 @@ function createUsersAroundChannel(userCoords, currentUser) {
   const greaterGeopoint = new firebase.firestore
     .GeoPoint(box.neCorner.latitude, box.neCorner.longitude);
 
-  const query = firebase.firestore().collection(collectionPath)
+  const query = firebase.firestore().collection(GEO_POINTS_COLLECTION)
     .where(geoPointPath, '>', lesserGeopoint)
     .where(geoPointPath, '<', greaterGeopoint)
     .where('visible', '==', true);
@@ -147,3 +187,33 @@ function createUsersAroundChannel(userCoords, currentUser) {
     return unsubscribe;
   });
 }
+
+
+function createMicroDateChannel(myCoords, currentUser, microDateState) {
+  const query = firebase.firestore().collection(GEO_POINTS_COLLECTION).doc(microDateState.targetUserUid);
+
+  return eventChannel((emit) => {
+    const onSnapshotUpdated = (snapshot) => {
+      if (snapshot.metadata.hasPendingWrites) { // do not process local updates triggered by local writes
+        return;
+      }
+
+      const targetUser = snapshot.data();
+      targetUser.uid = snapshot.id;
+      targetUser.shortId = snapshot.id.substring(0, 4);
+      targetUser.distance = GeoUtils.distance(myCoords, targetUser[geoPointPath]);
+
+      emit(targetUser);
+    };
+
+    const onError = (error) => {
+      emit({
+        error,
+      });
+    };
+    const unsubscribe = query.onSnapshot(onSnapshotUpdated, onError);
+
+    return unsubscribe;
+  });
+}
+

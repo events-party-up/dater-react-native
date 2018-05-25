@@ -85,7 +85,7 @@ function* startGeoLocationOnInit() {
 
 function* locationUpdatedSaga(action) {
   const isCentered = yield select((state) => state.mapView.centered);
-  const isFindUserEnabled = yield select((state) => state.findUser.enabled);
+  const isMicroDateEnabled = yield select((state) => state.microDate.enabled);
   const currentCoords = action.payload;
   const firstCoords = yield select((state) => state.location.firstCoords);
   const appState = yield select((state) => state.appState.state);
@@ -93,14 +93,14 @@ function* locationUpdatedSaga(action) {
   if (isCentered && appState === 'active') {
     yield* setCamera(action);
   }
-  if (isFindUserEnabled || true) {
+  if (isMicroDateEnabled) {
     yield put({
-      type: 'FIND_USER_MY_MOVE',
+      type: 'MICRO_DATE_MY_MOVE',
       payload: {
         latitude: currentCoords.latitude,
         longitude: currentCoords.longitude,
         accuracy: currentCoords.accuracy,
-        timestamp: Date.now(),
+        clientTS: Date.now(),
       },
     });
   }
@@ -142,7 +142,7 @@ function* updateLocation(coords) {
       type: 'GEO_LOCATION_UPDATED',
       payload: coords,
     });
-    yield* writeCoordsToFirestore();
+    yield* writeCoordsToFirestore(coords);
   } else if (coords.error) {
     yield put({
       type: 'GEO_LOCATION_UPDATE_CHANNEL_ERROR',
@@ -155,10 +155,9 @@ function* updateLocation(coords) {
   }
 }
 
-function* writeCoordsToFirestore() {
+function* writeCoordsToFirestore(coords) {
   try {
     const uid = yield select((state) => state.auth.uid);
-    const coords = yield select((state) => state.location.coords);
     if (!uid || !coords) return;
 
     yield call(updateFirestore, {

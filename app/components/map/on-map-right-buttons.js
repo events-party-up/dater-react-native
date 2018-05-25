@@ -11,7 +11,7 @@ import CircleButton from '../ui-kit/circle-button';
 const myLocationIcon = require('../../assets/icons/my-location/48/my-location.png');
 const playIcon = require('../../assets/icons/play/play.png');
 const stopIcon = require('../../assets/icons/stop/stop.png');
-const rotateIcon = require('../../assets/icons/rotate-map/rotate-map.png');
+// const rotateIcon = require('../../assets/icons/rotate-map/rotate-map.png');
 // const compassIcon = require('../../assets/icons/compass-colored/compass-colored.png');
 
 type Props = {
@@ -84,12 +84,12 @@ class OnMapRightButtons extends Component<Props> {
           image={compassIcon}
           size="medium"
         /> */}
-        <CircleButton
+        {/* <CircleButton
           style={styles.button}
           onPress={this.rotateMap}
           image={rotateIcon}
           size="medium"
-        />
+        /> */}
         <CircleButton
           style={styles.button}
           onPress={this.onGeoTogglePress}

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import {
   StyleSheet,
   View,
@@ -11,8 +11,8 @@ import { GeoCoordinates } from '../types';
 import MyLocationOnCenteredMap from './map/my-location-on-centered-map';
 import UsersAroundComponent from './map/users-around-component';
 import PastLocationsPath from './map/past-locations-path';
-import PastLocationsLines from './map/past-locations-lines';
 import { Caption2 } from './ui-kit/typography';
+import MicroDateStats from './micro-date/micro-date-stats';
 
 const mapStateToProps = (state) => ({
   location: state.location,
@@ -20,7 +20,7 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
   compass: state.compass,
   mapPanel: state.mapPanel,
-  findUser: state.findUser,
+  microDate: state.microDate,
 });
 
 function creatMapViewProxy(mapView: MapboxGL.MapView) {
@@ -59,10 +59,10 @@ type Props = {
   },
   mapView: MapboxGL.MapView,
   mapPanel: any,
-  findUser: any,
+  microDate: any,
 };
 
-class DaterMapView extends Component<Props> {
+class DaterMapView extends React.Component<Props> {
   mapView: MapboxGL.MapView;
   defZoomLevel = 17;
 
@@ -181,26 +181,20 @@ class DaterMapView extends Component<Props> {
           minZoomLevel={11}
           maxZoomLevel={18}
         >
-          <PastLocationsPath
-            pastCoords={this.props.findUser.myPastCoords}
-            mapViewheadingAngle={this.props.mapView.headingAngle}
-            uid={this.props.auth.uid && this.props.auth.uid}
-            mode="own"
-          />
-          <PastLocationsPath
-            pastCoords={this.props.findUser.targetPastCoords}
-            mapViewheadingAngle={this.props.mapView.headingAngle}
-            uid={this.props.findUser.targetUserUid}
-            mode="target"
-          />
-          <PastLocationsLines
-            pastCoords={this.props.findUser.myPastCoords}
-            mode="own"
-          />
-          <PastLocationsLines
-            pastCoords={this.props.findUser.targetPastCoords}
-            mode="target"
-          />
+          {this.props.microDate.enabled &&
+            <React.Fragment>
+              <PastLocationsPath
+                uid={this.props.auth.uid && this.props.auth.uid}
+                mode="own"
+                microDateId={this.props.microDate.microDateId}
+              />
+              <PastLocationsPath
+                uid={this.props.microDate.targetUserUid}
+                mode="target"
+                microDateId={this.props.microDate.microDateId}
+              />
+            </React.Fragment>
+        }
           <UsersAroundComponent />
         </MapboxGL.MapView>
         <View style={styles.debugView} pointerEvents="none">
@@ -213,14 +207,24 @@ class DaterMapView extends Component<Props> {
             UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}
           </Caption2>
         </View>
-        {this.props.findUser.enabled &&
-        <View style={styles.findUserContainer} pointerEvents="none">
-          <Caption2 style={styles.findUserText}>
-            Distance: {Math.floor(this.props.findUser.currentDistance)}{'\n'}
-            My Score:
-            {` ${Math.floor(this.props.findUser.myScore)}`}{'\n'}
-            {this.props.findUser.targetUserUid && this.props.findUser.targetUserUid.substring(0, 4)}:
-            {` ${Math.floor(this.props.findUser.targetScore)}`}
+        {this.props.microDate.enabled &&
+        <View style={styles.microDateContainer} pointerEvents="none">
+          <Caption2 style={styles.microDateText}>
+            Date ID: {this.props.microDate.microDateId.substring(0, 4)}{'\n'}
+            Distance: {Math.floor(this.props.microDate.distance)}{'\n'}
+            My Score:{' '}
+            <MicroDateStats
+              microDateId={this.props.microDate.microDateId}
+              uid={this.props.auth.uid && this.props.auth.uid}
+              style={styles.microDateText}
+            />
+            {'\n'}
+            {this.props.microDate.targetUserUid && this.props.microDate.targetUserUid.substring(0, 4)}: {' '}
+            <MicroDateStats
+              microDateId={this.props.microDate.microDateId}
+              uid={this.props.microDate.targetUserUid}
+              style={styles.microDateText}
+            />
           </Caption2>
         </View>
         }
@@ -247,11 +251,11 @@ const styles = StyleSheet.create({
     opacity: 0.7,
     color: 'rgba(0, 0, 0, 0.9)',
   },
-  findUserText: {
+  microDateText: {
     opacity: 0.8,
     color: 'rgba(0, 0, 0, 0.9)',
   },
-  findUserContainer: {
+  microDateContainer: {
     opacity: 0.8,
     position: 'absolute',
     top: 40,

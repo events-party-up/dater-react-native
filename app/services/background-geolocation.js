@@ -30,7 +30,7 @@ const geoOptions = async () => {
     notificationTitle: 'Dater.com',
     notificationText: 'Dater Mode ON',
     // disableStopDetection: true,
-    preventSuspend: true, // iOS only
+    preventSuspend: false, // iOS only
     params: {
       device: {
         platform: Platform.OS,
