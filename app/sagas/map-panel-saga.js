@@ -33,10 +33,11 @@ export default function* mapPanelSaga() {
     try {
       showingInProgress = true;
       const mapPanelVisible = yield select((state) => state.mapPanel.visible);
-      const canHide = yield select((state) => state.mapPanel.canHide);
 
-      if (mapPanelVisible && canHide) {
-        yield* hidePanel(mapPanelSnapper, action);
+      if (mapPanelVisible) {
+        // hide pannel without any actions
+        yield call(mapPanelSnapper, { index: 2 }); // hide
+        yield call(delay, mapPanelReplaceDelay);
       }
       yield put({ type: 'UI_MAP_PANEL_SHOW_FINISHED', payload: action.payload });
       const mapPanelMode = yield select((state) => state.mapPanel.mode);

@@ -202,6 +202,11 @@ function createChannelToMicroDate(microDateId) {
 
   return eventChannel((emit) => {
     const onSnapshotUpdated = (dataSnapshot) => {
+      // do not process local updates triggered by local writes
+      if (dataSnapshot.metadata.hasPendingWrites) {
+        return;
+      }
+
       emit({
         id: dataSnapshot.id,
         ...dataSnapshot.data(),
