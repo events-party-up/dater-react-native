@@ -189,9 +189,9 @@ DEPENDENCIES:
   - Firebase/Firestore
   - Firebase/Performance
   - Firebase/RemoteConfig
-  - GoogleMobileVision/Detector (~> 1.1.0)
-  - GoogleMobileVision/FaceDetector (~> 1.1.0)
-  - GoogleMobileVision/MVDataOutput (~> 1.1.0)
+  - GoogleMobileVision/Detector (= 1.1.0)
+  - GoogleMobileVision/FaceDetector (= 1.1.0)
+  - GoogleMobileVision/MVDataOutput (= 1.1.0)
   - Interactable (from `../node_modules/react-native-interactable`)
   - react-native-camera/FaceDetector (from `../node_modules/react-native-camera`)
   - react-native-camera/RCT (from `../node_modules/react-native-camera`)
@@ -307,6 +307,6 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 568c5641057313b4912d08a7742ff0b2f753ed5c
   yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: 874a6228dd4b2115c98760ac6d45fb426a577204
+PODFILE CHECKSUM: fcfc70d3c8c1ac72a745e3e112b748da234e4a4a
 
 COCOAPODS: 1.5.2

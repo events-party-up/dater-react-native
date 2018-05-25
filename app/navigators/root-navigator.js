@@ -4,11 +4,15 @@ import MainScreen from '../screens/main-screen';
 import UIKitNavigator from './ui-kit-navigator';
 import LoginNavigator from './login-navigator';
 import FloatingNavigator from './floating-navigator';
+import MakePhotoSelfieScreen from '../screens/make-photo-selfie-screen';
 
 const RootStack = StackNavigator(
   {
     Home: {
       screen: MainScreen,
+    },
+    MakePhotoSelfie: {
+      screen: MakePhotoSelfieScreen,
     },
     Login: {
       screen: LoginNavigator,
