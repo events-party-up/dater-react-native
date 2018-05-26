@@ -36,3 +36,6 @@ project(':react-native-camera').projectDir = new File(rootProject.projectDir, 	'
 
 include ':react-native-system-setting'
 project(':react-native-system-setting').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-system-setting/android')
+
+include ':react-native-android-settings-library'
+project(':react-native-android-settings-library').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-android-settings-library/android')

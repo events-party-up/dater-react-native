@@ -4,13 +4,17 @@ import {
   View,
   Text,
   Image,
+  Platform,
 } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import SystemSetting from 'react-native-system-setting';
+import Permissions from 'react-native-permissions';
+import RNANAndroidSettingsLibrary from 'react-native-android-settings-library';
 
 import DaterModal from '../components/ui-kit/dater-modal';
 import CircleButton from '../components/ui-kit/circle-button';
 import IconTitleSubtitleMolecule from '../components/ui-kit/molecules/icon-title-subtitle';
+import DaterButton from '../components/ui-kit/dater-button';
 
 const takePhotoIcon = require('../assets/icons/take-photo/take-photo-white.png');
 const noCameraIcon = require('../assets/icons/no-camera/no-camera.png');
@@ -22,26 +26,46 @@ type Props = {
 type State = {
   faces: [],
   photoURI: string,
+  hasCameraPermission: boolean,
 }
 
 export default class MakePhotoSelfieScreen extends Component<Props, State> {
   camera: RNCamera;
   styles: typeof StyleSheet;
   volumeListener: any;
-  isCameraReady = false;
 
   constructor(props: any) {
     super(props);
     this.state = {
       faces: [],
       photoURI: '',
+      hasCameraPermission: false,
     };
   }
 
-  componentWillMount() {
+  async componentWillMount() {
     this.volumeListener = SystemSetting.addVolumeListener(() => {
       this.takePicture();
     });
+
+    const cameraPermission = await Permissions.check('camera');
+    if (cameraPermission === 'authorized') {
+      this.setState({
+        ...this.state,
+        hasCameraPermission: true,
+      });
+    }
+  }
+
+  onCameraReady = () => {
+    this.setState({
+      ...this.state,
+      hasCameraPermission: true,
+    });
+  }
+
+  onMountError = (error) => {
+    console.log(error);
   }
 
   componentWillUnmount() {
@@ -62,26 +86,27 @@ export default class MakePhotoSelfieScreen extends Component<Props, State> {
       });
     }
   };
-  onCameraReady = () => {
-    console.log('Camera is ready');
-    this.isCameraReady = true;
-  }
-
-  onMountError = (error) => {
-    console.log(error);
-  }
 
   onFacesDetected = ({ faces }) => this.setState({ faces });
 
   onFaceDetectionError = (error) => console.log(error);
 
   renderNotAuthorized = () => (
-    <IconTitleSubtitleMolecule
-      icon={noCameraIcon}
-      header="Нет доступа к камере"
-      subheader={'Вы отклонили запрос\nна доступ \n к камере телефона'}
-      style={styles.preview}
-    />
+    <View style={styles.preview}>
+      <IconTitleSubtitleMolecule
+        icon={noCameraIcon}
+        header="Нет доступа к камере"
+        subheader={'Вы отклонили запрос\nна доступ \n к камере телефона'}
+      />
+      <DaterButton
+        style={styles.settingsButton}
+        onPress={Platform.OS === 'ios' ?
+          Permissions.openSettings :
+          () => RNANAndroidSettingsLibrary.open('ACTION_APPLICATION_DETAILS_SETTINGS')}
+      >
+        Настройки
+      </DaterButton>
+    </View>
   );
 
   onBackButton = () => {
@@ -127,8 +152,9 @@ export default class MakePhotoSelfieScreen extends Component<Props, State> {
             flashMode={RNCamera.Constants.FlashMode.auto}
             // onFacesDetected={this.onFacesDetected}
             // onFaceDetectionError={this.onFaceDetectionError}
-            permissionDialogTitle="Please allow access to cameral"
-            permissionDialogMessage="Needed to take selfie or adding photo to your profile."
+            permissionDialogTitle="Пожалуйста, разрешите доступ к камере"
+            permissionDialogMessage={'Доступ к камере нужен для съемки селфи ' +
+            'в конце встречи и добавления фото в ваш профиль.'}
             notAuthorizedView={this.renderNotAuthorized()}
             onCameraReady={() => this.onCameraReady()}
             onMountError={this.onMountError}
@@ -143,7 +169,7 @@ export default class MakePhotoSelfieScreen extends Component<Props, State> {
           />
         }
         <View style={styles.bottomButtonsContainer}>
-          {this.state.photoURI === '' &&
+          {this.state.photoURI === '' && this.state.hasCameraPermission &&
             <CircleButton
               image={takePhotoIcon}
               onPress={() => this.takePicture()}
@@ -234,6 +260,9 @@ const styles = StyleSheet.create({
   noCameraTopImage: {
     alignSelf: 'center',
     marginTop: 128,
+  },
+  settingsButton: {
+    marginTop: 16,
   },
 
 });

@@ -41,6 +41,7 @@ target 'DaterReactNative' do
   pod 'GoogleMobileVision/MVDataOutput', '1.1.0'
   pod 'GoogleMobileVision/FaceDetector', '1.1.0'
   pod'RCTSystemSetting', :path => '../node_modules/react-native-system-setting'
+  pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
 end
 
 post_install do |installer|

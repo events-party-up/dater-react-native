@@ -198,6 +198,7 @@ dependencies {
         }
     }
     implementation project(':react-native-system-setting')
+    implementation project(':react-native-android-settings-library')
 }
 
 repositories {

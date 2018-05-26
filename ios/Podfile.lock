@@ -172,6 +172,8 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
+  - ReactNativePermissions (1.1.1):
+    - React
   - RNBackgroundFetch (2.4.1):
     - React
   - RNBackgroundGeolocation (2.11.0):
@@ -212,6 +214,7 @@ DEPENDENCIES:
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTVibration (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
+  - ReactNativePermissions (from `../node_modules/react-native-permissions`)
   - RNBackgroundFetch (from `../node_modules/react-native-background-fetch`)
   - RNBackgroundGeolocation (from `../node_modules/react-native-background-geolocation`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
@@ -263,6 +266,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@mapbox/react-native-mapbox-gl"
   react-native-splash-screen:
     :path: "../node_modules/react-native-splash-screen"
+  ReactNativePermissions:
+    :path: "../node_modules/react-native-permissions"
   RNBackgroundFetch:
     :path: "../node_modules/react-native-background-fetch"
   RNBackgroundGeolocation:
@@ -308,11 +313,12 @@ SPEC CHECKSUMS:
   react-native-camera: ab22041dcf0403d88f2ae4b9ea3ed2644e680423
   react-native-mapbox-gl: b42480060cdcc515dfa3d8e403fb4dd32466a1b9
   react-native-splash-screen: 8e3f866dc79bfe533baeffd0a38c33f7a7eae7f8
+  ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
   RNBackgroundFetch: 8c4f77f83c398c659bce82af2f0a885079417b9e
   RNBackgroundGeolocation: c9bbf69b9aa277f0b46754cc5f853bd26051a18f
   RNDeviceInfo: 568c5641057313b4912d08a7742ff0b2f753ed5c
   yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: 7b56b7b091d5eafee4e35d956bceecede5db3a83
+PODFILE CHECKSUM: c52505f920cbbfe4379ce560d06b3d3e6d526c52
 
 COCOAPODS: 1.5.2
