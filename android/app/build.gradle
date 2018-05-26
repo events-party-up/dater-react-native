@@ -197,6 +197,7 @@ dependencies {
             force = true
         }
     }
+    implementation project(':react-native-system-setting')
 }
 
 repositories {

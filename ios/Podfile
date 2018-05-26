@@ -40,6 +40,7 @@ target 'DaterReactNative' do
   pod 'GoogleMobileVision/Detector', '1.1.0'
   pod 'GoogleMobileVision/MVDataOutput', '1.1.0'
   pod 'GoogleMobileVision/FaceDetector', '1.1.0'
+  pod'RCTSystemSetting', :path => '../node_modules/react-native-system-setting'
 end
 
 post_install do |installer|

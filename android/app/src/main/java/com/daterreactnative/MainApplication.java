@@ -11,6 +11,7 @@ import com.transistorsoft.rnbackgroundfetch.RNBackgroundFetchPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.joshblour.reactnativeheading.ReactNativeHeadingPackage;
 import org.reactnative.camera.RNCameraPackage;
+import com.ninty.system.setting.SystemSettingPackage;
 
 // Firebase packages
 import io.invertase.firebase.RNFirebasePackage;
@@ -61,7 +62,8 @@ public class MainApplication extends Application implements ReactApplication {
           new ReactNativeHeadingPackage(),
           new RCTMGLPackage(),
           new LinearGradientPackage(),
-          new RNCameraPackage()
+          new RNCameraPackage(),
+          new SystemSettingPackage()
         );
     }
 

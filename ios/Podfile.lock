@@ -130,6 +130,8 @@ PODS:
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
   - Protobuf (3.5.0)
+  - RCTSystemSetting (1.4.3):
+    - React
   - React (0.55.4):
     - React/Core (= 0.55.4)
   - react-native-camera/FaceDetector (1.1.4):
@@ -193,6 +195,7 @@ DEPENDENCIES:
   - GoogleMobileVision/FaceDetector (= 1.1.0)
   - GoogleMobileVision/MVDataOutput (= 1.1.0)
   - Interactable (from `../node_modules/react-native-interactable`)
+  - RCTSystemSetting (from `../node_modules/react-native-system-setting`)
   - react-native-camera/FaceDetector (from `../node_modules/react-native-camera`)
   - react-native-camera/RCT (from `../node_modules/react-native-camera`)
   - react-native-camera/RN (from `../node_modules/react-native-camera`)
@@ -250,6 +253,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-linear-gradient"
   Interactable:
     :path: "../node_modules/react-native-interactable"
+  RCTSystemSetting:
+    :path: "../node_modules/react-native-system-setting"
   React:
     :path: "../node_modules/react-native"
   react-native-camera:
@@ -298,6 +303,7 @@ SPEC CHECKSUMS:
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
+  RCTSystemSetting: 67dc0e56f86c0eb005055d131b38853af5c968c4
   React: aa2040dbb6f317b95314968021bd2888816e03d5
   react-native-camera: ab22041dcf0403d88f2ae4b9ea3ed2644e680423
   react-native-mapbox-gl: b42480060cdcc515dfa3d8e403fb4dd32466a1b9
@@ -307,6 +313,6 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 568c5641057313b4912d08a7742ff0b2f753ed5c
   yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: fcfc70d3c8c1ac72a745e3e112b748da234e4a4a
+PODFILE CHECKSUM: 7b56b7b091d5eafee4e35d956bceecede5db3a83
 
 COCOAPODS: 1.5.2

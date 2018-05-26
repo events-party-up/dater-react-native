@@ -6,6 +6,7 @@ import {
   Image,
 } from 'react-native';
 import { RNCamera } from 'react-native-camera';
+import SystemSetting from 'react-native-system-setting';
 
 import DaterModal from '../components/ui-kit/dater-modal';
 import CircleButton from '../components/ui-kit/circle-button';
@@ -24,6 +25,7 @@ type State = {
 export default class MakePhotoSelfieScreen extends Component<Props, State> {
   camera: RNCamera;
   styles: typeof StyleSheet;
+  volumeListener: any;
 
   constructor(props: any) {
     super(props);
@@ -33,8 +35,18 @@ export default class MakePhotoSelfieScreen extends Component<Props, State> {
     };
   }
 
+  componentWillMount() {
+    this.volumeListener = SystemSetting.addVolumeListener(() => {
+      this.takePicture();
+    });
+  }
+
+  componentWillUnmount() {
+    SystemSetting.removeVolumeListener(this.volumeListener);
+  }
+
   takePicture = async () => {
-    if (this.camera) {
+    if (this.camera && this.state.photoURI === '') {
       const options = {
         quality: 0.75,
         base64: false,
