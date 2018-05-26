@@ -33,7 +33,7 @@ export default class DaterModal extends React.Component<Props> {
           <DaterHeader>
             {this.props.headerTitle}
           </DaterHeader>)}
-        {this.props.backButton && (
+        {this.props.backButton && Platform.OS !== 'android' && (
           <View style={styles.backButton}>
             <CircleButton type="back" onPress={() => this.props.backButtonPress()} />
           </View>)}
