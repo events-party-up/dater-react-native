@@ -101,21 +101,21 @@ export default class MakePhotoSelfieScreen extends Component<Props, State> {
             {this.renderFaces()}
           </RNCamera>
         }
-        {this.state.photoURI &&
+        {this.state.photoURI !== '' &&
           <Image
             style={styles.preview}
             source={{ uri: this.state.photoURI }}
           />
         }
         <View style={styles.bottomButtonsContainer}>
-          {!this.state.photoURI &&
+          {this.state.photoURI === '' &&
             <CircleButton
               image={takePhotoIcon}
               onPress={() => this.takePicture()}
               style={styles.takePhotoButton}
             />
           }
-          {this.state.photoURI &&
+          {this.state.photoURI !== '' &&
             <CircleButton
               onPress={() => this.setState({
                 ...this.state,

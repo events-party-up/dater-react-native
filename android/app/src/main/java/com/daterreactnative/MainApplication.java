@@ -10,6 +10,7 @@ import com.transistorsoft.rnbackgroundgeolocation.*;
 import com.transistorsoft.rnbackgroundfetch.RNBackgroundFetchPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.joshblour.reactnativeheading.ReactNativeHeadingPackage;
+import org.reactnative.camera.RNCameraPackage;
 
 // Firebase packages
 import io.invertase.firebase.RNFirebasePackage;
@@ -59,7 +60,8 @@ public class MainApplication extends Application implements ReactApplication {
           new RNFirebasePerformancePackage(),
           new ReactNativeHeadingPackage(),
           new RCTMGLPackage(),
-          new LinearGradientPackage()
+          new LinearGradientPackage(),
+          new RNCameraPackage()
         );
     }
 
