@@ -11,7 +11,6 @@ import DaterModal from '../components/ui-kit/dater-modal';
 import CircleButton from '../components/ui-kit/circle-button';
 
 const takePhotoIcon = require('../assets/icons/take-photo/take-photo-white.png');
-const checkmarkIcon = require('../assets/icons/checkmark/checkmark-white.png');
 
 type Props = {
   navigation: any,
@@ -78,6 +77,12 @@ export default class MakePhotoSelfieScreen extends Component<Props, State> {
         fullscreen
         backButton={this.state.photoURI === '' || false}
         backButtonPress={() => this.onBackButton()}
+        confirmButton={this.state.photoURI !== '' || false}
+        confirmButtonPress={this.state.photoURI === '' ? false : () => this.setState({
+          ...this.state,
+          photoURI: '',
+        })}
+
         style={styles.container}
       >
         {!this.state.photoURI &&
@@ -120,22 +125,11 @@ export default class MakePhotoSelfieScreen extends Component<Props, State> {
               type="close"
             />
           }
-          {this.state.photoURI &&
-            <CircleButton
-              image={checkmarkIcon}
-              onPress={() => this.setState({
-                ...this.state,
-                photoURI: '',
-              })}
-              style={styles.savePhotoButton}
-            />
-          }
         </View>
       </DaterModal>
     );
   }
 }
-
 
 function renderFace({
   bounds,
@@ -166,7 +160,6 @@ function renderFace({
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   button: {
@@ -202,14 +195,5 @@ const styles = StyleSheet.create({
   },
   removePhotoButton: {
     alignContent: 'center',
-  },
-  savePhotoButton: {
-    backgroundColor: 'rgba(39, 174, 96, 0.9)',
-    shadowColor: '#4F4F4F',
-    position: 'absolute',
-    right: 20,
-    bottom: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });

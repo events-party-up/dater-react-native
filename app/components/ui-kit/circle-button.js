@@ -8,6 +8,7 @@ import {
 
 const closeIcon = require('../../assets/icons/close/close.png');
 const backIcon = require('../../assets/icons/back/back.png');
+const confirmCheckmarkIcon = require('../../assets/icons/checkmark/checkmark-white.png');
 
 const CircleButton = (props) => {
   let backgroundColor = '#4F4F4F';
@@ -26,6 +27,12 @@ const CircleButton = (props) => {
       backgroundColor = '#fff';
       shadowColor = 'rgba(0, 0, 0, 0.21)';
       image = backIcon;
+      break;
+    }
+    case 'confirm': {
+      backgroundColor = 'rgba(39, 174, 96, 0.9)';
+      shadowColor = '#4F4F4F';
+      image = confirmCheckmarkIcon;
       break;
     }
     default:
