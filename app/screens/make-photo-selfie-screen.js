@@ -1,4 +1,6 @@
-import React, { Component } from 'react';
+import * as React from 'react';
+import { connect, Dispatch } from 'react-redux';
+
 import {
   StyleSheet,
   View,
@@ -19,8 +21,13 @@ import DaterButton from '../components/ui-kit/dater-button';
 const takePhotoIcon = require('../assets/icons/take-photo/take-photo-white.png');
 const noCameraIcon = require('../assets/icons/no-camera/no-camera.png');
 
+const mapStateToProps = (state) => ({
+  uploadPhotos: state.uploadPhotos,
+});
+
 type Props = {
   navigation: any,
+  dispatch: Dispatch,
 };
 
 type State = {
@@ -29,7 +36,7 @@ type State = {
   hasCameraPermission: boolean,
 }
 
-export default class MakePhotoSelfieScreen extends Component<Props, State> {
+class MakePhotoSelfieScreen extends React.Component<Props, State> {
   camera: RNCamera;
   styles: typeof StyleSheet;
   volumeListener: any;
@@ -128,6 +135,16 @@ export default class MakePhotoSelfieScreen extends Component<Props, State> {
     );
   }
 
+  uploadPhoto = () => {
+    this.props.dispatch({
+      type: 'UPLOAD_PHOTO_START',
+      payload: {
+        type: 'microDateSelfie',
+        uri: this.state.photoURI,
+      },
+    });
+  }
+
   render() {
     return (
       <DaterModal
@@ -135,10 +152,7 @@ export default class MakePhotoSelfieScreen extends Component<Props, State> {
         backButton={this.state.photoURI === '' || false}
         backButtonPress={() => this.onBackButton()}
         confirmButton={this.state.photoURI !== '' || false}
-        confirmButtonPress={this.state.photoURI === '' ? false : () => this.setState({
-          ...this.state,
-          photoURI: '',
-        })}
+        confirmButtonPress={this.state.photoURI === '' ? false : () => this.uploadPhoto()}
 
         style={styles.container}
       >
@@ -266,3 +280,5 @@ const styles = StyleSheet.create({
   },
 
 });
+
+export default connect(mapStateToProps)(MakePhotoSelfieScreen);

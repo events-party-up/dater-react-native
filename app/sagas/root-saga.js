@@ -9,6 +9,7 @@ import mapPanelSaga from './map-panel-saga';
 import usersAroundSaga from './users-around-saga';
 import appStateSaga from './app-state-saga';
 import microDateSaga from './micro-date/micro-date-saga';
+import uploadPhotosSaga from './upload-photos-saga';
 
 export default function* rootSaga() {
   yield all([
@@ -22,5 +23,6 @@ export default function* rootSaga() {
     usersAroundSaga(),
     appStateSaga(),
     microDateSaga(),
+    uploadPhotosSaga(),
   ]);
 }
