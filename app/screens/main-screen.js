@@ -10,6 +10,7 @@ import DaterButton from '../components/ui-kit/dater-button';
 import MapPanelComponent from '../components/map/map-panel-component';
 import OnMapRightButtons from '../components/map/on-map-right-buttons';
 import { GeoCompass, GeoCoordinates } from '../types';
+// import FirebaseSetup from '../components/firebase-setup';
 
 const mapStateToProps = (state) => ({
   auth: state.auth,

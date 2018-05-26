@@ -22,6 +22,7 @@ import io.invertase.firebase.auth.RNFirebaseAuthPackage;
 import io.invertase.firebase.firestore.RNFirebaseFirestorePackage;
 import io.invertase.firebase.config.RNFirebaseRemoteConfigPackage;
 import io.invertase.firebase.perf.RNFirebasePerformancePackage;
+import io.invertase.firebase.storage.RNFirebaseStoragePackage;
 
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -60,6 +61,7 @@ public class MainApplication extends Application implements ReactApplication {
           new RNFirebaseFirestorePackage(),
           new RNFirebaseRemoteConfigPackage(),
           new RNFirebasePerformancePackage(),
+          new RNFirebaseStoragePackage(),
           new ReactNativeHeadingPackage(),
           new RCTMGLPackage(),
           new LinearGradientPackage(),
