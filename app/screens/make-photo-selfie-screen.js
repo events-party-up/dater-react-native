@@ -10,8 +10,10 @@ import SystemSetting from 'react-native-system-setting';
 
 import DaterModal from '../components/ui-kit/dater-modal';
 import CircleButton from '../components/ui-kit/circle-button';
+import IconTitleSubtitleMolecule from '../components/ui-kit/molecules/icon-title-subtitle';
 
 const takePhotoIcon = require('../assets/icons/take-photo/take-photo-white.png');
+const noCameraIcon = require('../assets/icons/no-camera/no-camera.png');
 
 type Props = {
   navigation: any,
@@ -26,6 +28,7 @@ export default class MakePhotoSelfieScreen extends Component<Props, State> {
   camera: RNCamera;
   styles: typeof StyleSheet;
   volumeListener: any;
+  isCameraReady = false;
 
   constructor(props: any) {
     super(props);
@@ -59,10 +62,27 @@ export default class MakePhotoSelfieScreen extends Component<Props, State> {
       });
     }
   };
+  onCameraReady = () => {
+    console.log('Camera is ready');
+    this.isCameraReady = true;
+  }
+
+  onMountError = (error) => {
+    console.log(error);
+  }
 
   onFacesDetected = ({ faces }) => this.setState({ faces });
 
   onFaceDetectionError = (error) => console.log(error);
+
+  renderNotAuthorized = () => (
+    <IconTitleSubtitleMolecule
+      icon={noCameraIcon}
+      header="Нет доступа к камере"
+      subheader={'Вы отклонили запрос\nна доступ \n к камере телефона'}
+      style={styles.preview}
+    />
+  );
 
   onBackButton = () => {
     if (this.state.photoURI) {
@@ -109,6 +129,9 @@ export default class MakePhotoSelfieScreen extends Component<Props, State> {
             // onFaceDetectionError={this.onFaceDetectionError}
             permissionDialogTitle="Please allow access to cameral"
             permissionDialogMessage="Needed to take selfie or adding photo to your profile."
+            notAuthorizedView={this.renderNotAuthorized()}
+            onCameraReady={() => this.onCameraReady()}
+            onMountError={this.onMountError}
           >
             {this.renderFaces()}
           </RNCamera>
@@ -187,14 +210,14 @@ const styles = StyleSheet.create({
   },
   preview: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     alignItems: 'center',
   },
   bottomButtonsContainer: {
     height: 96,
     bottom: 0,
     backgroundColor: 'white',
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: 'rgba(0, 0, 0, 0.05)',
     alignItems: 'center',
     justifyContent: 'center',
@@ -208,4 +231,9 @@ const styles = StyleSheet.create({
   removePhotoButton: {
     alignContent: 'center',
   },
+  noCameraTopImage: {
+    alignSelf: 'center',
+    marginTop: 128,
+  },
+
 });
