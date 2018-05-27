@@ -1,27 +1,42 @@
-import { takeEvery, call } from 'redux-saga/effects';
+import { takeEvery, call, put, take, fork } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
 
 export default function* uploadPhotosSaga() {
-  yield takeEvery('UPLOAD_PHOTO_START', uploadPhoto);
+  let uploadTaskId = 0;
+
+  while (true) {
+    const nextPhoto = yield take('UPLOAD_PHOTO_START');
+    yield fork(uploadPhoto, uploadTaskId, nextPhoto);
+    uploadTaskId += 1;
+  }
 }
 
-function* uploadPhoto(action) {
-  yield console.log('New photo: ', action);
-  // Create the file metadata
+function* uploadPhoto(uploadTaskId, action) {
+  yield console.log('New upload task: ', uploadTaskId);
   const metadata = {
     contentType: 'image/jpeg',
   };
-
   const fileName = action.payload.uri.replace(/^.*[\\/]/, '');
-  // Upload file and metadata to the object 'images/mountains.jpg'
   const uploadTask = firebase.storage().ref(`images/${fileName}`).put(action.payload.uri, metadata);
   const uploadTaskChannel = yield call(createUploadTaskChannel, uploadTask);
-  yield takeEvery(uploadTaskChannel, uploadTaskProgress);
+
+  yield takeEvery(uploadTaskChannel, uploadTaskProgress, uploadTaskId);
+  yield take(`UPLOAD_PHOTO_TASK_${uploadTaskId}_SUCCESS`);
+  yield uploadTaskChannel.close();
 }
 
-function* uploadTaskProgress(progress) {
-  yield console.log('uploadTaskProgress: ', progress);
+function* uploadTaskProgress(uploadTaskId, progress) {
+  yield console.log(`uploadTask #: ${uploadTaskId} progress: ${progress.progress}`);
+  if (progress.finished === true) {
+    yield put({
+      type: `UPLOAD_PHOTO_TASK_${uploadTaskId}_SUCCESS`,
+      payload: {
+        ...progress,
+        uploadTaskId,
+      },
+    });
+  }
 }
 
 function createUploadTaskChannel(uploadTask) {
@@ -92,7 +107,7 @@ function createUploadTaskChannel(uploadTask) {
     );
 
     const unsubscribe = async () => {
-      await uploadTask.ref.delete();
+      // await uploadTask.ref.delete();
     };
     return unsubscribe;
   });
