@@ -12,7 +12,7 @@ import 'moment/locale/ru';
 import Moment from 'react-moment';
 import { connect, Dispatch } from 'react-redux';
 
-import { H2, Caption2 } from '../../components/ui-kit/typography';
+import { H2, Caption2, Body } from '../../components/ui-kit/typography';
 import DaterButton from '../../components/ui-kit/dater-button';
 
 const mapStateToProps = (state) => ({
@@ -37,6 +37,8 @@ class MapPanelComponent extends Component<Props> {
   panViewBottom: Animated.Value;
   interactableElement: Interactable.View;
   showSnapPosition = Platform.OS === 'ios' ? Screen.height - 100 : Screen.height - 130;
+  showFullScreenSnapPosition = Platform.OS === 'ios' ? 20 : 8;
+  showHalfScreenSnapPosition = Platform.OS === 'ios' ? (Screen.height / 2) - 20 : (Screen.height / 2) - 8;
 
   componentDidMount() {
     this.props.dispatch({
@@ -145,12 +147,8 @@ class MapPanelComponent extends Component<Props> {
       case 'userCard':
         return (
           <View>
-            <H2>Пользователь ({this.props.mapPanel.user.shortId} )</H2>
-            <Caption2 style={{
-              marginBottom: 8,
-              marginTop: 8,
-            }}
-            >
+            <H2 style={styles.panelHeader}>Пользователь ({this.props.mapPanel.user.shortId} )</H2>
+            <Caption2 style={styles.panelBody}>
               {Math.floor(this.props.mapPanel.user.distance)} метров от вас. {' '}
               Был <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.user.timestamp}</Moment>.
             </Caption2>
@@ -162,14 +160,10 @@ class MapPanelComponent extends Component<Props> {
       case 'activeMicroDate':
         return (
           <View>
-            <H2>Встеча с {this.props.microDate.targetUserUid &&
+            <H2 style={styles.panelHeader}>Встеча с {this.props.microDate.targetUserUid &&
               this.props.microDate.targetUserUid.substring(0, 4)} активна
             </H2>
-            <Caption2 style={{
-              marginBottom: 8,
-              marginTop: 8,
-            }}
-            >
+            <Caption2 style={styles.panelBody}>
               Расстояние {Math.floor(this.props.mapPanel.distance)} м. {' '}
               Date ID: {this.props.microDate.id && this.props.microDate.id.substring(0, 4)}
             </Caption2>
@@ -197,12 +191,8 @@ class MapPanelComponent extends Component<Props> {
       case 'incomingMicroDateRequest':
         return (
           <View>
-            <H2>Запрос от {this.props.mapPanel.user.shortId}</H2>
-            <Caption2 style={{
-              marginBottom: 8,
-              marginTop: 8,
-            }}
-            >
+            <H2 style={styles.panelHeader}>Запрос от {this.props.mapPanel.user.shortId}</H2>
+            <Caption2 style={styles.panelBody}>
               Расстояние {Math.floor(this.props.mapPanel.distance)} м. {' '}
               Date ID: {this.props.mapPanel.microDateId.substring(0, 4)}
             </Caption2>
@@ -230,12 +220,8 @@ class MapPanelComponent extends Component<Props> {
       case 'outgoingMicroDateAwaitingAccept':
         return (
           <View>
-            <H2>Ожидание ответа</H2>
-            <Caption2 style={{
-              marginBottom: 8,
-              marginTop: 8,
-            }}
-            >
+            <H2 style={styles.panelHeader}>Ожидание ответа</H2>
+            <Caption2 style={styles.panelBody}>
               Запрос {this.props.mapPanel.microDate.id.substring(0, 4)} к{' '}
               {this.props.mapPanel.microDate.requestFor.substring(0, 4)} отправлен{' '}
               <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.requestTS}</Moment>
@@ -251,13 +237,9 @@ class MapPanelComponent extends Component<Props> {
       case 'outgoingMicroDateDeclined':
         return (
           <View>
-            <H2>Запрос к {this.props.mapPanel.microDate.requestFor.substring(0, 4)} отклонен
+            <H2 style={styles.panelHeader}>Запрос к {this.props.mapPanel.microDate.requestFor.substring(0, 4)} отклонен
             </H2>
-            <Caption2 style={{
-              marginBottom: 8,
-              marginTop: 8,
-            }}
-            >
+            <Caption2 style={styles.panelBody}>
               Запрос {this.props.mapPanel.microDate.id.substring(0, 4)} был отклонен{' '}
               <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.declineTS}</Moment>.
             </Caption2>
@@ -269,13 +251,9 @@ class MapPanelComponent extends Component<Props> {
       case 'incomingMicroDateCancelled':
         return (
           <View>
-            <H2>Запрос от {this.props.mapPanel.microDate.requestBy.substring(0, 4)} отменен
+            <H2 style={styles.panelHeader}>Запрос от {this.props.mapPanel.microDate.requestBy.substring(0, 4)} отменен
             </H2>
-            <Caption2 style={{
-              marginBottom: 8,
-              marginTop: 8,
-            }}
-            >
+            <Caption2 style={styles.panelBody}>
               Запрос {this.props.mapPanel.microDate.id.substring(0, 4)} был отменен{' '}
               <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.cancelRequestTS}</Moment>.
             </Caption2>
@@ -287,13 +265,9 @@ class MapPanelComponent extends Component<Props> {
       case 'microDateStopped':
         return (
           <View>
-            <H2>{this.props.mapPanel.microDate.stopBy.substring(0, 4)} отменил встречу
+            <H2 style={styles.panelHeader}>{this.props.mapPanel.microDate.stopBy.substring(0, 4)} отменил встречу
             </H2>
-            <Caption2 style={{
-              marginBottom: 8,
-              marginTop: 8,
-            }}
-            >
+            <Caption2 style={styles.panelBody}>
               Встреча ({this.props.mapPanel.microDate.id.substring(0, 4)}) отменена {' '}
               <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.stopTS}</Moment>.
             </Caption2>
@@ -305,14 +279,10 @@ class MapPanelComponent extends Component<Props> {
       case 'makeSelfie':
         return (
           <View>
-            <H2>Сделайте селфи с {this.props.microDate.targetUserUid &&
+            <H2 style={styles.panelHeader}>Сделайте селфи с {this.props.microDate.targetUserUid &&
               this.props.microDate.targetUserUid.substring(0, 4)}!
             </H2>
-            <Caption2 style={{
-              marginBottom: 8,
-              marginTop: 8,
-            }}
-            >
+            <Caption2 style={styles.panelBody}>
               Для завершения встречи сделайте совместное селфи.
             </Caption2>
             <DaterButton style={styles.panelButton} onPress={this.openCamera}>
@@ -323,22 +293,60 @@ class MapPanelComponent extends Component<Props> {
       case 'selfieUploading':
         return (
           <View>
-            <H2>Закачиваю селфи...
-            </H2>
-            <Caption2 style={{
-              marginBottom: 8,
-              marginTop: 8,
-            }}
-            >
-              Подождите, идет загрузка селфи на сервер. Загружено 5% {this.props.mapPanel.photoURI}
-            </Caption2>
-            <Image
-              style={styles.selfie}
-              source={{ uri: this.props.mapPanel.photoURI }}
-            />
-            <DaterButton style={styles.panelButton} onPress={this.openCamera}>
+            <View>
+              <View style={{
+                marginRight: 16,
+                paddingRight: 16,
+                marginTop: 8,
+                flexDirection: 'row',
+              }}
+              >
+                <Image
+                  style={{
+                    height: 112,
+                    alignSelf: 'flex-start',
+                    // height: 112 * this.props.mapPanel.uploadSelfie.aspectRatio,
+                    aspectRatio: this.props.mapPanel.uploadSelfie.aspectRatio,
+                    borderRadius: 4,
+                  }}
+                  source={{ uri: this.props.mapPanel.uploadSelfie.photoURI }}
+                // source={{ uri: 'https://res.cloudinary.com/dater/image/upload/v1527447895/microDates/microDateId.jpg' }}
+                />
+                <View style={{
+                  flexDirection: 'column',
+                  marginLeft: 16,
+                  marginRight: 26,
+                }}
+                >
+                  <H2>Загрузка фото
+                  </H2>
+                  <Caption2 style={{
+                    marginTop: 8,
+                    marginRight: 16,
+                    paddingRight: 16,
+                  }}
+                  >
+                    Ожидайте, идет загрузка фото на сервер.
+                  </Caption2>
+                  <View style={{
+                    flexDirection: 'column',
+                    justifyContent: 'flex-end',
+                    flex: 1,
+                  }}
+                  >
+                    <Body style={{
+                      alignSelf: 'flex-start',
+                    }}
+                    >
+                      Прогресс 5%
+                    </Body>
+                  </View>
+                </View>
+              </View>
+            </View>
+            {/* <DaterButton style={styles.panelButton} onPress={this.openCamera}>
               Отменить
-            </DaterButton>
+            </DaterButton> */}
           </View>
         );
       default:
@@ -356,8 +364,9 @@ class MapPanelComponent extends Component<Props> {
           ref={(component) => { this.interactableElement = component; }}
           verticalOnly
           snapPoints={[
-              { y: this.showSnapPosition, id: 'show' },
-              { y: this.showSnapPosition - 60, id: 'show_microDateActive' },
+              { y: this.showSnapPosition, id: 'showStandard' },
+              { y: this.showHalfScreenSnapPosition, id: 'showHalfScreen' },
+              { y: this.showFullScreenSnapPosition, id: 'showFullScreen' },
               { y: Screen.height + 80, id: 'close' }, // close map panel snap point
             ]}
           boundaries={{ top: -300 }}
@@ -366,9 +375,7 @@ class MapPanelComponent extends Component<Props> {
           onSnap={this.onSnap}
         >
           <View style={styles.panel}>
-            <View style={styles.panelHeader}>
-              <View style={styles.panelHandle} />
-            </View>
+            <View style={styles.panelHandle} />
             {this.renderCard()}
           </View>
         </Interactable.View>
@@ -388,7 +395,7 @@ const styles = StyleSheet.create({
   },
   panel: {
     height: Screen.height + 300,
-    padding: 20,
+    padding: 8,
     backgroundColor: '#FAFAFA',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
@@ -402,7 +409,12 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   panelHeader: {
-    alignItems: 'center',
+    marginLeft: 16,
+  },
+  panelBody: {
+    marginLeft: 16,
+    marginBottom: 8,
+    marginTop: 8,
   },
   panelHandle: {
     width: 48,
@@ -410,16 +422,12 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#00000040',
     marginBottom: 10,
+    alignSelf: 'center',
   },
   panelButton: {
     alignItems: 'center',
     marginVertical: 8,
     alignSelf: 'center',
-  },
-  selfie: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
   },
 });
 

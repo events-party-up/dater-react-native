@@ -34,6 +34,8 @@ type State = {
   faces: [],
   photoURI: string,
   hasCameraPermission: boolean,
+  width: number,
+  height: number,
 }
 
 class MakePhotoSelfieScreen extends React.Component<Props, State> {
@@ -47,6 +49,8 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
       faces: [],
       photoURI: '',
       hasCameraPermission: false,
+      width: 0,
+      height: 0,
     };
   }
 
@@ -90,6 +94,7 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
       this.setState({
         ...this.state,
         photoURI: data.uri,
+        ...data,
       });
     }
   };
@@ -149,7 +154,10 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
       payload: {
         mode: 'selfieUploading',
         canHide: false,
-        photoURI: this.state.photoURI,
+        uploadSelfie: {
+          photoURI: this.state.photoURI,
+          aspectRatio: this.state.width / this.state.height,
+        },
       },
     });
   }

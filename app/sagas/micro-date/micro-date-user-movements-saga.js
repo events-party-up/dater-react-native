@@ -116,6 +116,13 @@ function* checkDistance(microDate, myCoords, targetCoords) {
         canHide: true,
       },
     });
+    // yield put({
+    //   type: 'UI_MAP_PANEL_SHOW',
+    //   payload: {
+    //     mode: 'selfieUploading',
+    //     canHide: false,
+    //   },
+    // });
   } else if (mapPanelMode === 'makeSelfie') {
     yield put({
       type: 'UI_MAP_PANEL_SET_MODE',

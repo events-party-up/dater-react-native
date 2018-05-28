@@ -27,4 +27,4 @@ export const MICRO_DATES_COLLECTION = 'microDates';
 export const GEO_POINTS_COLLECTION = 'geoPoints';
 
 // Micro Dates
-export const DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD = 30;
+export const DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD = 1000;

@@ -36,12 +36,17 @@ export default function* mapPanelSaga() {
 
       if (mapPanelVisible) {
         // hide pannel without any actions
-        yield call(mapPanelSnapper, { index: 2 }); // hide
+        yield call(mapPanelSnapper, { index: 3 }); // hide
         yield call(delay, mapPanelReplaceDelay);
       }
-      const mapPanelMode = yield select((state) => state.mapPanel.mode);
+      const mapPanelMode = action.payload && action.payload.mode ?
+        action.payload.mode : yield select((state) => state.mapPanel.mode);
+
       switch (mapPanelMode) {
         case 'microDateActive':
+          yield call(mapPanelSnapper, { index: 0 }); // show
+          break;
+        case 'selfieUploading':
           yield call(mapPanelSnapper, { index: 0 }); // show
           break;
         default:
@@ -63,7 +68,7 @@ export default function* mapPanelSaga() {
       if ((showingInProgress && !mapPanelVisible)) return;
       if (action.type === 'UI_MAP_PANEL_HIDE' && !canHide) return; // non closable
 
-      yield call(mapPanelSnapper, { index: 2 }); // hide
+      yield call(mapPanelSnapper, { index: 3 }); // hide
       if (mapPanelVisible) {
         yield call(delay, mapPanelReplaceDelay);
       } else {
