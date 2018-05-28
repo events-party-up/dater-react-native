@@ -143,6 +143,15 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
         uri: this.state.photoURI,
       },
     });
+    this.props.navigation.goBack();
+    this.props.dispatch({
+      type: 'UI_MAP_PANEL_SHOW',
+      payload: {
+        mode: 'selfieUploading',
+        canHide: false,
+        photoURI: this.state.photoURI,
+      },
+    });
   }
 
   render() {

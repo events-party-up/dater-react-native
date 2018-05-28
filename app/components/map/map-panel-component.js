@@ -5,6 +5,7 @@ import {
   Dimensions,
   Animated,
   Platform,
+  Image,
 } from 'react-native';
 import Interactable from 'react-native-interactable';
 import 'moment/locale/ru';
@@ -319,6 +320,27 @@ class MapPanelComponent extends Component<Props> {
             </DaterButton>
           </View>
         );
+      case 'selfieUploading':
+        return (
+          <View>
+            <H2>Закачиваю селфи...
+            </H2>
+            <Caption2 style={{
+              marginBottom: 8,
+              marginTop: 8,
+            }}
+            >
+              Подождите, идет загрузка селфи на сервер. Загружено 5% {this.props.mapPanel.photoURI}
+            </Caption2>
+            <Image
+              style={styles.selfie}
+              source={{ uri: this.props.mapPanel.photoURI }}
+            />
+            <DaterButton style={styles.panelButton} onPress={this.openCamera}>
+              Отменить
+            </DaterButton>
+          </View>
+        );
       default:
         return null;
     }
@@ -393,6 +415,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 8,
     alignSelf: 'center',
+  },
+  selfie: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
 });
 
