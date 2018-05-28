@@ -19,8 +19,9 @@ function* uploadPhoto(uploadTaskId, action) {
     contentType: 'image/jpeg',
   };
   const fileName = action.payload.uri.replace(/^.*[\\/]/, '');
+  const microDate = yield select((state) => state.microDate);
   const uploadTask = firebase.storage()
-    .ref(`microDates/0nEWfZi6F1ysUpJfv3lL/${uid}/${fileName}`)
+    .ref(`microDates/${microDate.id}/${uid}/${fileName}`)
     .put(action.payload.uri, metadata);
   const uploadTaskChannel = yield call(createUploadTaskChannel, uploadTask);
 
