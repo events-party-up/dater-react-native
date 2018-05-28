@@ -1,4 +1,4 @@
-import { takeEvery, call, put, take, fork } from 'redux-saga/effects';
+import { takeEvery, call, put, take, fork, select } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
 
@@ -13,12 +13,15 @@ export default function* uploadPhotosSaga() {
 }
 
 function* uploadPhoto(uploadTaskId, action) {
+  const uid = yield select((state) => state.auth.uid);
   yield console.log('New upload task: ', uploadTaskId);
   const metadata = {
     contentType: 'image/jpeg',
   };
   const fileName = action.payload.uri.replace(/^.*[\\/]/, '');
-  const uploadTask = firebase.storage().ref(`images/${fileName}`).put(action.payload.uri, metadata);
+  const uploadTask = firebase.storage()
+    .ref(`microDates/0nEWfZi6F1ysUpJfv3lL/${uid}/${fileName}`)
+    .put(action.payload.uri, metadata);
   const uploadTaskChannel = yield call(createUploadTaskChannel, uploadTask);
 
   yield takeEvery(uploadTaskChannel, uploadTaskProgress, uploadTaskId);
@@ -93,6 +96,7 @@ function createUploadTaskChannel(uploadTask) {
       // Upload completed successfully, now we can get the download URL
       emit({
         finished: true,
+        progress: 100,
         downloadURL: finishedTask.downloadURL,
         metadata: finishedTask.metadata,
       });

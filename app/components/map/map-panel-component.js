@@ -16,8 +16,7 @@ import DaterButton from '../../components/ui-kit/dater-button';
 
 const mapStateToProps = (state) => ({
   mapPanel: state.mapPanel,
-  myCurrentCoords: state.location.coords,
-  microDateDistance: state.microDate.distance,
+  microDate: state.microDate,
 });
 
 const Screen = {
@@ -27,8 +26,9 @@ const Screen = {
 
 type Props = {
   mapPanel: any,
+  microDate: any,
   dispatch: Dispatch,
-  microDateDistance: number,
+  navigation: any,
 };
 
 class MapPanelComponent extends Component<Props> {
@@ -126,6 +126,10 @@ class MapPanelComponent extends Component<Props> {
     });
   }
 
+  openCamera = () => {
+    this.props.navigation.navigate('MakePhotoSelfie');
+  }
+
   closePanel = () => {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE',
@@ -157,14 +161,16 @@ class MapPanelComponent extends Component<Props> {
       case 'activeMicroDate':
         return (
           <View>
-            <H2>Встеча с {this.props.mapPanel.user.shortId} активна</H2>
+            <H2>Встеча с {this.props.microDate.targetUserUid &&
+              this.props.microDate.targetUserUid.substring(0, 4)} активна
+            </H2>
             <Caption2 style={{
               marginBottom: 8,
               marginTop: 8,
             }}
             >
-              Расстояние {Math.floor(this.props.microDateDistance)} м. {' '}
-              Date ID: {this.props.mapPanel.microDateId.substring(0, 4)}
+              Расстояние {Math.floor(this.props.mapPanel.distance)} м. {' '}
+              Date ID: {this.props.microDate.id && this.props.microDate.id.substring(0, 4)}
             </Caption2>
             <View
               style={{
@@ -292,6 +298,24 @@ class MapPanelComponent extends Component<Props> {
             </Caption2>
             <DaterButton style={styles.panelButton} onPress={this.closePanel}>
               ОК
+            </DaterButton>
+          </View>
+        );
+      case 'makeSelfie':
+        return (
+          <View>
+            <H2>Сделайте селфи с {this.props.microDate.targetUserUid &&
+              this.props.microDate.targetUserUid.substring(0, 4)}!
+            </H2>
+            <Caption2 style={{
+              marginBottom: 8,
+              marginTop: 8,
+            }}
+            >
+              Для завершения встречи сделайте совместное селфи.
+            </Caption2>
+            <DaterButton style={styles.panelButton} onPress={this.openCamera}>
+              Камера
             </DaterButton>
           </View>
         );

@@ -36,10 +36,10 @@ const types = {
 };
 
 const initialState = {
+  id: null,
   enabled: false,
   pending: false,
   targetUserUid: null,
-  microDateId: null,
   targetCurrentCoords: null,
   targetPreviousCoords: null,
   myPreviousCoords: null,
@@ -81,7 +81,7 @@ const microDateReducer = (state = initialState, action) => {
         enabled: true,
         pending: false,
         distance: payload.distance,
-        microDateId: payload.microDateId,
+        id: payload.microDateId,
         myPreviousCoords: {
           ...payload.myCoords,
           clientTS: Date.now(),

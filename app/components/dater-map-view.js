@@ -186,12 +186,12 @@ class DaterMapView extends React.Component<Props> {
               <PastLocationsPath
                 uid={this.props.auth.uid && this.props.auth.uid}
                 mode="own"
-                microDateId={this.props.microDate.microDateId}
+                microDateId={this.props.microDate.id}
               />
               <PastLocationsPath
                 uid={this.props.microDate.targetUserUid}
                 mode="target"
-                microDateId={this.props.microDate.microDateId}
+                microDateId={this.props.microDate.id}
               />
             </React.Fragment>
         }
@@ -210,18 +210,18 @@ class DaterMapView extends React.Component<Props> {
         {this.props.microDate.enabled &&
         <View style={styles.microDateContainer} pointerEvents="none">
           <Caption2 style={styles.microDateText}>
-            Date ID: {this.props.microDate.microDateId.substring(0, 4)}{'\n'}
+            Date ID: {this.props.microDate.id.substring(0, 4)}{'\n'}
             Distance: {Math.floor(this.props.microDate.distance)}{'\n'}
             My Score:{' '}
             <MicroDateStats
-              microDateId={this.props.microDate.microDateId}
+              microDateId={this.props.microDate.id}
               uid={this.props.auth.uid && this.props.auth.uid}
               style={styles.microDateText}
             />
             {'\n'}
             {this.props.microDate.targetUserUid && this.props.microDate.targetUserUid.substring(0, 4)}: {' '}
             <MicroDateStats
-              microDateId={this.props.microDate.microDateId}
+              microDateId={this.props.microDate.id}
               uid={this.props.microDate.targetUserUid}
               style={styles.microDateText}
             />

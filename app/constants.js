@@ -26,3 +26,5 @@ export const USERS_AROUND_SHOW_LAST_SEEN_HOURS_AGO = 12;
 export const MICRO_DATES_COLLECTION = 'microDates';
 export const GEO_POINTS_COLLECTION = 'geoPoints';
 
+// Micro Dates
+export const DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD = 30;

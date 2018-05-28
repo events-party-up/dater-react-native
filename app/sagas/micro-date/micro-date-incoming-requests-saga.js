@@ -104,10 +104,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
         payload: {
           canClose: true,
           mode: 'activeMicroDate',
-          user,
-          myCoords,
           distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
-          microDateId: microDate.id,
         },
       });
 

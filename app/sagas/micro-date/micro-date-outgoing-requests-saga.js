@@ -135,10 +135,7 @@ export default function* microDateOutgoingRequestsSaga() {
           payload: {
             mode: 'activeMicroDate',
             canHide: true,
-            user,
-            myCoords,
             distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
-            microDateId: microDate.id,
           },
         });
         break;
