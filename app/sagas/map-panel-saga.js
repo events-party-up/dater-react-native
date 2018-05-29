@@ -32,9 +32,10 @@ export default function* mapPanelSaga() {
   function* showPanel(mapPanelSnapper, action) {
     try {
       showingInProgress = true;
+      const mapPanelPreviousMode = yield select((state) => state.mapPanel.previousMode);
       const mapPanelVisible = yield select((state) => state.mapPanel.visible);
 
-      if (mapPanelVisible) {
+      if (mapPanelVisible && mapPanelPreviousMode !== action.payload.mode) {
         // hide pannel without any actions
         yield call(mapPanelSnapper, { index: 3 }); // hide
         yield call(delay, mapPanelReplaceDelay);

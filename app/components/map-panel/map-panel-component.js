@@ -320,8 +320,9 @@ class MapPanelComponent extends Component<Props> {
       case 'selfieUploadedByMe':
         return (
           <MapPanelSelfieUploadedByMe
-            aspectRatio={this.props.mapPanel.microDate.selfie.width / this.props.mapPanel.microDate.selfie.width}
+            aspectRatio={this.props.mapPanel.microDate.selfie.width / this.props.mapPanel.microDate.selfie.height}
             cloudinaryPublicId={this.props.mapPanel.microDate.id}
+            cloudinaryImageVersion={this.props.mapPanel.microDate.selfie.version}
             targetUserUid={this.props.mapPanel.microDate.selfie.uploadedBy ===
               this.props.mapPanel.microDate.requestFor ?
               this.props.mapPanel.microDate.requestBy :
@@ -334,6 +335,7 @@ class MapPanelComponent extends Component<Props> {
           <MapPanelSelfieUploadedByTarget
             aspectRatio={this.props.mapPanel.microDate.selfie.width / this.props.mapPanel.microDate.selfie.height}
             cloudinaryPublicId={this.props.mapPanel.microDate.id}
+            cloudinaryImageVersion={this.props.mapPanel.microDate.selfie.version}
             targetUserUid={this.props.mapPanel.microDate.requestBy}
             onDecline={this.onSelfieDeclinedByMe}
             onApprove={this.onSelfieApprovedByMe}

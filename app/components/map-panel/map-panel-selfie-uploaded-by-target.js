@@ -12,6 +12,7 @@ import cloudinaryUrl from '../../utils/cloudinary-utils';
 type Props = {
   aspectRatio: number,
   cloudinaryPublicId: string,
+  cloudinaryImageVersion: number,
   targetUserUid: string,
   onDecline: () => void,
   onApprove: () => void,
@@ -44,7 +45,10 @@ class MapPanelSelfieUploadedByTarget extends React.Component<Props> {
                   borderRadius: 4,
                 }}
                 source={{
-                  uri: cloudinaryUrl(`microDates/${this.props.cloudinaryPublicId}`, {
+                  uri: cloudinaryUrl({
+                    publicId: `microDates/${this.props.cloudinaryPublicId}`,
+                    version: this.props.cloudinaryImageVersion,
+                  }, {
                     height: 112,
                     crop: 'scale',
                   }),

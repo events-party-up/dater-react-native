@@ -12,6 +12,7 @@ export const types = {
 
 const initialState = {
   mode: '',
+  previousMode: '',
   visible: false,
   user: {},
   error: null,
@@ -26,6 +27,7 @@ const mapPanelReducer = (state = initialState, action) => {
       return {
         ...state,
         ...payload,
+        previousMode: state.mode,
       };
     }
     case types.UI_MAP_PANEL_SHOW_FINISHED: {
@@ -33,18 +35,21 @@ const mapPanelReducer = (state = initialState, action) => {
         ...state,
         ...payload,
         visible: true,
+        previousMode: state.mode,
       };
     }
     case types.UI_MAP_PANEL_HIDE_FORCE: {
       return {
         ...state,
         canHide: true,
+        previousMode: '',
       };
     }
     case types.UI_MAP_PANEL_HIDE_FINISHED: {
       return {
         ...state,
         visible: false,
+        previousMode: '',
       };
     }
     case types.UI_MAP_PANEL_ERROR: {
