@@ -1,4 +1,4 @@
-import { call, take, put, takeLatest, select, cancel } from 'redux-saga/effects';
+import { call, take, put, takeLatest, select, cancel, actionChannel } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import GeoUtils from '../../utils/geo-utils';
@@ -10,49 +10,55 @@ export default function* microDateOutgoingRequestsSaga() {
   let microDateUpdatesTask;
 
   try {
+    const requestsChannel = yield actionChannel([
+      'MICRO_DATE_OUTGOING_REQUEST',
+      'MICRO_DATE_OUTGOING_REQUEST_PENDING',
+    ]);
     const myUid = yield select((state) => state.auth.uid);
-    const activeMicroDate = yield getActiveOutgoingDate(myUid);
+    const pendingMicroDate = yield getPendingOutgoingMicroDate(myUid);
 
-    if (activeMicroDate) {
-      microDateChannel = yield call(createChannelToMicroDate, activeMicroDate.id);
-      microDateUpdatesTask = yield takeLatest(microDateChannel, handleOutgoingRequestsSaga);
+    if (pendingMicroDate) {
+      const targetUserSnap = yield pendingMicroDate.requestForRef.get();
 
-      const nextAction = yield take([
-        'MICRO_DATE_OUTGOING_CANCEL',
-        'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
-        'MICRO_DATE_STOPPED_BY_TARGET',
-        'MICRO_DATE_STOP',
-        'MICRO_DATE_OUTGOING_REMOVE',
-      ]);
-
-      if (nextAction.type === 'MICRO_DATE_OUTGOING_REMOVE') {
-        yield* handleRemoveRequest(microDateChannel, microDateUpdatesTask);
-      } else if (nextAction.type === 'MICRO_DATE_OUTGOING_CANCEL') {
-        yield* handleCancelRequest(microDateChannel, microDateUpdatesTask, activeMicroDate.id);
-      } else if (nextAction.type === 'MICRO_DATE_STOP') {
-        yield* handleStopRequest(microDateChannel, microDateUpdatesTask, activeMicroDate);
-      } else {
-        yield* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask);
-      }
+      yield put({
+        type: 'MICRO_DATE_OUTGOING_REQUEST_PENDING',
+        payload: {
+          user: {
+            id: targetUserSnap.id,
+            shortId: targetUserSnap.id.substring(0, 4),
+            ...targetUserSnap.data(),
+          },
+          microDate: pendingMicroDate,
+        },
+      });
     }
 
     while (true) {
-      const action = yield take('MICRO_DATE_OUTGOING_REQUEST');
-      const targetUser = action.payload.user;
-      const microDate = {
-        status: 'REQUEST',
-        requestBy: myUid,
-        requestFor: targetUser.uid,
-        requestByRef: firebase.firestore().collection('geoPoints').doc(myUid),
-        requestForRef: firebase.firestore().collection('geoPoints').doc(targetUser.uid),
-        requestTS: firebase.firestore.FieldValue.serverTimestamp(),
-        active: true,
-      };
-      const microDateRef = yield firebase.firestore()
-        .collection(MICRO_DATES_COLLECTION)
-        .add(microDate);
+      let microDate: any = {};
+      let microDateRef = {};
 
-      microDateChannel = yield call(createChannelToMicroDate, microDateRef.id);
+      const action = yield take(requestsChannel);
+      const targetUser = action.payload.user;
+
+      if (action.type === 'MICRO_DATE_OUTGOING_REQUEST') {
+        microDateRef = yield firebase.firestore()
+          .collection(MICRO_DATES_COLLECTION).doc();
+        microDate = {
+          status: 'REQUEST',
+          requestBy: myUid,
+          requestFor: targetUser.uid,
+          requestByRef: firebase.firestore().collection('geoPoints').doc(myUid),
+          requestForRef: firebase.firestore().collection('geoPoints').doc(targetUser.uid),
+          requestTS: firebase.firestore.FieldValue.serverTimestamp(),
+          active: true,
+          id: microDateRef.id,
+        };
+        yield microDateRef.set(microDate);
+      } else if (action.type === 'MICRO_DATE_OUTGOING_REQUEST_PENDING') {
+        microDate = action.payload.microDate; // eslint-disable-line
+      }
+
+      microDateChannel = yield call(createChannelToMicroDate, microDate.id || microDateRef.id);
       microDateUpdatesTask = yield takeLatest(microDateChannel, handleOutgoingRequestsSaga);
 
       const nextAction = yield take([
@@ -66,9 +72,9 @@ export default function* microDateOutgoingRequestsSaga() {
       if (nextAction.type === 'MICRO_DATE_OUTGOING_REMOVE') {
         yield* handleRemoveRequest(microDateChannel, microDateUpdatesTask);
       } else if (nextAction.type === 'MICRO_DATE_OUTGOING_CANCEL') {
-        yield* handleCancelRequest(microDateChannel, microDateUpdatesTask, microDateRef.id);
+        yield* handleCancelRequest(microDateChannel, microDateUpdatesTask, microDate.id);
       } else if (nextAction.type === 'MICRO_DATE_STOP') {
-        yield* handleStopRequest(microDateChannel, microDateUpdatesTask, { ...microDate, id: microDateRef.id });
+        yield* handleStopRequest(microDateChannel, microDateUpdatesTask, microDate);
       } else {
         yield* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask);
       }
@@ -262,14 +268,14 @@ function createChannelToMicroDate(microDateId) {
   return eventChannel((emit) => {
     const onSnapshotUpdated = (dataSnapshot) => {
       // do not process local updates triggered by local writes
-      // if (dataSnapshot.metadata.hasPendingWrites) {
+      // if (dataSnapshot.metadata.fromCache === true) {
       //   return;
       // }
 
       emit({
-        id: dataSnapshot.id,
         ...dataSnapshot.data(),
         hasNoData: typeof dataSnapshot.data() === 'undefined',
+        id: dataSnapshot.id,
       });
     };
 
@@ -285,7 +291,7 @@ function createChannelToMicroDate(microDateId) {
   });
 }
 
-async function getActiveOutgoingDate(uid) {
+async function getPendingOutgoingMicroDate(uid) {
   const dateStartedByMeQuery = firebase.firestore()
     .collection(MICRO_DATES_COLLECTION)
     .where('requestBy', '==', uid)
@@ -295,7 +301,7 @@ async function getActiveOutgoingDate(uid) {
   const activeDateSnapshot = dateStartedByMeSnapshot.docs[0];
 
   return activeDateSnapshot ? {
-    id: activeDateSnapshot.id,
     ...activeDateSnapshot.data(),
+    id: activeDateSnapshot.id,
   } : null;
 }

@@ -1,8 +1,11 @@
 import GeoUtils from '../utils/geo-utils';
 
 const types = {
+
   MICRO_DATE_OUTGOING_REQUEST: 'MICRO_DATE_OUTGOING_REQUEST',
   MICRO_DATE_OUTGOING_REQUESTED: 'MICRO_DATE_OUTGOING_REQUESTED',
+  MICRO_DATE_OUTGOING_REQUEST_PENDING: 'MICRO_DATE_OUTGOING_REQUEST_PENDING',
+
   MICRO_DATE_INCOMING_REQUEST: 'MICRO_DATE_INCOMING_REQUEST',
 
   MICRO_DATE_INCOMING_DECLINE_BY_ME: 'MICRO_DATE_INCOMING_DECLINE_BY_ME',
@@ -59,6 +62,7 @@ const microDateReducer = (state = initialState, action) => {
         targetUserUid: payload.user.id,
       };
     }
+    case types.MICRO_DATE_OUTGOING_REQUEST_PENDING:
     case types.MICRO_DATE_OUTGOING_REQUESTED:
     case types.MICRO_DATE_INCOMING_REQUEST: {
       return {
