@@ -41,7 +41,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
     // console.log('microDateChannel: ', microDateChannel);
     const myCoords = yield select((state) => state.location.coords);
     const userSnap = yield microDate.requestByRef.get();
-    const user = {
+    const targetUser = {
       id: userSnap.id,
       shortId: userSnap.id.substring(0, 4),
       ...userSnap.data(),
@@ -53,7 +53,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
         type: 'UI_MAP_PANEL_SHOW',
         payload: {
           mode: 'incomingMicroDateRequest',
-          user,
+          targetUser,
           distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
           canHide: false,
           microDateId: microDate.id,
@@ -92,7 +92,7 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
       yield put({
         type: 'MICRO_DATE_INCOMING_START',
         payload: {
-          user,
+          targetUser,
           myCoords,
           distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
           microDateId: microDate.id,

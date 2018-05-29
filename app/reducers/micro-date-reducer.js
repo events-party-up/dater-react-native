@@ -59,7 +59,7 @@ const microDateReducer = (state = initialState, action) => {
     case types.MICRO_DATE_OUTGOING_REQUEST: {
       return {
         ...state,
-        targetUserUid: payload.user.id,
+        targetUserUid: payload.targetUser.id,
       };
     }
     case types.MICRO_DATE_OUTGOING_REQUEST_PENDING:
@@ -83,7 +83,7 @@ const microDateReducer = (state = initialState, action) => {
     case types.MICRO_DATE_INCOMING_START: {
       return {
         ...state,
-        targetUserUid: payload.user.id,
+        targetUserUid: payload.targetUser.id,
         enabled: true,
         pending: false,
         distance: payload.distance,
@@ -92,7 +92,7 @@ const microDateReducer = (state = initialState, action) => {
           ...payload.myCoords,
           clientTS: Date.now(),
         },
-        targetCurrentCoords: payload.user.geoPoint,
+        targetCurrentCoords: payload.targetUser.geoPoint,
       };
     }
     case types.MICRO_DATE_OUTGOING_REMOVED:

@@ -75,7 +75,7 @@ class MapPanelComponent extends Component<Props> {
     this.props.dispatch({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE' });
   }
 
-  requestMicroDate = (user) => {
+  requestMicroDate = (targetUser) => {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE',
       payload: {
@@ -85,7 +85,7 @@ class MapPanelComponent extends Component<Props> {
     this.props.dispatch({
       type: 'MICRO_DATE_OUTGOING_REQUEST',
       payload: {
-        user,
+        targetUser,
       },
     });
   }
@@ -160,14 +160,14 @@ class MapPanelComponent extends Component<Props> {
       case 'userCard':
         return (
           <View>
-            <H2 style={MapPanelStyles.panelHeader}>Пользователь ({this.props.mapPanel.user.shortId} )</H2>
+            <H2 style={MapPanelStyles.panelHeader}>Пользователь ({this.props.mapPanel.targetUser.shortId} )</H2>
             <Caption2 style={MapPanelStyles.panelBody}>
-              {Math.floor(this.props.mapPanel.user.distance)} метров от вас. {' '}
-              Был <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.user.timestamp}</Moment>.
+              {Math.floor(this.props.mapPanel.targetUser.distance)} метров от вас. {' '}
+              Был <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.targetUser.timestamp}</Moment>.
             </Caption2>
             <DaterButton
               style={MapPanelStyles.panelButton}
-              onPress={() => this.requestMicroDate(this.props.mapPanel.user)}
+              onPress={() => this.requestMicroDate(this.props.mapPanel.targetUser)}
             >
               Встретиться
             </DaterButton>
@@ -207,7 +207,7 @@ class MapPanelComponent extends Component<Props> {
       case 'incomingMicroDateRequest':
         return (
           <View>
-            <H2 style={MapPanelStyles.panelHeader}>Запрос от {this.props.mapPanel.user.shortId}</H2>
+            <H2 style={MapPanelStyles.panelHeader}>Запрос от {this.props.mapPanel.targetUser.shortId}</H2>
             <Caption2 style={MapPanelStyles.panelBody}>
               Расстояние {Math.floor(this.props.mapPanel.distance)} м. {' '}
               Date ID: {this.props.mapPanel.microDateId.substring(0, 4)}

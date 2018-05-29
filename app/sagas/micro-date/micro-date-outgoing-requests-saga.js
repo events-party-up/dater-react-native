@@ -23,7 +23,7 @@ export default function* microDateOutgoingRequestsSaga() {
       yield put({
         type: 'MICRO_DATE_OUTGOING_REQUEST_PENDING',
         payload: {
-          user: {
+          targetUser: {
             id: targetUserSnap.id,
             shortId: targetUserSnap.id.substring(0, 4),
             ...targetUserSnap.data(),
@@ -38,11 +38,12 @@ export default function* microDateOutgoingRequestsSaga() {
       let microDateRef = {};
 
       const action = yield take(requestsChannel);
-      const targetUser = action.payload.user;
+      const { targetUser } = action.payload;
 
       if (action.type === 'MICRO_DATE_OUTGOING_REQUEST') {
         microDateRef = yield firebase.firestore()
           .collection(MICRO_DATES_COLLECTION).doc();
+
         microDate = {
           status: 'REQUEST',
           requestBy: myUid,
@@ -53,20 +54,21 @@ export default function* microDateOutgoingRequestsSaga() {
           active: true,
           id: microDateRef.id,
         };
+
         yield microDateRef.set(microDate);
       } else if (action.type === 'MICRO_DATE_OUTGOING_REQUEST_PENDING') {
         microDate = action.payload.microDate; // eslint-disable-line
       }
 
-      microDateChannel = yield call(createChannelToMicroDate, microDate.id || microDateRef.id);
+      microDateChannel = yield call(createChannelToMicroDate, microDate.id);
       microDateUpdatesTask = yield takeLatest(microDateChannel, handleOutgoingRequestsSaga);
 
       const nextAction = yield take([
+        'MICRO_DATE_OUTGOING_REMOVE',
         'MICRO_DATE_OUTGOING_CANCEL',
+        'MICRO_DATE_STOP',
         'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
         'MICRO_DATE_STOPPED_BY_TARGET',
-        'MICRO_DATE_STOP',
-        'MICRO_DATE_OUTGOING_REMOVE',
       ]);
 
       if (nextAction.type === 'MICRO_DATE_OUTGOING_REMOVE') {
@@ -95,7 +97,7 @@ export default function* microDateOutgoingRequestsSaga() {
 
     const myCoords = yield select((state) => state.location.coords);
     const userSnap = yield microDate.requestForRef.get();
-    const user = {
+    const targetUser = {
       id: userSnap.id,
       shortId: userSnap.id.substring(0, 4),
       ...userSnap.data(),
@@ -140,7 +142,7 @@ export default function* microDateOutgoingRequestsSaga() {
         yield put({
           type: 'MICRO_DATE_OUTGOING_START',
           payload: {
-            user,
+            targetUser,
             myCoords,
             distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
             microDateId: microDate.id,
@@ -302,6 +304,5 @@ async function getPendingOutgoingMicroDate(uid) {
 
   return activeDateSnapshot ? {
     ...activeDateSnapshot.data(),
-    id: activeDateSnapshot.id,
   } : null;
 }

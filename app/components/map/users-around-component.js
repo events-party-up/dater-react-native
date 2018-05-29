@@ -20,7 +20,7 @@ type Props = {
 };
 
 class UsersAroundComponent extends React.Component<Props> {
-  onPressOrSelect = (user) => {
+  onPressOrSelect = (targetUser) => {
     if (this.props.microDate.enabled || this.props.microDate.pending) {
       this.props.dispatch({
         type: 'UI_MAP_PANEL_SHOW',
@@ -33,7 +33,7 @@ class UsersAroundComponent extends React.Component<Props> {
         type: 'UI_MAP_PANEL_SHOW',
         payload: {
           mode: 'userCard',
-          user,
+          targetUser,
           canHide: true,
         },
       });
