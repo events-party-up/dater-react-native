@@ -163,7 +163,26 @@ export default function* microDateOutgoingRequestsSaga() {
               microDate,
             },
           });
+          // yield put({
+          //   type: 'MICRO_DATE_OUTGOING_START',
+          //   payload: {
+          //     user,
+          //     myCoords,
+          //     distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
+          //     microDateId: microDate.id,
+          //   },
+          // });
 
+          yield put({ type: 'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME' });
+        } else if (microDate.selfie.uploadedBy !== microDate.requestBy) {
+          yield put({
+            type: 'UI_MAP_PANEL_SHOW',
+            payload: {
+              mode: 'selfieUploadedByTarget',
+              canHide: false,
+              microDate,
+            },
+          });
           yield put({ type: 'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME' });
         }
         break;

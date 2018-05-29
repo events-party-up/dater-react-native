@@ -49,6 +49,9 @@ export default function* mapPanelSaga() {
         case 'selfieUploading':
           yield call(mapPanelSnapper, { index: 0 }); // show
           break;
+        case 'selfieUploadedByTarget':
+          yield call(mapPanelSnapper, { index: 1 }); // show
+          break;
         default:
           yield call(mapPanelSnapper, { index: 0 }); // show
           break;

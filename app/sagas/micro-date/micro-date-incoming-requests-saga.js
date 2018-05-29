@@ -145,6 +145,28 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
       yield put({ type: 'MICRO_DATE_STOPPED_BY_TARGET' });
       // cancel channel & task here
       yield microDateChannel.close();
+    } else if (microDate.status === 'SELFIE_UPLOADED' && microDate.selfie.uploadedBy === microDate.requestBy) {
+      yield put({
+        type: 'UI_MAP_PANEL_SHOW',
+        payload: {
+          mode: 'selfieUploadedByTarget',
+          canHide: false,
+          microDate,
+        },
+      });
+
+      yield put({ type: 'MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_TARGET' });
+    } else if (microDate.status === 'SELFIE_UPLOADED' && microDate.selfie.uploadedBy === microDate.requestFor) {
+      yield put({
+        type: 'UI_MAP_PANEL_SHOW',
+        payload: {
+          mode: 'selfieUploadedByMe',
+          canHide: false,
+          microDate,
+        },
+      });
+
+      yield put({ type: 'MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_ME' });
     }
   } catch (error) {
     yield put({ type: 'MICRO_DATE_HANDLE_INCOMING_ERROR', payload: error });

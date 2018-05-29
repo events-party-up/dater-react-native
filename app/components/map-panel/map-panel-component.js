@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {
-  StyleSheet,
   View,
   Dimensions,
   Animated,
@@ -11,10 +10,13 @@ import 'moment/locale/ru';
 import Moment from 'react-moment';
 import { connect, Dispatch } from 'react-redux';
 
+import MapPanelStyles from './map-panel-styles';
+
 import { H2, Caption2 } from '../../components/ui-kit/typography';
 import DaterButton from '../../components/ui-kit/dater-button';
 import MapPanelSelfieUploading from './map-panel-selfie-uploading';
 import MapPanelSelfieUploadedByMe from './map-panel-selfie-uploaded-by-me';
+import MapPanelSelfieUploadedByTarget from './map-panel-selfie-uploaded-by-target';
 
 const mapStateToProps = (state) => ({
   mapPanel: state.mapPanel,
@@ -41,7 +43,7 @@ class MapPanelComponent extends Component<Props> {
   interactableElement: Interactable.View;
   showSnapPosition = Platform.OS === 'ios' ? Screen.height - 100 : Screen.height - 130;
   showFullScreenSnapPosition = Platform.OS === 'ios' ? 20 : 8;
-  showHalfScreenSnapPosition = Platform.OS === 'ios' ? (Screen.height / 2) - 20 : (Screen.height / 2) - 8;
+  showHalfScreenSnapPosition = (Screen.height / 2) + 50;
 
   componentDidMount() {
     this.props.dispatch({
@@ -136,6 +138,14 @@ class MapPanelComponent extends Component<Props> {
     this.props.navigation.navigate('MakePhotoSelfie');
   }
 
+  onSelfieDeclinedByMe = () => {
+    console.log('Declined by me!', this);
+  }
+
+  onSelfieApprovedByMe = () => {
+    console.log('Approved by me!', this);
+  }
+
   closePanel = () => {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_HIDE',
@@ -150,12 +160,15 @@ class MapPanelComponent extends Component<Props> {
       case 'userCard':
         return (
           <View>
-            <H2 style={styles.panelHeader}>Пользователь ({this.props.mapPanel.user.shortId} )</H2>
-            <Caption2 style={styles.panelBody}>
+            <H2 style={MapPanelStyles.panelHeader}>Пользователь ({this.props.mapPanel.user.shortId} )</H2>
+            <Caption2 style={MapPanelStyles.panelBody}>
               {Math.floor(this.props.mapPanel.user.distance)} метров от вас. {' '}
               Был <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.user.timestamp}</Moment>.
             </Caption2>
-            <DaterButton style={styles.panelButton} onPress={() => this.requestMicroDate(this.props.mapPanel.user)}>
+            <DaterButton
+              style={MapPanelStyles.panelButton}
+              onPress={() => this.requestMicroDate(this.props.mapPanel.user)}
+            >
               Встретиться
             </DaterButton>
           </View>
@@ -163,10 +176,10 @@ class MapPanelComponent extends Component<Props> {
       case 'activeMicroDate':
         return (
           <View>
-            <H2 style={styles.panelHeader}>Встеча с {this.props.microDate.targetUserUid &&
+            <H2 style={MapPanelStyles.panelHeader}>Встеча с {this.props.microDate.targetUserUid &&
               this.props.microDate.targetUserUid.substring(0, 4)} активна
             </H2>
-            <Caption2 style={styles.panelBody}>
+            <Caption2 style={MapPanelStyles.panelBody}>
               Расстояние {Math.floor(this.props.mapPanel.distance)} м. {' '}
               Date ID: {this.props.microDate.id && this.props.microDate.id.substring(0, 4)}
             </Caption2>
@@ -177,13 +190,13 @@ class MapPanelComponent extends Component<Props> {
               }}
             >
               <DaterButton
-                style={[styles.panelButton, { width: 130 }]}
+                style={[MapPanelStyles.panelButton, { width: 130 }]}
                 onPress={this.stopMicroDate}
               >
                 Отменить
               </DaterButton>
               <DaterButton
-                style={[styles.panelButton, { width: 130 }]}
+                style={[MapPanelStyles.panelButton, { width: 130 }]}
                 onPress={this.showMeTargetUser}
               >
                 Найти
@@ -194,8 +207,8 @@ class MapPanelComponent extends Component<Props> {
       case 'incomingMicroDateRequest':
         return (
           <View>
-            <H2 style={styles.panelHeader}>Запрос от {this.props.mapPanel.user.shortId}</H2>
-            <Caption2 style={styles.panelBody}>
+            <H2 style={MapPanelStyles.panelHeader}>Запрос от {this.props.mapPanel.user.shortId}</H2>
+            <Caption2 style={MapPanelStyles.panelBody}>
               Расстояние {Math.floor(this.props.mapPanel.distance)} м. {' '}
               Date ID: {this.props.mapPanel.microDateId.substring(0, 4)}
             </Caption2>
@@ -206,13 +219,13 @@ class MapPanelComponent extends Component<Props> {
             }}
             >
               <DaterButton
-                style={[styles.panelButton, { width: 130 }]}
+                style={[MapPanelStyles.panelButton, { width: 130 }]}
                 onPress={this.declineIncomingMicroDate}
               >
                 Отклонить
               </DaterButton>
               <DaterButton
-                style={[styles.panelButton, { width: 130 }]}
+                style={[MapPanelStyles.panelButton, { width: 130 }]}
                 onPress={this.acceptIncomingMicroDate}
               >
                 Принять
@@ -223,14 +236,14 @@ class MapPanelComponent extends Component<Props> {
       case 'outgoingMicroDateAwaitingAccept':
         return (
           <View>
-            <H2 style={styles.panelHeader}>Ожидание ответа</H2>
-            <Caption2 style={styles.panelBody}>
+            <H2 style={MapPanelStyles.panelHeader}>Ожидание ответа</H2>
+            <Caption2 style={MapPanelStyles.panelBody}>
               Запрос {this.props.mapPanel.microDate.id.substring(0, 4)} к{' '}
               {this.props.mapPanel.microDate.requestFor.substring(0, 4)} отправлен{' '}
               <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.requestTS}</Moment>
             </Caption2>
             <DaterButton
-              style={styles.panelButton}
+              style={MapPanelStyles.panelButton}
               onPress={this.cancelOutgoingMicroDate}
             >
               Отменить
@@ -240,13 +253,14 @@ class MapPanelComponent extends Component<Props> {
       case 'outgoingMicroDateDeclined':
         return (
           <View>
-            <H2 style={styles.panelHeader}>Запрос к {this.props.mapPanel.microDate.requestFor.substring(0, 4)} отклонен
+            <H2 style={MapPanelStyles.panelHeader}>
+              Запрос к {this.props.mapPanel.microDate.requestFor.substring(0, 4)} отклонен
             </H2>
-            <Caption2 style={styles.panelBody}>
+            <Caption2 style={MapPanelStyles.panelBody}>
               Запрос {this.props.mapPanel.microDate.id.substring(0, 4)} был отклонен{' '}
               <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.declineTS}</Moment>.
             </Caption2>
-            <DaterButton style={styles.panelButton} onPress={this.closePanel}>
+            <DaterButton style={MapPanelStyles.panelButton} onPress={this.closePanel}>
               ОК
             </DaterButton>
           </View>
@@ -254,13 +268,14 @@ class MapPanelComponent extends Component<Props> {
       case 'incomingMicroDateCancelled':
         return (
           <View>
-            <H2 style={styles.panelHeader}>Запрос от {this.props.mapPanel.microDate.requestBy.substring(0, 4)} отменен
+            <H2 style={MapPanelStyles.panelHeader}>
+              Запрос от {this.props.mapPanel.microDate.requestBy.substring(0, 4)} отменен
             </H2>
-            <Caption2 style={styles.panelBody}>
+            <Caption2 style={MapPanelStyles.panelBody}>
               Запрос {this.props.mapPanel.microDate.id.substring(0, 4)} был отменен{' '}
               <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.cancelRequestTS}</Moment>.
             </Caption2>
-            <DaterButton style={styles.panelButton} onPress={this.closePanel}>
+            <DaterButton style={MapPanelStyles.panelButton} onPress={this.closePanel}>
               ОК
             </DaterButton>
           </View>
@@ -268,13 +283,14 @@ class MapPanelComponent extends Component<Props> {
       case 'microDateStopped':
         return (
           <View>
-            <H2 style={styles.panelHeader}>{this.props.mapPanel.microDate.stopBy.substring(0, 4)} отменил встречу
+            <H2 style={MapPanelStyles.panelHeader}>
+              {this.props.mapPanel.microDate.stopBy.substring(0, 4)} отменил встречу
             </H2>
-            <Caption2 style={styles.panelBody}>
+            <Caption2 style={MapPanelStyles.panelBody}>
               Встреча ({this.props.mapPanel.microDate.id.substring(0, 4)}) отменена {' '}
               <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.stopTS}</Moment>.
             </Caption2>
-            <DaterButton style={styles.panelButton} onPress={this.closePanel}>
+            <DaterButton style={MapPanelStyles.panelButton} onPress={this.closePanel}>
               ОК
             </DaterButton>
           </View>
@@ -282,13 +298,13 @@ class MapPanelComponent extends Component<Props> {
       case 'makeSelfie':
         return (
           <View>
-            <H2 style={styles.panelHeader}>Сделайте селфи с {this.props.microDate.targetUserUid &&
+            <H2 style={MapPanelStyles.panelHeader}>Сделайте селфи с {this.props.microDate.targetUserUid &&
               this.props.microDate.targetUserUid.substring(0, 4)}!
             </H2>
-            <Caption2 style={styles.panelBody}>
+            <Caption2 style={MapPanelStyles.panelBody}>
               Для завершения встречи сделайте совместное селфи.
             </Caption2>
-            <DaterButton style={styles.panelButton} onPress={this.openCamera}>
+            <DaterButton style={MapPanelStyles.panelButton} onPress={this.openCamera}>
               Камера
             </DaterButton>
           </View>
@@ -306,7 +322,21 @@ class MapPanelComponent extends Component<Props> {
           <MapPanelSelfieUploadedByMe
             aspectRatio={this.props.mapPanel.microDate.selfie.width / this.props.mapPanel.microDate.selfie.width}
             cloudinaryPublicId={this.props.mapPanel.microDate.id}
-            targetUserUid={this.props.mapPanel.microDate.requestFor}
+            targetUserUid={this.props.mapPanel.microDate.selfie.uploadedBy ===
+              this.props.mapPanel.microDate.requestFor ?
+              this.props.mapPanel.microDate.requestBy :
+              this.props.mapPanel.microDate.requestFor
+            }
+          />
+        );
+      case 'selfieUploadedByTarget':
+        return (
+          <MapPanelSelfieUploadedByTarget
+            aspectRatio={this.props.mapPanel.microDate.selfie.width / this.props.mapPanel.microDate.selfie.height}
+            cloudinaryPublicId={this.props.mapPanel.microDate.id}
+            targetUserUid={this.props.mapPanel.microDate.requestBy}
+            onDecline={this.onSelfieDeclinedByMe}
+            onApprove={this.onSelfieApprovedByMe}
           />
         );
       default:
@@ -317,7 +347,7 @@ class MapPanelComponent extends Component<Props> {
   render() {
     return (
       <View
-        style={styles.panelContainer}
+        style={MapPanelStyles.panelContainer}
         pointerEvents="box-none"
       >
         <Interactable.View
@@ -334,8 +364,8 @@ class MapPanelComponent extends Component<Props> {
           animatedValueY={this._deltaY}
           onSnap={this.onSnap}
         >
-          <View style={styles.panel}>
-            <View style={styles.panelHandle} />
+          <View style={MapPanelStyles.panel}>
+            <View style={MapPanelStyles.panelHandle} />
             {this.renderCard()}
           </View>
         </Interactable.View>
@@ -343,52 +373,5 @@ class MapPanelComponent extends Component<Props> {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  panelContainer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    top: 0,
-    zIndex: 4,
-  },
-  panel: {
-    height: Screen.height + 300,
-    padding: 8,
-    backgroundColor: '#FAFAFA',
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderRadius: 4,
-    shadowColor: 'rgba(0, 0, 0, 0.2)',
-    shadowRadius: 4,
-    shadowOpacity: 1,
-    shadowOffset: {
-      width: 0, height: 0,
-    },
-    elevation: 1,
-  },
-  panelHeader: {
-    marginLeft: 16,
-  },
-  panelBody: {
-    marginLeft: 16,
-    marginBottom: 8,
-    marginTop: 8,
-  },
-  panelHandle: {
-    width: 48,
-    height: 4,
-    borderRadius: 4,
-    backgroundColor: '#00000040',
-    marginBottom: 10,
-    alignSelf: 'center',
-  },
-  panelButton: {
-    alignItems: 'center',
-    marginVertical: 8,
-    alignSelf: 'center',
-  },
-});
 
 export default connect(mapStateToProps)(MapPanelComponent);

@@ -1,9 +1,11 @@
 import { Dimensions } from 'react-native';
 
 // Screen
-export const { width, height } = Dimensions.get('window');
-export const SCREEN_ASPECT_RATIO = width / height;
-export const SCREEN_DIAGONAL = Math.sqrt((width * width) + (height * height));
+export const SCREEN_WIDTH = Dimensions.get('window').width;
+export const SCREEN_HEIGHT = Dimensions.get('window').height;
+
+export const SCREEN_ASPECT_RATIO = SCREEN_WIDTH / SCREEN_HEIGHT;
+export const SCREEN_DIAGONAL = Math.sqrt((SCREEN_WIDTH * SCREEN_WIDTH) + (SCREEN_HEIGHT * SCREEN_HEIGHT));
 
 // Map
 export const DEFAULT_LATITUDE_DELTA = 0.00322;
@@ -28,3 +30,6 @@ export const GEO_POINTS_COLLECTION = 'geoPoints';
 
 // Micro Dates
 export const DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD = 2000;
+
+// Cloudinary
+
