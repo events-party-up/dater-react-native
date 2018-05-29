@@ -1,4 +1,4 @@
-import { call, take, put, takeEvery, select, cancel } from 'redux-saga/effects';
+import { call, take, put, takeLatest, select, cancel } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import GeoUtils from '../../utils/geo-utils';
@@ -15,16 +15,19 @@ export default function* microDateOutgoingRequestsSaga() {
 
     if (activeMicroDate) {
       microDateChannel = yield call(createChannelToMicroDate, activeMicroDate.id);
-      microDateUpdatesTask = yield takeEvery(microDateChannel, handleOutgoingRequestsSaga);
+      microDateUpdatesTask = yield takeLatest(microDateChannel, handleOutgoingRequestsSaga);
 
       const nextAction = yield take([
         'MICRO_DATE_OUTGOING_CANCEL',
         'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
         'MICRO_DATE_STOPPED_BY_TARGET',
         'MICRO_DATE_STOP',
+        'MICRO_DATE_OUTGOING_REMOVE',
       ]);
 
-      if (nextAction.type === 'MICRO_DATE_OUTGOING_CANCEL') {
+      if (nextAction.type === 'MICRO_DATE_OUTGOING_REMOVE') {
+        yield* handleRemoveRequest(microDateChannel, microDateUpdatesTask);
+      } else if (nextAction.type === 'MICRO_DATE_OUTGOING_CANCEL') {
         yield* handleCancelRequest(microDateChannel, microDateUpdatesTask, activeMicroDate.id);
       } else if (nextAction.type === 'MICRO_DATE_STOP') {
         yield* handleStopRequest(microDateChannel, microDateUpdatesTask, activeMicroDate);
@@ -50,16 +53,19 @@ export default function* microDateOutgoingRequestsSaga() {
         .add(microDate);
 
       microDateChannel = yield call(createChannelToMicroDate, microDateRef.id);
-      microDateUpdatesTask = yield takeEvery(microDateChannel, handleOutgoingRequestsSaga);
+      microDateUpdatesTask = yield takeLatest(microDateChannel, handleOutgoingRequestsSaga);
 
       const nextAction = yield take([
         'MICRO_DATE_OUTGOING_CANCEL',
         'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
         'MICRO_DATE_STOPPED_BY_TARGET',
         'MICRO_DATE_STOP',
+        'MICRO_DATE_OUTGOING_REMOVE',
       ]);
 
-      if (nextAction.type === 'MICRO_DATE_OUTGOING_CANCEL') {
+      if (nextAction.type === 'MICRO_DATE_OUTGOING_REMOVE') {
+        yield* handleRemoveRequest(microDateChannel, microDateUpdatesTask);
+      } else if (nextAction.type === 'MICRO_DATE_OUTGOING_CANCEL') {
         yield* handleCancelRequest(microDateChannel, microDateUpdatesTask, microDateRef.id);
       } else if (nextAction.type === 'MICRO_DATE_STOP') {
         yield* handleStopRequest(microDateChannel, microDateUpdatesTask, { ...microDate, id: microDateRef.id });
@@ -74,6 +80,11 @@ export default function* microDateOutgoingRequestsSaga() {
   function* handleOutgoingRequestsSaga(microDate) {
     if (microDate.error) {
       throw new Error(microDate.error);
+    }
+
+    if (microDate.hasNoData) {
+      yield put({ type: 'MICRO_DATE_OUTGOING_REMOVE' });
+      return;
     }
 
     const myCoords = yield select((state) => state.location.coords);
@@ -183,7 +194,19 @@ export default function* microDateOutgoingRequestsSaga() {
               microDate,
             },
           });
-          yield put({ type: 'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME' });
+          yield put({ type: 'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_TARGET' });
+          const nextAction = yield take([
+            'MICRO_DATE_DECLINE_SELFIE_BY_ME',
+            'MICRO_DATE_INCOMING_ACCEPT_SELFIE',
+          ]);
+          if (nextAction.type === 'MICRO_DATE_DECLINE_SELFIE_BY_ME') {
+            yield firebase.firestore()
+              .collection(MICRO_DATES_COLLECTION)
+              .doc(microDate.id)
+              .update({
+                status: 'ACCEPT',
+              });
+          }
         }
         break;
       default:
@@ -220,6 +243,12 @@ function* handleStopRequest(microDateChannel, microDateUpdatesTask, microDate) {
   yield put({ type: 'MICRO_DATE_STOPPED' });
 }
 
+function* handleRemoveRequest(microDateChannel, microDateUpdatesTask) {
+  yield put({ type: 'UI_MAP_PANEL_HIDE_FORCE' });
+  yield* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask);
+  yield put({ type: 'MICRO_DATE_OUTGOING_REMOVED' });
+}
+
 function* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask) {
   yield cancel(microDateUpdatesTask);
   yield microDateChannel.close();
@@ -233,13 +262,14 @@ function createChannelToMicroDate(microDateId) {
   return eventChannel((emit) => {
     const onSnapshotUpdated = (dataSnapshot) => {
       // do not process local updates triggered by local writes
-      if (dataSnapshot.metadata.hasPendingWrites) {
-        return;
-      }
+      // if (dataSnapshot.metadata.hasPendingWrites) {
+      //   return;
+      // }
 
       emit({
         id: dataSnapshot.id,
         ...dataSnapshot.data(),
+        hasNoData: typeof dataSnapshot.data() === 'undefined',
       });
     };
 

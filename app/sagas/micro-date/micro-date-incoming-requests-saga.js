@@ -1,4 +1,4 @@
-import { call, take, put, takeEvery, select, cancel } from 'redux-saga/effects';
+import { call, take, put, takeLatest, select, cancel } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import firebase from 'react-native-firebase';
 
@@ -25,7 +25,7 @@ export default function* microDateIncomingRequestsSaga() {
       }
 
       microDateChannel = yield call(createChannelToMicroDate, nextMicroDate.id);
-      microDateUpdatesTask = yield takeEvery(microDateChannel, handleIncomingMicroDate, microDateChannel);
+      microDateUpdatesTask = yield takeLatest(microDateChannel, handleIncomingMicroDate, microDateChannel);
     }
   } catch (error) {
     yield put({ type: 'MICRO_DATE_INCOMING_ERROR', payload: error });
@@ -156,6 +156,18 @@ function* handleIncomingMicroDate(microDateChannel, microDate) {
       });
 
       yield put({ type: 'MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_TARGET' });
+      const nextAction = yield take([
+        'MICRO_DATE_DECLINE_SELFIE_BY_ME',
+        'MICRO_DATE_INCOMING_ACCEPT_SELFIE',
+      ]);
+      if (nextAction.type === 'MICRO_DATE_DECLINE_SELFIE_BY_ME') {
+        yield firebase.firestore()
+          .collection(MICRO_DATES_COLLECTION)
+          .doc(microDate.id)
+          .update({
+            status: 'ACCEPT',
+          });
+      }
     } else if (microDate.status === 'SELFIE_UPLOADED' && microDate.selfie.uploadedBy === microDate.requestFor) {
       yield put({
         type: 'UI_MAP_PANEL_SHOW',
@@ -183,8 +195,9 @@ function createChannelForIncomingMicroDateRequests(uid) {
 
   return eventChannel((emit) => {
     const onSnapshotUpdated = (snapshot) => {
-      if (snapshot.docs.length > 0) {
+      if (snapshot.docs.length > 0 && snapshot.docChanges[0].type === 'added') {
         const dateRequest = snapshot.docs[0].data();
+
         emit({
           ...dateRequest,
           id: snapshot.docs[0].id,
@@ -211,10 +224,11 @@ function createChannelToMicroDate(microDateId) {
 
   return eventChannel((emit) => {
     const onSnapshotUpdated = (dataSnapshot) => {
+      console.log('Microdate updated: ', dataSnapshot);
       // do not process local updates triggered by local writes
-      if (dataSnapshot.metadata.hasPendingWrites) {
-        return;
-      }
+      // if (dataSnapshot.metadata.hasPendingWrites) {
+      //   return;
+      // }
 
       emit({
         id: dataSnapshot.id,
@@ -233,3 +247,4 @@ function createChannelToMicroDate(microDateId) {
     return unsubscribe;
   });
 }
+

@@ -139,7 +139,7 @@ class MapPanelComponent extends Component<Props> {
   }
 
   onSelfieDeclinedByMe = () => {
-    console.log('Declined by me!', this);
+    this.props.dispatch({ type: 'MICRO_DATE_DECLINE_SELFIE_BY_ME' });
   }
 
   onSelfieApprovedByMe = () => {

@@ -29,7 +29,7 @@ export const MICRO_DATES_COLLECTION = 'microDates';
 export const GEO_POINTS_COLLECTION = 'geoPoints';
 
 // Micro Dates
-export const DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD = 2000;
+export const DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD = 200000;
 
 // Cloudinary
 

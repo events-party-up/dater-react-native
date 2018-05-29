@@ -23,6 +23,8 @@ const types = {
   MICRO_DATE_STOPPED: 'MICRO_DATE_STOPPED',
   MICRO_DATE_STOPPED_BY_TARGET: 'MICRO_DATE_STOPPED_BY_TARGET',
 
+  MICRO_DATE_OUTGOING_REMOVED: 'MICRO_DATE_OUTGOING_REMOVED',
+
   MICRO_DATE_MY_MOVE: 'MICRO_DATE_MY_MOVE',
   MICRO_DATE_MY_MOVE_RECORDED: 'MICRO_DATE_MY_MOVE_RECORDED', // move recorded to Firestore
   MICRO_DATE_TARGET_MOVE: 'MICRO_DATE_TARGET_MOVE', // incoming moves are already qualified by sending party
@@ -89,6 +91,7 @@ const microDateReducer = (state = initialState, action) => {
         targetCurrentCoords: payload.user.geoPoint,
       };
     }
+    case types.MICRO_DATE_OUTGOING_REMOVED:
     case types.MICRO_DATE_STOPPED_BY_TARGET:
     case types.MICRO_DATE_STOPPED: {
       return initialState;
