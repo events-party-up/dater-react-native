@@ -6,6 +6,7 @@ import {
   Animated,
   Platform,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import Interactable from 'react-native-interactable';
 import 'moment/locale/ru';
@@ -295,36 +296,53 @@ class MapPanelComponent extends Component<Props> {
           <View>
             <View>
               <View style={{
-                marginRight: 16,
-                paddingRight: 16,
                 marginTop: 8,
                 flexDirection: 'row',
               }}
               >
-                <Image
+                <View
                   style={{
                     height: 112,
-                    alignSelf: 'flex-start',
-                    // height: 112 * this.props.mapPanel.uploadSelfie.aspectRatio,
                     aspectRatio: this.props.mapPanel.uploadSelfie.aspectRatio,
-                    borderRadius: 4,
                   }}
-                  source={{ uri: this.props.mapPanel.uploadSelfie.photoURI }}
-                // source={{ uri: 'https://res.cloudinary.com/dater/image/upload/v1527447895/microDates/microDateId.jpg' }}
-                />
+                >
+                  <ActivityIndicator
+                    color="white"
+                    size="large"
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      bottom: 0,
+                      top: 0,
+                      right: 0,
+                      zIndex: 1,
+                      backgroundColor: 'rgba(107, 107, 107, 0.6)',
+                      }
+                    }
+                  />
+                  <Image
+                    style={{
+                      height: 112,
+                      alignSelf: 'flex-start',
+                      aspectRatio: this.props.mapPanel.uploadSelfie.aspectRatio,
+                      borderRadius: 4,
+                    }}
+                    source={{ uri: this.props.mapPanel.uploadSelfie.photoURI }}
+                    // source={{ uri: 'https://res.cloudinary.com/dater/image/upload/v1527447895/microDates/microDateId.jpg' }}
+                  />
+                </View>
                 <View style={{
+                  flex: 1,
                   flexDirection: 'column',
                   marginLeft: 16,
-                  marginRight: 26,
                 }}
                 >
                   <H2>Загрузка фото
                   </H2>
-                  <Caption2 style={{
-                    marginTop: 8,
-                    marginRight: 16,
-                    paddingRight: 16,
-                  }}
+                  <Caption2
+                    style={{
+                      marginTop: 8,
+                    }}
                   >
                     Ожидайте, идет загрузка фото на сервер.
                   </Caption2>
