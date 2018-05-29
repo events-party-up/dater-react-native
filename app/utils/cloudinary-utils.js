@@ -6,20 +6,20 @@ const cloudinaryClient = new cloudinary.Cloudinary({ cloud_name: 'dater', secure
  * Generates Pixel Density aware Cloudinary URL
  * @param {*} imageOptions.publicId Cloudinary image public_id
  * @param {*} imageOptions.version Cloudinary image version, used to replace existing photos
- * @param {*} options see https://cloudinary.com/documentation/javascript_image_manipulation for options
+ * @param {*} transformOptions see https://cloudinary.com/documentation/javascript_image_manipulation for options
  */
 export default function cloudinaryUrl(imageOptions: {
   publicId: string,
   version: number,
-}, transofmrations) {
+}, transformOptions) {
   const imageUrl = imageOptions.version ? `v${imageOptions.version}/${imageOptions.publicId}` : imageOptions.publicId;
   const transformedUrl = cloudinaryClient.url(
     imageUrl,
     {
-      ...transofmrations,
+      ...transformOptions,
       // return image taking into consideration device's Pixel Density
-      width: transofmrations.width ? PixelRatio.getPixelSizeForLayoutSize(transofmrations.width) : undefined,
-      height: transofmrations.height ? PixelRatio.getPixelSizeForLayoutSize(transofmrations.height) : undefined,
+      width: transformOptions.width ? PixelRatio.getPixelSizeForLayoutSize(transformOptions.width) : undefined,
+      height: transformOptions.height ? PixelRatio.getPixelSizeForLayoutSize(transformOptions.height) : undefined,
     },
   );
   return transformedUrl;
