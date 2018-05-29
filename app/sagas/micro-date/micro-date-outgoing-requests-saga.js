@@ -153,6 +153,20 @@ export default function* microDateOutgoingRequestsSaga() {
           yield put({ type: 'MICRO_DATE_STOPPED_BY_TARGET' });
         }
         break;
+      case 'SELFIE_UPLOADED':
+        if (microDate.selfie.uploadedBy === microDate.requestBy) {
+          yield put({
+            type: 'UI_MAP_PANEL_SHOW',
+            payload: {
+              mode: 'selfieUploadedByMe',
+              canHide: false,
+              microDate,
+            },
+          });
+
+          yield put({ type: 'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME' });
+        }
+        break;
       default:
         console.log('Request removed');
         break;

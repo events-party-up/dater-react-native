@@ -5,16 +5,16 @@ import {
   Dimensions,
   Animated,
   Platform,
-  Image,
-  ActivityIndicator,
 } from 'react-native';
 import Interactable from 'react-native-interactable';
 import 'moment/locale/ru';
 import Moment from 'react-moment';
 import { connect, Dispatch } from 'react-redux';
 
-import { H2, Caption2, Body } from '../../components/ui-kit/typography';
+import { H2, Caption2 } from '../../components/ui-kit/typography';
 import DaterButton from '../../components/ui-kit/dater-button';
+import MapPanelSelfieUploading from './map-panel-selfie-uploading';
+import MapPanelSelfieUploadedByMe from './map-panel-selfie-uploaded-by-me';
 
 const mapStateToProps = (state) => ({
   mapPanel: state.mapPanel,
@@ -295,76 +295,19 @@ class MapPanelComponent extends Component<Props> {
         );
       case 'selfieUploading':
         return (
-          <View>
-            <View>
-              <View style={{
-                marginTop: 8,
-                flexDirection: 'row',
-              }}
-              >
-                <View
-                  style={{
-                    height: 112,
-                    aspectRatio: this.props.mapPanel.uploadSelfie.aspectRatio,
-                  }}
-                >
-                  <ActivityIndicator
-                    color="white"
-                    size="large"
-                    style={{
-                      position: 'absolute',
-                      left: 0,
-                      bottom: 0,
-                      top: 0,
-                      right: 0,
-                      zIndex: 1,
-                      backgroundColor: 'rgba(107, 107, 107, 0.6)',
-                      }
-                    }
-                  />
-                  <Image
-                    style={{
-                      height: 112,
-                      alignSelf: 'flex-start',
-                      aspectRatio: this.props.mapPanel.uploadSelfie.aspectRatio,
-                      borderRadius: 4,
-                    }}
-                    source={{ uri: this.props.mapPanel.uploadSelfie.photoURI }}
-                    // source={{ uri: 'https://res.cloudinary.com/dater/image/upload/v1527447895/microDates/microDateId.jpg' }}
-                  />
-                </View>
-                <View style={{
-                  flex: 1,
-                  flexDirection: 'column',
-                  marginLeft: 16,
-                }}
-                >
-                  <H2>Загрузка фото
-                  </H2>
-                  <Caption2
-                    style={{
-                      marginTop: 8,
-                    }}
-                  >
-                    Ожидайте, идет загрузка фото на сервер.
-                  </Caption2>
-                  <View style={{
-                    flexDirection: 'column',
-                    justifyContent: 'flex-end',
-                    flex: 1,
-                  }}
-                  >
-                    <Body style={{
-                      alignSelf: 'flex-start',
-                    }}
-                    >
-                      Прогресс {this.props.uploadPhotos.progress}%
-                    </Body>
-                  </View>
-                </View>
-              </View>
-            </View>
-          </View>
+          <MapPanelSelfieUploading
+            aspectRatio={this.props.mapPanel.uploadSelfie.aspectRatio}
+            photoURI={this.props.mapPanel.uploadSelfie.photoURI}
+            progress={this.props.uploadPhotos.progress}
+          />
+        );
+      case 'selfieUploadedByMe':
+        return (
+          <MapPanelSelfieUploadedByMe
+            aspectRatio={this.props.mapPanel.microDate.selfie.width / this.props.mapPanel.microDate.selfie.width}
+            cloudinaryPublicId={this.props.mapPanel.microDate.id}
+            targetUserUid={this.props.mapPanel.microDate.requestFor}
+          />
         );
       default:
         return null;
