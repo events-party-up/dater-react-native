@@ -146,9 +146,9 @@ function createAllUsersAroundChannel(userCoords, currentUser) {
       const usersAround = [];
       snapshot.forEach((userSnapshot) => {
         const userData = userSnapshot.data();
-        userData.uid = userSnapshot.id;
+        userData.id = userSnapshot.id;
 
-        if (currentUser && userData.uid === currentUser.uid) {
+        if (currentUser && userData.id === currentUser.uid) {
           return;
         } else if (Date.now() - new Date(userData.timestamp) > ONE_HOUR * USERS_AROUND_SHOW_LAST_SEEN_HOURS_AGO) {
           // only show users with fresh timestamps
@@ -199,7 +199,9 @@ function createMicroDateChannel(myCoords, currentUser, microDateState) {
       }
 
       const targetUser = snapshot.data();
-      targetUser.uid = snapshot.id;
+      if (!targetUser) return;
+
+      targetUser.id = snapshot.id;
       targetUser.shortId = snapshot.id.substring(0, 4);
       targetUser.distance = GeoUtils.distance(myCoords, targetUser[geoPointPath]);
 

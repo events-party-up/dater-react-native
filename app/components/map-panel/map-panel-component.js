@@ -160,7 +160,9 @@ class MapPanelComponent extends Component<Props> {
       case 'userCard':
         return (
           <View>
-            <H2 style={MapPanelStyles.panelHeader}>Пользователь ({this.props.mapPanel.targetUser.shortId} )</H2>
+            <H2 style={MapPanelStyles.panelHeader}>
+              Пользователь ({this.props.mapPanel.targetUser.id.substring(0, 4)} )
+            </H2>
             <Caption2 style={MapPanelStyles.panelBody}>
               {Math.floor(this.props.mapPanel.targetUser.distance)} метров от вас. {' '}
               Был <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.targetUser.timestamp}</Moment>.

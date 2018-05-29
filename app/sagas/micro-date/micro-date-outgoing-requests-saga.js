@@ -19,7 +19,6 @@ export default function* microDateOutgoingRequestsSaga() {
 
     if (pendingMicroDate) {
       const targetUserSnap = yield pendingMicroDate.requestForRef.get();
-
       yield put({
         type: 'MICRO_DATE_OUTGOING_REQUEST_PENDING',
         payload: {
@@ -47,9 +46,9 @@ export default function* microDateOutgoingRequestsSaga() {
         microDate = {
           status: 'REQUEST',
           requestBy: myUid,
-          requestFor: targetUser.uid,
+          requestFor: targetUser.id,
           requestByRef: firebase.firestore().collection('geoPoints').doc(myUid),
-          requestForRef: firebase.firestore().collection('geoPoints').doc(targetUser.uid),
+          requestForRef: firebase.firestore().collection('geoPoints').doc(targetUser.id),
           requestTS: firebase.firestore.FieldValue.serverTimestamp(),
           active: true,
           id: microDateRef.id,

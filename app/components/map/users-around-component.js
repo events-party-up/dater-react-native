@@ -58,8 +58,8 @@ class UsersAroundComponent extends React.Component<Props> {
           user.geoPoint.longitude,
           user.geoPoint.latitude,
         ]}
-        key={user.uid}
-        id={user.uid}
+        key={user.id}
+        id={user.id}
         onSelected={() => { this.onPressOrSelect(user); }} // TOOD: refactor this, onPress uses same callback
         onDeselected={() => { this.onDeselected(); }}
         selected={false}
