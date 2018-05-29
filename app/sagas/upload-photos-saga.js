@@ -1,54 +1,57 @@
-import { takeEvery, call, put, take, fork, select } from 'redux-saga/effects';
+import { takeEvery, call, put, take, cancel, select } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
 
 export default function* uploadPhotosSaga() {
-  let uploadTaskId = 0;
+  const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
+  if (!isUserAuthenticated) { // user must be authorized
+    yield take('AUTH_SUCCESS');
+  }
+  const uid = yield select((state) => state.auth.uid);
 
   while (true) {
-    const nextPhoto = yield take('UPLOAD_PHOTO_START');
-    yield fork(uploadPhoto, uploadTaskId, nextPhoto);
-    uploadTaskId += 1;
+    const uploadStartAction = yield take('UPLOAD_PHOTO_START');
+    const metadata = {
+      contentType: 'image/jpeg',
+    };
+    const fileName = uploadStartAction.payload.uri.replace(/^.*[\\/]/, '');
+    const microDate = yield select((state) => state.microDate);
+    const uploadTask = firebase.storage()
+      .ref(`microDates/${microDate.id}/${uid}/${fileName}`)
+      .put(uploadStartAction.payload.uri, metadata);
+    const uploadTaskChannel = yield call(createUploadTaskChannel, uploadTask);
+
+    const progressTask = yield takeEvery(uploadTaskChannel, uploadTaskProgress);
+    yield take('UPLOAD_PHOTO_SUCCESS');
+    yield uploadTaskChannel.close();
+    yield cancel(progressTask);
   }
 }
 
-function* uploadPhoto(uploadTaskId, action) {
-  const uid = yield select((state) => state.auth.uid);
-  yield console.log('New upload task: ', uploadTaskId);
-  const metadata = {
-    contentType: 'image/jpeg',
-  };
-  const fileName = action.payload.uri.replace(/^.*[\\/]/, '');
-  const microDate = yield select((state) => state.microDate);
-  const uploadTask = firebase.storage()
-    .ref(`microDates/${microDate.id}/${uid}/${fileName}`)
-    .put(action.payload.uri, metadata);
-  const uploadTaskChannel = yield call(createUploadTaskChannel, uploadTask);
 
-  yield takeEvery(uploadTaskChannel, uploadTaskProgress, uploadTaskId);
-  yield take(`UPLOAD_PHOTO_TASK_${uploadTaskId}_SUCCESS`);
-  yield uploadTaskChannel.close();
-}
-
-function* uploadTaskProgress(uploadTaskId, progress) {
-  yield console.log(`uploadTask #: ${uploadTaskId} progress: ${progress.progress}`);
-  if (progress.finished === true) {
+function* uploadTaskProgress(progress) {
+  if (progress.running === true) {
     yield put({
-      type: `UPLOAD_PHOTO_TASK_${uploadTaskId}_SUCCESS`,
+      type: 'UPLOAD_PHOTO_RUNNING',
       payload: {
         ...progress,
-        uploadTaskId,
+      },
+    });
+  } else if (progress.finished === true) {
+    yield put({
+      type: 'UPLOAD_PHOTO_SUCCESS',
+      payload: {
+        ...progress,
       },
     });
   }
 }
 
 function createUploadTaskChannel(uploadTask) {
-  console.log('Upload task submitted: ', uploadTask);
   return eventChannel((emit) => {
     const onTaskProgress = (snapshot) => {
       // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      const progress = Math.floor((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
       switch (snapshot.state) {
         case firebase.storage.TaskState.PAUSED: // or 'paused'
           emit({

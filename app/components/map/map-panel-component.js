@@ -18,6 +18,7 @@ import DaterButton from '../../components/ui-kit/dater-button';
 
 const mapStateToProps = (state) => ({
   mapPanel: state.mapPanel,
+  uploadPhotos: state.uploadPhotos,
   microDate: state.microDate,
 });
 
@@ -31,6 +32,7 @@ type Props = {
   microDate: any,
   dispatch: Dispatch,
   navigation: any,
+  uploadPhotos: any,
 };
 
 class MapPanelComponent extends Component<Props> {
@@ -356,15 +358,12 @@ class MapPanelComponent extends Component<Props> {
                       alignSelf: 'flex-start',
                     }}
                     >
-                      Прогресс 5%
+                      Прогресс {this.props.uploadPhotos.progress}%
                     </Body>
                   </View>
                 </View>
               </View>
             </View>
-            {/* <DaterButton style={styles.panelButton} onPress={this.openCamera}>
-              Отменить
-            </DaterButton> */}
           </View>
         );
       default:

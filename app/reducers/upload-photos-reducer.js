@@ -1,12 +1,14 @@
 export const types = {
   UPLOAD_PHOTO_START: 'UPLOAD_PHOTO_START',
+  UPLOAD_PHOTO_SUCCESS: 'UPLOAD_PHOTO_SUCCESS',
+  UPLOAD_PHOTO_RUNNING: 'UPLOAD_PHOTO_RUNNING',
   UPLOAD_PHOTO_ERROR: 'UPLOAD_PHOTO_ERROR',
 };
 
 const initialState = {
-  uploading: false,
+  running: false,
   progress: 0,
-  photoURI: null,
+  uri: null,
 };
 
 const uploadPhotosReducer = (state = initialState, action) => {
@@ -14,6 +16,20 @@ const uploadPhotosReducer = (state = initialState, action) => {
 
   switch (type) {
     case types.UPLOAD_PHOTO_START: {
+      return {
+        ...initialState,
+        ...payload,
+        running: true,
+      };
+    }
+    case types.UPLOAD_PHOTO_SUCCESS: {
+      return {
+        ...state,
+        ...payload,
+        running: false,
+      };
+    }
+    case types.UPLOAD_PHOTO_RUNNING: {
       return {
         ...state,
         ...payload,
