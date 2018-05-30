@@ -33,8 +33,8 @@ export default function* microDateIncomingRequestsSaga() {
       const task7 = yield fork(incomingMicroDateSelfieUploadedByTargetSaga);
       const task8 = yield fork(incomingMicroDateSelfieUploadedByMe);
 
-      const task9 = yield fork(incomingMicroDateDeclineSelfieByMe, nextMicroDate);
-      const task10 = yield fork(incomingMicroDateAcceptSelfieByMe, nextMicroDate);
+      const task9 = yield fork(incomingMicroDateSelfieDeclineByMe, nextMicroDate);
+      const task10 = yield fork(incomingMicroDateSelfieAcceptByMe, nextMicroDate);
 
       const nextAction = yield take([
         'MICRO_DATE_INCOMING_REMOVE',
@@ -252,7 +252,7 @@ function* incomingMicroDateSelfieUploadedByMe() {
   }
 }
 
-function* incomingMicroDateDeclineSelfieByMe(microDate) {
+function* incomingMicroDateSelfieDeclineByMe(microDate) {
   while (true) {
     yield take('MICRO_DATE_DECLINE_SELFIE_BY_ME');
     yield firebase.firestore()
@@ -265,7 +265,7 @@ function* incomingMicroDateDeclineSelfieByMe(microDate) {
   }
 }
 
-function* incomingMicroDateAcceptSelfieByMe(microDate) {
+function* incomingMicroDateSelfieAcceptByMe(microDate) {
   yield take('MICRO_DATE_INCOMING_ACCEPT_SELFIE');
   yield firebase.firestore()
     .collection(MICRO_DATES_COLLECTION)
