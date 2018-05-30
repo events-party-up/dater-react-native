@@ -90,10 +90,14 @@ function* incomingMicroDateUpdatedSaga(microDateChannel, microDate) {
         }
         break;
       default:
+        yield put({
+          type: 'MICRO_DATE_UPDATED_SAGA_UNKNOWN_STATUS_ERROR',
+          payload: `Unknown microDate status: ${microDate.status}`,
+        });
         break;
     }
   } catch (error) {
-    yield put({ type: 'MICRO_DATE_HANDLE_INCOMING_ERROR', payload: error });
+    yield put({ type: 'MICRO_DATE_UPDATED_SAGA_ERROR', payload: error });
   }
 }
 
