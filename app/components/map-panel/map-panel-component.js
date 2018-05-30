@@ -109,6 +109,9 @@ class MapPanelComponent extends Component<Props> {
     });
     this.props.dispatch({
       type: 'MICRO_DATE_INCOMING_ACCEPT',
+      payload: {
+        acceptType: 'acceptButtonPressed',
+      },
     });
   }
 
@@ -304,11 +307,29 @@ class MapPanelComponent extends Component<Props> {
               this.props.microDate.targetUserUid.substring(0, 4)}!
             </H2>
             <Caption2 style={MapPanelStyles.panelBody}>
+              Вы уже очень близко к {this.props.microDate.targetUserUid &&
+                this.props.microDate.targetUserUid.substring(0, 4)}!{' '}
               Для завершения встречи сделайте совместное селфи.
             </Caption2>
-            <DaterButton style={MapPanelStyles.panelButton} onPress={this.openCamera}>
-              Камера
-            </DaterButton>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-evenly',
+              }}
+            >
+              <DaterButton
+                style={[MapPanelStyles.panelButton, { width: 130 }]}
+                onPress={this.stopMicroDate}
+              >
+                Остановить
+              </DaterButton>
+              <DaterButton
+                style={[MapPanelStyles.panelButton, { width: 130 }]}
+                onPress={this.openCamera}
+              >
+                Камера
+              </DaterButton>
+            </View>
           </View>
         );
       case 'selfieUploading':
