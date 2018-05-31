@@ -146,7 +146,8 @@ class MapPanelComponent extends Component<Props> {
   }
 
   onSelfieApprovedByMe = () => {
-    console.log('Approved by me!', this);
+    this.props.dispatch({ type: 'MICRO_DATE_APPROVE_SELFIE' });
+    this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_FORCE' });
   }
 
   closePanel = () => {

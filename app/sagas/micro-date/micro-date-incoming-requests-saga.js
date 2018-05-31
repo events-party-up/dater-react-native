@@ -42,7 +42,9 @@ export default function* microDateIncomingRequestsSaga() {
         'MICRO_DATE_INCOMING_CANCELLED',
         'MICRO_DATE_INCOMING_STOPPED_BY_ME',
         'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
+        'MICRO_DATE_INCOMING_APPROVED_SELFIE',
       ]);
+      console.log('Cancelling tasks');
 
       yield microDateChannel.close();
       yield cancel(microDateUpdatesTask, task1, task2, task3, task4, task5, task6, task7, task8, task9, task10);
@@ -90,6 +92,7 @@ function* incomingMicroDateUpdatedSaga(microDateChannel, microDate) {
         }
         break;
       default:
+        console.log(microDate);
         yield put({
           type: 'MICRO_DATE_UPDATED_SAGA_UNKNOWN_STATUS_ERROR',
           payload: `Unknown microDate status: ${microDate.status}`,
@@ -143,6 +146,8 @@ function* incomingMicroDateAcceptSaga(microDate) {
         .update({
           status: 'ACCEPT',
           startDistance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
+          requestForGeoPoint: new firebase.firestore.GeoPoint(myCoords.latitude, myCoords.longitude),
+          requestByGeoPoint: userSnap.data().geoPoint,
           acceptTS: firebase.firestore.FieldValue.serverTimestamp(),
         });
     }
@@ -269,15 +274,20 @@ function* incomingMicroDateSelfieDeclineByMeSaga(microDate) {
 }
 
 function* incomingMicroDateSelfieAcceptByMeSaga(microDate) {
-  yield take('MICRO_DATE_INCOMING_ACCEPT_SELFIE');
+  yield take('MICRO_DATE_APPROVE_SELFIE');
   yield firebase.firestore()
     .collection(MICRO_DATES_COLLECTION)
     .doc(microDate.id)
     .update({
-      status: 'SELFIE_ACCEPTED',
+      status: 'FINISHED',
+      active: false,
+      finishTS: firebase.firestore.FieldValue.serverTimestamp(),
+      moderationStatus: 'PENDING',
+      [`${microDate.requestBy}_firstAlert`]: false,
+      [`${microDate.requestFor}_firstAlert`]: false,
     });
 
-  yield put({ type: 'MICRO_DATE_INCOMING_ACCEPTED_SELFIE' });
+  yield put({ type: 'MICRO_DATE_INCOMING_APPROVED_SELFIE' });
 }
 
 function createChannelForIncomingMicroDateRequests(uid) {

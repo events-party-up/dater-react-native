@@ -2,6 +2,8 @@ import { takeEvery, call, put, take, cancel, select } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
 
+import { MICRO_DATES_COLLECTION } from '../constants';
+
 export default function* uploadPhotosSaga() {
   const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
   if (!isUserAuthenticated) { // user must be authorized
@@ -16,13 +18,20 @@ export default function* uploadPhotosSaga() {
     };
     const fileName = uploadStartAction.payload.uri.replace(/^.*[\\/]/, '');
     const microDate = yield select((state) => state.microDate);
+    const myCoords = yield select((state) => state.location.coords);
     const uploadTask = firebase.storage()
-      .ref(`microDates/${microDate.id}/${uid}/${fileName}`)
+      .ref(`${MICRO_DATES_COLLECTION}/${microDate.id}/${uid}/${fileName}`)
       .put(uploadStartAction.payload.uri, metadata);
     const uploadTaskChannel = yield call(createUploadTaskChannel, uploadTask);
-
     const progressTask = yield takeEvery(uploadTaskChannel, uploadTaskProgress);
     yield take('UPLOAD_PHOTO_SUCCESS');
+    yield yield firebase.firestore()
+      .collection(MICRO_DATES_COLLECTION)
+      .doc(microDate.id)
+      .update({
+        selfieGeoPoint: new firebase.firestore.GeoPoint(myCoords.latitude, myCoords.longitude),
+      });
+
     yield uploadTaskChannel.close();
     yield cancel(progressTask);
   }
