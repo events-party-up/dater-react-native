@@ -5,6 +5,7 @@ import UIKitNavigator from './ui-kit-navigator';
 import LoginNavigator from './login-navigator';
 import FloatingNavigator from './floating-navigator';
 import MakePhotoSelfieScreen from '../screens/make-photo-selfie-screen';
+import MicroDateScreen from '../screens/micro-date-screen';
 
 const RootStack = StackNavigator(
   {
@@ -13,6 +14,9 @@ const RootStack = StackNavigator(
     },
     MakePhotoSelfie: {
       screen: MakePhotoSelfieScreen,
+    },
+    MicroDate: {
+      screen: MicroDateScreen,
     },
     Login: {
       screen: LoginNavigator,
