@@ -158,6 +158,8 @@ function* updateLocation(coords) {
 function* writeCoordsToFirestore(coords) {
   try {
     const uid = yield select((state) => state.auth.uid);
+    const moveHeadingAngle = yield select((state) => state.location.moveHeadingAngle);
+
     if (!uid || !coords) return;
 
     yield call(updateFirestore, {
@@ -166,7 +168,7 @@ function* writeCoordsToFirestore(coords) {
       data: {
         visible: true,
         accuracy: coords.accuracy,
-        heading: coords.heading,
+        heading: coords.heading > 0 ? coords.heading : moveHeadingAngle, // use calculated heading if GPS has no heading data
         speed: coords.speed,
         geoPoint: new firebase.firestore.GeoPoint(coords.latitude, coords.longitude),
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),

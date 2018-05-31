@@ -1,4 +1,6 @@
 
+// import firebase from 'react-native-firebase';
+
 export type GeoCoordinates = {
   accuracy: number,
   altitude: number,
@@ -18,3 +20,21 @@ export type LngLat = [
   number, number
 ];
 
+export type MicroDate = {
+  id: string,
+  acceptTS: Date,
+  finishTS: Date,
+  active: boolean,
+  requestBy: string,
+  requestFor: string,
+  requestByRef: string,
+  requestForRef: string,
+  requestByGeoPoint: FireStoreGeoPoint,
+  selfieGeoPoint: FireStoreGeoPoint,
+}
+
+export type FireStoreGeoPoint = {
+  // ...firebase.firestore.GeoPoint,
+  latitude: number,
+  longitude: number,
+}

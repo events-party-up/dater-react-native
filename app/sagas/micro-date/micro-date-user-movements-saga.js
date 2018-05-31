@@ -1,4 +1,4 @@
-import { put, takeEvery, select } from 'redux-saga/effects';
+import { put, throttle, takeEvery, select } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 
 import GeoUtils from '../../utils/geo-utils';
@@ -12,7 +12,7 @@ import {
 
 export default function* microDateUserMovementsSaga() {
   try {
-    yield takeEvery('MICRO_DATE_MY_MOVE', handleMyMoveSaga);
+    yield throttle(3000, 'MICRO_DATE_MY_MOVE', handleMyMoveSaga);
     yield takeEvery('MICRO_DATE_TARGET_MOVE', handleTargetMoveSaga);
   } catch (error) {
     yield put({ type: 'MICRO_DATE_USER_MOVEMENTS_ERROR', payload: error });
@@ -32,29 +32,27 @@ function* handleMyMoveSaga(action) {
 
     if (myPreviousCoords) {
       const timeDelta = (newCoords.clientTS - myPreviousCoords.clientTS) / 1000; // in seconds
-      const distanceMoved = GeoUtils.distance(myPreviousCoords, newCoords);
-      const velocity = Math.floor(distanceMoved / timeDelta); // in seconds
+      const distanceDelta = GeoUtils.distance(myPreviousCoords, newCoords);
+      const velocity = Math.floor(distanceDelta / timeDelta); // in seconds
 
-      if (
-        velocity < MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION && // discard too fast moves, probably a noise from location services
-        newCoords.accuracy < MINIMUM_ACCURACY_PAST_LOCATION && // discard not accurate enough locations
-        distanceMoved > MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION // discard too nearby updates
-      ) {
-        yield firebase.firestore()
-          .collection(MICRO_DATES_COLLECTION)
-          .doc(microDate.id)
-          .collection(`pastLocations_${myUidDB}`)
-          .add({
-            distance: distanceMoved,
-            velocity,
-            geoPoint: new firebase.firestore.GeoPoint(newCoords.latitude, newCoords.longitude),
-            serverTS: firebase.firestore.FieldValue.serverTimestamp(),
-            clientTS: newCoords.clientTS,
-            heading: GeoUtils.getBearing(myPreviousCoords, newCoords),
-          });
-      } else { // discarding
+      if (velocity > MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION ||
+        newCoords.accuracy > MINIMUM_ACCURACY_PAST_LOCATION ||
+        distanceDelta < MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
         return;
       }
+
+      yield firebase.firestore()
+        .collection(MICRO_DATES_COLLECTION)
+        .doc(microDate.id)
+        .collection(`pastLocations_${myUidDB}`)
+        .add({
+          distanceDelta,
+          velocity,
+          geoPoint: new firebase.firestore.GeoPoint(newCoords.latitude, newCoords.longitude),
+          serverTS: firebase.firestore.FieldValue.serverTimestamp(),
+          clientTS: newCoords.clientTS,
+          heading: GeoUtils.getBearing(myPreviousCoords, newCoords),
+        });
     }
 
     let myScore = yield select((state) => state.microDate.myScore);
@@ -116,21 +114,15 @@ function* checkDistance(microDate, myCoords, targetCoords) {
         canHide: true,
       },
     });
-    // yield put({
-    //   type: 'UI_MAP_PANEL_SHOW',
-    //   payload: {
-    //     mode: 'selfieUploading',
-    //     canHide: false,
-    //   },
-    // });
-  } else if (mapPanelMode === 'makeSelfie') {
-    yield put({
-      type: 'UI_MAP_PANEL_SET_MODE',
-      payload: {
-        mode: 'activeMicroDate',
-        canHide: true,
-        distance: GeoUtils.distance(microDate.targetCurrentCoords, myCoords),
-      },
-    });
   }
+  // else if (mapPanelMode === 'makeSelfie') { // WTF ?
+  //   yield put({
+  //     type: 'UI_MAP_PANEL_SET_MODE',
+  //     payload: {
+  //       mode: 'activeMicroDate',
+  //       canHide: true,
+  //       distance: GeoUtils.distance(microDate.targetCurrentCoords, myCoords),
+  //     },
+  //   });
+  // }
 }

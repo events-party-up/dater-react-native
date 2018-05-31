@@ -85,10 +85,10 @@ class PastLocationsPath extends React.Component<Props> {
     if (this.pastLocations.length < 2) return null;
 
     const arrows = this.pastLocations.slice(1).map((coords, index) => {
-      const { heading, distance } = coords;
+      const { heading, distanceDelta } = coords;
       const arrowHeadLength = 7; // in meters
       let arrowTailLength = 7;
-      arrowTailLength = arrowTailLength * 2 > distance ? distance : arrowTailLength * 2;
+      arrowTailLength = arrowTailLength * 2 > distanceDelta ? distanceDelta : arrowTailLength * 2;
       const arrowSkirtLeft = GeoUtils.destinationPoint(coords.geoPoint, -arrowHeadLength, heading + 20);
       const arrowSkirtRight = GeoUtils.destinationPoint(coords.geoPoint, -arrowHeadLength, heading - 20);
       const arrowLineStartLeft = GeoUtils.destinationPoint(coords.geoPoint, -arrowHeadLength, heading + 4);

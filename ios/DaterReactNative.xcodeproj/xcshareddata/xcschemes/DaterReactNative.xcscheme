@@ -88,7 +88,7 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "NO">
+      allowLocationSimulation = "YES">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
@@ -102,7 +102,7 @@
       <AdditionalOptions>
       </AdditionalOptions>
       <LocationScenarioReference
-         identifier = "../../test/fake-coords/city-run-start.gpx"
+         identifier = "../../test/fake-coords/fake-meeting-bob-reversed.gpx"
          referenceType = "0">
       </LocationScenarioReference>
    </LaunchAction>

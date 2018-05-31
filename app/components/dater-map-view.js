@@ -184,7 +184,7 @@ class DaterMapView extends React.Component<Props> {
           {this.props.microDate.enabled &&
             <React.Fragment>
               <PastLocationsPath
-                uid={this.props.auth.uid && this.props.auth.uid}
+                uid={this.props.auth && this.props.auth.uid}
                 mode="own"
                 microDateId={this.props.microDate.id}
               />
