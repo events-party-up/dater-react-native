@@ -23,14 +23,18 @@ export default class TextInputsScreen extends React.Component<Props> {
 
   onMapReady = () => {
     this.mapIsReady = true;
-    // this.mapView.fitBounds(
-    //   [
-    //     this.microDate.requestByGeoPoint.longitude, this.microDate.requestByGeoPoint.latitude,
-    //   ],
-    //   [
-    //     this.microDate.requestForGeoPoint.longitude, this.microDate.requestForGeoPoint.latitude,
-    //   ],
-    // );
+    // requestAnimationFrame(() => {
+    //   this.mapView.fitBounds(
+    //     [
+    //       this.microDate.requestByGeoPoint.longitude, this.microDate.requestByGeoPoint.latitude,
+    //     ],
+    //     [
+    //       this.microDate.requestForGeoPoint.longitude, this.microDate.requestForGeoPoint.latitude,
+    //     ],
+    //     8,
+    //     1000,
+    //   );
+    // });
   }
 
   render() {
@@ -53,7 +57,7 @@ export default class TextInputsScreen extends React.Component<Props> {
             ref={(component) => { this.mapView = component; }}
             showUserLocation={false}
             userTrackingMode={0}
-            zoomLevel={15}
+            zoomLevel={16}
             style={styles.mapView}
             animated={false}
             logoEnabled={false}
@@ -74,11 +78,13 @@ export default class TextInputsScreen extends React.Component<Props> {
               uid={this.microDate.requestFor}
               mode="own"
               microDateId={this.microDate.id}
+              isLimited={false}
             />
             <PastLocationsPath
               uid={this.microDate.requestBy}
               mode="target"
               microDateId={this.microDate.id}
+              isLimited={false}
             />
           </MapboxGL.MapView>
         </ScrollView>

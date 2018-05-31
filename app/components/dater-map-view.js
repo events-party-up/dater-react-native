@@ -186,6 +186,7 @@ class DaterMapView extends React.Component<Props> {
               uid={this.props.auth && this.props.auth.uid}
               mode="own"
               microDateId={this.props.microDate.id}
+              limit={15}
             />
           }
           {this.props.microDate.enabled &&
@@ -193,6 +194,7 @@ class DaterMapView extends React.Component<Props> {
             uid={this.props.microDate.targetUserUid}
             mode="target"
             microDateId={this.props.microDate.id}
+            limit={15}
           />
         }
           <UsersAroundComponent />

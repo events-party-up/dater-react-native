@@ -10,6 +10,7 @@ import GeoUtils from '../../utils/geo-utils';
 
 type Props = {
   mode: 'target' | 'own',
+  limit: number,
   microDateId: string,
   uid: string,
 };
@@ -50,7 +51,7 @@ class PastLocationsPath extends React.Component<Props, State> {
       .doc(this.props.microDateId)
       .collection(`pastLocations_${this.props.uid.substring(0, 8)}`)
       .orderBy('serverTS', 'desc')
-      .limit(MAX_VISIBLE_PAST_LOCATIONS);
+      .limit(this.props.limit || 15);
 
     this.queryUnsubscribe = pastLocationsQuery.onSnapshot(this.onLocationsUpdated, this.onError);
   }
@@ -75,7 +76,7 @@ class PastLocationsPath extends React.Component<Props, State> {
         // console.log('New locaiton modified: ', change.doc.data());
         this.pastLocations.push(change.doc.data());
       }
-      if (this.pastLocations.length > MAX_VISIBLE_PAST_LOCATIONS) {
+      if (this.props.isLimited && this.pastLocations.length > MAX_VISIBLE_PAST_LOCATIONS) {
         this.pastLocations.shift();
       }
     });
