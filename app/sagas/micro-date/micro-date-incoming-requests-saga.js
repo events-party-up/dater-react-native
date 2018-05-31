@@ -2,15 +2,22 @@ import { call, take, put, takeEvery, select, cancel, fork } from 'redux-saga/eff
 import { eventChannel } from 'redux-saga';
 import firebase from 'react-native-firebase';
 
+import { Actions } from '../../navigators/navigator-actions';
 import GeoUtils from '../../utils/geo-utils';
 import { MICRO_DATES_COLLECTION } from '../../constants';
 
 export default function* microDateIncomingRequestsSaga() {
   try {
     const myUid = yield select((state) => state.auth.uid);
+    const pendingViewMicroDate = yield getPendingViewFinishedMicroDate(myUid);
+
+    if (pendingViewMicroDate) {
+      const finishTask = yield fork(incomingMicroDateFinishedSaga, pendingViewMicroDate);
+      yield* incomingMicroDateUpdatedSaga(pendingViewMicroDate);
+      cancel(finishTask);
+    }
+
     const incomingMicroDateRequestsChannel = yield call(createChannelForIncomingMicroDateRequests, myUid);
-    // let microDateUpdatesTask;
-    // let microDateChannel;
 
     while (true) {
       const nextMicroDate = yield take(incomingMicroDateRequestsChannel);
@@ -20,7 +27,7 @@ export default function* microDateIncomingRequestsSaga() {
       }
 
       const microDateChannel = yield call(createChannelToMicroDate, nextMicroDate.id);
-      const microDateUpdatesTask = yield takeEvery(microDateChannel, incomingMicroDateUpdatedSaga, microDateChannel);
+      const microDateUpdatesTask = yield takeEvery(microDateChannel, incomingMicroDateUpdatedSaga);
 
       const task1 = yield fork(incomingMicroDateRequestSaga, nextMicroDate);
       const task2 = yield fork(incomingMicroDateAcceptSaga, nextMicroDate);
@@ -36,6 +43,8 @@ export default function* microDateIncomingRequestsSaga() {
       const task9 = yield fork(incomingMicroDateSelfieDeclineByMeSaga, nextMicroDate);
       const task10 = yield fork(incomingMicroDateSelfieAcceptByMeSaga, nextMicroDate);
 
+      const task11 = yield fork(incomingMicroDateFinishedSaga, nextMicroDate);
+
       const stopAction = yield take([
         'MICRO_DATE_INCOMING_REMOVE',
         'MICRO_DATE_INCOMING_DECLINED_BY_ME',
@@ -47,7 +56,7 @@ export default function* microDateIncomingRequestsSaga() {
       console.log('Cancelling tasks');
 
       yield microDateChannel.close();
-      yield cancel(microDateUpdatesTask, task1, task2, task3, task4, task5, task6, task7, task8, task9, task10);
+      yield cancel(microDateUpdatesTask, task1, task2, task3, task4, task5, task6, task7, task8, task9, task10, task11);
 
       if (stopAction.type === 'MICRO_DATE_INCOMING_REMOVE') {
         yield put({ type: 'UI_MAP_PANEL_HIDE_FORCE' });
@@ -58,7 +67,7 @@ export default function* microDateIncomingRequestsSaga() {
   }
 }
 
-function* incomingMicroDateUpdatedSaga(microDateChannel, microDate) {
+function* incomingMicroDateUpdatedSaga(microDate) {
   try {
     if (microDate.error) {
       throw new Error(microDate.error);
@@ -90,6 +99,9 @@ function* incomingMicroDateUpdatedSaga(microDateChannel, microDate) {
         } else if (microDate.selfie.uploadedBy === microDate.requestFor) {
           yield put({ type: 'MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_ME', payload: microDate });
         }
+        break;
+      case 'FINISHED':
+        yield put({ type: 'MICRO_DATE_INCOMING_FINISHED', payload: microDate });
         break;
       default:
         console.log(microDate);
@@ -290,6 +302,17 @@ function* incomingMicroDateSelfieAcceptByMeSaga(microDate) {
   yield put({ type: 'MICRO_DATE_INCOMING_APPROVED_SELFIE' });
 }
 
+function* incomingMicroDateFinishedSaga(microDate) {
+  yield take('MICRO_DATE_INCOMING_FINISHED');
+  yield firebase.firestore()
+    .collection(MICRO_DATES_COLLECTION)
+    .doc(microDate.id)
+    .update({
+      [`${microDate.requestFor}_firstAlert`]: true,
+    });
+  yield Actions.navigate({ routeName: 'MicroDate', params: { microDate } });
+}
+
 function createChannelForIncomingMicroDateRequests(uid) {
   const microDateStartedByOthersQuery = firebase.firestore()
     .collection(MICRO_DATES_COLLECTION)
@@ -349,3 +372,17 @@ function createChannelToMicroDate(microDateId) {
   });
 }
 
+
+async function getPendingViewFinishedMicroDate(uid) {
+  const microDatesQuery = firebase.firestore()
+    .collection(MICRO_DATES_COLLECTION)
+    .where('requestFor', '==', uid)
+    .where('status', '==', 'FINISHED')
+    // .where(`${uid}_firstAlert`, '==', false)
+    .where('active', '==', false);
+
+  const microDatesSnapshot = await microDatesQuery.get();
+  const microDateSnapshot = microDatesSnapshot.docs[0];
+
+  return microDateSnapshot ? microDateSnapshot.data() : null;
+}
