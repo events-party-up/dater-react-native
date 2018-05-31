@@ -14,7 +14,18 @@ type Props = {
   uid: string,
 };
 
-class PastLocationsPath extends React.Component<Props> {
+type State = {
+  pastLocations: [],
+};
+
+class PastLocationsPath extends React.Component<Props, State> {
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      pastLocations: [],
+    };
+  }
+
   pathStyle = MapboxGL.StyleSheet.create({
     lines: {
       lineColor: this.props.mode ===
@@ -34,7 +45,6 @@ class PastLocationsPath extends React.Component<Props> {
   pastLocations = [];
 
   componentWillMount() {
-    console.log('PastLocationsPath mounted for id: ', this.props.microDateId);
     const pastLocationsQuery = firebase.firestore()
       .collection(MICRO_DATES_COLLECTION)
       .doc(this.props.microDateId)
@@ -69,6 +79,9 @@ class PastLocationsPath extends React.Component<Props> {
         this.pastLocations.shift();
       }
     });
+    this.setState({
+      pastLocations: this.pastLocations,
+    });
   };
 
   onError = (error) => {
@@ -82,9 +95,9 @@ class PastLocationsPath extends React.Component<Props> {
   }
 
   render() {
-    if (this.pastLocations.length < 2) return null;
+    if (this.state.pastLocations.length < 2) return null;
 
-    const arrows = this.pastLocations.slice(1).map((coords, index) => {
+    const arrows = this.state.pastLocations.slice(1).map((coords, index) => {
       const { heading, distanceDelta } = coords;
       const arrowHeadLength = 7; // in meters
       let arrowTailLength = 7;

@@ -182,18 +182,18 @@ class DaterMapView extends React.Component<Props> {
           maxZoomLevel={18}
         >
           {this.props.microDate.enabled &&
-            <React.Fragment>
-              <PastLocationsPath
-                uid={this.props.auth && this.props.auth.uid}
-                mode="own"
-                microDateId={this.props.microDate.id}
-              />
-              <PastLocationsPath
-                uid={this.props.microDate.targetUserUid}
-                mode="target"
-                microDateId={this.props.microDate.id}
-              />
-            </React.Fragment>
+            <PastLocationsPath
+              uid={this.props.auth && this.props.auth.uid}
+              mode="own"
+              microDateId={this.props.microDate.id}
+            />
+          }
+          {this.props.microDate.enabled &&
+          <PastLocationsPath
+            uid={this.props.microDate.targetUserUid}
+            mode="target"
+            microDateId={this.props.microDate.id}
+          />
         }
           <UsersAroundComponent />
         </MapboxGL.MapView>

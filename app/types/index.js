@@ -30,6 +30,7 @@ export type MicroDate = {
   requestByRef: string,
   requestForRef: string,
   requestByGeoPoint: FireStoreGeoPoint,
+  requestForGeoPoint: FireStoreGeoPoint,
   selfieGeoPoint: FireStoreGeoPoint,
 }
 
