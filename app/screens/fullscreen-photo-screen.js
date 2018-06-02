@@ -9,7 +9,6 @@ import {
 import ImageZoom from 'react-native-image-pan-zoom';
 
 import DaterModal from '../components/ui-kit/dater-modal';
-import { CloudinaryPhoto } from '../types';
 import cloudinaryUrl from '../utils/cloudinary-utils';
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../constants';
 
@@ -23,7 +22,7 @@ type State = {
 }
 
 export default class FullscreenPhotoScreen extends React.Component<Props, State> {
-  photo: CloudinaryPhoto;
+  photo: string;
   imageUrls: any;
 
   constructor(props) {
