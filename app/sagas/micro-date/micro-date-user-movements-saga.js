@@ -103,7 +103,11 @@ function* checkDistance(microDate, myCoords, targetCoords) {
   const mapPanelMode = yield select((state) => state.mapPanel.mode);
 
   if (distanceToTarget < DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD) {
-    if (mapPanelMode === 'makeSelfie') {
+    if (
+      mapPanelMode === 'makeSelfie' ||
+      mapPanelMode === 'selfieUploadedByTarget' ||
+      mapPanelMode === 'selfieUploadedByMe' ||
+      mapPanelMode === 'selfieUploading') {
       return;
     }
 
@@ -111,18 +115,8 @@ function* checkDistance(microDate, myCoords, targetCoords) {
       type: 'UI_MAP_PANEL_SHOW',
       payload: {
         mode: 'makeSelfie',
-        canHide: true,
+        canHide: false,
       },
     });
   }
-  // else if (mapPanelMode === 'makeSelfie') { // WTF ?
-  //   yield put({
-  //     type: 'UI_MAP_PANEL_SET_MODE',
-  //     payload: {
-  //       mode: 'activeMicroDate',
-  //       canHide: true,
-  //       distance: GeoUtils.distance(microDate.targetCurrentCoords, myCoords),
-  //     },
-  //   });
-  // }
 }
