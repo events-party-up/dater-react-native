@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import Moment from 'react-moment';
 
@@ -7,7 +7,8 @@ import DaterModal from '../components/ui-kit/dater-modal';
 import PastLocationsPath from '../components/map/past-locations-path';
 import { MicroDate } from '../types';
 import { SCREEN_WIDTH } from '../constants';
-import { H2, Body, Caption1 } from '../components/ui-kit/typography';
+import { H2, Body } from '../components/ui-kit/typography';
+import CardInfoItemMolecule from '../components/ui-kit/molecules/card-info-item-molecule';
 
 type Props = {
   navigation: any,
@@ -17,26 +18,17 @@ export default class TextInputsScreen extends React.Component<Props> {
   mapView: MapboxGL.MapView;
   microDate: MicroDate;
   mapIsReady = false;
+  microDateDuration: number;
 
   componentWillMount() {
     console.log(this.props.navigation.getParam('microDate'));
     this.microDate = this.props.navigation.getParam('microDate');
+    this.microDateDuration =
+      Math.floor((this.microDate.finishTS.getTime() - this.microDate.acceptTS.getTime()) / 1000 / 60);
   }
 
   onMapReady = () => {
     this.mapIsReady = true;
-    // requestAnimationFrame(() => {
-    //   this.mapView.fitBounds(
-    //     [
-    //       this.microDate.requestByGeoPoint.longitude, this.microDate.requestByGeoPoint.latitude,
-    //     ],
-    //     [
-    //       this.microDate.requestForGeoPoint.longitude, this.microDate.requestForGeoPoint.latitude,
-    //     ],
-    //     8,
-    //     1000,
-    //   );
-    // });
   }
 
   render() {
@@ -89,7 +81,7 @@ export default class TextInputsScreen extends React.Component<Props> {
               isLimited={false}
             />
           </MapboxGL.MapView>
-          <H2 style={[styles.subHeader, styles.textBodyPadding]}>Заголовок 2</H2>
+          <H2 style={[styles.subHeader, styles.textBodyPadding]}>Карточка встречи</H2>
           <Body
             style={[styles.bodyText, styles.textBodyPadding]}
           >
@@ -97,36 +89,31 @@ export default class TextInputsScreen extends React.Component<Props> {
             <Moment locale="ru" element={Body} fromNow>{this.microDate.finishTS}</Moment>{' '}
             между {this.microDate.requestBy.substring(0, 4)} и {this.microDate.requestFor.substring(0, 4)}{' '}
           </Body>
-          <Caption1
-            style={[styles.infoItemHeader, styles.textBodyPadding]}
+          <CardInfoItemMolecule
+            style={[styles.bodyText, styles.textBodyPadding]}
+            header="Статус:"
           >
-            Время выполнения квеста:
-          </Caption1>
-          <Body
-            style={[styles.infoItemBody, styles.textBodyPadding]}
+            Ожидает подтверждения
+          </CardInfoItemMolecule>
+          <CardInfoItemMolecule
+            style={[styles.bodyText, styles.textBodyPadding]}
+            header="Время выполнения квеста:"
           >
-            15 минут
-          </Body>
-          <Caption1
-            style={[styles.infoItemHeader, styles.textBodyPadding]}
-          >
-            Добыто монет:
-          </Caption1>
-          <Body
-            style={[styles.infoItemBody, styles.textBodyPadding]}
+            {this.microDateDuration} минут
+          </CardInfoItemMolecule>
+          <CardInfoItemMolecule
+            style={[styles.bodyText, styles.textBodyPadding]}
+            header="Добыто монет:"
           >
             1500 coins
-          </Body>
-          <Caption1
-            style={[styles.infoItemHeader, styles.textBodyPadding]}
-          >
-            Набрано опыта:
-          </Caption1>
-          <Body
-            style={[styles.infoItemBody, styles.textBodyPadding]}
+          </CardInfoItemMolecule>
+          <CardInfoItemMolecule
+            style={[styles.bodyText, styles.textBodyPadding]}
+            header="Набрано опыта:"
           >
             140 XP
-          </Body>
+          </CardInfoItemMolecule>
+          <View style={styles.bottomButtonsPad} />
         </ScrollView>
       </DaterModal>
     );
@@ -143,7 +130,6 @@ const styles = StyleSheet.create({
     paddingRight: 8,
   },
   mapView: {
-    // width: 300,
     height: SCREEN_WIDTH - 16,
     marginBottom: 8,
   },
@@ -157,11 +143,7 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 16,
   },
-  infoItemHeader: {
-    marginTop: 8,
-    marginBottom: 4,
-  },
-  infoItemBody: {
-    marginBottom: 8,
+  bottomButtonsPad: {
+    height: 96,
   },
 });
