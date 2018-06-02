@@ -80,12 +80,14 @@ export default class MicroDateScreen extends React.Component<Props> {
             maxZoomLevel={18}
           >
             <PastLocationsPath
+              lastLocation={this.microDate.selfieGeoPoint}
               uid={this.microDate.requestFor}
               mode="own"
               microDateId={this.microDate.id}
               isLimited={false}
             />
             <PastLocationsPath
+              lastLocation={this.microDate.selfieGeoPoint}
               uid={this.microDate.requestBy}
               mode="target"
               microDateId={this.microDate.id}
@@ -107,7 +109,7 @@ export default class MicroDateScreen extends React.Component<Props> {
                 photo={
                   {
                     // public_id: `microDates/${this.microDate.id}`,
-                    public_id: `microDates/${this.microDate.id}1`,
+                    public_id: `microDates/${this.microDate.id}1`, // TODO: Change this, remove 1
                     version: this.microDate.selfie.version,
                   }
                 }

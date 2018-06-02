@@ -1,22 +1,21 @@
 import * as React from 'react';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import firebase from 'react-native-firebase';
-import {
-  MICRO_DATES_COLLECTION,
-  MAX_VISIBLE_PAST_LOCATIONS,
-} from '../../constants';
+import { MICRO_DATES_COLLECTION } from '../../constants';
 
 import GeoUtils from '../../utils/geo-utils';
+import { GeoCoordinates } from '../../types';
 
 type Props = {
   mode: 'target' | 'own',
   limit: number,
   microDateId: string,
   uid: string,
+  lastLocation: GeoCoordinates,
 };
 
 type State = {
-  pastLocations: [],
+  pastLocations: GeoCoordinates[],
 };
 
 class PastLocationsPath extends React.Component<Props, State> {
@@ -30,14 +29,14 @@ class PastLocationsPath extends React.Component<Props, State> {
   pathStyle = MapboxGL.StyleSheet.create({
     lines: {
       lineColor: this.props.mode ===
-        'own' ? 'rgba(128, 128, 128, 1)' : 'rgba(0, 128, 0, 1)',
+        'own' ? 'rgba(128, 128, 128, 1)' : '#1F8BFF',
       lineWidth: 1.5,
       lineOpacity: 0.84,
       lineDasharray: [3, 3],
     },
     arrows: {
       fillAntialias: true,
-      fillColor: this.props.mode === 'own' ? 'rgba(128, 128, 128, 1)' : 'rgba(0, 128, 0, 1)',
+      fillColor: this.props.mode === 'own' ? 'rgba(128, 128, 128, 1)' : '#1F8BFF',
     },
   });
 
@@ -76,7 +75,7 @@ class PastLocationsPath extends React.Component<Props, State> {
         // console.log('New locaiton modified: ', change.doc.data());
         this.pastLocations.push(change.doc.data());
       }
-      if (this.props.isLimited && this.pastLocations.length > MAX_VISIBLE_PAST_LOCATIONS) {
+      if (this.props.limit && this.pastLocations.length > this.props.limit) {
         this.pastLocations.shift();
       }
     });
@@ -96,9 +95,30 @@ class PastLocationsPath extends React.Component<Props, State> {
   }
 
   render() {
+    let renderPastLocations = [];
+
     if (this.state.pastLocations.length < 2) return null;
 
-    const arrows = this.state.pastLocations.slice(1).map((coords, index) => {
+    if (this.props.lastLocation) { // adding artificial last location, used for MicroDate Card to show final point of meeting on card
+      renderPastLocations = [
+        ...this.state.pastLocations.slice(0, this.state.pastLocations.length - 1), // adjust this to remove last real points to make room for artificial arrows
+        {
+          geoPoint: this.props.lastLocation,
+          heading: GeoUtils.getBearing( // manually calculating bearing from last point
+            this.state.pastLocations[this.state.pastLocations.length - 2].geoPoint,
+            this.props.lastLocation,
+          ),
+          distanceDelta: GeoUtils.distance( // manually calculating distance from last point
+            this.state.pastLocations[this.state.pastLocations.length - 2].geoPoint,
+            this.props.lastLocation,
+          ),
+        },
+      ];
+    } else {
+      renderPastLocations = this.state.pastLocations;
+    }
+
+    const arrows = renderPastLocations.slice(1).map((coords, index) => {
       const { heading, distanceDelta } = coords;
       const arrowHeadLength = 7; // in meters
       let arrowTailLength = 7;
@@ -167,7 +187,7 @@ class PastLocationsPath extends React.Component<Props, State> {
           },
           geometry: {
             type: 'LineString',
-            coordinates: this.pastLocations.map((coords) => [coords.geoPoint.longitude, coords.geoPoint.latitude]),
+            coordinates: renderPastLocations.map((coords) => [coords.geoPoint.longitude, coords.geoPoint.latitude]),
           },
         },
       ],

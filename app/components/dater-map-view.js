@@ -13,6 +13,7 @@ import UsersAroundComponent from './map/users-around-component';
 import PastLocationsPath from './map/past-locations-path';
 import { Caption2 } from './ui-kit/typography';
 import MicroDateStats from './micro-date/micro-date-stats';
+import { MAX_VISIBLE_PAST_LOCATIONS } from '../constants';
 
 const mapStateToProps = (state) => ({
   location: state.location,
@@ -183,18 +184,20 @@ class DaterMapView extends React.Component<Props> {
         >
           {this.props.microDate.enabled &&
             <PastLocationsPath
+              lastLocation={this.props.location.coords}
               uid={this.props.auth && this.props.auth.uid}
               mode="own"
               microDateId={this.props.microDate.id}
-              limit={15}
+              limit={MAX_VISIBLE_PAST_LOCATIONS}
             />
           }
           {this.props.microDate.enabled &&
           <PastLocationsPath
+            lastLocation={this.props.microDate.targetCurrentCoords}
             uid={this.props.microDate.targetUserUid}
             mode="target"
             microDateId={this.props.microDate.id}
-            limit={15}
+            limit={MAX_VISIBLE_PAST_LOCATIONS}
           />
         }
           <UsersAroundComponent />
