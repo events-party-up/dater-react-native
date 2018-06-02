@@ -374,15 +374,20 @@ function createChannelToMicroDate(microDateId) {
 
 
 async function getPendingViewFinishedMicroDate(uid) {
-  const microDatesQuery = firebase.firestore()
-    .collection(MICRO_DATES_COLLECTION)
-    .where('requestFor', '==', uid)
-    .where('status', '==', 'FINISHED')
-    // .where(`${uid}_firstAlert`, '==', false)
-    .where('active', '==', false);
+  // const microDatesQuery = firebase.firestore()
+  //   .collection(MICRO_DATES_COLLECTION)
+  //   .where('requestFor', '==', uid)
+  //   .where('status', '==', 'FINISHED')
+  //   // .where(`${uid}_firstAlert`, '==', false)
+  //   .where('active', '==', false);
 
-  const microDatesSnapshot = await microDatesQuery.get();
-  const microDateSnapshot = microDatesSnapshot.docs[0];
+  // const microDatesSnapshot = await microDatesQuery.get();
+  // const microDateSnapshot = microDatesSnapshot.docs[0];
+  console.log(uid);
+  const microDate = firebase.firestore()
+    .collection(MICRO_DATES_COLLECTION)
+    .doc('3uloX6P8tvZaxqodH23e');
+  const microDateSnapshot = await microDate.get();
 
   return microDateSnapshot ? microDateSnapshot.data() : null;
 }

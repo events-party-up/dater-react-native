@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
+import Moment from 'react-moment';
 
 import DaterModal from '../components/ui-kit/dater-modal';
 import PastLocationsPath from '../components/map/past-locations-path';
 import { MicroDate } from '../types';
 import { SCREEN_WIDTH } from '../constants';
+import { H2, Body, Caption1 } from '../components/ui-kit/typography';
 
 type Props = {
   navigation: any,
@@ -67,12 +69,12 @@ export default class TextInputsScreen extends React.Component<Props> {
             pitch={0}
             onWillStartLoadingMap={this.onMapReady}
             styleURL="mapbox://styles/olegwn/cjggmap8l002u2rmu63wda2nk"
-            // scrollEnabled={false}
+            scrollEnabled={false}
             // zoomEnabled={true}
             rotateEnabled={false}
             pitchEnabled={false}
-            // minZoomLevel={11}
-            // maxZoomLevel={18}
+            minZoomLevel={11}
+            maxZoomLevel={18}
           >
             <PastLocationsPath
               uid={this.microDate.requestFor}
@@ -87,6 +89,44 @@ export default class TextInputsScreen extends React.Component<Props> {
               isLimited={false}
             />
           </MapboxGL.MapView>
+          <H2 style={[styles.subHeader, styles.textBodyPadding]}>Заголовок 2</H2>
+          <Body
+            style={[styles.bodyText, styles.textBodyPadding]}
+          >
+            Встреча {this.microDate.id.substring(0, 4)} состоялась{' '}
+            <Moment locale="ru" element={Body} fromNow>{this.microDate.finishTS}</Moment>{' '}
+            между {this.microDate.requestBy.substring(0, 4)} и {this.microDate.requestFor.substring(0, 4)}{' '}
+          </Body>
+          <Caption1
+            style={[styles.infoItemHeader, styles.textBodyPadding]}
+          >
+            Время выполнения квеста:
+          </Caption1>
+          <Body
+            style={[styles.infoItemBody, styles.textBodyPadding]}
+          >
+            15 минут
+          </Body>
+          <Caption1
+            style={[styles.infoItemHeader, styles.textBodyPadding]}
+          >
+            Добыто монет:
+          </Caption1>
+          <Body
+            style={[styles.infoItemBody, styles.textBodyPadding]}
+          >
+            1500 coins
+          </Body>
+          <Caption1
+            style={[styles.infoItemHeader, styles.textBodyPadding]}
+          >
+            Набрано опыта:
+          </Caption1>
+          <Body
+            style={[styles.infoItemBody, styles.textBodyPadding]}
+          >
+            140 XP
+          </Body>
         </ScrollView>
       </DaterModal>
     );
@@ -95,13 +135,33 @@ export default class TextInputsScreen extends React.Component<Props> {
 
 const styles = StyleSheet.create({
   mapViewContainer: {
-    paddingLeft: 8,
-    paddingRight: 8,
+    paddingLeft: 0,
+    paddingRight: 0,
   },
   scrollViewContainer: {
+    paddingLeft: 8,
+    paddingRight: 8,
   },
   mapView: {
     // width: 300,
     height: SCREEN_WIDTH - 16,
+    marginBottom: 8,
+  },
+  subHeader: {
+    marginBottom: 8,
+  },
+  bodyText: {
+    marginBottom: 8,
+  },
+  textBodyPadding: {
+    paddingLeft: 16,
+    paddingRight: 16,
+  },
+  infoItemHeader: {
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  infoItemBody: {
+    marginBottom: 8,
   },
 });
