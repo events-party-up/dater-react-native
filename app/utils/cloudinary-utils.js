@@ -11,7 +11,7 @@ const cloudinaryClient = new cloudinary.Cloudinary({ cloud_name: 'dater', secure
 export default function cloudinaryUrl(imageOptions: {
   publicId: string,
   version: number,
-}, transformOptions) {
+}, transformOptions = {}) {
   const imageUrl = imageOptions.version ? `v${imageOptions.version}/${imageOptions.publicId}` : imageOptions.publicId;
   const transformedUrl = cloudinaryClient.url(
     imageUrl,

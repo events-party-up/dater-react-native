@@ -15,7 +15,7 @@ type Props = {
   navigation: any,
 };
 
-export default class TextInputsScreen extends React.Component<Props> {
+export default class MicroDateScreen extends React.Component<Props> {
   mapView: MapboxGL.MapView;
   microDate: MicroDate;
   mapIsReady = false;
@@ -26,6 +26,16 @@ export default class TextInputsScreen extends React.Component<Props> {
     this.microDate = this.props.navigation.getParam('microDate');
     this.microDateDuration =
       Math.floor((this.microDate.finishTS.getTime() - this.microDate.acceptTS.getTime()) / 1000 / 60);
+  }
+
+  onSelfieMarkerPress = () => {
+    this.props.navigation.navigate('FullscreenPhoto', {
+      photo: {
+        // public_id: `microDates/${this.microDate.id}`,
+        publicId: `microDates/${this.microDate.id}1`, // TODO: remove 1
+        version: this.microDate.selfie.version,
+      },
+    });
   }
 
   onMapReady = () => {
@@ -89,9 +99,11 @@ export default class TextInputsScreen extends React.Component<Props> {
               key={this.microDate.id}
               id={this.microDate.id}
               selected={false}
+              anchor={{ x: 0.5, y: 1 }}
             >
               <UserOnMapMarker
                 type="microDate"
+                onPress={this.onSelfieMarkerPress}
                 photo={
                   {
                     // public_id: `microDates/${this.microDate.id}`,

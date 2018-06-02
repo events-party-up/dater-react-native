@@ -6,6 +6,7 @@ import LoginNavigator from './login-navigator';
 import FloatingNavigator from './floating-navigator';
 import MakePhotoSelfieScreen from '../screens/make-photo-selfie-screen';
 import MicroDateScreen from '../screens/micro-date-screen';
+import FullscreenPhotoScreen from '../screens/fullscreen-photo-screen';
 
 const RootStack = StackNavigator(
   {
@@ -17,6 +18,9 @@ const RootStack = StackNavigator(
     },
     MicroDate: {
       screen: MicroDateScreen,
+    },
+    FullscreenPhoto: {
+      screen: FullscreenPhotoScreen,
     },
     Login: {
       screen: LoginNavigator,
