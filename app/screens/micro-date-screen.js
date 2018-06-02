@@ -9,6 +9,7 @@ import { MicroDate } from '../types';
 import { SCREEN_WIDTH } from '../constants';
 import { H2, Body } from '../components/ui-kit/typography';
 import CardInfoItemMolecule from '../components/ui-kit/molecules/card-info-item-molecule';
+import UserOnMapMarker from '../components/map/user-on-map-marker';
 
 type Props = {
   navigation: any,
@@ -80,6 +81,26 @@ export default class TextInputsScreen extends React.Component<Props> {
               microDateId={this.microDate.id}
               isLimited={false}
             />
+            <MapboxGL.PointAnnotation
+              coordinate={[
+                this.microDate.selfieGeoPoint.longitude,
+                this.microDate.selfieGeoPoint.latitude,
+              ]}
+              key={this.microDate.id}
+              id={this.microDate.id}
+              selected={false}
+            >
+              <UserOnMapMarker
+                type="microDate"
+                photo={
+                  {
+                    // public_id: `microDates/${this.microDate.id}`,
+                    public_id: `microDates/${this.microDate.id}1`,
+                    version: this.microDate.selfie.version,
+                  }
+                }
+              />
+            </MapboxGL.PointAnnotation>
           </MapboxGL.MapView>
           <H2 style={[styles.subHeader, styles.textBodyPadding]}>Карточка встречи</H2>
           <Body

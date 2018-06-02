@@ -32,10 +32,28 @@ export type MicroDate = {
   requestByGeoPoint: FireStoreGeoPoint,
   requestForGeoPoint: FireStoreGeoPoint,
   selfieGeoPoint: FireStoreGeoPoint,
+  selfie: PhotoSelfie,
+  startDistance: number,
 }
 
 export type FireStoreGeoPoint = {
   // ...firebase.firestore.GeoPoint,
   latitude: number,
   longitude: number,
+}
+
+export type PhotoSelfie = {
+  cloudinaryUrl: string,
+  width: number,
+  height: number,
+  version: number,
+  format: string,
+  timestamp: Date,
+  uploadedBy: string,
+  storageUrl: string,
+};
+
+export type CloudinaryPhoto = {
+  public_id: string,
+  version: number,
 }

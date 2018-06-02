@@ -68,6 +68,6 @@ export default class MapPanelSelfieUploadedByMe extends React.Component<Props> {
           </View>
         </View>
       </View>
-    )
+    );
   }
 }

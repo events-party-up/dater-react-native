@@ -3,9 +3,12 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 
 import { H3 } from '../ui-kit/typography';
+import cloudinaryUrl from '../../utils/cloudinary-utils';
+import { CloudinaryPhoto } from '../../types';
 
 const ARROW_SIZE = 7;
 const ARROW_DISTANCE = 10;
@@ -17,6 +20,7 @@ type Props = {
   onPress: () => void,
   heading: number,
   mapViewBearingAngle: number,
+  photo: CloudinaryPhoto,
 };
 
 class UserOnMapMarker extends React.Component<Props> {
@@ -31,15 +35,33 @@ class UserOnMapMarker extends React.Component<Props> {
       >
         <View style={styles.container}>
           <View style={styles.outerCircle}>
-            <View style={styles.innerCircle}>
-              <H3 style={styles.title}>{title}</H3>
-            </View>
+            {this.props.photo &&
+              <Image
+                style={styles.innerCircle}
+                source={{
+                    uri: cloudinaryUrl({
+                      publicId: this.props.photo.public_id,
+                      version: this.props.photo.version,
+                    }, {
+                        height: 26,
+                        width: 26,
+                        crop: 'fill',
+                        gravity: 'faces',
+                      }),
+                  }}
+              />
+            }
+            {this.props.title &&
+              <View style={styles.innerCircle}>
+                <H3 style={styles.title}>{title}</H3>
+              </View>
+            }
           </View>
           <View style={styles.circlePin}>
             <View style={styles.arrowBorder} />
             <View style={styles.arrow} />
           </View>
-          {this.props.heading !== -1 &&
+          {this.props.heading > 0 &&
             <View style={[styles.heading, { transform: [{ rotate }] }]}>
               <View style={styles.headingPointer} />
             </View>

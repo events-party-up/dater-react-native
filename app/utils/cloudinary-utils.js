@@ -22,5 +22,6 @@ export default function cloudinaryUrl(imageOptions: {
       height: transformOptions.height ? PixelRatio.getPixelSizeForLayoutSize(transformOptions.height) : undefined,
     },
   );
+  // console.log(transformedUrl);
   return transformedUrl;
 }
