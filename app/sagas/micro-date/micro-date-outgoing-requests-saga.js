@@ -26,25 +26,25 @@ export default function* microDateOutgoingRequestsSaga() {
       const task1 = yield fork(outgoingMicroDateDeclinedByTarget);
       const task2 = yield fork(outgoingMicroDateAcceptSaga);
       const task3 = yield fork(outgoingMicroDateCancelSaga, microDate);
+      const task4 = yield fork(outgoingMicroDateStopByTargetSaga);
+      const task5 = yield fork(outgoingMicroDateStopByMeSaga, microDate);
 
       const microDateChannel = yield call(createChannelToMicroDate, microDate.id);
       const microDateUpdatesTask = yield takeLatest(microDateChannel, handleOutgoingRequestsSaga);
 
-      const nextAction = yield take([
+      const stopAction = yield take([
         'MICRO_DATE_OUTGOING_REMOVE',
-        'MICRO_DATE_STOP',
         'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
-        'MICRO_DATE_STOPPED_BY_TARGET',
         'MICRO_DATE_OUTGOING_CANCELLED',
+        'MICRO_DATE_OUTGOING_STOPPED_BY_ME',
+        'MICRO_DATE_STOPPED_BY_TARGET',
       ]);
-      yield cancel(task1, task2, task3);
+      yield cancel(task1, task2, task3, task4, task5);
       yield cancel(microDateUpdatesTask);
       yield microDateChannel.close();
 
-      if (nextAction.type === 'MICRO_DATE_OUTGOING_REMOVE') {
-        yield* handleRemoveRequest(microDateChannel, microDateUpdatesTask);
-      } else if (nextAction.type === 'MICRO_DATE_STOP') {
-        yield* handleStopRequest(microDateChannel, microDateUpdatesTask, microDate);
+      if (stopAction.type === 'MICRO_DATE_OUTGOING_REMOVE') {
+        yield put({ type: 'UI_MAP_PANEL_HIDE_FORCE' });
       }
     }
   } catch (error) {
@@ -73,16 +73,7 @@ export default function* microDateOutgoingRequestsSaga() {
         break;
       case 'STOP':
         if (microDate.stopBy !== microDate.requestBy) {
-          yield put({
-            type: 'UI_MAP_PANEL_SHOW',
-            payload: {
-              mode: 'microDateStopped',
-              canHide: true,
-              microDate,
-            },
-          });
-
-          yield put({ type: 'MICRO_DATE_STOPPED_BY_TARGET' });
+          yield put({ type: 'MICRO_DATE_STOP_BY_TARGET', payload: microDate });
         }
         break;
       case 'SELFIE_UPLOADED':
@@ -245,8 +236,23 @@ function* outgoingMicroDateCancelSaga(microDate) {
   yield put({ type: 'MICRO_DATE_OUTGOING_CANCELLED', payload: microDate });
 }
 
-function* handleStopRequest(microDateChannel, microDateUpdatesTask, microDate) {
-  yield* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask);
+function* outgoingMicroDateStopByTargetSaga() {
+  const action = yield take('MICRO_DATE_STOP_BY_TARGET');
+  const microDate = action.payload;
+  yield put({
+    type: 'UI_MAP_PANEL_SHOW',
+    payload: {
+      mode: 'microDateStopped',
+      canHide: true,
+      microDate,
+    },
+  });
+
+  yield put({ type: 'MICRO_DATE_STOPPED_BY_TARGET' });
+}
+
+function* outgoingMicroDateStopByMeSaga(microDate) {
+  yield take('MICRO_DATE_STOP');
   yield firebase.firestore()
     .collection(MICRO_DATES_COLLECTION)
     .doc(microDate.id)
@@ -256,18 +262,7 @@ function* handleStopRequest(microDateChannel, microDateUpdatesTask, microDate) {
       stopBy: microDate.requestBy,
       stopTS: firebase.firestore.FieldValue.serverTimestamp(),
     });
-  yield put({ type: 'MICRO_DATE_STOPPED' });
-}
-
-function* handleRemoveRequest(microDateChannel, microDateUpdatesTask) {
-  yield put({ type: 'UI_MAP_PANEL_HIDE_FORCE' });
-  yield* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask);
-  yield put({ type: 'MICRO_DATE_OUTGOING_REMOVED' });
-}
-
-function* cancelMicroDateTaskAndChannel(microDateChannel, microDateUpdatesTask) {
-  yield cancel(microDateUpdatesTask);
-  yield microDateChannel.close();
+  yield put({ type: 'MICRO_DATE_OUTGOING_STOPPED_BY_ME' });
 }
 
 function createChannelToMicroDate(microDateId) {
