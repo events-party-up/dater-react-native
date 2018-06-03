@@ -2,6 +2,7 @@ import GeoUtils from '../utils/geo-utils';
 
 const types = {
 
+  MICRO_DATE_OUTGOING_REQUEST_INIT: 'MICRO_DATE_OUTGOING_REQUEST_INIT',
   MICRO_DATE_OUTGOING_REQUEST: 'MICRO_DATE_OUTGOING_REQUEST',
   MICRO_DATE_OUTGOING_REQUESTED: 'MICRO_DATE_OUTGOING_REQUESTED',
   MICRO_DATE_OUTGOING_REQUEST_PENDING: 'MICRO_DATE_OUTGOING_REQUEST_PENDING',
@@ -20,6 +21,7 @@ const types = {
 
   MICRO_DATE_OUTGOING_START: 'MICRO_DATE_OUTGOING_START',
   MICRO_DATE_INCOMING_START: 'MICRO_DATE_INCOMING_START',
+  MICRO_DATE_OUTGOING_STARTED: 'MICRO_DATE_OUTGOING_STARTED',
 
   MICRO_DATE_STOP: 'MICRO_DATE_STOP',
   MICRO_DATE_INCOMING_STOP_BY_TARGET: 'MICRO_DATE_INCOMING_STOP_BY_TARGET',
@@ -65,7 +67,7 @@ const microDateReducer = (state = initialState, action) => {
     case types.MICRO_DATE_OUTGOING_REQUEST: {
       return {
         ...state,
-        targetUserUid: payload.targetUser.id,
+        targetUserUid: payload.requestFor,
       };
     }
     case types.MICRO_DATE_OUTGOING_REQUEST_PENDING:
@@ -85,7 +87,7 @@ const microDateReducer = (state = initialState, action) => {
         pending: false,
       };
     }
-    case types.MICRO_DATE_OUTGOING_START:
+    case types.MICRO_DATE_OUTGOING_STARTED:
     case types.MICRO_DATE_INCOMING_START: {
       return {
         ...state,

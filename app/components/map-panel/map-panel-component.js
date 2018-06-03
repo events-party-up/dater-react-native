@@ -83,7 +83,7 @@ class MapPanelComponent extends Component<Props> {
       },
     });
     this.props.dispatch({
-      type: 'MICRO_DATE_OUTGOING_REQUEST',
+      type: 'MICRO_DATE_OUTGOING_REQUEST_INIT',
       payload: {
         targetUser,
       },

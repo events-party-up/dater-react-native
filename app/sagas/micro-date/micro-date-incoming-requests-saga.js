@@ -1,5 +1,5 @@
 import { call, take, put, takeEvery, select, cancel, fork } from 'redux-saga/effects';
-import { eventChannel } from 'redux-saga';
+import { eventChannel, buffers } from 'redux-saga';
 import firebase from 'react-native-firebase';
 
 import { Actions } from '../../navigators/navigator-actions';
@@ -332,7 +332,6 @@ function createChannelForIncomingMicroDateRequests(uid) {
     const onSnapshotUpdated = (snapshot) => {
       if (snapshot.docs.length > 0 && snapshot.docChanges[0].type === 'added') {
         const microDate = snapshot.docs[0].data();
-
         emit({
           ...microDate,
           id: snapshot.docs[0].id,
@@ -349,7 +348,7 @@ function createChannelForIncomingMicroDateRequests(uid) {
     const unsubscribe = microDateStartedByOthersQuery.onSnapshot(onSnapshotUpdated, onError);
 
     return unsubscribe;
-  });
+  }, buffers.expanding(5));
 }
 
 function createChannelToMicroDate(microDateId) {

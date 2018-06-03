@@ -1,4 +1,4 @@
-import { call, take, put, cancel, select, takeLatest, END } from 'redux-saga/effects';
+import { call, take, put, cancel, select, takeLatest } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 
 const mapPanelReplaceDelay = 250;
