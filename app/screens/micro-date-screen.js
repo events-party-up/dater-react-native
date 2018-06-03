@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View, Image } from 'react-native';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import Moment from 'react-moment';
 
@@ -10,6 +10,8 @@ import { SCREEN_WIDTH } from '../constants';
 import { H2, Body } from '../components/ui-kit/typography';
 import CardInfoItemMolecule from '../components/ui-kit/molecules/card-info-item-molecule';
 import UserOnMapMarker from '../components/map/user-on-map-marker';
+
+const coinIcon = require('../assets/icons/coin/16/coin.png');
 
 type Props = {
   navigation: any,
@@ -137,16 +139,10 @@ export default class MicroDateScreen extends React.Component<Props> {
             {this.microDateDuration} минут
           </CardInfoItemMolecule>
           <CardInfoItemMolecule
-            style={[styles.bodyText, styles.textBodyPadding]}
+            style={[styles.bodyText]}
             header="Добыто монет:"
           >
-            1500 coins
-          </CardInfoItemMolecule>
-          <CardInfoItemMolecule
-            style={[styles.bodyText, styles.textBodyPadding]}
-            header="Набрано опыта:"
-          >
-            140 XP
+            <Image source={coinIcon} style={styles.textBodyPadding} />1500
           </CardInfoItemMolecule>
           <View style={styles.bottomButtonsPad} />
         </ScrollView>

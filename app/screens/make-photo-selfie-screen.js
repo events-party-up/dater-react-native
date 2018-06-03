@@ -62,7 +62,6 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
     const cameraPermission = await Permissions.check('camera');
     if (cameraPermission === 'authorized') {
       this.setState({
-        ...this.state,
         hasCameraPermission: true,
       });
     }
@@ -70,7 +69,6 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
 
   onCameraReady = () => {
     this.setState({
-      ...this.state,
       hasCameraPermission: true,
     });
   }
@@ -92,7 +90,6 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
       };
       const data = await this.camera.takePictureAsync(options);
       this.setState({
-        ...this.state,
         photoURI: data.uri,
         ...data,
       });
@@ -124,7 +121,6 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
   onBackButton = () => {
     if (this.state.photoURI) {
       this.setState({
-        ...this.state,
         photoURI: '',
       });
     } else {
@@ -210,7 +206,6 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
           {this.state.photoURI !== '' &&
             <CircleButton
               onPress={() => this.setState({
-                ...this.state,
                 photoURI: '',
               })}
               style={styles.removePhotoButton}
