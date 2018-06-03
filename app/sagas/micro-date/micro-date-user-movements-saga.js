@@ -100,17 +100,8 @@ function* checkDistance(microDate, myCoords, targetCoords) {
   }
 
   const distanceToTarget = GeoUtils.distance(myCoords, targetCoords);
-  const mapPanelMode = yield select((state) => state.mapPanel.mode);
 
   if (distanceToTarget < DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD) {
-    if (
-      mapPanelMode === 'makeSelfie' ||
-      mapPanelMode === 'selfieUploadedByTarget' ||
-      mapPanelMode === 'selfieUploadedByMe' ||
-      mapPanelMode === 'selfieUploading') {
-      return;
-    }
-
     yield put({
       type: 'UI_MAP_PANEL_SHOW',
       payload: {

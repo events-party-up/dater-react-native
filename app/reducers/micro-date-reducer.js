@@ -35,6 +35,7 @@ const types = {
   MICRO_DATE_MY_MOVE: 'MICRO_DATE_MY_MOVE',
   MICRO_DATE_MY_MOVE_RECORDED: 'MICRO_DATE_MY_MOVE_RECORDED', // move recorded to Firestore
   MICRO_DATE_TARGET_MOVE: 'MICRO_DATE_TARGET_MOVE', // incoming moves are already qualified by sending party
+  MICRO_DATE_INCOMING_SHOW_FINAL_SCREEN: 'MICRO_DATE_INCOMING_SHOW_FINAL_SCREEN',
 
   MICRO_DATE_ROOT_SAGA_ERROR: 'MICRO_DATE_ROOT_SAGA_ERROR',
   MICRO_DATE_INCOMING_ERROR: 'MICRO_DATE_INCOMING_ERROR',
@@ -100,6 +101,7 @@ const microDateReducer = (state = initialState, action) => {
         targetCurrentCoords: payload.targetUser.geoPoint,
       };
     }
+    case types.MICRO_DATE_INCOMING_SHOW_FINAL_SCREEN:
     case types.MICRO_DATE_OUTGOING_REMOVED:
     case types.MICRO_DATE_INCOMING_REMOVE:
     case types.MICRO_DATE_STOPPED_BY_TARGET:

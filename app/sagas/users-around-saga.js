@@ -61,6 +61,9 @@ export default function* usersAroundSaga() {
         'MICRO_DATE_OUTGOING_START', // app mode switched to find user
         'MICRO_DATE_STOP',
         'MICRO_DATE_STOPPED_BY_TARGET',
+        'MICRO_DATE_INCOMING_SHOW_FINAL_SCREEN',
+        'MICRO_DATE_INCOMING_REMOVE',
+        'MICRO_DATE_OUTGOING_REMOVE',
       ]);
 
       if (stopAction.type === 'USERS_AROUND_STOP') {
@@ -73,7 +76,11 @@ export default function* usersAroundSaga() {
       }
 
       if (stopAction.type === 'MICRO_DATE_STOP' ||
-        stopAction.type === 'MICRO_DATE_STOPPED_BY_TARGET') {
+        stopAction.type === 'MICRO_DATE_STOPPED_BY_TARGET' ||
+        stopAction.type === 'MICRO_DATE_INCOMING_SHOW_FINAL_SCREEN' ||
+        stopAction.type === 'MICRO_DATE_INCOMING_REMOVE' ||
+        stopAction.type === 'MICRO_DATE_OUTGOING_REMOVE'
+      ) {
         isMicroDateMode = false;
       }
 

@@ -22,19 +22,21 @@ export default class MicroDateScreen extends React.Component<Props> {
   microDate: MicroDate;
   mapIsReady = false;
   microDateDuration: number;
+  finishTS: Date;
 
   componentWillMount() {
     console.log(this.props.navigation.getParam('microDate'));
     this.microDate = this.props.navigation.getParam('microDate');
+    this.finishTS = this.microDate.finishTS ? this.microDate.finishTS : new Date();
     this.microDateDuration =
-      Math.floor((this.microDate.finishTS.getTime() - this.microDate.acceptTS.getTime()) / 1000 / 60);
+      Math.floor((this.finishTS.getTime() - this.microDate.acceptTS.getTime()) / 1000 / 60);
+    this.microDateDuration = this.microDateDuration <= 0 ? 1 : this.microDateDuration; // reset to 1 if duration is too small
   }
 
   onSelfieMarkerPress = () => {
     this.props.navigation.navigate('FullscreenPhoto', {
       photo: {
-        // public_id: `microDates/${this.microDate.id}`,
-        publicId: `microDates/${this.microDate.id}1`, // TODO: remove 1
+        publicId: `microDates/${this.microDate.id}`,
         version: this.microDate.selfie.version,
       },
     });
@@ -111,7 +113,7 @@ export default class MicroDateScreen extends React.Component<Props> {
                 photo={
                   {
                     // public_id: `microDates/${this.microDate.id}`,
-                    public_id: `microDates/${this.microDate.id}1`, // TODO: Change this, remove 1
+                    publicId: `microDates/${this.microDate.id}`,
                     version: this.microDate.selfie.version,
                   }
                 }
@@ -123,7 +125,7 @@ export default class MicroDateScreen extends React.Component<Props> {
             style={[styles.bodyText, styles.textBodyPadding]}
           >
             Встреча {this.microDate.id.substring(0, 4)} состоялась{' '}
-            <Moment locale="ru" element={Body} fromNow>{this.microDate.finishTS}</Moment>{' '}
+            <Moment locale="ru" element={Body} fromNow>{this.finishTS}</Moment>{' '}
             между {this.microDate.requestBy.substring(0, 4)} и {this.microDate.requestFor.substring(0, 4)}{' '}
           </Body>
           <View style={{
@@ -180,7 +182,7 @@ export default class MicroDateScreen extends React.Component<Props> {
             style={[styles.bodyText, styles.textBodyPadding]}
             header="Время выполнения квеста:"
           >
-            {this.microDateDuration} минут
+            {this.microDateDuration} мин.
           </CardInfoItemMolecule>
           <View style={styles.bottomButtonsPad} />
         </ScrollView>

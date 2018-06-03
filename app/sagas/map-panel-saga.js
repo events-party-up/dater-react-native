@@ -1,4 +1,4 @@
-import { call, take, put, cancel, select, takeLatest } from 'redux-saga/effects';
+import { call, take, put, cancel, select, takeLatest, END } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 
 const mapPanelReplaceDelay = 250;
@@ -34,8 +34,9 @@ export default function* mapPanelSaga() {
       showingInProgress = true;
       const mapPanelPreviousMode = yield select((state) => state.mapPanel.previousMode);
       const mapPanelVisible = yield select((state) => state.mapPanel.visible);
+      const pendingShow = yield select((state) => state.mapPanel.pendingShow);
 
-      if (mapPanelVisible && mapPanelPreviousMode !== action.payload.mode) {
+      if (mapPanelVisible && mapPanelPreviousMode !== action.payload.mode && !pendingShow) {
         // hide pannel without any actions
         yield call(mapPanelSnapper, { index: 3 }); // hide
         yield call(delay, mapPanelReplaceDelay);
@@ -44,7 +45,14 @@ export default function* mapPanelSaga() {
         action.payload.mode : yield select((state) => state.mapPanel.mode);
 
       switch (mapPanelMode) {
-        case 'microDateActive':
+        case 'activeMicroDate':
+          if (
+            mapPanelMode === 'makeSelfie' ||
+            mapPanelMode === 'selfieUploadedByTarget' ||
+            mapPanelMode === 'selfieUploadedByMe' ||
+            mapPanelMode === 'selfieUploading') {
+            return;
+          }
           yield call(mapPanelSnapper, { index: 0 }); // show
           break;
         case 'selfieUploading':
@@ -52,6 +60,16 @@ export default function* mapPanelSaga() {
           break;
         case 'selfieUploadedByTarget':
           yield call(mapPanelSnapper, { index: 1 }); // show
+          break;
+        case 'makeSelfie':
+          if (
+            // mapPanelMode === 'makeSelfie' ||
+            mapPanelMode === 'selfieUploadedByTarget' ||
+            mapPanelMode === 'selfieUploadedByMe' ||
+            mapPanelMode === 'selfieUploading') {
+            return;
+          }
+          yield call(mapPanelSnapper, { index: 0 }); // show
           break;
         default:
           yield call(mapPanelSnapper, { index: 0 }); // show

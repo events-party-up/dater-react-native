@@ -40,7 +40,7 @@ class UserOnMapMarker extends React.Component<Props> {
                 style={styles.innerCircle}
                 source={{
                     uri: cloudinaryUrl({
-                      publicId: this.props.photo.public_id,
+                      publicId: this.props.photo.publicId,
                       version: this.props.photo.version,
                     }, {
                         height: 26,

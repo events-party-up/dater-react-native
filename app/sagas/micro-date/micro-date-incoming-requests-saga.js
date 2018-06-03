@@ -9,15 +9,14 @@ import { MICRO_DATES_COLLECTION } from '../../constants';
 export default function* microDateIncomingRequestsSaga() {
   try {
     const myUid = yield select((state) => state.auth.uid);
-    const pendingViewMicroDate = yield getPendingViewFinishedMicroDate(myUid);
-
-    if (pendingViewMicroDate) {
-      const finishTask = yield fork(incomingMicroDateFinishedSaga, pendingViewMicroDate);
-      yield* incomingMicroDateUpdatedSaga(pendingViewMicroDate);
-      cancel(finishTask);
-    }
-
     const incomingMicroDateRequestsChannel = yield call(createChannelForIncomingMicroDateRequests, myUid);
+    const pendingFinalScreen = yield getPendingViewFinishedMicroDate(myUid);
+
+    if (pendingFinalScreen) {
+      const pendingTask = yield fork(incomingMicroDateFinishedSaga);
+      yield* incomingMicroDateUpdatedSaga(pendingFinalScreen);
+      cancel(pendingTask);
+    }
 
     while (true) {
       const nextMicroDate = yield take(incomingMicroDateRequestsChannel);
@@ -42,8 +41,7 @@ export default function* microDateIncomingRequestsSaga() {
 
       const task9 = yield fork(incomingMicroDateSelfieDeclineByMeSaga, nextMicroDate);
       const task10 = yield fork(incomingMicroDateSelfieAcceptByMeSaga, nextMicroDate);
-
-      const task11 = yield fork(incomingMicroDateFinishedSaga, nextMicroDate);
+      const task11 = yield fork(incomingMicroDateFinishedSaga);
 
       const stopAction = yield take([
         'MICRO_DATE_INCOMING_REMOVE',
@@ -51,12 +49,13 @@ export default function* microDateIncomingRequestsSaga() {
         'MICRO_DATE_INCOMING_CANCELLED',
         'MICRO_DATE_INCOMING_STOPPED_BY_ME',
         'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
-        'MICRO_DATE_INCOMING_APPROVED_SELFIE',
+        'MICRO_DATE_INCOMING_SHOW_FINAL_SCREEN',
       ]);
       console.log('Cancelling tasks');
 
       yield microDateChannel.close();
-      yield cancel(microDateUpdatesTask, task1, task2, task3, task4, task5, task6, task7, task8, task9, task10, task11);
+      yield cancel(microDateUpdatesTask);
+      yield cancel(task1, task2, task3, task4, task5, task6, task7, task8, task9, task10, task11);
 
       if (stopAction.type === 'MICRO_DATE_INCOMING_REMOVE') {
         yield put({ type: 'UI_MAP_PANEL_HIDE_FORCE' });
@@ -104,7 +103,6 @@ function* incomingMicroDateUpdatedSaga(microDate) {
         yield put({ type: 'MICRO_DATE_INCOMING_FINISHED', payload: microDate });
         break;
       default:
-        console.log(microDate);
         yield put({
           type: 'MICRO_DATE_UPDATED_SAGA_UNKNOWN_STATUS_ERROR',
           payload: `Unknown microDate status: ${microDate.status}`,
@@ -281,7 +279,13 @@ function* incomingMicroDateSelfieDeclineByMeSaga(microDate) {
       .update({
         status: 'ACCEPT',
       });
-    yield put({ type: 'UI_MAP_PANEL_HIDE_FORCE' });
+    yield put({
+      type: 'UI_MAP_PANEL_SHOW',
+      payload: {
+        mode: 'makeSelfie',
+        canHide: false,
+      },
+    });
   }
 }
 
@@ -294,16 +298,18 @@ function* incomingMicroDateSelfieAcceptByMeSaga(microDate) {
       status: 'FINISHED',
       active: false,
       finishTS: firebase.firestore.FieldValue.serverTimestamp(),
+      finishBy: microDate.requestFor,
       moderationStatus: 'PENDING',
       [`${microDate.requestBy}_firstAlert`]: false,
       [`${microDate.requestFor}_firstAlert`]: false,
     });
-
   yield put({ type: 'MICRO_DATE_INCOMING_APPROVED_SELFIE' });
 }
 
-function* incomingMicroDateFinishedSaga(microDate) {
-  yield take('MICRO_DATE_INCOMING_FINISHED');
+function* incomingMicroDateFinishedSaga() {
+  const action = yield take('MICRO_DATE_INCOMING_FINISHED');
+  const microDate = action.payload;
+
   yield firebase.firestore()
     .collection(MICRO_DATES_COLLECTION)
     .doc(microDate.id)
@@ -311,6 +317,7 @@ function* incomingMicroDateFinishedSaga(microDate) {
       [`${microDate.requestFor}_firstAlert`]: true,
     });
   yield Actions.navigate({ routeName: 'MicroDate', params: { microDate } });
+  yield put({ type: 'MICRO_DATE_INCOMING_SHOW_FINAL_SCREEN' });
 }
 
 function createChannelForIncomingMicroDateRequests(uid) {
@@ -372,22 +379,20 @@ function createChannelToMicroDate(microDateId) {
   });
 }
 
-
 async function getPendingViewFinishedMicroDate(uid) {
-  // const microDatesQuery = firebase.firestore()
-  //   .collection(MICRO_DATES_COLLECTION)
-  //   .where('requestFor', '==', uid)
-  //   .where('status', '==', 'FINISHED')
-  //   // .where(`${uid}_firstAlert`, '==', false)
-  //   .where('active', '==', false);
-
-  // const microDatesSnapshot = await microDatesQuery.get();
-  // const microDateSnapshot = microDatesSnapshot.docs[0];
-  console.log(uid);
-  const microDate = firebase.firestore()
+  const microDatesQuery = firebase.firestore()
     .collection(MICRO_DATES_COLLECTION)
-    .doc('3uloX6P8tvZaxqodH23e');
-  const microDateSnapshot = await microDate.get();
+    .where('requestFor', '==', uid)
+    .where('status', '==', 'FINISHED')
+    .where(`${uid}_firstAlert`, '==', false)
+    .where('active', '==', false);
 
+  const microDatesSnapshot = await microDatesQuery.get();
+  const microDateSnapshot = microDatesSnapshot.docs[0];
+  // console.log(uid);
+  // const microDate = firebase.firestore()
+  //   .collection(MICRO_DATES_COLLECTION)
+  //   .doc('3uloX6P8tvZaxqodH23e');
+  // const microDateSnapshot = await microDate.get();
   return microDateSnapshot ? microDateSnapshot.data() : null;
 }
