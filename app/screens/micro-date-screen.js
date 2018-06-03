@@ -7,7 +7,7 @@ import DaterModal from '../components/ui-kit/dater-modal';
 import PastLocationsPath from '../components/map/past-locations-path';
 import { MicroDate } from '../types';
 import { SCREEN_WIDTH } from '../constants';
-import { H2, Body } from '../components/ui-kit/typography';
+import { Body } from '../components/ui-kit/typography';
 import CardInfoItemMolecule from '../components/ui-kit/molecules/card-info-item-molecule';
 import UserOnMapMarker from '../components/map/user-on-map-marker';
 
@@ -118,7 +118,7 @@ export default class MicroDateScreen extends React.Component<Props> {
               />
             </MapboxGL.PointAnnotation>
           </MapboxGL.MapView>
-          <H2 style={[styles.subHeader, styles.textBodyPadding]}>Карточка встречи</H2>
+          {/* <H2 style={[styles.subHeader, styles.textBodyPadding]}>Карточка встречи</H2> */}
           <Body
             style={[styles.bodyText, styles.textBodyPadding]}
           >
@@ -126,8 +126,52 @@ export default class MicroDateScreen extends React.Component<Props> {
             <Moment locale="ru" element={Body} fromNow>{this.microDate.finishTS}</Moment>{' '}
             между {this.microDate.requestBy.substring(0, 4)} и {this.microDate.requestFor.substring(0, 4)}{' '}
           </Body>
+          <View style={{
+             flexDirection: 'row',
+            }}
+          >
+            <CardInfoItemMolecule
+              style={[styles.bodyText, styles.textBodyPadding]}
+              header="Добыто"
+              bodyStyle={{
+                paddingLeft: 0,
+              }}
+            >
+              <View style={styles.coinIcon}>
+                <Image source={coinIcon} />
+              </View>
+              1500
+            </CardInfoItemMolecule>
+            <CardInfoItemMolecule
+              style={[styles.bodyText, styles.textBodyPadding]}
+              header={this.microDate.requestBy.substring(0, 4)}
+              bodyStyle={{
+                paddingLeft: 0,
+              }}
+            >
+              <View style={styles.coinIcon}>
+                <Image source={coinIcon} />
+              </View>
+              1000
+            </CardInfoItemMolecule>
+            <CardInfoItemMolecule
+              style={[styles.bodyText, styles.textBodyPadding]}
+              header={this.microDate.requestFor.substring(0, 4)}
+              bodyStyle={{
+                paddingLeft: 0,
+              }}
+            >
+              <View style={styles.coinIcon}>
+                <Image source={coinIcon} />
+              </View>
+              500
+            </CardInfoItemMolecule>
+          </View>
           <CardInfoItemMolecule
             style={[styles.bodyText, styles.textBodyPadding]}
+            bodyStyle={{
+              color: this.microDate.moderationStatus === 'PENDING' && '#354DFF',
+            }}
             header="Статус:"
           >
             Ожидает подтверждения
@@ -137,12 +181,6 @@ export default class MicroDateScreen extends React.Component<Props> {
             header="Время выполнения квеста:"
           >
             {this.microDateDuration} минут
-          </CardInfoItemMolecule>
-          <CardInfoItemMolecule
-            style={[styles.bodyText]}
-            header="Добыто монет:"
-          >
-            <Image source={coinIcon} style={styles.textBodyPadding} />1500
           </CardInfoItemMolecule>
           <View style={styles.bottomButtonsPad} />
         </ScrollView>
@@ -173,6 +211,9 @@ const styles = StyleSheet.create({
   textBodyPadding: {
     paddingLeft: 16,
     paddingRight: 16,
+  },
+  coinIcon: {
+    // paddingLeft: 16,
   },
   bottomButtonsPad: {
     height: 96,

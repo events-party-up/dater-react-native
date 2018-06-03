@@ -34,7 +34,12 @@ export type MicroDate = {
   selfieGeoPoint: FireStoreGeoPoint,
   selfie: PhotoSelfie,
   startDistance: number,
+  moderationStatus: MicroDateModerationStatus,
+  status: MicroDateStatus,
 }
+
+export type MicroDateModerationStatus = 'PENDING' | 'DECLINED' | 'APPROVED';
+export type MicroDateStatus = 'REQUEST' | 'ACCEPT' | 'CANCEL_REQUEST' | 'STOP' | 'SELFIE_UPLOADED' | 'FINISHED';
 
 export type FireStoreGeoPoint = {
   // ...firebase.firestore.GeoPoint,

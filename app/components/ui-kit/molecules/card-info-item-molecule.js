@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { Caption1, Body } from '../../../components/ui-kit/typography';
 
@@ -7,23 +7,27 @@ type Props = {
   children: any,
   header: string,
   style: typeof StyleSheet,
+  captionStyle: typeof StyleSheet,
+  bodyStyle: typeof StyleSheet,
 };
 
 export default class CardInfoItemMolecule extends React.Component<Props> {
   render() {
     return (
-      <React.Fragment>
+      <View
+        style={[styles.container, this.props.style]}
+      >
         <Caption1
-          style={[this.props.style, styles.infoItemHeader]}
+          style={[styles.infoItemHeader, this.props.captionStyle]}
         >
           {this.props.header}
         </Caption1>
         <Body
-          style={[this.props.style, styles.infoItemBody]}
+          style={[styles.infoItemBody, this.props.bodyStyle]}
         >
           {this.props.children}
         </Body>
-      </React.Fragment>
+      </View>
     );
   }
 }
@@ -35,5 +39,8 @@ const styles = StyleSheet.create({
   },
   infoItemBody: {
     marginBottom: 8,
+  },
+  container: {
+    flexDirection: 'column',
   },
 });
