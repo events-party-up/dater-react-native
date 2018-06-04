@@ -11,8 +11,8 @@ export const types = {
 };
 
 const initialState = {
-  mode: '',
-  previousMode: '',
+  mode: null,
+  previousMode: null,
   visible: false,
   pendingShow: false,
   user: {},
@@ -43,7 +43,7 @@ const mapPanelReducer = (state = initialState, action) => {
         ...payload,
         visible: true,
         pendingShow: false,
-        previousMode: state.mode,
+        previousMode: state.mode || payload.mode,
       };
     }
     case types.UI_MAP_PANEL_HIDE_FORCE: {

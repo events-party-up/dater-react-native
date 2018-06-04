@@ -43,7 +43,8 @@ export default function* mapPanelSaga() {
       }
       const mapPanelMode = action.payload && action.payload.mode ?
         action.payload.mode : yield select((state) => state.mapPanel.mode);
-
+      console.log('mapPanelMode: ', mapPanelMode);
+      console.log('mapPanelPreviousMode: ', mapPanelPreviousMode);
       switch (mapPanelMode) {
         case 'activeMicroDate':
           if (
@@ -65,6 +66,7 @@ export default function* mapPanelSaga() {
           if (
             // mapPanelMode === 'makeSelfie' ||
             mapPanelMode === 'selfieUploadedByTarget' ||
+            mapPanelPreviousMode === 'selfieUploadedByTarget' ||
             mapPanelMode === 'selfieUploadedByMe' ||
             mapPanelMode === 'selfieUploading') {
             return;

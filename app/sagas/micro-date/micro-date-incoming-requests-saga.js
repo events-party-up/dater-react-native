@@ -57,7 +57,10 @@ export default function* microDateIncomingRequestsSaga() {
       yield cancel(microDateUpdatesTask);
       yield cancel(task1, task2, task3, task4, task5, task6, task7, task8, task9, task10, task11);
 
-      if (stopAction.type === 'MICRO_DATE_INCOMING_REMOVE') {
+      if (
+        stopAction.type === 'MICRO_DATE_INCOMING_REMOVE' ||
+        stopAction.type === 'MICRO_DATE_INCOMING_SHOW_FINAL_SCREEN'
+      ) {
         yield put({ type: 'UI_MAP_PANEL_HIDE_FORCE' });
       }
     }
@@ -143,11 +146,6 @@ function* incomingMicroDateAcceptSaga(microDate) {
 
     const myCoords = yield select((state) => state.location.coords);
     const userSnap = yield microDate.requestByRef.get();
-    const targetUser = {
-      id: userSnap.id,
-      shortId: userSnap.id.substring(0, 4),
-      ...userSnap.data(),
-    };
 
     if (acceptType === 'acceptButtonPressed') {
       yield firebase.firestore()
@@ -162,16 +160,7 @@ function* incomingMicroDateAcceptSaga(microDate) {
         });
     }
 
-    yield put({
-      type: 'MICRO_DATE_INCOMING_START',
-      payload: {
-        targetUser,
-        myCoords,
-        distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
-        microDateId: microDate.id,
-      },
-    });
-
+    yield* startMicroDateSaga(microDate);
     yield put({
       type: 'UI_MAP_PANEL_SHOW',
       payload: {
@@ -243,6 +232,7 @@ function* incomingMicroDateSelfieUploadedByTargetSaga() {
     const action = yield take('MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_TARGET');
     const microDate = action.payload;
 
+    yield* startMicroDateSaga(microDate);
     yield put({
       type: 'UI_MAP_PANEL_SHOW',
       payload: {
@@ -318,6 +308,26 @@ function* incomingMicroDateFinishedSaga() {
     });
   yield Actions.navigate({ routeName: 'MicroDate', params: { microDate } });
   yield put({ type: 'MICRO_DATE_INCOMING_SHOW_FINAL_SCREEN' });
+}
+
+function* startMicroDateSaga(microDate) {
+  const myCoords = yield select((state) => state.location.coords);
+  const userSnap = yield microDate.requestByRef.get();
+  const targetUser = {
+    id: userSnap.id,
+    shortId: userSnap.id.substring(0, 4),
+    ...userSnap.data(),
+  };
+
+  yield put({
+    type: 'MICRO_DATE_INCOMING_START',
+    payload: {
+      targetUser,
+      myCoords,
+      distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
+      microDateId: microDate.id,
+    },
+  });
 }
 
 function createChannelForIncomingMicroDateRequests(uid) {
