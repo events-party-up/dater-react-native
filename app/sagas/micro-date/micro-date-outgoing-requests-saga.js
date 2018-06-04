@@ -1,5 +1,5 @@
-import { call, take, put, takeLatest, select, cancel, actionChannel, fork } from 'redux-saga/effects';
-import { eventChannel } from 'redux-saga';
+import { call, take, put, takeEvery, select, cancel, fork } from 'redux-saga/effects';
+import { eventChannel, buffers } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import GeoUtils from '../../utils/geo-utils';
 
@@ -9,28 +9,20 @@ import { MicroDate } from '../../types';
 
 export default function* microDateOutgoingRequestsSaga() {
   try {
-    const requestsChannel = yield actionChannel([
-      'MICRO_DATE_OUTGOING_REQUEST',
-      'MICRO_DATE_OUTGOING_START',
-      'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME',
-      'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_TARGET',
-    ]);
     const myUid = yield select((state) => state.auth.uid);
-    const pendingMicroDate = yield getPendingOutgoingMicroDate(myUid);
+    const outgoingMicroDateRequestsChannel = yield call(createChannelForOutgoingMicroDateRequests, myUid);
 
     yield fork(handleOutgoingMicroDateRequestInit);
     yield fork(handleOutgoingMicroDateRequest);
 
-    if (pendingMicroDate) {
-      yield* handleOutgoingRequestsSaga(pendingMicroDate);
-    }
-
     while (true) {
-      const nextRequest = yield take(requestsChannel);
-      const microDate: MicroDate = nextRequest.payload;
+      const microDate: MicroDate = yield take(outgoingMicroDateRequestsChannel);
+      if (microDate.error) {
+        throw new Error(JSON.stringify(microDate.error));
+      }
 
       const task1 = yield fork(outgoingMicroDateCancelSaga, microDate);
-      const task2 = yield fork(outgoingMicroDateDeclinedByTargetSaga);
+      const task2 = yield fork(outgoingMicroDateDeclinedByTarget);
 
       const task3 = yield fork(outgoingMicroDateAcceptSaga);
 
@@ -42,9 +34,10 @@ export default function* microDateOutgoingRequestsSaga() {
 
       const task8 = yield fork(outgoingMicroDateSelfieDeclineByMeSaga, microDate);
       const task9 = yield fork(outgoingMicroDateSelfieAcceptByMeSaga, microDate);
+      const task10 = yield fork(outgoingMicroDateFinishedSaga);
 
       const microDateChannel = yield call(createChannelToMicroDate, microDate.id);
-      const microDateUpdatesTask = yield takeLatest(microDateChannel, handleOutgoingRequestsSaga);
+      const microDateUpdatesTask = yield takeEvery(microDateChannel, handleOutgoingRequestsSaga);
 
       const stopAction = yield take([
         'MICRO_DATE_OUTGOING_REMOVE',
@@ -55,7 +48,7 @@ export default function* microDateOutgoingRequestsSaga() {
         'MICRO_DATE_OUTGOING_FINISHED',
       ]);
 
-      yield cancel(task1, task2, task3, task4, task5, task6, task7, task8, task9);
+      yield cancel(task1, task2, task3, task4, task5, task6, task7, task8, task9, task10);
       yield cancel(microDateUpdatesTask);
       yield microDateChannel.close();
 
@@ -82,6 +75,7 @@ export default function* microDateOutgoingRequestsSaga() {
 
     switch (microDate.status) {
       case 'REQUEST':
+        console.log('HERE: MICRO_DATE_OUTGOING_REQUEST');
         yield put({ type: 'MICRO_DATE_OUTGOING_REQUEST', payload: microDate });
         break;
       case 'DECLINE':
@@ -103,6 +97,13 @@ export default function* microDateOutgoingRequestsSaga() {
         }
         break;
       case 'FINISHED':
+        if (microDate.finishBy === microDate.requestFor) {
+          yield put({ type: 'MICRO_DATE_OUTGOING_FINISH', payload: microDate });
+        } else if (
+          microDate.finishBy === microDate.requestBy &&
+          microDate[`${microDate.requestBy}_firstAlert`] === false) {
+          yield put({ type: 'MICRO_DATE_OUTGOING_FINISH', payload: microDate });
+        }
         break;
       default:
         console.log('Request removed');
@@ -176,7 +177,7 @@ function* startMicroDateSaga(microDate) {
   });
 }
 
-function* outgoingMicroDateDeclinedByTargetSaga() {
+function* outgoingMicroDateDeclinedByTarget() {
   const action = yield take('MICRO_DATE_OUTGOING_DECLINE_BY_TARGET');
   const microDate = action.payload;
   yield put({
@@ -285,7 +286,6 @@ function* outgoingMicroDateSelfieUploadedByTargetSaga() {
   });
 }
 
-
 function* outgoingMicroDateSelfieDeclineByMeSaga(microDate: MicroDate) {
   while (true) {
     yield take('MICRO_DATE_DECLINE_SELFIE_BY_ME');
@@ -316,16 +316,24 @@ function* outgoingMicroDateSelfieAcceptByMeSaga(microDate: MicroDate) {
       finishTS: firebase.firestore.FieldValue.serverTimestamp(),
       finishBy: microDate.requestBy,
       moderationStatus: 'PENDING',
-      [`${microDate.requestBy}_firstAlert`]: true,
+      [`${microDate.requestBy}_firstAlert`]: false,
       [`${microDate.requestFor}_firstAlert`]: false,
     });
-  const newMicroDateSnap = yield firebase.firestore()
+  yield put({ type: 'MICRO_DATE_OUTGOING_APPROVED_SELFIE' });
+}
+
+function* outgoingMicroDateFinishedSaga() {
+  const action = yield take('MICRO_DATE_OUTGOING_FINISH');
+  const microDate = action.payload;
+
+  yield firebase.firestore()
     .collection(MICRO_DATES_COLLECTION)
     .doc(microDate.id)
-    .get();
-  const newMicroDate = newMicroDateSnap.data();
-  yield Actions.navigate({ routeName: 'MicroDate', params: { microDate: newMicroDate } });
-  yield put({ type: 'MICRO_DATE_OUTGOING_FINISHED', payload: microDate });
+    .update({
+      [`${microDate.requestBy}_firstAlert`]: true,
+    });
+  yield Actions.navigate({ routeName: 'MicroDate', params: { microDate } });
+  yield put({ type: 'MICRO_DATE_OUTGOING_FINISHED' });
 }
 
 function createChannelToMicroDate(microDateId) {
@@ -336,7 +344,7 @@ function createChannelToMicroDate(microDateId) {
   return eventChannel((emit) => {
     const onSnapshotUpdated = (dataSnapshot) => {
       // do not process local updates triggered by local writes
-      // if (dataSnapshot.metadata.fromCache === true) {
+      // if (dataSnapshot.metadata.hasPendingWrites === true) {
       //   return;
       // }
 
@@ -359,16 +367,34 @@ function createChannelToMicroDate(microDateId) {
   });
 }
 
-async function getPendingOutgoingMicroDate(uid) {
-  const dateStartedByMeQuery = firebase.firestore()
+function createChannelForOutgoingMicroDateRequests(uid) {
+  const microDateStartedByOthersQuery = firebase.firestore()
     .collection(MICRO_DATES_COLLECTION)
     .where('requestBy', '==', uid)
-    .where('active', '==', true);
-  const dateStartedByMeSnapshot = await dateStartedByMeQuery.get();
-  // console.log('Active dates by me: ', dateStartedByMeSnapshot.docs.length);
-  const activeDateSnapshot = dateStartedByMeSnapshot.docs[0];
+    .where('active', '==', true)
+    .orderBy('requestTS')
+    .limit(1);
 
-  return activeDateSnapshot ? {
-    ...activeDateSnapshot.data(),
-  } : null;
+  return eventChannel((emit) => {
+    const onSnapshotUpdated = (snapshot) => {
+      if (snapshot.docs.length > 0 && snapshot.docChanges[0].type === 'added') {
+        const microDate = snapshot.docs[0].data();
+        emit({
+          ...microDate,
+          id: snapshot.docs[0].id,
+        });
+      }
+    };
+
+    const onError = (error) => {
+      emit({
+        error,
+      });
+    };
+
+    const unsubscribe = microDateStartedByOthersQuery.onSnapshot(onSnapshotUpdated, onError);
+
+    return unsubscribe;
+  }, buffers.expanding(5));
 }
+

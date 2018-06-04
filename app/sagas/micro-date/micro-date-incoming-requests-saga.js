@@ -5,6 +5,7 @@ import firebase from 'react-native-firebase';
 import { Actions } from '../../navigators/navigator-actions';
 import GeoUtils from '../../utils/geo-utils';
 import { MICRO_DATES_COLLECTION } from '../../constants';
+import { MicroDate } from '../../types';
 
 export default function* microDateIncomingRequestsSaga() {
   try {
@@ -19,28 +20,28 @@ export default function* microDateIncomingRequestsSaga() {
     }
 
     while (true) {
-      const nextMicroDate = yield take(incomingMicroDateRequestsChannel);
+      const microDate: MicroDate = yield take(incomingMicroDateRequestsChannel);
 
-      if (nextMicroDate.error) {
-        throw new Error(nextMicroDate.error);
+      if (microDate.error) {
+        throw new Error(JSON.stringify(microDate.error));
       }
 
-      const microDateChannel = yield call(createChannelToMicroDate, nextMicroDate.id);
+      const microDateChannel = yield call(createChannelToMicroDate, microDate.id);
       const microDateUpdatesTask = yield takeEvery(microDateChannel, incomingMicroDateUpdatedSaga);
 
-      const task1 = yield fork(incomingMicroDateRequestSaga, nextMicroDate);
-      const task2 = yield fork(incomingMicroDateAcceptSaga, nextMicroDate);
+      const task1 = yield fork(incomingMicroDateRequestSaga, microDate);
+      const task2 = yield fork(incomingMicroDateAcceptSaga, microDate);
 
-      const task3 = yield fork(incomingMicroDateDeclineByMeSaga, nextMicroDate);
-      const task4 = yield fork(incomingMicroDateCancelSaga, nextMicroDate);
-      const task5 = yield fork(incomingMicroDateStopByMeSaga, nextMicroDate);
+      const task3 = yield fork(incomingMicroDateDeclineByMeSaga, microDate);
+      const task4 = yield fork(incomingMicroDateCancelSaga, microDate);
+      const task5 = yield fork(incomingMicroDateStopByMeSaga, microDate);
       const task6 = yield fork(incomingMicroDateStopByTargetSaga);
 
       const task7 = yield fork(incomingMicroDateSelfieUploadedByTargetSaga);
       const task8 = yield fork(incomingMicroDateSelfieUploadedByMeSaga);
 
-      const task9 = yield fork(incomingMicroDateSelfieDeclineByMeSaga, nextMicroDate);
-      const task10 = yield fork(incomingMicroDateSelfieAcceptByMeSaga, nextMicroDate);
+      const task9 = yield fork(incomingMicroDateSelfieDeclineByMeSaga, microDate);
+      const task10 = yield fork(incomingMicroDateSelfieAcceptByMeSaga, microDate);
       const task11 = yield fork(incomingMicroDateFinishedSaga);
 
       const stopAction = yield take([
@@ -49,7 +50,7 @@ export default function* microDateIncomingRequestsSaga() {
         'MICRO_DATE_INCOMING_CANCELLED',
         'MICRO_DATE_INCOMING_STOPPED_BY_ME',
         'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
-        'MICRO_DATE_INCOMING_SHOW_FINAL_SCREEN',
+        'MICRO_DATE_INCOMING_FINISHED',
       ]);
       console.log('Cancelling tasks');
 
@@ -59,7 +60,7 @@ export default function* microDateIncomingRequestsSaga() {
 
       if (
         stopAction.type === 'MICRO_DATE_INCOMING_REMOVE' ||
-        stopAction.type === 'MICRO_DATE_INCOMING_SHOW_FINAL_SCREEN'
+        stopAction.type === 'MICRO_DATE_INCOMING_FINISHED'
       ) {
         yield put({ type: 'UI_MAP_PANEL_HIDE_FORCE' });
       }
@@ -103,7 +104,7 @@ function* incomingMicroDateUpdatedSaga(microDate) {
         }
         break;
       case 'FINISHED':
-        yield put({ type: 'MICRO_DATE_INCOMING_FINISHED', payload: microDate });
+        yield put({ type: 'MICRO_DATE_INCOMING_FINISH', payload: microDate });
         break;
       default:
         yield put({
@@ -297,7 +298,7 @@ function* incomingMicroDateSelfieAcceptByMeSaga(microDate) {
 }
 
 function* incomingMicroDateFinishedSaga() {
-  const action = yield take('MICRO_DATE_INCOMING_FINISHED');
+  const action = yield take('MICRO_DATE_INCOMING_FINISH');
   const microDate = action.payload;
 
   yield firebase.firestore()
@@ -307,7 +308,7 @@ function* incomingMicroDateFinishedSaga() {
       [`${microDate.requestFor}_firstAlert`]: true,
     });
   yield Actions.navigate({ routeName: 'MicroDate', params: { microDate } });
-  yield put({ type: 'MICRO_DATE_INCOMING_SHOW_FINAL_SCREEN' });
+  yield put({ type: 'MICRO_DATE_INCOMING_FINISHED' });
 }
 
 function* startMicroDateSaga(microDate) {
