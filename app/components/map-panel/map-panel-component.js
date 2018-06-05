@@ -59,9 +59,10 @@ class MapPanelComponent extends Component<Props> {
   }
 
   onSnap = (event) => {
-    if (event && event.nativeEvent &&
-      (event.nativeEvent.id === 'close') && this.props.mapPanel.visible === true) {
-      this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_FINISHED' });
+    if (event && event.nativeEvent && event.nativeEvent.id === 'close') {
+      this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_SNAPPED' });
+    } else if (event && event.nativeEvent && event.nativeEvent.id === 'showStandard') {
+      this.props.dispatch({ type: 'UI_MAP_PANEL_SHOW_SNAPPED' });
     }
   }
 
@@ -77,12 +78,6 @@ class MapPanelComponent extends Component<Props> {
 
   requestMicroDate = (targetUser) => {
     this.props.dispatch({
-      type: 'UI_MAP_PANEL_HIDE',
-      payload: {
-        source: 'mapPanelRequestMicroDate',
-      },
-    });
-    this.props.dispatch({
       type: 'MICRO_DATE_OUTGOING_REQUEST_INIT',
       payload: {
         targetUser,
@@ -92,21 +87,9 @@ class MapPanelComponent extends Component<Props> {
 
   cancelOutgoingMicroDate = () => {
     this.props.dispatch({ type: 'MICRO_DATE_OUTGOING_CANCEL' });
-    this.props.dispatch({
-      type: 'UI_MAP_PANEL_HIDE_FORCE',
-      payload: {
-        source: 'mapPanelCancelOutgoingMicroDate',
-      },
-    });
   }
 
   acceptIncomingMicroDate = () => {
-    this.props.dispatch({
-      type: 'UI_MAP_PANEL_HIDE_FORCE',
-      payload: {
-        source: 'mapPanelAcceptIncomingMicroDate',
-      },
-    });
     this.props.dispatch({
       type: 'MICRO_DATE_INCOMING_ACCEPT',
       payload: {
@@ -119,22 +102,10 @@ class MapPanelComponent extends Component<Props> {
     this.props.dispatch({
       type: 'MICRO_DATE_INCOMING_DECLINE_BY_ME',
     });
-    this.props.dispatch({
-      type: 'UI_MAP_PANEL_HIDE_FORCE',
-      payload: {
-        source: 'mapPanelDeclineIncomingMicroDate',
-      },
-    });
   }
 
   stopMicroDate = () => {
     this.props.dispatch({ type: 'MICRO_DATE_STOP' });
-    this.props.dispatch({
-      type: 'UI_MAP_PANEL_HIDE_FORCE',
-      payload: {
-        source: 'mapPanelStopMicroDate',
-      },
-    });
   }
 
   openCamera = () => {
@@ -142,12 +113,10 @@ class MapPanelComponent extends Component<Props> {
   }
 
   onSelfieDeclinedByMe = () => {
-    this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_FORCE' });
     this.props.dispatch({ type: 'MICRO_DATE_DECLINE_SELFIE_BY_ME' });
   }
 
   onSelfieApprovedByMe = () => {
-    this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_FORCE' });
     this.props.dispatch({ type: 'MICRO_DATE_APPROVE_SELFIE' });
   }
 

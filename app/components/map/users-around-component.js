@@ -15,29 +15,33 @@ type Props = {
   usersAround: Array<mixed>,
   dispatch: Dispatch,
   mapPanel: any,
-  microDate: any,
   mapViewBearingAngle: number,
 };
 
 class UsersAroundComponent extends React.Component<Props> {
   onPressOrSelect = (targetUser) => {
-    if (this.props.microDate.enabled || this.props.microDate.pending) {
-      this.props.dispatch({
-        type: 'UI_MAP_PANEL_SHOW',
-        payload: {
-          ...this.props.mapPanel,
-        },
-      });
-    } else {
-      this.props.dispatch({
-        type: 'UI_MAP_PANEL_SHOW',
-        payload: {
-          mode: 'userCard',
-          targetUser,
-          canHide: true,
-        },
-      });
-    }
+    this.props.dispatch({
+      type: 'USERS_AROUND_ITEM_PRESSED',
+      payload: targetUser,
+    });
+
+    // if (this.props.microDate.enabled || this.props.microDate.pending) {
+    //   this.props.dispatch({
+    //     type: 'UI_MAP_PANEL_SHOW',
+    //     payload: {
+    //       ...this.props.mapPanel,
+    //     },
+    //   });
+    // } else {
+    //   this.props.dispatch({
+    //     type: 'UI_MAP_PANEL_SHOW',
+    //     payload: {
+    //       mode: 'userCard',
+    //       targetUser,
+    //       canHide: true,
+    //     },
+    //   });
+    // }
   }
 
   onDeselected = () => {

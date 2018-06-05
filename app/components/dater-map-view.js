@@ -59,7 +59,6 @@ type Props = {
     moveHeadingAngle: number,
   },
   mapView: MapboxGL.MapView,
-  mapPanel: any,
   microDate: any,
 };
 
@@ -99,15 +98,9 @@ class DaterMapView extends React.Component<Props> {
   }
 
   onMapPressed = () => {
-    console.log('Map pressed');
-    if (this.props.mapPanel.visible) {
-      this.props.dispatch({
-        type: 'UI_MAP_PANEL_HIDE',
-        payload: {
-          source: 'onMapPressed',
-        },
-      });
-    }
+    this.props.dispatch({
+      type: 'MAPVIEW_PRESSED',
+    });
   }
 
   onMapDragStart = (event) => {

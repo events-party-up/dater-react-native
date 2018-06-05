@@ -22,7 +22,6 @@ export default function* microDateOutgoingRequestsSaga() {
       }
 
       const task1 = yield fork(outgoingMicroDateCancelSaga, microDate);
-      const task2 = yield fork(outgoingMicroDateDeclinedByTarget);
 
       const task3 = yield fork(outgoingMicroDateAcceptSaga);
 
@@ -39,7 +38,7 @@ export default function* microDateOutgoingRequestsSaga() {
       const microDateChannel = yield call(createChannelToMicroDate, microDate.id);
       const microDateUpdatesTask = yield takeLatest(microDateChannel, handleOutgoingRequestsSaga);
 
-      const stopAction = yield take([
+      yield take([
         'MICRO_DATE_OUTGOING_REMOVE',
         'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
         'MICRO_DATE_OUTGOING_CANCELLED',
@@ -47,17 +46,10 @@ export default function* microDateOutgoingRequestsSaga() {
         'MICRO_DATE_STOPPED_BY_TARGET',
         'MICRO_DATE_OUTGOING_FINISHED',
       ]);
-
-      yield cancel(task1, task2, task3, task4, task5, task6, task7, task8, task9, task10);
+      yield put({ type: 'MICRO_DATE_OUTGOING_SAGA_CANCEL_TASKS' });
+      yield cancel(task1, task3, task4, task5, task6, task7, task8, task9, task10);
       yield cancel(microDateUpdatesTask);
       yield microDateChannel.close();
-
-      if (
-        stopAction.type === 'MICRO_DATE_OUTGOING_REMOVE' ||
-        stopAction.type === 'MICRO_DATE_OUTGOING_FINISHED'
-      ) {
-        yield put({ type: 'UI_MAP_PANEL_HIDE_FORCE' });
-      }
     }
   } catch (error) {
     yield put({ type: 'MICRO_DATE_OUTGOING_ERROR', payload: error });
@@ -79,7 +71,7 @@ export default function* microDateOutgoingRequestsSaga() {
         yield put({ type: 'MICRO_DATE_OUTGOING_REQUEST', payload: microDate });
         break;
       case 'DECLINE':
-        yield put({ type: 'MICRO_DATE_OUTGOING_DECLINE_BY_TARGET', payload: microDate });
+        yield put({ type: 'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET' });
         break;
       case 'ACCEPT':
         yield put({ type: 'MICRO_DATE_OUTGOING_START', payload: microDate });
@@ -140,18 +132,18 @@ function* handleOutgoingMicroDateRequest() {
     const action = yield take('MICRO_DATE_OUTGOING_REQUEST');
     const microDate = action.payload;
 
-    yield put({
-      type: 'UI_MAP_PANEL_SHOW',
-      payload: {
-        mode: 'outgoingMicroDateAwaitingAccept',
-        canHide: false,
-        microDate: {
-          id: microDate.id,
-          requestFor: microDate.requestFor,
-          requestTS: microDate.requestTS,
-        },
-      },
-    });
+    // yield put({
+    //   type: 'UI_MAP_PANEL_SHOW',
+    //   payload: {
+    //     mode: 'outgoingMicroDateAwaitingAccept',
+    //     canHide: false,
+    //     microDate: {
+    //       id: microDate.id,
+    //       requestFor: microDate.requestFor,
+    //       requestTS: microDate.requestTS,
+    //     },
+    //   },
+    // });
 
     yield put({ type: 'MICRO_DATE_OUTGOING_REQUESTED', payload: microDate });
   }
@@ -175,25 +167,6 @@ function* startMicroDateSaga(microDate) {
       microDateId: microDate.id,
     },
   });
-}
-
-function* outgoingMicroDateDeclinedByTarget() {
-  const action = yield take('MICRO_DATE_OUTGOING_DECLINE_BY_TARGET');
-  const microDate = action.payload;
-  yield put({
-    type: 'UI_MAP_PANEL_SHOW',
-    payload: {
-      mode: 'outgoingMicroDateDeclined',
-      canHide: true,
-      microDate: {
-        id: microDate.id,
-        requestFor: microDate.requestFor,
-        declineTS: microDate.declineTS,
-      },
-    },
-  });
-
-  yield put({ type: 'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET' });
 }
 
 function* outgoingMicroDateAcceptSaga() {

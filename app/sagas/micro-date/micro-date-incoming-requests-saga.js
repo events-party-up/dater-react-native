@@ -26,11 +26,10 @@ export default function* microDateIncomingRequestsSaga() {
         throw new Error(JSON.stringify(microDate.error));
       }
 
-      const task1 = yield fork(incomingMicroDateRequestSaga, microDate);
+      // const task1 = yield fork(incomingMicroDateRequestSaga, microDate);
       const task2 = yield fork(incomingMicroDateAcceptSaga, microDate);
 
       const task3 = yield fork(incomingMicroDateDeclineByMeSaga, microDate);
-      const task4 = yield fork(incomingMicroDateCancelSaga, microDate);
       const task5 = yield fork(incomingMicroDateStopByMeSaga, microDate);
       const task6 = yield fork(incomingMicroDateStopByTargetSaga);
 
@@ -44,7 +43,7 @@ export default function* microDateIncomingRequestsSaga() {
       const microDateChannel = yield call(createChannelToMicroDate, microDate.id);
       const microDateUpdatesTask = yield takeLatest(microDateChannel, incomingMicroDateUpdatedSaga);
 
-      const stopAction = yield take([
+      yield take([
         'MICRO_DATE_INCOMING_REMOVE',
         'MICRO_DATE_INCOMING_DECLINED_BY_ME',
         'MICRO_DATE_INCOMING_CANCELLED',
@@ -52,18 +51,11 @@ export default function* microDateIncomingRequestsSaga() {
         'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
         'MICRO_DATE_INCOMING_FINISHED',
       ]);
-      console.log('Cancelling tasks');
 
+      yield put({ type: 'MICRO_DATE_INCOMING_SAGA_CANCEL_TASKS' });
       yield microDateChannel.close();
       yield cancel(microDateUpdatesTask);
-      yield cancel(task1, task2, task3, task4, task5, task6, task7, task8, task9, task10, task11);
-
-      if (
-        stopAction.type === 'MICRO_DATE_INCOMING_REMOVE' ||
-        stopAction.type === 'MICRO_DATE_INCOMING_FINISHED'
-      ) {
-        yield put({ type: 'UI_MAP_PANEL_HIDE_FORCE' });
-      }
+      yield cancel(task2, task3, task5, task6, task7, task8, task9, task10, task11);
     }
   } catch (error) {
     yield put({ type: 'MICRO_DATE_INCOMING_ERROR', payload: error });
@@ -88,8 +80,12 @@ function* incomingMicroDateUpdatedSaga(microDate) {
       case 'ACCEPT':
         yield put({ type: 'MICRO_DATE_INCOMING_ACCEPT' });
         break;
+      case 'DECLINE':
+        // yield put({ type: 'MICRO_DATE_INCOMING_FINISH', payload: microDate });
+        break;
       case 'CANCEL_REQUEST':
-        yield put({ type: 'MICRO_DATE_INCOMING_CANCEL' });
+        yield put({ type: 'MICRO_DATE_INCOMING_CANCELLED' });
+        // yield put({ type: 'MICRO_DATE_INCOMING_CANCEL' });
         break;
       case 'STOP':
         if (microDate.stopBy !== microDate.requestFor) {
@@ -108,7 +104,7 @@ function* incomingMicroDateUpdatedSaga(microDate) {
         break;
       default:
         yield put({
-          type: 'MICRO_DATE_UPDATED_SAGA_UNKNOWN_STATUS_ERROR',
+          type: 'MICRO_DATE_INCOMING_UPDATED_SAGA_UNKNOWN_STATUS_ERROR',
           payload: `Unknown microDate status: ${microDate.status}`,
         });
         break;
@@ -118,27 +114,27 @@ function* incomingMicroDateUpdatedSaga(microDate) {
   }
 }
 
-function* incomingMicroDateRequestSaga(microDate) {
-  yield take('MICRO_DATE_INCOMING_REQUEST');
-  const myCoords = yield select((state) => state.location.coords);
-  const userSnap = yield microDate.requestByRef.get();
-  const targetUser = {
-    id: userSnap.id,
-    shortId: userSnap.id.substring(0, 4),
-    ...userSnap.data(),
-  };
+// function* incomingMicroDateRequestSaga(microDate) {
+//   yield take('MICRO_DATE_INCOMING_REQUEST');
+//   // const myCoords = yield select((state) => state.location.coords);
+//   // const userSnap = yield microDate.requestByRef.get();
+//   // const targetUser = {
+//   //   id: userSnap.id,
+//   //   shortId: userSnap.id.substring(0, 4),
+//   //   ...userSnap.data(),
+//   // };
 
-  yield put({
-    type: 'UI_MAP_PANEL_SHOW',
-    payload: {
-      mode: 'incomingMicroDateRequest',
-      targetUser,
-      distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
-      canHide: false,
-      microDateId: microDate.id,
-    },
-  });
-}
+//   // yield put({
+//   //   type: 'UI_MAP_PANEL_SHOW',
+//   //   payload: {
+//   //     mode: 'incomingMicroDateRequest',
+//   //     targetUser,
+//   //     distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
+//   //     canHide: false,
+//   //     microDateId: microDate.id,
+//   //   },
+//   // });
+// }
 
 function* incomingMicroDateAcceptSaga(microDate) {
   while (true) {
@@ -193,19 +189,6 @@ function* startMicroDateSaga(microDate) {
       microDateId: microDate.id,
     },
   });
-}
-
-function* incomingMicroDateCancelSaga(microDate) {
-  yield take('MICRO_DATE_INCOMING_CANCEL');
-  yield put({
-    type: 'UI_MAP_PANEL_SHOW',
-    payload: {
-      mode: 'incomingMicroDateCancelled',
-      canHide: true,
-      microDate,
-    },
-  });
-  yield put({ type: 'MICRO_DATE_INCOMING_CANCELLED' });
 }
 
 function* incomingMicroDateDeclineByMeSaga(microDate) {

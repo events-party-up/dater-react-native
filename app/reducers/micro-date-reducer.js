@@ -5,7 +5,6 @@ const types = {
   MICRO_DATE_OUTGOING_REQUEST_INIT: 'MICRO_DATE_OUTGOING_REQUEST_INIT',
   MICRO_DATE_OUTGOING_REQUEST: 'MICRO_DATE_OUTGOING_REQUEST',
   MICRO_DATE_OUTGOING_REQUESTED: 'MICRO_DATE_OUTGOING_REQUESTED',
-  MICRO_DATE_OUTGOING_REQUEST_PENDING: 'MICRO_DATE_OUTGOING_REQUEST_PENDING',
 
   MICRO_DATE_INCOMING_REQUEST: 'MICRO_DATE_INCOMING_REQUEST',
 
@@ -66,17 +65,12 @@ const microDateReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
+    case types.MICRO_DATE_INCOMING_REQUEST:
     case types.MICRO_DATE_OUTGOING_REQUEST: {
       return {
         ...state,
         targetUserUid: payload.requestFor,
-      };
-    }
-    case types.MICRO_DATE_OUTGOING_REQUEST_PENDING:
-    case types.MICRO_DATE_OUTGOING_REQUESTED:
-    case types.MICRO_DATE_INCOMING_REQUEST: {
-      return {
-        ...state,
+        microDate: payload,
         pending: true,
       };
     }

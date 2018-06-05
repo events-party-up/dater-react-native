@@ -5,7 +5,7 @@ export const types = {
   UI_MAP_PANEL_SHOW_FINISHED: 'UI_MAP_PANEL_SHOW_FINISHED',
   UI_MAP_PANEL_HIDE: 'UI_MAP_PANEL_HIDE',
   UI_MAP_PANEL_HIDE_FORCE: 'UI_MAP_PANEL_HIDE_FORCE',
-  UI_MAP_PANEL_HIDE_FINISHED: 'UI_MAP_PANEL_HIDE_FINISHED',
+  UI_MAP_PANEL_HIDE_SNAPPED: 'UI_MAP_PANEL_HIDE_SNAPPED',
   UI_MAP_PANEL_SET_MODE: 'UI_MAP_PANEL_SET_MODE',
   UI_MAP_PANEL_ERROR: 'UI_MAP_PANEL_ERROR',
 };
@@ -53,7 +53,7 @@ const mapPanelReducer = (state = initialState, action) => {
         previousMode: '',
       };
     }
-    case types.UI_MAP_PANEL_HIDE_FINISHED: {
+    case types.UI_MAP_PANEL_HIDE_SNAPPED: {
       return {
         ...state,
         visible: false,
