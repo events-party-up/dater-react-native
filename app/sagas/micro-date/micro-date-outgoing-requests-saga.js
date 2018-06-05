@@ -12,8 +12,7 @@ export default function* microDateOutgoingRequestsSaga() {
     const myUid = yield select((state) => state.auth.uid);
     const outgoingMicroDateRequestsChannel = yield call(createChannelForOutgoingMicroDateRequests, myUid);
 
-    yield fork(handleOutgoingMicroDateRequestInit);
-    yield fork(handleOutgoingMicroDateRequest);
+    yield fork(outgoingMicroDateRequestInitSaga);
 
     while (true) {
       const microDate: MicroDate = yield take(outgoingMicroDateRequestsChannel);
@@ -102,7 +101,7 @@ export default function* microDateOutgoingRequestsSaga() {
   }
 }
 
-function* handleOutgoingMicroDateRequestInit() {
+function* outgoingMicroDateRequestInitSaga() {
   while (true) {
     const myUid = yield select((state) => state.auth.uid);
     const action = yield take('MICRO_DATE_OUTGOING_REQUEST_INIT');
@@ -122,14 +121,6 @@ function* handleOutgoingMicroDateRequestInit() {
 
     yield microDateRef.set(microDate);
     // yield put({ type: 'MICRO_DATE_OUTGOING_REQUEST', payload: microDate });
-  }
-}
-
-function* handleOutgoingMicroDateRequest() {
-  while (true) {
-    const action = yield take('MICRO_DATE_OUTGOING_REQUEST');
-    const microDate = action.payload;
-    yield put({ type: 'MICRO_DATE_OUTGOING_REQUESTED', payload: microDate });
   }
 }
 
@@ -156,7 +147,8 @@ function* startMicroDateSaga(microDate) {
 function* outgoingMicroDateAcceptSaga() {
   const action = yield take('MICRO_DATE_OUTGOING_ACCEPT');
   const microDate = action.payload;
-  yield* startMicroDateSaga(microDate);
+  const isMicroDateMode = yield select((state) => state.microDate.enabled);
+  if (!isMicroDateMode) yield* startMicroDateSaga(microDate);
 }
 
 function* outgoingMicroDateCancelSaga(microDate: MicroDate) {
@@ -208,16 +200,8 @@ function* outgoingMicroDateSelfieUploadedByTargetSaga() {
   while (true) {
     const action = yield take('MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_TARGET');
     const microDate = action.payload;
-
-    yield* startMicroDateSaga(microDate);
-    yield put({
-      type: 'UI_MAP_PANEL_SHOW',
-      payload: {
-        mode: 'selfieUploadedByTarget',
-        canHide: false,
-        microDate,
-      },
-    });
+    const isMicroDateMode = yield select((state) => state.microDate.enabled);
+    if (!isMicroDateMode) yield* startMicroDateSaga(microDate);
   }
 }
 
@@ -230,13 +214,6 @@ function* outgoingMicroDateSelfieDeclineByMeSaga(microDate: MicroDate) {
       .update({
         status: 'ACCEPT',
       });
-    yield put({
-      type: 'UI_MAP_PANEL_SHOW',
-      payload: {
-        mode: 'makeSelfie',
-        canHide: false,
-      },
-    });
   }
 }
 

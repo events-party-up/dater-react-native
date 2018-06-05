@@ -142,20 +142,10 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
       payload: {
         type: 'microDateSelfie',
         uri: this.state.photoURI,
+        aspectRatio: this.state.width / this.state.height,
       },
     });
     this.props.navigation.goBack();
-    this.props.dispatch({
-      type: 'UI_MAP_PANEL_SHOW',
-      payload: {
-        mode: 'selfieUploading',
-        canHide: false,
-        uploadSelfie: {
-          photoURI: this.state.photoURI,
-          aspectRatio: this.state.width / this.state.height,
-        },
-      },
-    });
   }
 
   render() {

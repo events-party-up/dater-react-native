@@ -63,6 +63,8 @@ class MapPanelComponent extends Component<Props> {
       this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_SNAPPED' });
     } else if (event && event.nativeEvent && event.nativeEvent.id === 'showStandard') {
       this.props.dispatch({ type: 'UI_MAP_PANEL_SHOW_SNAPPED' });
+    } else if (event && event.nativeEvent && event.nativeEvent.id === 'showHalfScreen') {
+      this.props.dispatch({ type: 'UI_MAP_PANEL_SHOW_HALF_SCREEN_SNAPPED' });
     }
   }
 
@@ -90,12 +92,7 @@ class MapPanelComponent extends Component<Props> {
   }
 
   acceptIncomingMicroDate = () => {
-    this.props.dispatch({
-      type: 'MICRO_DATE_INCOMING_ACCEPT',
-      payload: {
-        acceptType: 'acceptButtonPressed',
-      },
-    });
+    this.props.dispatch({ type: 'MICRO_DATE_INCOMING_ACCEPT_INIT' });
   }
 
   declineIncomingMicroDate = () => {

@@ -18,6 +18,7 @@ export default function* microDateIncomingRequestsSaga() {
       yield* incomingMicroDateUpdatedSaga(pendingFinalScreen);
       cancel(pendingTask);
     }
+    yield fork(incomingMicroDateAcceptInitSaga);
 
     while (true) {
       const microDate: MicroDate = yield take(incomingMicroDateRequestsChannel);
@@ -113,50 +114,30 @@ function* incomingMicroDateUpdatedSaga(microDate) {
   }
 }
 
-// function* incomingMicroDateRequestSaga(microDate) {
-//   yield take('MICRO_DATE_INCOMING_REQUEST');
-//   // const myCoords = yield select((state) => state.location.coords);
-//   // const userSnap = yield microDate.requestByRef.get();
-//   // const targetUser = {
-//   //   id: userSnap.id,
-//   //   shortId: userSnap.id.substring(0, 4),
-//   //   ...userSnap.data(),
-//   // };
+function* incomingMicroDateAcceptInitSaga() {
+  while (true) {
+    yield take('MICRO_DATE_INCOMING_ACCEPT_INIT');
+    const myCoords = yield select((state) => state.location.coords);
+    const microDateState = yield select((state) => state.microDate);
+    const userSnap = yield microDateState.microDate.requestByRef.get();
 
-//   // yield put({
-//   //   type: 'UI_MAP_PANEL_SHOW',
-//   //   payload: {
-//   //     mode: 'incomingMicroDateRequest',
-//   //     targetUser,
-//   //     distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
-//   //     canHide: false,
-//   //     microDateId: microDate.id,
-//   //   },
-//   // });
-// }
+    yield firebase.firestore()
+      .collection(MICRO_DATES_COLLECTION)
+      .doc(microDateState.microDate.id)
+      .update({
+        status: 'ACCEPT',
+        startDistance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
+        requestForGeoPoint: new firebase.firestore.GeoPoint(myCoords.latitude, myCoords.longitude),
+        requestByGeoPoint: userSnap.data().geoPoint,
+        acceptTS: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+  }
+}
 
 function* incomingMicroDateAcceptSaga(microDate) {
   while (true) {
-    const action = yield take('MICRO_DATE_INCOMING_ACCEPT');
-    const { acceptType } = action.payload ? action.payload : {};
-
-    const myCoords = yield select((state) => state.location.coords);
-    const userSnap = yield microDate.requestByRef.get();
+    yield take('MICRO_DATE_INCOMING_ACCEPT');
     const isMicroDateMode = yield select((state) => state.microDate.enabled);
-
-    if (acceptType === 'acceptButtonPressed') {
-      yield firebase.firestore()
-        .collection(MICRO_DATES_COLLECTION)
-        .doc(microDate.id)
-        .update({
-          status: 'ACCEPT',
-          startDistance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
-          requestForGeoPoint: new firebase.firestore.GeoPoint(myCoords.latitude, myCoords.longitude),
-          requestByGeoPoint: userSnap.data().geoPoint,
-          acceptTS: firebase.firestore.FieldValue.serverTimestamp(),
-        });
-    }
-
     if (!isMicroDateMode) yield* startMicroDateSaga(microDate);
   }
 }
@@ -231,16 +212,6 @@ function* incomingMicroDateSelfieUploadedByMeSaga() {
     const action = yield take('MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_ME');
     const microDate = action.payload;
     const isMicroDateMode = yield select((state) => state.microDate.enabled);
-
-    yield put({
-      type: 'UI_MAP_PANEL_SHOW',
-      payload: {
-        mode: 'selfieUploadedByMe',
-        canHide: false,
-        microDate,
-      },
-    });
-    yield take('UI_MAP_PANEL_SHOW_FINISHED');
     if (!isMicroDateMode) yield* startMicroDateSaga(microDate);
   }
 }
@@ -333,7 +304,11 @@ function createChannelToMicroDate(microDateId) {
 
   return eventChannel((emit) => {
     const onSnapshotUpdated = (dataSnapshot) => {
-      // console.log('Microdate updated: ', dataSnapshot);
+      console.log(dataSnapshot);
+      if (dataSnapshot.metadata.hasPendingWrites) {
+        return;
+      }
+
       emit({
         ...dataSnapshot.data(),
         hasNoData: typeof dataSnapshot.data() === 'undefined',

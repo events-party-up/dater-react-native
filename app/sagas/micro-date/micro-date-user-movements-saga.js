@@ -103,10 +103,9 @@ function* checkDistance(microDate, myCoords, targetCoords) {
 
   if (distanceToTarget < DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD) {
     yield put({
-      type: 'UI_MAP_PANEL_SHOW',
+      type: 'MICRO_DATE_CLOSE_DISTANCE_MOVE',
       payload: {
-        mode: 'makeSelfie',
-        canHide: false,
+        distanceToTarget,
       },
     });
   }
