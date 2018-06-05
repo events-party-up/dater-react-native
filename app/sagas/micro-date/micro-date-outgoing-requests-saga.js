@@ -1,4 +1,4 @@
-import { call, take, put, takeEvery, select, cancel, fork } from 'redux-saga/effects';
+import { call, take, put, takeLatest, select, cancel, fork } from 'redux-saga/effects';
 import { eventChannel, buffers } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import GeoUtils from '../../utils/geo-utils';
@@ -37,7 +37,7 @@ export default function* microDateOutgoingRequestsSaga() {
       const task10 = yield fork(outgoingMicroDateFinishedSaga);
 
       const microDateChannel = yield call(createChannelToMicroDate, microDate.id);
-      const microDateUpdatesTask = yield takeEvery(microDateChannel, handleOutgoingRequestsSaga);
+      const microDateUpdatesTask = yield takeLatest(microDateChannel, handleOutgoingRequestsSaga);
 
       const stopAction = yield take([
         'MICRO_DATE_OUTGOING_REMOVE',
@@ -131,7 +131,7 @@ function* handleOutgoingMicroDateRequestInit() {
     };
 
     yield microDateRef.set(microDate);
-    yield put({ type: 'MICRO_DATE_OUTGOING_REQUEST', payload: microDate });
+    // yield put({ type: 'MICRO_DATE_OUTGOING_REQUEST', payload: microDate });
   }
 }
 
@@ -257,33 +257,38 @@ function* outgoingMicroDateStopByMeSaga(microDate: MicroDate) {
 }
 
 function* outgoingMicroDateSelfieUploadedByMeSaga() {
-  const action = yield take('MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME');
-  const microDate = action.payload;
+  while (true) {
+    const action = yield take('MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME');
+    const microDate = action.payload;
+    const isMicroDateMode = yield select((state) => state.microDate.enabled);
+    if (!isMicroDateMode) yield* startMicroDateSaga(microDate);
 
-  yield* startMicroDateSaga(microDate);
-  yield put({
-    type: 'UI_MAP_PANEL_SHOW',
-    payload: {
-      mode: 'selfieUploadedByMe',
-      canHide: false,
-      microDate,
-    },
-  });
+    yield put({
+      type: 'UI_MAP_PANEL_SHOW',
+      payload: {
+        mode: 'selfieUploadedByMe',
+        canHide: false,
+        microDate,
+      },
+    });
+  }
 }
 
 function* outgoingMicroDateSelfieUploadedByTargetSaga() {
-  const action = yield take('MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_TARGET');
-  const microDate = action.payload;
+  while (true) {
+    const action = yield take('MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_TARGET');
+    const microDate = action.payload;
 
-  yield* startMicroDateSaga(microDate);
-  yield put({
-    type: 'UI_MAP_PANEL_SHOW',
-    payload: {
-      mode: 'selfieUploadedByTarget',
-      canHide: false,
-      microDate,
-    },
-  });
+    yield* startMicroDateSaga(microDate);
+    yield put({
+      type: 'UI_MAP_PANEL_SHOW',
+      payload: {
+        mode: 'selfieUploadedByTarget',
+        canHide: false,
+        microDate,
+      },
+    });
+  }
 }
 
 function* outgoingMicroDateSelfieDeclineByMeSaga(microDate: MicroDate) {
@@ -344,9 +349,9 @@ function createChannelToMicroDate(microDateId) {
   return eventChannel((emit) => {
     const onSnapshotUpdated = (dataSnapshot) => {
       // do not process local updates triggered by local writes
-      // if (dataSnapshot.metadata.hasPendingWrites === true) {
-      //   return;
-      // }
+      if (dataSnapshot.metadata.hasPendingWrites === true) {
+        return;
+      }
 
       emit({
         ...dataSnapshot.data(),
@@ -364,7 +369,7 @@ function createChannelToMicroDate(microDateId) {
     const unsubscribe = query.onSnapshot(onSnapshotUpdated, onError);
 
     return unsubscribe;
-  });
+  }, buffers.sliding(1));
 }
 
 function createChannelForOutgoingMicroDateRequests(uid) {

@@ -1,4 +1,4 @@
-import { call, take, put, takeEvery, select, cancel, fork } from 'redux-saga/effects';
+import { call, take, put, takeLatest, select, cancel, fork } from 'redux-saga/effects';
 import { eventChannel, buffers } from 'redux-saga';
 import firebase from 'react-native-firebase';
 
@@ -26,9 +26,6 @@ export default function* microDateIncomingRequestsSaga() {
         throw new Error(JSON.stringify(microDate.error));
       }
 
-      const microDateChannel = yield call(createChannelToMicroDate, microDate.id);
-      const microDateUpdatesTask = yield takeEvery(microDateChannel, incomingMicroDateUpdatedSaga);
-
       const task1 = yield fork(incomingMicroDateRequestSaga, microDate);
       const task2 = yield fork(incomingMicroDateAcceptSaga, microDate);
 
@@ -43,6 +40,9 @@ export default function* microDateIncomingRequestsSaga() {
       const task9 = yield fork(incomingMicroDateSelfieDeclineByMeSaga, microDate);
       const task10 = yield fork(incomingMicroDateSelfieAcceptByMeSaga, microDate);
       const task11 = yield fork(incomingMicroDateFinishedSaga);
+
+      const microDateChannel = yield call(createChannelToMicroDate, microDate.id);
+      const microDateUpdatesTask = yield takeLatest(microDateChannel, incomingMicroDateUpdatedSaga);
 
       const stopAction = yield take([
         'MICRO_DATE_INCOMING_REMOVE',
@@ -147,6 +147,7 @@ function* incomingMicroDateAcceptSaga(microDate) {
 
     const myCoords = yield select((state) => state.location.coords);
     const userSnap = yield microDate.requestByRef.get();
+    const isMicroDateMode = yield select((state) => state.microDate.enabled);
 
     if (acceptType === 'acceptButtonPressed') {
       yield firebase.firestore()
@@ -161,7 +162,6 @@ function* incomingMicroDateAcceptSaga(microDate) {
         });
     }
 
-    yield* startMicroDateSaga(microDate);
     yield put({
       type: 'UI_MAP_PANEL_SHOW',
       payload: {
@@ -170,7 +170,29 @@ function* incomingMicroDateAcceptSaga(microDate) {
         distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
       },
     });
+    yield take('UI_MAP_PANEL_SHOW_FINISHED');
+    if (!isMicroDateMode) yield* startMicroDateSaga(microDate);
   }
+}
+
+function* startMicroDateSaga(microDate) {
+  const myCoords = yield select((state) => state.location.coords);
+  const userSnap = yield microDate.requestByRef.get();
+  const targetUser = {
+    id: userSnap.id,
+    shortId: userSnap.id.substring(0, 4),
+    ...userSnap.data(),
+  };
+
+  yield put({
+    type: 'MICRO_DATE_INCOMING_START',
+    payload: {
+      targetUser,
+      myCoords,
+      distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
+      microDateId: microDate.id,
+    },
+  });
 }
 
 function* incomingMicroDateCancelSaga(microDate) {
@@ -232,8 +254,7 @@ function* incomingMicroDateSelfieUploadedByTargetSaga() {
   while (true) {
     const action = yield take('MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_TARGET');
     const microDate = action.payload;
-
-    yield* startMicroDateSaga(microDate);
+    const isMicroDateMode = yield select((state) => state.microDate.enabled);
     yield put({
       type: 'UI_MAP_PANEL_SHOW',
       payload: {
@@ -242,6 +263,8 @@ function* incomingMicroDateSelfieUploadedByTargetSaga() {
         microDate,
       },
     });
+    yield take('UI_MAP_PANEL_SHOW_FINISHED');
+    if (!isMicroDateMode) yield* startMicroDateSaga(microDate);
   }
 }
 
@@ -249,6 +272,7 @@ function* incomingMicroDateSelfieUploadedByMeSaga() {
   while (true) {
     const action = yield take('MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_ME');
     const microDate = action.payload;
+    const isMicroDateMode = yield select((state) => state.microDate.enabled);
 
     yield put({
       type: 'UI_MAP_PANEL_SHOW',
@@ -258,6 +282,8 @@ function* incomingMicroDateSelfieUploadedByMeSaga() {
         microDate,
       },
     });
+    yield take('UI_MAP_PANEL_SHOW_FINISHED');
+    if (!isMicroDateMode) yield* startMicroDateSaga(microDate);
   }
 }
 
@@ -309,26 +335,6 @@ function* incomingMicroDateFinishedSaga() {
     });
   yield Actions.navigate({ routeName: 'MicroDate', params: { microDate } });
   yield put({ type: 'MICRO_DATE_INCOMING_FINISHED' });
-}
-
-function* startMicroDateSaga(microDate) {
-  const myCoords = yield select((state) => state.location.coords);
-  const userSnap = yield microDate.requestByRef.get();
-  const targetUser = {
-    id: userSnap.id,
-    shortId: userSnap.id.substring(0, 4),
-    ...userSnap.data(),
-  };
-
-  yield put({
-    type: 'MICRO_DATE_INCOMING_START',
-    payload: {
-      targetUser,
-      myCoords,
-      distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
-      microDateId: microDate.id,
-    },
-  });
 }
 
 function createChannelForIncomingMicroDateRequests(uid) {
@@ -386,7 +392,7 @@ function createChannelToMicroDate(microDateId) {
     const unsubscribe = microDateQuery.onSnapshot(onSnapshotUpdated, onError);
 
     return unsubscribe;
-  });
+  }, buffers.sliding(1));
 }
 
 async function getPendingViewFinishedMicroDate(uid) {

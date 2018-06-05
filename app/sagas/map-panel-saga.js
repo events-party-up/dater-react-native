@@ -31,16 +31,11 @@ export default function* mapPanelSaga() {
 
   function* showPanel(mapPanelSnapper, action) {
     try {
+      yield delay(200);
       showingInProgress = true;
       const mapPanelPreviousMode = yield select((state) => state.mapPanel.previousMode);
-      const mapPanelVisible = yield select((state) => state.mapPanel.visible);
-      const pendingShow = yield select((state) => state.mapPanel.pendingShow);
+      // const pendingShow = yield select((state) => state.mapPanel.pendingShow);
 
-      if (mapPanelVisible && mapPanelPreviousMode !== action.payload.mode && !pendingShow) {
-        // hide pannel without any actions
-        yield call(mapPanelSnapper, { index: 3 }); // hide
-        yield call(delay, mapPanelReplaceDelay);
-      }
       const mapPanelMode = action.payload && action.payload.mode ?
         action.payload.mode : yield select((state) => state.mapPanel.mode);
       console.log('mapPanelMode: ', mapPanelMode);
@@ -51,29 +46,42 @@ export default function* mapPanelSaga() {
             mapPanelMode === 'makeSelfie' ||
             mapPanelMode === 'selfieUploadedByTarget' ||
             mapPanelMode === 'selfieUploadedByMe' ||
-            mapPanelMode === 'selfieUploading') {
+            mapPanelMode === 'selfieUploading' ||
+            mapPanelPreviousMode === 'makeSelfie' ||
+            mapPanelPreviousMode === 'selfieUploadedByTarget' ||
+            mapPanelPreviousMode === 'selfieUploadedByMe' ||
+            mapPanelPreviousMode === 'selfieUploading'
+          ) {
             return;
           }
+          yield* hideIfVisibleAndNewMode(mapPanelSnapper, action);
           yield call(mapPanelSnapper, { index: 0 }); // show
           break;
         case 'selfieUploading':
+          yield* hideIfVisibleAndNewMode(mapPanelSnapper, action);
           yield call(mapPanelSnapper, { index: 0 }); // show
           break;
         case 'selfieUploadedByTarget':
+          yield* hideIfVisibleAndNewMode(mapPanelSnapper, action);
           yield call(mapPanelSnapper, { index: 1 }); // show
           break;
         case 'makeSelfie':
           if (
             // mapPanelMode === 'makeSelfie' ||
             mapPanelMode === 'selfieUploadedByTarget' ||
-            mapPanelPreviousMode === 'selfieUploadedByTarget' ||
             mapPanelMode === 'selfieUploadedByMe' ||
-            mapPanelMode === 'selfieUploading') {
+            mapPanelMode === 'selfieUploading' ||
+            mapPanelPreviousMode === 'selfieUploadedByTarget' ||
+            mapPanelPreviousMode === 'selfieUploadedByMe' ||
+            mapPanelPreviousMode === 'selfieUploading'
+          ) {
             return;
           }
+          yield* hideIfVisibleAndNewMode(mapPanelSnapper, action);
           yield call(mapPanelSnapper, { index: 0 }); // show
           break;
         default:
+          yield* hideIfVisibleAndNewMode(mapPanelSnapper, action);
           yield call(mapPanelSnapper, { index: 0 }); // show
           break;
       }
@@ -82,6 +90,18 @@ export default function* mapPanelSaga() {
     } catch (error) {
       showingInProgress = false;
       yield put({ type: 'UI_MAP_PANEL_ERROR', payload: error });
+    }
+  }
+
+  function* hideIfVisibleAndNewMode(mapPanelSnapper, action) {
+    const mapPanelVisible = yield select((state) => state.mapPanel.visible);
+    const mapPanelPreviousMode = yield select((state) => state.mapPanel.previousMode);
+
+    if (mapPanelVisible && mapPanelPreviousMode !== action.payload.mode) {
+      // hide pannel without any actions
+      yield call(mapPanelSnapper, { index: 3 }); // hide
+      yield take('UI_MAP_PANEL_HIDE_FINISHED');
+      // yield call(delay, mapPanelReplaceDelay);
     }
   }
 
