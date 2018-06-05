@@ -22,16 +22,16 @@ export default function* microDateOutgoingRequestsSaga() {
 
       const task1 = yield fork(outgoingMicroDateCancelSaga, microDate);
 
-      const task3 = yield fork(outgoingMicroDateAcceptSaga);
+      const task2 = yield fork(outgoingMicroDateAcceptSaga);
 
-      const task5 = yield fork(outgoingMicroDateStopByMeSaga, microDate);
+      const task3 = yield fork(outgoingMicroDateStopByMeSaga, microDate);
 
-      const task6 = yield fork(outgoingMicroDateSelfieUploadedByMeSaga);
-      const task7 = yield fork(outgoingMicroDateSelfieUploadedByTargetSaga);
+      const task4 = yield fork(outgoingMicroDateSelfieUploadedByMeSaga);
+      const task5 = yield fork(outgoingMicroDateSelfieUploadedByTargetSaga);
 
-      const task8 = yield fork(outgoingMicroDateSelfieDeclineByMeSaga, microDate);
-      const task9 = yield fork(outgoingMicroDateSelfieAcceptByMeSaga, microDate);
-      const task10 = yield fork(outgoingMicroDateFinishedSaga);
+      const task6 = yield fork(outgoingMicroDateSelfieDeclineByMeSaga, microDate);
+      const task7 = yield fork(outgoingMicroDateSelfieAcceptByMeSaga, microDate);
+      const task8 = yield fork(outgoingMicroDateFinishedSaga);
 
       const microDateChannel = yield call(createChannelToMicroDate, microDate.id);
       const microDateUpdatesTask = yield takeLatest(microDateChannel, handleOutgoingRequestsSaga);
@@ -45,7 +45,7 @@ export default function* microDateOutgoingRequestsSaga() {
         'MICRO_DATE_OUTGOING_FINISHED',
       ]);
       yield put({ type: 'MICRO_DATE_OUTGOING_SAGA_CANCEL_TASKS' });
-      yield cancel(task1, task3, task5, task6, task7, task8, task9, task10);
+      yield cancel(task1, task2, task3, task4, task5, task6, task7, task8);
       yield cancel(microDateUpdatesTask);
       yield microDateChannel.close();
     }
@@ -55,7 +55,7 @@ export default function* microDateOutgoingRequestsSaga() {
 
   function* handleOutgoingRequestsSaga(microDate) {
     if (microDate.error) {
-      throw new Error(microDate.error);
+      throw new Error(JSON.stringify(microDate.error));
     }
 
     if (microDate.hasNoData) {
@@ -120,7 +120,6 @@ function* outgoingMicroDateRequestInitSaga() {
     };
 
     yield microDateRef.set(microDate);
-    // yield put({ type: 'MICRO_DATE_OUTGOING_REQUEST', payload: microDate });
   }
 }
 
@@ -184,15 +183,6 @@ function* outgoingMicroDateSelfieUploadedByMeSaga() {
     const microDate = action.payload;
     const isMicroDateMode = yield select((state) => state.microDate.enabled);
     if (!isMicroDateMode) yield* startMicroDateSaga(microDate);
-
-    yield put({
-      type: 'UI_MAP_PANEL_SHOW',
-      payload: {
-        mode: 'selfieUploadedByMe',
-        canHide: false,
-        microDate,
-      },
-    });
   }
 }
 
@@ -309,4 +299,3 @@ function createChannelForOutgoingMicroDateRequests(uid) {
     return unsubscribe;
   }, buffers.expanding(5));
 }
-

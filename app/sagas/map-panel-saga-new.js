@@ -32,6 +32,7 @@ export default function* mapPanelSagaNew() {
       const hideActions = yield actionChannel([
         'MAPVIEW_PRESSED',
         'MICRO_DATE_OUTGOING_REQUEST_INIT',
+        'USERS_AROUND_ITEM_DESELECTED',
       ], buffers.none());
 
       const forceHideActions = yield actionChannel([
@@ -46,6 +47,8 @@ export default function* mapPanelSagaNew() {
         'MICRO_DATE_OUTGOING_FINISHED',
         'MICRO_DATE_DECLINE_SELFIE_BY_ME',
         'UPLOAD_PHOTO_START',
+        'MICRO_DATE_APPROVE_SELFIE',
+        'UI_MAP_PANEL_HIDE_WITH_BUTTON',
       ]);
 
       const task1 = yield takeLatest(showActions, mapPanelShowActionsSaga, mapPanelSnapper);
@@ -260,10 +263,6 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
     yield call(mapPanelSnapper, { index: 0 }); // show
     yield take('UI_MAP_PANEL_SHOW_SNAPPED');
     yield put({ type: 'UI_MAP_PANEL_SHOW_FINISHED', payload: nextAction.payload });
-
-    // yield take('UI_MAP_PANEL_HIDE');
-    // yield call(mapPanelSnapper, { index: 3 }); // hide
-    // yield take('UI_MAP_PANEL_HIDE_SNAPPED');
   } catch (error) {
     yield put({ type: 'UI_MAP_PANEL_ERROR', payload: error });
   }

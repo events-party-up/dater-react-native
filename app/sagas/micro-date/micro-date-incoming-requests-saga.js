@@ -27,18 +27,17 @@ export default function* microDateIncomingRequestsSaga() {
         throw new Error(JSON.stringify(microDate.error));
       }
 
-      // const task1 = yield fork(incomingMicroDateRequestSaga, microDate);
-      const task2 = yield fork(incomingMicroDateAcceptSaga, microDate);
+      const task1 = yield fork(incomingMicroDateAcceptSaga, microDate);
 
-      const task3 = yield fork(incomingMicroDateDeclineByMeSaga, microDate);
-      const task5 = yield fork(incomingMicroDateStopByMeSaga, microDate);
+      const task2 = yield fork(incomingMicroDateDeclineByMeSaga, microDate);
+      const task3 = yield fork(incomingMicroDateStopByMeSaga, microDate);
 
-      const task7 = yield fork(incomingMicroDateSelfieUploadedByTargetSaga);
-      const task8 = yield fork(incomingMicroDateSelfieUploadedByMeSaga);
+      const task4 = yield fork(incomingMicroDateSelfieUploadedByTargetSaga);
+      const task5 = yield fork(incomingMicroDateSelfieUploadedByMeSaga);
 
-      const task9 = yield fork(incomingMicroDateSelfieDeclineByMeSaga, microDate);
-      const task10 = yield fork(incomingMicroDateSelfieAcceptByMeSaga, microDate);
-      const task11 = yield fork(incomingMicroDateFinishedSaga);
+      const task6 = yield fork(incomingMicroDateSelfieDeclineByMeSaga, microDate);
+      const task7 = yield fork(incomingMicroDateSelfieAcceptByMeSaga, microDate);
+      const task8 = yield fork(incomingMicroDateFinishedSaga);
 
       const microDateChannel = yield call(createChannelToMicroDate, microDate.id);
       const microDateUpdatesTask = yield takeLatest(microDateChannel, incomingMicroDateUpdatedSaga);
@@ -55,7 +54,7 @@ export default function* microDateIncomingRequestsSaga() {
       yield put({ type: 'MICRO_DATE_INCOMING_SAGA_CANCEL_TASKS' });
       yield microDateChannel.close();
       yield cancel(microDateUpdatesTask);
-      yield cancel(task2, task3, task5, task7, task8, task9, task10, task11);
+      yield cancel(task1, task2, task3, task4, task5, task6, task7, task8);
     }
   } catch (error) {
     yield put({ type: 'MICRO_DATE_INCOMING_ERROR', payload: error });
@@ -65,7 +64,7 @@ export default function* microDateIncomingRequestsSaga() {
 function* incomingMicroDateUpdatedSaga(microDate) {
   try {
     if (microDate.error) {
-      throw new Error(microDate.error);
+      throw new Error(JSON.stringify(microDate.error));
     }
 
     if (microDate.hasNoData) {
@@ -81,11 +80,9 @@ function* incomingMicroDateUpdatedSaga(microDate) {
         yield put({ type: 'MICRO_DATE_INCOMING_ACCEPT', payload: microDate });
         break;
       case 'DECLINE':
-        // yield put({ type: 'MICRO_DATE_INCOMING_FINISH', payload: microDate });
         break;
       case 'CANCEL_REQUEST':
         yield put({ type: 'MICRO_DATE_INCOMING_CANCELLED', payload: microDate });
-        // yield put({ type: 'MICRO_DATE_INCOMING_CANCEL' });
         break;
       case 'STOP':
         if (microDate.stopBy !== microDate.requestFor) {
@@ -194,15 +191,6 @@ function* incomingMicroDateSelfieUploadedByTargetSaga() {
     const action = yield take('MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_TARGET');
     const microDate = action.payload;
     const isMicroDateMode = yield select((state) => state.microDate.enabled);
-    yield put({
-      type: 'UI_MAP_PANEL_SHOW',
-      payload: {
-        mode: 'selfieUploadedByTarget',
-        canHide: false,
-        microDate,
-      },
-    });
-    yield take('UI_MAP_PANEL_SHOW_FINISHED');
     if (!isMicroDateMode) yield* startMicroDateSaga(microDate);
   }
 }
@@ -225,13 +213,6 @@ function* incomingMicroDateSelfieDeclineByMeSaga(microDate) {
       .update({
         status: 'ACCEPT',
       });
-    yield put({
-      type: 'UI_MAP_PANEL_SHOW',
-      payload: {
-        mode: 'makeSelfie',
-        canHide: false,
-      },
-    });
   }
 }
 

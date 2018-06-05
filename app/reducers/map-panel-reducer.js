@@ -1,9 +1,7 @@
 export const types = {
   UI_MAP_PANEL_READY: 'UI_MAP_PANEL_READY',
   UI_MAP_PANEL_UNLOAD: 'UI_MAP_PANEL_UNLOAD',
-  UI_MAP_PANEL_SHOW: 'UI_MAP_PANEL_SHOW',
   UI_MAP_PANEL_SHOW_FINISHED: 'UI_MAP_PANEL_SHOW_FINISHED',
-  UI_MAP_PANEL_HIDE: 'UI_MAP_PANEL_HIDE',
   UI_MAP_PANEL_HIDE_FORCE: 'UI_MAP_PANEL_HIDE_FORCE',
   UI_MAP_PANEL_HIDE_SNAPPED: 'UI_MAP_PANEL_HIDE_SNAPPED',
   UI_MAP_PANEL_SET_MODE: 'UI_MAP_PANEL_SET_MODE',
@@ -29,12 +27,6 @@ const mapPanelReducer = (state = initialState, action) => {
         ...state,
         ...payload,
         previousMode: state.mode,
-      };
-    }
-    case types.UI_MAP_PANEL_SHOW: {
-      return {
-        ...state,
-        pendingShow: true,
       };
     }
     case types.UI_MAP_PANEL_SHOW_FINISHED: {

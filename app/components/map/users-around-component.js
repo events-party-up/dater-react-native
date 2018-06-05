@@ -6,7 +6,6 @@ import UserOnMapMarker from './user-on-map-marker';
 
 const mapStateToProps = (state) => ({
   usersAround: state.usersAround.users,
-  mapPanel: state.mapPanel,
   microDate: state.microDate,
   mapViewBearingAngle: state.mapView.heading,
 });
@@ -14,7 +13,6 @@ const mapStateToProps = (state) => ({
 type Props = {
   usersAround: Array<mixed>,
   dispatch: Dispatch,
-  mapPanel: any,
   mapViewBearingAngle: number,
 };
 
@@ -24,35 +22,10 @@ class UsersAroundComponent extends React.Component<Props> {
       type: 'USERS_AROUND_ITEM_PRESSED',
       payload: targetUser,
     });
-
-    // if (this.props.microDate.enabled || this.props.microDate.pending) {
-    //   this.props.dispatch({
-    //     type: 'UI_MAP_PANEL_SHOW',
-    //     payload: {
-    //       ...this.props.mapPanel,
-    //     },
-    //   });
-    // } else {
-    //   this.props.dispatch({
-    //     type: 'UI_MAP_PANEL_SHOW',
-    //     payload: {
-    //       mode: 'userCard',
-    //       targetUser,
-    //       canHide: true,
-    //     },
-    //   });
-    // }
   }
 
   onDeselected = () => {
-    if (this.props.mapPanel.visible) {
-      this.props.dispatch({
-        type: 'UI_MAP_PANEL_HIDE',
-        payload: {
-          source: 'userAround-onDeselected',
-        },
-      });
-    }
+    this.props.dispatch({ type: 'USERS_AROUND_ITEM_DESELECTED' });
   }
 
   renderUsersAround() {

@@ -69,12 +69,7 @@ class MapPanelComponent extends Component<Props> {
   }
 
   showMeTargetUser = () => {
-    this.props.dispatch({
-      type: 'UI_MAP_PANEL_HIDE',
-      payload: {
-        source: 'mapPanelShowMeTargetUser',
-      },
-    });
+    this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_WITH_BUTTON' });
     this.props.dispatch({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE' });
   }
 
@@ -118,12 +113,7 @@ class MapPanelComponent extends Component<Props> {
   }
 
   closePanel = () => {
-    this.props.dispatch({
-      type: 'UI_MAP_PANEL_HIDE',
-      payload: {
-        source: 'mapPanelClosePanel',
-      },
-    });
+    this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_WITH_BUTTON' });
   }
 
   renderCard() {
