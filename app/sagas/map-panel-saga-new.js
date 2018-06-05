@@ -195,7 +195,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
           mapPanelState.mode !== 'selfieUploadedByMe' &&
           mapPanelState.mode !== 'selfieUploading' &&
           mapPanelState.mode !== 'makeSelfie') ||
-          microDateState.microDate.status === 'ACCEPT' // hacky!
+          (mapPanelState.mode !== 'makeSelfie' && microDateState.microDate.status === 'ACCEPT') // hacky!
         ) {
           console.log('here 2');
           yield put({
