@@ -16,6 +16,10 @@ export default function* mapPanelSagaNew() {
         'MICRO_DATE_INCOMING_REQUEST',
         'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
         'MICRO_DATE_INCOMING_CANCELLED',
+        'MICRO_DATE_INCOMING_ACCEPT',
+        'MICRO_DATE_OUTGOING_ACCEPT',
+        'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
+        'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
       ], buffers.none());
 
       const hideActions = yield actionChannel([
@@ -29,7 +33,7 @@ export default function* mapPanelSagaNew() {
         'MICRO_DATE_STOP',
         'MICRO_DATE_DECLINE_SELFIE_BY_ME',
         'MICRO_DATE_APPROVE_SELFIE',
-        'MICRO_DATE_INCOMING_ACCEPT',
+        // 'MICRO_DATE_INCOMING_ACCEPT',
         'MICRO_DATE_INCOMING_REMOVE',
         'MICRO_DATE_INCOMING_FINISHED',
         'MICRO_DATE_OUTGOING_REMOVE',
@@ -79,7 +83,6 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
             },
           });
         }
-
         break;
       case 'MICRO_DATE_OUTGOING_REQUEST':
         yield put({
@@ -122,6 +125,46 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
           type: 'UI_MAP_PANEL_SET_MODE',
           payload: {
             mode: 'incomingMicroDateCancelled',
+            canHide: true,
+            microDate: microDateState.microDate,
+          },
+        });
+        break;
+      case 'MICRO_DATE_INCOMING_ACCEPT':
+        yield put({
+          type: 'UI_MAP_PANEL_SET_MODE',
+          payload: {
+            canClose: true,
+            mode: 'activeMicroDate',
+            distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
+          },
+        });
+        break;
+      case 'MICRO_DATE_OUTGOING_ACCEPT':
+        yield put({
+          type: 'UI_MAP_PANEL_SET_MODE',
+          payload: {
+            mode: 'activeMicroDate',
+            canHide: true,
+            distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
+          },
+        });
+        break;
+      case 'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET':
+        yield put({
+          type: 'UI_MAP_PANEL_SET_MODE',
+          payload: {
+            mode: 'microDateStopped',
+            canHide: true,
+            microDate: microDateState.microDate,
+          },
+        });
+        break;
+      case 'MICRO_DATE_INCOMING_STOPPED_BY_TARGET':
+        yield put({
+          type: 'UI_MAP_PANEL_SET_MODE',
+          payload: {
+            mode: 'microDateStopped',
             canHide: true,
             microDate: microDateState.microDate,
           },

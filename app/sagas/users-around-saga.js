@@ -58,13 +58,14 @@ export default function* usersAroundSaga() {
         'GEO_LOCATION_STOPPED', // stop if location services are disabled
         'USERS_AROUND_STOP',
         'MICRO_DATE_INCOMING_START', // app mode switched to find user
-        'MICRO_DATE_OUTGOING_START', // app mode switched to find user
+        'MICRO_DATE_OUTGOING_ACCEPT', // app mode switched to find user
         'MICRO_DATE_STOP',
-        'MICRO_DATE_STOPPED_BY_TARGET',
         'MICRO_DATE_OUTGOING_FINISHED',
         'MICRO_DATE_INCOMING_FINISHED',
         'MICRO_DATE_INCOMING_REMOVE',
         'MICRO_DATE_OUTGOING_REMOVE',
+        'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
+        'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
       ]);
 
       if (stopAction.type === 'USERS_AROUND_STOP') {
@@ -72,14 +73,15 @@ export default function* usersAroundSaga() {
       }
 
       if (stopAction.type === 'MICRO_DATE_INCOMING_START' ||
-          stopAction.type === 'MICRO_DATE_OUTGOING_START') {
+          stopAction.type === 'MICRO_DATE_OUTGOING_ACCEPT') {
         isMicroDateMode = true;
       }
 
       if (stopAction.type === 'MICRO_DATE_STOP' ||
-        stopAction.type === 'MICRO_DATE_STOPPED_BY_TARGET' ||
-        stopAction.type === 'MICRO_DATE_OUTGOING_FINISHED' ||
+        stopAction.type === 'MICRO_DATE_INCOMING_STOPPED_BY_TARGET' ||
+        stopAction.type === 'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET' ||
         stopAction.type === 'MICRO_DATE_INCOMING_FINISHED' ||
+        stopAction.type === 'MICRO_DATE_OUTGOING_FINISHED' ||
         stopAction.type === 'MICRO_DATE_INCOMING_REMOVE' ||
         stopAction.type === 'MICRO_DATE_OUTGOING_REMOVE'
       ) {
