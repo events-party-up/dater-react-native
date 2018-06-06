@@ -7,9 +7,9 @@
 	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
 	<string>ca-app-pub-3940256099942544/4411468910</string>
 	<key>CLIENT_ID</key>
-	<string>569828839948-s97prc8dbr5ocm2ns48qq6mq8249jd8o.apps.googleusercontent.com</string>
+	<string>569828839948-ru1vmhhjd9m5tfmte2gpohckmh7ngr47.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.569828839948-s97prc8dbr5ocm2ns48qq6mq8249jd8o</string>
+	<string>com.googleusercontent.apps.569828839948-ru1vmhhjd9m5tfmte2gpohckmh7ngr47</string>
 	<key>API_KEY</key>
 	<string>AIzaSyBheLYozP1virNWuIzyXW0Twtgrms2G_vg</string>
 	<key>GCM_SENDER_ID</key>
@@ -17,7 +17,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>org.reactjs.native.example.DaterReactNative</string>
+	<string>com.dater</string>
 	<key>PROJECT_ID</key>
 	<string>dater3-dev</string>
 	<key>STORAGE_BUCKET</key>
@@ -33,7 +33,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:569828839948:ios:327adbfb0b5f515d</string>
+	<string>1:569828839948:ios:ed9a9345c3491938</string>
 	<key>DATABASE_URL</key>
 	<string>https://dater3-dev.firebaseio.com</string>
 </dict>

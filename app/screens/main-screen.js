@@ -6,7 +6,7 @@ import {
 import { connect, Dispatch } from 'react-redux';
 
 import DaterMapView from '../components/dater-map-view';
-// import DaterButton from '../components/ui-kit/dater-button';
+import DaterButton from '../components/ui-kit/dater-button';
 import MapPanelComponent from '../components/map-panel/map-panel-component';
 import OnMapRightButtons from '../components/map/on-map-right-buttons';
 import { GeoCompass, GeoCoordinates } from '../types';
@@ -45,7 +45,7 @@ class MainScreen extends Component<Props> {
           location={this.props.location}
           compass={this.props.compass}
         />
-        {/* <View style={styles.buttons}>
+        <View style={styles.buttons}>
           <DaterButton
             style={styles.button}
             onPress={() => this.props.navigation.navigate('MakePhotoSelfie')}
@@ -63,10 +63,10 @@ class MainScreen extends Component<Props> {
 
           <DaterButton
             style={styles.button}
-            onPress={() => this.props.navigation.navigate('Login')}
+            onPress={() => this.props.navigation.navigate('PhoneNumber')}
             type="secondary"
           >
-            Login Screen
+            Phone Screen
           </DaterButton>
 
           <DaterButton
@@ -75,7 +75,7 @@ class MainScreen extends Component<Props> {
           >
             UI Kit
           </DaterButton>
-        </View> */}
+        </View>
       </View>
     );
   }

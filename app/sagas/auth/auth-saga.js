@@ -8,7 +8,7 @@ import {
   deleteFirestoreDoc,
   setFirestore,
   updateFirestore,
-} from '../utils/firebase-utils';
+} from '../../utils/firebase-utils';
 
 export default function* authSaga() {
   try {

@@ -4,7 +4,8 @@ import mapViewSaga from './mapview/mapview-saga';
 import mapViewInitializeRegionSaga from './mapview/mapview-init-region-saga';
 import mapViewMyVisibilitySaga from './mapview/mapview-my-visibility-saga';
 import locationSaga from './location-saga';
-import authSaga from './auth-saga';
+import authSaga from './auth/auth-saga';
+import authPhoneSaga from './auth/auth-phone-saga';
 import startGeolocationOnFirstUpdate from './location-start-saga';
 import mapPanelSagaNew from './map-panel-saga-new';
 import usersAroundSaga from './users-around-saga';
@@ -17,9 +18,10 @@ export default function* rootSaga() {
     takeEvery('MAPVIEW_READY', mapViewInitializeRegionSaga),
     mapViewSaga(),
     mapViewMyVisibilitySaga(),
+    authSaga(),
+    authPhoneSaga(),
     compassSaga(),
     locationSaga(),
-    authSaga(),
     startGeolocationOnFirstUpdate(),
     mapPanelSagaNew(),
     usersAroundSaga(),
