@@ -6,7 +6,6 @@ import UserOnMapMarker from './user-on-map-marker';
 
 const mapStateToProps = (state) => ({
   usersAround: state.usersAround.users,
-  mapPanel: state.mapPanel,
   microDate: state.microDate,
   mapViewBearingAngle: state.mapView.heading,
 });
@@ -14,41 +13,19 @@ const mapStateToProps = (state) => ({
 type Props = {
   usersAround: Array<mixed>,
   dispatch: Dispatch,
-  mapPanel: any,
-  microDate: any,
   mapViewBearingAngle: number,
 };
 
 class UsersAroundComponent extends React.Component<Props> {
-  onPressOrSelect = (user) => {
-    if (this.props.microDate.enabled || this.props.microDate.pending) {
-      this.props.dispatch({
-        type: 'UI_MAP_PANEL_SHOW',
-        payload: {
-          ...this.props.mapPanel,
-        },
-      });
-    } else {
-      this.props.dispatch({
-        type: 'UI_MAP_PANEL_SHOW',
-        payload: {
-          mode: 'userCard',
-          user,
-          canHide: true,
-        },
-      });
-    }
+  onPressOrSelect = (targetUser) => {
+    this.props.dispatch({
+      type: 'USERS_AROUND_ITEM_PRESSED',
+      payload: targetUser,
+    });
   }
 
   onDeselected = () => {
-    if (this.props.mapPanel.visible) {
-      this.props.dispatch({
-        type: 'UI_MAP_PANEL_HIDE',
-        payload: {
-          source: 'userAround-onDeselected',
-        },
-      });
-    }
+    this.props.dispatch({ type: 'USERS_AROUND_ITEM_DESELECTED' });
   }
 
   renderUsersAround() {
@@ -58,11 +35,12 @@ class UsersAroundComponent extends React.Component<Props> {
           user.geoPoint.longitude,
           user.geoPoint.latitude,
         ]}
-        key={user.uid}
-        id={user.uid}
+        key={user.id}
+        id={user.id}
         onSelected={() => { this.onPressOrSelect(user); }} // TOOD: refactor this, onPress uses same callback
         onDeselected={() => { this.onDeselected(); }}
         selected={false}
+        anchor={{ x: 0.5, y: 1 }} // anchor so that bottom tip of the marker is at the geo point
       >
         <UserOnMapMarker
           onPress={() => { this.onPressOrSelect(user); }}

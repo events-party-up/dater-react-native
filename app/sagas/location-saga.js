@@ -34,7 +34,7 @@ export default function* locationSaga() {
           doc: uid,
         });
 
-        if (!myStatus.visible) {
+        if (myStatus.visibility === 'private') {
           continue; // eslint-disable-line
         }
       }
@@ -62,13 +62,6 @@ export default function* locationSaga() {
       yield take('GEO_LOCATION_STOP');
 
       yield call([BackgroundGeolocation, 'stop']);
-      yield call(updateFirestore, {
-        collection: 'geoPoints',
-        doc: uid,
-        data: {
-          visible: false,
-        },
-      });
       yield cancel(task1, task2, task3, task4);
       yield locationChannel.close();
 
@@ -158,15 +151,16 @@ function* updateLocation(coords) {
 function* writeCoordsToFirestore(coords) {
   try {
     const uid = yield select((state) => state.auth.uid);
+    const moveHeadingAngle = yield select((state) => state.location.moveHeadingAngle);
+
     if (!uid || !coords) return;
 
     yield call(updateFirestore, {
       collection: 'geoPoints',
       doc: uid,
       data: {
-        visible: true,
         accuracy: coords.accuracy,
-        heading: coords.heading,
+        heading: coords.heading > 0 ? coords.heading : moveHeadingAngle, // use calculated heading if GPS has no heading data
         speed: coords.speed,
         geoPoint: new firebase.firestore.GeoPoint(coords.latitude, coords.longitude),
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),

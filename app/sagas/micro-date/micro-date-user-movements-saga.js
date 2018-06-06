@@ -1,4 +1,4 @@
-import { put, takeEvery, select } from 'redux-saga/effects';
+import { put, throttle, takeEvery, select } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 
 import GeoUtils from '../../utils/geo-utils';
@@ -7,11 +7,13 @@ import {
   MINIMUM_ACCURACY_PAST_LOCATION,
   MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION,
   MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION,
+  DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD,
 } from '../../constants';
 
 export default function* microDateUserMovementsSaga() {
   try {
-    yield takeEvery('MICRO_DATE_MY_MOVE', handleMyMoveSaga);
+    yield throttle(3000, 'MICRO_DATE_MY_MOVE', handleMyMoveSaga);
+    yield takeEvery('MICRO_DATE_TARGET_MOVE', handleTargetMoveSaga);
   } catch (error) {
     yield put({ type: 'MICRO_DATE_USER_MOVEMENTS_ERROR', payload: error });
   }
@@ -20,37 +22,37 @@ export default function* microDateUserMovementsSaga() {
 function* handleMyMoveSaga(action) {
   try {
     // yield console.log('handleMyMoveSaga', action);
-    const microDateId = yield select((state) => state.microDate.microDateId);
+    const microDate = yield select((state) => state.microDate);
     const myUid = yield select((state) => state.auth.uid);
     const myUidDB = myUid.substring(0, 8);
     const newCoords = action.payload;
     const myPreviousCoords = yield select((state) => state.microDate.myPreviousCoords);
 
+    yield* checkDistance(microDate, newCoords, microDate.targetCurrentCoords);
+
     if (myPreviousCoords) {
       const timeDelta = (newCoords.clientTS - myPreviousCoords.clientTS) / 1000; // in seconds
-      const distance = GeoUtils.distance(myPreviousCoords, newCoords);
-      const velocity = Math.floor(distance / timeDelta); // in seconds
+      const distanceDelta = GeoUtils.distance(myPreviousCoords, newCoords);
+      const velocity = Math.floor(distanceDelta / timeDelta); // in seconds
 
-      if (
-        velocity < MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION && // discard too fast moves, probably a noise from location services
-        newCoords.accuracy < MINIMUM_ACCURACY_PAST_LOCATION && // discard not accurate enough locations
-        distance > MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION // discard too nearby updates
-      ) {
-        yield firebase.firestore()
-          .collection(MICRO_DATES_COLLECTION)
-          .doc(microDateId)
-          .collection(`pastLocations_${myUidDB}`)
-          .add({
-            distance,
-            velocity,
-            geoPoint: new firebase.firestore.GeoPoint(newCoords.latitude, newCoords.longitude),
-            serverTS: firebase.firestore.FieldValue.serverTimestamp(),
-            clientTS: newCoords.clientTS,
-            heading: GeoUtils.getBearing(myPreviousCoords, newCoords),
-          });
-      } else { // discarding
+      if (velocity > MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION ||
+        newCoords.accuracy > MINIMUM_ACCURACY_PAST_LOCATION ||
+        distanceDelta < MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
         return;
       }
+
+      yield firebase.firestore()
+        .collection(MICRO_DATES_COLLECTION)
+        .doc(microDate.id)
+        .collection(`pastLocations_${myUidDB}`)
+        .add({
+          distanceDelta,
+          velocity,
+          geoPoint: new firebase.firestore.GeoPoint(newCoords.latitude, newCoords.longitude),
+          serverTS: firebase.firestore.FieldValue.serverTimestamp(),
+          clientTS: newCoords.clientTS,
+          heading: GeoUtils.getBearing(myPreviousCoords, newCoords),
+        });
     }
 
     let myScore = yield select((state) => state.microDate.myScore);
@@ -65,7 +67,7 @@ function* handleMyMoveSaga(action) {
 
       yield firebase.firestore()
         .collection(MICRO_DATES_COLLECTION)
-        .doc(microDateId)
+        .doc(microDate.id)
         .collection('stats')
         .doc(myUidDB)
         .set({
@@ -82,5 +84,29 @@ function* handleMyMoveSaga(action) {
     });
   } catch (error) {
     yield put({ type: 'MICRO_DATE_USER_MOVEMENTS_HANDLE_MY_MOVE_ERROR', payload: error });
+  }
+}
+
+function* handleTargetMoveSaga(action) {
+  const myCoords = yield select((state) => state.location.coords);
+  const targetCoords = action.payload.geoPoint;
+  const microDate = yield select((state) => state.microDate);
+  yield* checkDistance(microDate, myCoords, targetCoords);
+}
+
+function* checkDistance(microDate, myCoords, targetCoords) {
+  if (!microDate.targetCurrentCoords) {
+    return;
+  }
+
+  const distanceToTarget = GeoUtils.distance(myCoords, targetCoords);
+
+  if (distanceToTarget < DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD) {
+    yield put({
+      type: 'MICRO_DATE_CLOSE_DISTANCE_MOVE',
+      payload: {
+        distanceToTarget,
+      },
+    });
   }
 }

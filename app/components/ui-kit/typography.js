@@ -1,8 +1,6 @@
 import React from 'react';
 import { Text } from 'react-native';
 
-import TextWithLetterSpacing from './text-with-letter-spacing';
-
 export const H1 = (props) => (
   <Text style={[styles.h1, props.style]} allowFontScaling={false}>
     {props.children}
@@ -48,9 +46,9 @@ export const Body = (props) => {
 };
 
 export const Caption1 = (props) => (
-  <TextWithLetterSpacing spacing={1.2} textStyle={[styles.caption1, props.style]}>
+  <Text style={[styles.caption1, props.style]}>
     {props.children.toUpperCase()}
-  </TextWithLetterSpacing>
+  </Text>
 );
 
 export const Caption2 = (props) => (
@@ -95,6 +93,7 @@ const styles = {
     lineHeight: 16,
     fontSize: 12,
     textAlign: 'left',
+    letterSpacing: 1.2,
   },
   caption2: {
     fontFamily: 'OpenSans-Regular',

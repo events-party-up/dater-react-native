@@ -18,13 +18,18 @@ type Props = {
   dispatch: Dispatch,
   location: {
     coords: GeoCoordinates,
+    enabled: boolean,
   },
   compass: GeoCompass,
+  microDateIsEnabled: boolean,
+  isAuthenticated: boolean,
 };
 
 const mapStateToProps = (state) => ({
   location: state.location,
   mapView: state.mapView,
+  isAuthenticated: state.auth.isAuthenticated,
+  microDateIsEnabled: state.microDate.enabled,
 });
 
 class OnMapRightButtons extends Component<Props> {
@@ -90,17 +95,21 @@ class OnMapRightButtons extends Component<Props> {
           image={rotateIcon}
           size="medium"
         /> */}
-        <CircleButton
-          style={styles.button}
-          onPress={this.onGeoTogglePress}
-          image={this.props.location.enabled ? stopIcon : playIcon}
-          size="medium"
-        />
+        {!this.props.microDateIsEnabled &&
+          <CircleButton
+            style={styles.button}
+            onPress={this.onGeoTogglePress}
+            image={this.props.location.enabled ? stopIcon : playIcon}
+            size="medium"
+            disabled={!this.props.isAuthenticated}
+          />
+        }
         <CircleButton
           style={styles.button}
           onPress={this.centerMe}
           image={myLocationIcon}
           size="medium"
+          disabled={!this.props.location.enabled}
         />
       </View>
     );

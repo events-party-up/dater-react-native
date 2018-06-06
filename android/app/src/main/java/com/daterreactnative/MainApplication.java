@@ -10,6 +10,9 @@ import com.transistorsoft.rnbackgroundgeolocation.*;
 import com.transistorsoft.rnbackgroundfetch.RNBackgroundFetchPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.joshblour.reactnativeheading.ReactNativeHeadingPackage;
+import org.reactnative.camera.RNCameraPackage;
+import com.ninty.system.setting.SystemSettingPackage;
+import com.reactlibrary.androidsettings.RNANAndroidSettingsLibraryPackage;
 
 // Firebase packages
 import io.invertase.firebase.RNFirebasePackage;
@@ -19,6 +22,7 @@ import io.invertase.firebase.auth.RNFirebaseAuthPackage;
 import io.invertase.firebase.firestore.RNFirebaseFirestorePackage;
 import io.invertase.firebase.config.RNFirebaseRemoteConfigPackage;
 import io.invertase.firebase.perf.RNFirebasePerformancePackage;
+import io.invertase.firebase.storage.RNFirebaseStoragePackage;
 
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -57,9 +61,13 @@ public class MainApplication extends Application implements ReactApplication {
           new RNFirebaseFirestorePackage(),
           new RNFirebaseRemoteConfigPackage(),
           new RNFirebasePerformancePackage(),
+          new RNFirebaseStoragePackage(),
           new ReactNativeHeadingPackage(),
           new RCTMGLPackage(),
-          new LinearGradientPackage()
+          new LinearGradientPackage(),
+          new RNCameraPackage(),
+          new SystemSettingPackage(),
+          new RNANAndroidSettingsLibraryPackage()
         );
     }
 

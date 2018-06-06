@@ -5,14 +5,18 @@ import firebase from 'react-native-firebase';
 import SplashScreen from 'react-native-splash-screen';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
+import { AppNavigator } from './navigators/navigator-actions';
 import configureStore from './config/configure-store';
 import RootStack from './navigators/root-navigator';
+import { MAP_BOX_ACCESS_TOKEN } from './constants';
+
+const RootStackWithActions = AppNavigator(RootStack);
 
 const store = configureStore();
 type Props = {
 };
 
-MapboxGL.setAccessToken('pk.eyJ1Ijoib2xlZ3duIiwiYSI6ImNqZzZhZXRsaTFydjAzM21vZjR0Y290aG8ifQ.gsFXXecyedS9_eg8TGTu7A');
+MapboxGL.setAccessToken(MAP_BOX_ACCESS_TOKEN);
 
 export default class App extends Component<Props> {
   componentDidMount() {
@@ -25,7 +29,7 @@ export default class App extends Component<Props> {
   render() {
     return (
       <Provider store={store}>
-        <RootStack />
+        <RootStackWithActions />
       </Provider>
     );
   }

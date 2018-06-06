@@ -29,8 +29,7 @@ const geoOptions = async () => {
     notificationPriority: RNBackgroundGeolocation.NOTIFICATION_PRIORITY_LOW,
     notificationTitle: 'Dater.com',
     notificationText: 'Dater Mode ON',
-    // disableStopDetection: true,
-    preventSuspend: false, // iOS only
+    preventSuspend: true, // iOS only
     params: {
       device: {
         platform: Platform.OS,

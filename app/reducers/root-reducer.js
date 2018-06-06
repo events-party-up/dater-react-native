@@ -8,6 +8,7 @@ import compassReducer from './compass-reducer';
 import mapPanelReducer from './map-panel-reducer';
 import microDateReducer from './micro-date-reducer';
 import appStateReducer from './app-state-reducer';
+import uploadPhotosReducer from './upload-photos-reducer';
 
 export const rootReducer = combineReducers({
   auth: authReducer,
@@ -18,6 +19,7 @@ export const rootReducer = combineReducers({
   mapPanel: mapPanelReducer,
   microDate: microDateReducer,
   appState: appStateReducer,
+  uploadPhotos: uploadPhotosReducer,
 });
 
 export default rootReducer;

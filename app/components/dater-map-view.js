@@ -13,6 +13,7 @@ import UsersAroundComponent from './map/users-around-component';
 import PastLocationsPath from './map/past-locations-path';
 import { Caption2 } from './ui-kit/typography';
 import MicroDateStats from './micro-date/micro-date-stats';
+import { MAX_VISIBLE_PAST_LOCATIONS } from '../constants';
 
 const mapStateToProps = (state) => ({
   location: state.location,
@@ -52,13 +53,13 @@ type Props = {
   },
   dispatch: Dispatch,
   location: {
+    enabled: boolean,
     coords: GeoCoordinates,
     geoUpdates: number,
     pastCoords: Array<GeoCoordinates>,
     moveHeadingAngle: number,
   },
   mapView: MapboxGL.MapView,
-  mapPanel: any,
   microDate: any,
 };
 
@@ -98,15 +99,9 @@ class DaterMapView extends React.Component<Props> {
   }
 
   onMapPressed = () => {
-    console.log('Map pressed');
-    if (this.props.mapPanel.visible) {
-      this.props.dispatch({
-        type: 'UI_MAP_PANEL_HIDE',
-        payload: {
-          source: 'onMapPressed',
-        },
-      });
-    }
+    this.props.dispatch({
+      type: 'MAPVIEW_PRESSED',
+    });
   }
 
   onMapDragStart = (event) => {
@@ -159,14 +154,14 @@ class DaterMapView extends React.Component<Props> {
         />}
         <MapboxGL.MapView
           ref={(component) => { this.mapView = component; }}
-          showUserLocation={!this.props.mapView.centered}
+          showUserLocation={!this.props.mapView.centered && this.props.location.enabled}
           // showUserLocation
           userTrackingMode={0}
           zoomLevel={17}
           style={styles.mapView}
           animated
           logoEnabled={false}
-          // compassEnabled={false}
+          compassEnabled={false}
           localizeLabels
           onPress={() => { this.onMapPressed(); }}
           pitch={0}
@@ -182,18 +177,22 @@ class DaterMapView extends React.Component<Props> {
           maxZoomLevel={18}
         >
           {this.props.microDate.enabled &&
-            <React.Fragment>
-              <PastLocationsPath
-                uid={this.props.auth.uid && this.props.auth.uid}
-                mode="own"
-                microDateId={this.props.microDate.microDateId}
-              />
-              <PastLocationsPath
-                uid={this.props.microDate.targetUserUid}
-                mode="target"
-                microDateId={this.props.microDate.microDateId}
-              />
-            </React.Fragment>
+            <PastLocationsPath
+              lastLocation={this.props.location.coords}
+              uid={this.props.auth && this.props.auth.uid}
+              mode="own"
+              microDateId={this.props.microDate.id}
+              limit={MAX_VISIBLE_PAST_LOCATIONS}
+            />
+          }
+          {this.props.microDate.enabled &&
+          <PastLocationsPath
+            lastLocation={this.props.microDate.targetCurrentCoords}
+            uid={this.props.microDate.targetUserUid}
+            mode="target"
+            microDateId={this.props.microDate.id}
+            limit={MAX_VISIBLE_PAST_LOCATIONS}
+          />
         }
           <UsersAroundComponent />
         </MapboxGL.MapView>
@@ -210,18 +209,18 @@ class DaterMapView extends React.Component<Props> {
         {this.props.microDate.enabled &&
         <View style={styles.microDateContainer} pointerEvents="none">
           <Caption2 style={styles.microDateText}>
-            Date ID: {this.props.microDate.microDateId.substring(0, 4)}{'\n'}
+            Date ID: {this.props.microDate.id.substring(0, 4)}{'\n'}
             Distance: {Math.floor(this.props.microDate.distance)}{'\n'}
             My Score:{' '}
             <MicroDateStats
-              microDateId={this.props.microDate.microDateId}
+              microDateId={this.props.microDate.id}
               uid={this.props.auth.uid && this.props.auth.uid}
               style={styles.microDateText}
             />
             {'\n'}
             {this.props.microDate.targetUserUid && this.props.microDate.targetUserUid.substring(0, 4)}: {' '}
             <MicroDateStats
-              microDateId={this.props.microDate.microDateId}
+              microDateId={this.props.microDate.id}
               uid={this.props.microDate.targetUserUid}
               style={styles.microDateText}
             />

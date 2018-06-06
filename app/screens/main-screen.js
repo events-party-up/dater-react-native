@@ -7,9 +7,10 @@ import { connect, Dispatch } from 'react-redux';
 
 import DaterMapView from '../components/dater-map-view';
 // import DaterButton from '../components/ui-kit/dater-button';
-import MapPanelComponent from '../components/map/map-panel-component';
+import MapPanelComponent from '../components/map-panel/map-panel-component';
 import OnMapRightButtons from '../components/map/on-map-right-buttons';
 import { GeoCompass, GeoCoordinates } from '../types';
+// import FirebaseSetup from '../components/firebase-setup';
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
@@ -17,7 +18,7 @@ const mapStateToProps = (state) => ({
 
 type Props = {
   dispatch: Dispatch,
-  // navigation: any,
+  navigation: any,
   compass: GeoCompass,
   location: GeoCoordinates,
 };
@@ -36,13 +37,22 @@ class MainScreen extends Component<Props> {
         {/* <View style={styles.button}>
           <Button title="Выйти" color="blue" onPress={this.signOut} />
         </View> */}
-        <MapPanelComponent />
+        <MapPanelComponent
+          navigation={this.props.navigation}
+        />
         <DaterMapView />
         <OnMapRightButtons
           location={this.props.location}
           compass={this.props.compass}
         />
         {/* <View style={styles.buttons}>
+          <DaterButton
+            style={styles.button}
+            onPress={() => this.props.navigation.navigate('MakePhotoSelfie')}
+            type="secondary"
+          >
+            Фото
+          </DaterButton>
           <DaterButton
             style={styles.button}
             onPress={() => this.props.navigation.navigate('Floating')}

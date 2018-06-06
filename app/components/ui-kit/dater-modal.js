@@ -13,8 +13,10 @@ import DaterHeader from '../../components/ui-kit/dater-header';
 type Props = {
   children: React.Node,
   closeButton: boolean,
+  backButton: boolean,
   closeButtonPress: () => void,
   backButtonPress: () => void,
+  confirmButtonPress: () => void,
   headerTitle: string,
   style: typeof StyleSheet,
 };
@@ -27,18 +29,22 @@ export default class DaterModal extends React.Component<Props> {
         [styles.fullScreenModalContainer, this.props.style] :
         [styles.floatingModalContainer, this.props.style]}
       >
-        {this.props.closeButton && (
-        <View style={styles.closeButton}>
-          <CircleButton type="close" onPress={() => this.props.closeButtonPress()} />
-        </View>)}
-        {this.props.backButton && (
+        {this.props.headerTitle && (
+          <DaterHeader>
+            {this.props.headerTitle}
+          </DaterHeader>)}
+        {this.props.backButton && Platform.OS !== 'android' && (
           <View style={styles.backButton}>
             <CircleButton type="back" onPress={() => this.props.backButtonPress()} />
           </View>)}
-        {this.props.headerTitle && (
-        <DaterHeader>
-          {this.props.headerTitle}
-        </DaterHeader>)}
+        {this.props.closeButton && (
+          <View style={styles.closeButton}>
+            <CircleButton type="close" onPress={() => this.props.closeButtonPress()} />
+          </View>)}
+        {this.props.confirmButton && (
+          <View style={styles.confirmButton}>
+            <CircleButton type="confirm" onPress={() => this.props.confirmButtonPress()} />
+          </View>)}
         {this.props.children}
       </View>
     );
@@ -64,6 +70,14 @@ const modalBottomMargin = () => {
 };
 
 const styles = StyleSheet.create({
+  backButton: {
+    position: 'absolute',
+    left: 20,
+    bottom: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2,
+  },
   closeButton: {
     position: 'absolute',
     right: 0,
@@ -73,9 +87,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 2,
   },
-  backButton: {
+  confirmButton: {
     position: 'absolute',
-    left: 20,
+    right: 20,
     bottom: 16,
     justifyContent: 'center',
     alignItems: 'center',

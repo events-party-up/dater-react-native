@@ -13,6 +13,7 @@ target 'DaterReactNative' do
   pod 'Firebase/Firestore'
   pod 'Firebase/RemoteConfig'
   pod 'Firebase/Performance'
+  pod 'Firebase/Storage'
 
   pod 'yoga', path: "#{rn_path}/ReactCommon/yoga/yoga.podspec"
   pod 'React', path: rn_path, subspecs: [
@@ -36,6 +37,12 @@ target 'DaterReactNative' do
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
   pod 'react-native-mapbox-gl', :path => '../node_modules/@mapbox/react-native-mapbox-gl'
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
+  pod 'react-native-camera', subspecs: ['RCT', 'RN', 'FaceDetector'], path: '../node_modules/react-native-camera'
+  pod 'GoogleMobileVision/Detector', '1.1.0'
+  pod 'GoogleMobileVision/MVDataOutput', '1.1.0'
+  pod 'GoogleMobileVision/FaceDetector', '1.1.0'
+  pod'RCTSystemSetting', :path => '../node_modules/react-native-system-setting'
+  pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
 end
 
 post_install do |installer|

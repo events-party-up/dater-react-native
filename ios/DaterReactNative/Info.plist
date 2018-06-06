@@ -43,6 +43,12 @@
 	<string>Required to work with maps.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>Required to work with location services.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Taking selfie or adding photo to your profile.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Add photos to your Dater profile.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Add photos to your Dater profile.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>OpenSans-Bold.ttf</string>

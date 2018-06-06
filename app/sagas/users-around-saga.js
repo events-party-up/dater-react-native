@@ -58,9 +58,14 @@ export default function* usersAroundSaga() {
         'GEO_LOCATION_STOPPED', // stop if location services are disabled
         'USERS_AROUND_STOP',
         'MICRO_DATE_INCOMING_START', // app mode switched to find user
-        'MICRO_DATE_OUTGOING_START', // app mode switched to find user
+        'MICRO_DATE_OUTGOING_ACCEPT', // app mode switched to find user
         'MICRO_DATE_STOP',
-        'MICRO_DATE_STOPPED_BY_TARGET',
+        'MICRO_DATE_OUTGOING_FINISHED',
+        'MICRO_DATE_INCOMING_FINISHED',
+        'MICRO_DATE_INCOMING_REMOVE',
+        'MICRO_DATE_OUTGOING_REMOVE',
+        'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
+        'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
       ]);
 
       if (stopAction.type === 'USERS_AROUND_STOP') {
@@ -68,12 +73,18 @@ export default function* usersAroundSaga() {
       }
 
       if (stopAction.type === 'MICRO_DATE_INCOMING_START' ||
-          stopAction.type === 'MICRO_DATE_OUTGOING_START') {
+          stopAction.type === 'MICRO_DATE_OUTGOING_ACCEPT') {
         isMicroDateMode = true;
       }
 
       if (stopAction.type === 'MICRO_DATE_STOP' ||
-        stopAction.type === 'MICRO_DATE_STOPPED_BY_TARGET') {
+        stopAction.type === 'MICRO_DATE_INCOMING_STOPPED_BY_TARGET' ||
+        stopAction.type === 'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET' ||
+        stopAction.type === 'MICRO_DATE_INCOMING_FINISHED' ||
+        stopAction.type === 'MICRO_DATE_OUTGOING_FINISHED' ||
+        stopAction.type === 'MICRO_DATE_INCOMING_REMOVE' ||
+        stopAction.type === 'MICRO_DATE_OUTGOING_REMOVE'
+      ) {
         isMicroDateMode = false;
       }
 
@@ -135,7 +146,7 @@ function createAllUsersAroundChannel(userCoords, currentUser) {
   const query = firebase.firestore().collection(GEO_POINTS_COLLECTION)
     .where(geoPointPath, '>', lesserGeopoint)
     .where(geoPointPath, '<', greaterGeopoint)
-    .where('visible', '==', true);
+    .where('visibility', '==', 'public');
 
   return eventChannel((emit) => {
     const onSnapshotUpdated = (snapshot) => {
@@ -146,9 +157,9 @@ function createAllUsersAroundChannel(userCoords, currentUser) {
       const usersAround = [];
       snapshot.forEach((userSnapshot) => {
         const userData = userSnapshot.data();
-        userData.uid = userSnapshot.id;
+        userData.id = userSnapshot.id;
 
-        if (currentUser && userData.uid === currentUser.uid) {
+        if (currentUser && userData.id === currentUser.uid) {
           return;
         } else if (Date.now() - new Date(userData.timestamp) > ONE_HOUR * USERS_AROUND_SHOW_LAST_SEEN_HOURS_AGO) {
           // only show users with fresh timestamps
@@ -190,7 +201,9 @@ function createAllUsersAroundChannel(userCoords, currentUser) {
 
 
 function createMicroDateChannel(myCoords, currentUser, microDateState) {
-  const query = firebase.firestore().collection(GEO_POINTS_COLLECTION).doc(microDateState.targetUserUid);
+  const query = firebase.firestore()
+    .collection(GEO_POINTS_COLLECTION)
+    .doc(microDateState.targetUserUid);
 
   return eventChannel((emit) => {
     const onSnapshotUpdated = (snapshot) => {
@@ -199,7 +212,9 @@ function createMicroDateChannel(myCoords, currentUser, microDateState) {
       }
 
       const targetUser = snapshot.data();
-      targetUser.uid = snapshot.id;
+      if (!targetUser) return;
+
+      targetUser.id = snapshot.id;
       targetUser.shortId = snapshot.id.substring(0, 4);
       targetUser.distance = GeoUtils.distance(myCoords, targetUser[geoPointPath]);
 

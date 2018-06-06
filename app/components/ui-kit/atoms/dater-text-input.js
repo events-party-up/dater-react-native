@@ -65,11 +65,11 @@ export default class DaterTextInput extends Component<Props, State> {
         {...this.props}
         ref={(component) => { this.textInput = component; }}
         style={[styles.textInput, this.props.style]}
-        onChangeText={(text) => this.setState({ ...this.state, text })}
+        onChangeText={(text) => this.setState({ text })}
         value={this.state.text}
         placeholderTextColor="rgba(0, 0, 0, 0.2)"
-        onFocus={() => this.setState({ ...this.state, isFocused: true })}
-        onBlur={() => this.setState({ ...this.state, isFocused: false })}
+        onFocus={() => this.setState({ isFocused: true })}
+        onBlur={() => this.setState({ isFocused: false })}
         allowFontScaling={false}
         autoCorrect={false}
         underlineColorAndroid="transparent"
