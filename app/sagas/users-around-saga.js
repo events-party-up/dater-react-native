@@ -146,7 +146,7 @@ function createAllUsersAroundChannel(userCoords, currentUser) {
   const query = firebase.firestore().collection(GEO_POINTS_COLLECTION)
     .where(geoPointPath, '>', lesserGeopoint)
     .where(geoPointPath, '<', greaterGeopoint)
-    .where('visible', '==', true);
+    .where('visibility', '==', 'public');
 
   return eventChannel((emit) => {
     const onSnapshotUpdated = (snapshot) => {
@@ -201,7 +201,9 @@ function createAllUsersAroundChannel(userCoords, currentUser) {
 
 
 function createMicroDateChannel(myCoords, currentUser, microDateState) {
-  const query = firebase.firestore().collection(GEO_POINTS_COLLECTION).doc(microDateState.targetUserUid);
+  const query = firebase.firestore()
+    .collection(GEO_POINTS_COLLECTION)
+    .doc(microDateState.targetUserUid);
 
   return eventChannel((emit) => {
     const onSnapshotUpdated = (snapshot) => {

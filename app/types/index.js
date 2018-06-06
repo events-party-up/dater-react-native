@@ -62,3 +62,12 @@ export type CloudinaryPhoto = {
   public_id: string,
   version: number,
 }
+
+export type PublicUserGeoPoint = {
+  visibility: 'public' | 'private' | [string],
+  accuracy: number,
+  selfieGeoPoint: FireStoreGeoPoint,
+  heading: number,
+  speed: number,
+  timestamp: Date,
+}
