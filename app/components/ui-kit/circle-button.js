@@ -16,6 +16,11 @@ const CircleButton = (props) => {
   let image;
   let width = 64;
   let height = 64;
+  let opacity = 1;
+
+  if (props.disabled === true) {
+    opacity = 0.5;
+  }
 
   switch (props.type) {
     case 'close': {
@@ -93,14 +98,14 @@ const CircleButton = (props) => {
       // margin: 8,
     },
     imageContainer: {
-
     },
     image: {
+      opacity,
     },
   });
 
   const onPress = () => {
-    if (props.onPress) {
+    if (props.onPress && !props.disabled) {
       props.onPress();
     }
   };
@@ -108,6 +113,7 @@ const CircleButton = (props) => {
   return (
     <TouchableOpacity
       style={[styles.buttonContainer, props.style]}
+      activeOpacity={props.disabled ? opacity : 0.2}
       onPress={() => onPress()}
       hitSlop={{
         top: 10,

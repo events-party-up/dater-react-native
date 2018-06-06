@@ -53,6 +53,7 @@ type Props = {
   },
   dispatch: Dispatch,
   location: {
+    enabled: boolean,
     coords: GeoCoordinates,
     geoUpdates: number,
     pastCoords: Array<GeoCoordinates>,
@@ -153,14 +154,14 @@ class DaterMapView extends React.Component<Props> {
         />}
         <MapboxGL.MapView
           ref={(component) => { this.mapView = component; }}
-          showUserLocation={!this.props.mapView.centered}
+          showUserLocation={!this.props.mapView.centered && this.props.location.enabled}
           // showUserLocation
           userTrackingMode={0}
           zoomLevel={17}
           style={styles.mapView}
           animated
           logoEnabled={false}
-          // compassEnabled={false}
+          compassEnabled={false}
           localizeLabels
           onPress={() => { this.onMapPressed(); }}
           pitch={0}
