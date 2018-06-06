@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect, Dispatch } from 'react-redux';
 import {
   ScrollView,
   StyleSheet,
@@ -12,11 +13,38 @@ import { H2 } from '../../components/ui-kit/typography';
 
 const phoneIcon = require('../../assets/icons/phone/phone.png');
 
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+});
+
 type Props = {
   navigation: any,
+  dispatch: Dispatch,
 };
 
-export default class PhoneNumberScreen extends Component<Props> {
+class PhoneNumberScreen extends Component<Props> {
+  phoneNumber: string = '+16505553434';
+
+  onPhoneSubmit = () => {
+    const phoneNumbers = this.phoneNumber.replace(/\D/g, ''); // remove non numbers
+    let phoneNumberFinal;
+
+    if (phoneNumbers.length === 10) {
+      phoneNumberFinal = `+7${phoneNumbers}`;
+    } else if (phoneNumbers.length === 11 && /^7.*/.test(phoneNumbers)) {
+      phoneNumberFinal = `+${phoneNumbers}`;
+    } else if (phoneNumbers.length === 11 && /^8.*/.test(phoneNumbers)) {
+      phoneNumberFinal = `+7${phoneNumbers.substring(1, 11)}`;
+    } else {
+      phoneNumberFinal = `+${phoneNumbers}`;
+    }
+    this.props.dispatch({ type: 'AUTH_PHONE_NUMBER_VERIFY', payload: { phoneNumber: phoneNumberFinal } });
+  }
+
+  onChangeInput = (phoneNumber) => {
+    this.phoneNumber = phoneNumber;
+  }
+
   render() {
     return (
       <DaterModal
@@ -41,9 +69,10 @@ export default class PhoneNumberScreen extends Component<Props> {
             keyboardType="phone-pad"
             returnKeyType="go"
             style={styles.input}
+            onChangeText={this.onChangeInput}
           />
           <DaterButton
-            onPress={() => this.props.navigation.navigate('SmsCode')}
+            onPress={this.onPhoneSubmit}
           >
             Далее
           </DaterButton>
@@ -74,3 +103,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+export default connect(mapStateToProps)(PhoneNumberScreen);

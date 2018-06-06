@@ -3,6 +3,7 @@ import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
 import DeviceInfo from 'react-native-device-info';
 import { Platform } from 'react-native';
+import { Actions } from '../../navigators/navigator-actions';
 
 import {
   deleteFirestoreDoc,
@@ -35,7 +36,7 @@ function* authSignOutSaga() {
       });
       yield call([currentUser, 'delete']);
     } else {
-      yield call([firebase.auth()], 'signOut');
+      yield firebase.auth().signOut();
     }
   } catch (error) {
     yield put({ type: 'AUTH_SIGNOUT_ERROR', payload: error });
@@ -79,25 +80,8 @@ function* authStateChangedSaga(user) {
         payload: user,
       });
     } else {
-      const anonymousUser = yield call([firebase.auth(), 'signInAnonymouslyAndRetrieveData']);
-
-      yield call(setFirestore, {
-        collection: 'users',
-        doc: anonymousUser.user.uid,
-        data: {
-          registered: firebase.firestore.FieldValue.serverTimestamp(),
-        },
-      });
-
-      yield put({
-        type: 'AUTH_SUCCESS_NEW_USER',
-        payload: {
-          isNewUser: anonymousUser.additionalUserInfo.isNewUser,
-          isAnonymous: anonymousUser.user.isAnonymous,
-          uid: anonymousUser.user.uid,
-          metadata: anonymousUser.user.metadata,
-        },
-      });
+      yield put({ type: 'AUTH_SHOW_LOGIN_SCREEN' });
+      yield Actions.navigate({ routeName: 'Login' });
     }
   } catch (error) {
     yield put({ type: 'AUTH_STATE_CHANGED_ERROR', payload: error });

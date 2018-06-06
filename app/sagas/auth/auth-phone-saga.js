@@ -1,13 +1,30 @@
 import { take, cancel, takeEvery, put } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
-
 import { eventChannel } from 'redux-saga';
+
+import { Actions } from '../../navigators/navigator-actions';
 
 export default function* authPhoneSaga() {
   const startAction = yield take('AUTH_PHONE_NUMBER_VERIFY');
   const authPhoneChannel = yield createAuthPhoneChannel(startAction.payload.phoneNumber);
   const authPhoneStateChannel = yield takeEvery(authPhoneChannel, authPhoneStatesSaga);
-  yield take('AUTH_PHONE_NUMBER_SUCCESS');
+
+  const codeSentAction = yield take('AUTH_PHONE_NUMBER_CODE_SENT');
+  const { verificationId } = codeSentAction.payload;
+
+  yield Actions.navigate({ routeName: 'SmsCode' });
+
+  const smsCodeAction = yield take('AUTH_PHONE_NUMBER_SMS_CODE_SUBMITTED');
+
+  const { smsCode } = smsCodeAction.payload;
+  const authCredentials = firebase.auth.PhoneAuthProvider.credential(
+    verificationId,
+    smsCode,
+  );
+  const currentUser = yield firebase.auth().signInAndRetrieveDataWithCredential(authCredentials);
+  yield put({ type: 'AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL', payload: currentUser });
+  yield take('AUTH_SUCCESS');
+  yield Actions.navigate({ routeName: 'RegisterGender' });
   yield cancel(authPhoneStateChannel);
   yield authPhoneChannel.close();
 }
@@ -27,7 +44,8 @@ function* authPhoneStatesSaga(phoneAuthSnapshot) {
       //  IOS AND ANDROID EVENTS
       // ------------------------
       case firebase.auth.PhoneAuthState.CODE_SENT: // or 'sent'
-        console.log('code sent');
+        yield put({ type: 'AUTH_PHONE_NUMBER_CODE_SENT', payload: phoneAuthSnapshot });
+
         // on ios this is the final phone auth state event you'd receive
         // so you'd then ask for user input of the code and build a credential from it
         // as demonstrated in the `signInWithPhoneNumber` example above
@@ -42,7 +60,11 @@ function* authPhoneStatesSaga(phoneAuthSnapshot) {
         break;
       case firebase.auth.PhoneAuthState.ERROR: // or 'error'
         console.log('verification error');
-        console.log(phoneAuthSnapshot.error);
+        if (phoneAuthSnapshot.error.nativeErrorMessage === 'Invalid format.') {
+          yield put({ type: 'AUTH_PHONE_NUMBER_ERROR', payload: phoneAuthSnapshot.error });
+        } else {
+          console.log(phoneAuthSnapshot.error);
+        }
         break;
       // ---------------------
       // ANDROID ONLY EVENTS
@@ -80,10 +102,10 @@ function createAuthPhoneChannel(phoneNumber: string) {
       emit(phoneAuthSnapshot);
     };
 
-    const unsubscribe = firebase.auth()
+    firebase.auth()
       .verifyPhoneNumber(phoneNumber)
       .on('state_changed', onVerifyPhoneStateChanged);
 
-    return unsubscribe;
+    return () => { };
   });
 }

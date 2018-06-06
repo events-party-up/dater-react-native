@@ -21,6 +21,7 @@ type Props = {
   navigation: any,
   compass: GeoCompass,
   location: GeoCoordinates,
+  auth: any,
 };
 
 class MainScreen extends Component<Props> {
@@ -34,9 +35,6 @@ class MainScreen extends Component<Props> {
     return (
       <View style={styles.mainContainer}>
         {/* <FirebaseSetup /> */}
-        {/* <View style={styles.button}>
-          <Button title="Выйти" color="blue" onPress={this.signOut} />
-        </View> */}
         <MapPanelComponent
           navigation={this.props.navigation}
         />
@@ -46,20 +44,20 @@ class MainScreen extends Component<Props> {
           compass={this.props.compass}
         />
         <View style={styles.buttons}>
-          <DaterButton
+          {/* <DaterButton
             style={styles.button}
             onPress={() => this.props.navigation.navigate('MakePhotoSelfie')}
             type="secondary"
           >
             Фото
-          </DaterButton>
-          <DaterButton
+          </DaterButton> */}
+          {/* <DaterButton
             style={styles.button}
             onPress={() => this.props.navigation.navigate('Floating')}
             type="secondary"
           >
             Floating Screen
-          </DaterButton>
+          </DaterButton> */}
 
           <DaterButton
             style={styles.button}
@@ -75,6 +73,14 @@ class MainScreen extends Component<Props> {
           >
             UI Kit
           </DaterButton>
+          {this.props.auth.isAuthenticated &&
+            <DaterButton
+              style={styles.button}
+              onPress={this.signOut}
+            >
+              Выйти
+            </DaterButton>
+          }
         </View>
       </View>
     );

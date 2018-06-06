@@ -24,6 +24,7 @@ import { TextInput, StyleSheet } from 'react-native';
 type Props = {
   placeholder: string,
   style: typeof StyleSheet,
+  onChangeText: (string) => void,
   // label: string,
 };
 
@@ -41,6 +42,11 @@ export default class DaterTextInput extends Component<Props, State> {
       isFocused: false,
       text: '',
     };
+  }
+
+  onChangeText = (text) => {
+    this.setState({ text });
+    this.props.onChangeText(text);
   }
 
   render() {
@@ -65,7 +71,7 @@ export default class DaterTextInput extends Component<Props, State> {
         {...this.props}
         ref={(component) => { this.textInput = component; }}
         style={[styles.textInput, this.props.style]}
-        onChangeText={(text) => this.setState({ text })}
+        onChangeText={this.onChangeText}
         value={this.state.text}
         placeholderTextColor="rgba(0, 0, 0, 0.2)"
         onFocus={() => this.setState({ isFocused: true })}

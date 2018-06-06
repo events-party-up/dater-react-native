@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect, Dispatch } from 'react-redux';
 import {
   ScrollView,
   StyleSheet,
@@ -12,11 +13,35 @@ import { H2 } from '../../components/ui-kit/typography';
 
 const smsCodeIcon = require('../../assets/icons/sms-code/sms-code.png');
 
+const mapStateToProps = () => ({
+});
+
 type Props = {
   navigation: any,
+  dispatch: Dispatch,
 };
 
-export default class SmsCodeScreen extends Component<Props> {
+class SmsCodeScreen extends Component<Props> {
+  smsCode: string;
+
+  componentWillMount() {
+  }
+
+  onChangeInput = (smsCode) => {
+    this.smsCode = smsCode;
+  }
+
+  onSmsCodeSubmit = () => {
+    this.smsCode = this.smsCode.replace(/\D/g, ''); // remove non numbers
+    this.props.dispatch({
+      type:
+        'AUTH_PHONE_NUMBER_SMS_CODE_SUBMITTED',
+      payload: {
+        smsCode: this.smsCode,
+      },
+    });
+  }
+
   render() {
     return (
       <DaterModal
@@ -37,13 +62,14 @@ export default class SmsCodeScreen extends Component<Props> {
           />
           <H2 style={styles.header}>Введи код из SMS</H2>
           <DaterTextInput
-            placeholder="XXXX"
+            placeholder="XXXXXX"
             keyboardType="numeric"
             returnKeyType="go"
             style={styles.input}
+            onChangeText={this.onChangeInput}
           />
           <DaterButton
-            onPress={() => this.props.navigation.navigate('RegisterGender')}
+            onPress={this.onSmsCodeSubmit}
           >
             Далее
           </DaterButton>
@@ -52,7 +78,6 @@ export default class SmsCodeScreen extends Component<Props> {
     );
   }
 }
-
 
 const styles = StyleSheet.create({
   modal: {
@@ -74,3 +99,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+export default connect(mapStateToProps)(SmsCodeScreen);
