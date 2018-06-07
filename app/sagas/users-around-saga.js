@@ -1,12 +1,16 @@
 import { put, select, call, take, takeEvery, cancel } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
+import * as _ from 'lodash';
+
 import GeoUtils from '../utils/geo-utils';
 
 import {
   USERS_AROUND_SEARCH_RADIUS_KM,
   USERS_AROUND_SHOW_LAST_SEEN_HOURS_AGO,
   GEO_POINTS_COLLECTION,
+  USERS_AROUND_PUBLIC_UPDATE_INTERVAL,
+  USERS_AROUND_MICRODATE_UPDATE_INTERVAL,
 } from '../constants';
 
 const ONE_HOUR = 1000 * 60 * 60;
@@ -193,7 +197,9 @@ function createAllUsersAroundChannel(userCoords, currentUser) {
         error,
       });
     };
-    const unsubscribe = query.onSnapshot(onSnapshotUpdated, onError);
+    const throttledOnSnapshotUpdated = _.throttle(onSnapshotUpdated, USERS_AROUND_PUBLIC_UPDATE_INTERVAL);
+
+    const unsubscribe = query.onSnapshot(throttledOnSnapshotUpdated, onError);
 
     return unsubscribe;
   });
@@ -221,12 +227,14 @@ function createMicroDateChannel(myCoords, currentUser, microDateState) {
       emit(targetUser);
     };
 
+    const throttledOnSnapshotUpdated = _.throttle(onSnapshotUpdated, USERS_AROUND_MICRODATE_UPDATE_INTERVAL);
+
     const onError = (error) => {
       emit({
         error,
       });
     };
-    const unsubscribe = query.onSnapshot(onSnapshotUpdated, onError);
+    const unsubscribe = query.onSnapshot(throttledOnSnapshotUpdated, onError);
 
     return unsubscribe;
   });

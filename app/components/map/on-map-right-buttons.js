@@ -145,6 +145,7 @@ const styles = StyleSheet.create({
     right: 10,
     backgroundColor: 'transparent',
     alignItems: 'center',
+    zIndex: 1,
   },
 });
 

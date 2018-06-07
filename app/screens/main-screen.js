@@ -67,12 +67,12 @@ class MainScreen extends Component<Props> {
             Phone Screen
           </DaterButton>
 
-          <DaterButton
+          {/* <DaterButton
             style={styles.button}
             onPress={() => this.props.navigation.navigate('UIKit')}
           >
             UI Kit
-          </DaterButton>
+          </DaterButton> */}
           {this.props.auth.isAuthenticated &&
             <DaterButton
               style={styles.button}

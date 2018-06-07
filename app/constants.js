@@ -34,3 +34,6 @@ export const DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD = 30;
 
 // Cloudinary
 
+// Users around
+export const USERS_AROUND_PUBLIC_UPDATE_INTERVAL = 2000;
+export const USERS_AROUND_MICRODATE_UPDATE_INTERVAL = 1000;
