@@ -1,32 +1,68 @@
-import { take, cancel, takeEvery, put } from 'redux-saga/effects';
+import { take, cancel, takeEvery, put, fork } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
+import { Alert } from 'react-native';
 
 import { Actions } from '../../navigators/navigator-actions';
 
 export default function* authPhoneSaga() {
-  const startAction = yield take('AUTH_PHONE_NUMBER_VERIFY');
-  const authPhoneChannel = yield createAuthPhoneChannel(startAction.payload.phoneNumber);
-  const authPhoneStateChannel = yield takeEvery(authPhoneChannel, authPhoneStatesSaga);
+  while (true) {
+    const startAction = yield take('AUTH_PHONE_NUMBER_VERIFY');
+    const authPhoneChannel = yield createAuthPhoneChannel(startAction.payload.phoneNumber);
+    const authPhoneStateChannel = yield takeEvery(authPhoneChannel, authPhoneStatesSaga);
 
+    const task1 = yield fork(authPhoneCodeSentSaga);
+
+    const stopAction = yield take([
+      'AUTH_SUCCESS',
+      'AUTH_PHONE_INVALID_NUMBER_ERROR',
+      'AUTH_PHONE_NUMBER_UNKNOWN_ERROR',
+    ]);
+
+    if (stopAction.type === 'AUTH_SUCCESS') {
+      yield Actions.navigate({ routeName: 'RegisterGender' });
+    } else {
+      Alert.alert(
+        'Что то пошло не так',
+        stopAction.payload.nativeErrorMessage,
+        [
+          { text: 'ОК' },
+        ],
+      );
+    }
+    yield cancel(authPhoneStateChannel);
+    yield cancel(task1);
+    yield authPhoneChannel.close();
+    yield put({ type: 'AUTH_PHONE_NUMBER_TASKS_STOPPED', payload: stopAction.type });
+  }
+}
+
+function* authPhoneCodeSentSaga() {
   const codeSentAction = yield take('AUTH_PHONE_NUMBER_CODE_SENT');
-  const { verificationId } = codeSentAction.payload;
-
   yield Actions.navigate({ routeName: 'SmsCode' });
+  const { verificationId } = codeSentAction.payload;
+  yield takeEvery('AUTH_PHONE_NUMBER_SMS_CODE_SUBMITTED', authPhoneCodeSubmittedSaga, verificationId);
+}
 
-  const smsCodeAction = yield take('AUTH_PHONE_NUMBER_SMS_CODE_SUBMITTED');
-
-  const { smsCode } = smsCodeAction.payload;
-  const authCredentials = firebase.auth.PhoneAuthProvider.credential(
-    verificationId,
-    smsCode,
-  );
-  const currentUser = yield firebase.auth().signInAndRetrieveDataWithCredential(authCredentials);
-  yield put({ type: 'AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL', payload: currentUser });
-  yield take('AUTH_SUCCESS');
-  yield Actions.navigate({ routeName: 'RegisterGender' });
-  yield cancel(authPhoneStateChannel);
-  yield authPhoneChannel.close();
+function* authPhoneCodeSubmittedSaga(verificationId, action) {
+  try {
+    const { smsCode } = action.payload;
+    const authCredentials = firebase.auth.PhoneAuthProvider.credential(
+      verificationId,
+      smsCode,
+    );
+    const currentUser = yield firebase.auth().signInAndRetrieveDataWithCredential(authCredentials);
+    yield put({ type: 'AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL', payload: currentUser });
+  } catch (error) {
+    Alert.alert(
+      'Неверный СМС код',
+      'Введен неверный код из СМС, 6 цифр',
+      [
+        { text: 'Исправлюсь!' },
+      ],
+    );
+    yield put({ type: 'AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_ERROR', payload: error });
+  }
 }
 
 function* authPhoneStatesSaga(phoneAuthSnapshot) {
@@ -59,10 +95,10 @@ function* authPhoneStatesSaga(phoneAuthSnapshot) {
 
         break;
       case firebase.auth.PhoneAuthState.ERROR: // or 'error'
-        console.log('verification error');
         if (phoneAuthSnapshot.error.nativeErrorMessage === 'Invalid format.') {
-          yield put({ type: 'AUTH_PHONE_NUMBER_ERROR', payload: phoneAuthSnapshot.error });
+          yield put({ type: 'AUTH_PHONE_INVALID_NUMBER_ERROR', payload: phoneAuthSnapshot.error });
         } else {
+          yield put({ type: 'AUTH_PHONE_NUMBER_UNKNOWN_ERROR', payload: phoneAuthSnapshot.error });
           console.log(phoneAuthSnapshot.error);
         }
         break;

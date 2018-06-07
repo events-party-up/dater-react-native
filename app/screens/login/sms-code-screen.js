@@ -4,6 +4,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 
 import DaterTextInput from '../../components/ui-kit/atoms/dater-text-input';
@@ -16,19 +17,35 @@ const smsCodeIcon = require('../../assets/icons/sms-code/sms-code.png');
 const mapStateToProps = () => ({
 });
 
+type State = {
+  isCodeValid: boolean,
+}
+
 type Props = {
   navigation: any,
   dispatch: Dispatch,
 };
 
-class SmsCodeScreen extends Component<Props> {
+class SmsCodeScreen extends Component<Props, State> {
   smsCode: string;
 
-  componentWillMount() {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isCodeValid: false,
+    };
+  }
+
+  isCodeValid() {
+    return this.smsCode.length === 6;
   }
 
   onChangeInput = (smsCode) => {
     this.smsCode = smsCode;
+    this.setState({
+      isCodeValid: this.isCodeValid(),
+    });
   }
 
   onSmsCodeSubmit = () => {
@@ -40,6 +57,16 @@ class SmsCodeScreen extends Component<Props> {
         smsCode: this.smsCode,
       },
     });
+  }
+
+  onInvalidCodeSubmit = () => {
+    Alert.alert(
+      'Неверный код',
+      'Введи корректный код из СМС, 6 цифр',
+      [
+        { text: 'Исправлюсь!' },
+      ],
+    );
   }
 
   render() {
@@ -67,9 +94,12 @@ class SmsCodeScreen extends Component<Props> {
             returnKeyType="go"
             style={styles.input}
             onChangeText={this.onChangeInput}
+            maxLength={6}
           />
           <DaterButton
             onPress={this.onSmsCodeSubmit}
+            disabled={!this.state.isCodeValid}
+            onDisabledPress={this.onInvalidCodeSubmit}
           >
             Далее
           </DaterButton>

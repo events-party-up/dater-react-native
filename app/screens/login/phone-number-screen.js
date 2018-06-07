@@ -28,15 +28,16 @@ type Props = {
 };
 
 class PhoneNumberScreen extends Component<Props, State> {
-  phoneNumber: string = ''; // '+16505553434';
-  phoneNumberOnlyNumbers: string = '';
+  phoneNumber: string = '+16505553434';
+  phoneNumberOnlyNumbers: string = '+16505553434';
   phoneNumberFinal: string = '';
   phonePlaceholder = '8 926 333 22 11';
+
   constructor(props) {
     super(props);
 
     this.state = {
-      isNumberValid: false,
+      isNumberValid: true,
     };
   }
 
@@ -100,6 +101,7 @@ class PhoneNumberScreen extends Component<Props, State> {
             returnKeyType="go"
             style={styles.input}
             onChangeText={this.onChangeInput}
+            maxLength={15}
           />
           <DaterButton
             onPress={this.onPhoneSubmit}
