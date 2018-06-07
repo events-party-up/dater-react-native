@@ -10,7 +10,7 @@ import FullscreenPhotoScreen from '../screens/fullscreen-photo-screen';
 
 const RootStack = StackNavigator(
   {
-    Home: {
+    RootHome: {
       screen: MainScreen,
     },
     MakePhotoSelfie: {
@@ -34,7 +34,7 @@ const RootStack = StackNavigator(
   },
   {
     mode: 'modal',
-    initialRouteName: 'Home',
+    initialRouteName: 'RootHome',
     headerMode: 'none',
     header: null,
     cardStyle: {

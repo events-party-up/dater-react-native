@@ -17,6 +17,7 @@ import DaterModal from '../components/ui-kit/dater-modal';
 import CircleButton from '../components/ui-kit/circle-button';
 import IconTitleSubtitleMolecule from '../components/ui-kit/molecules/icon-title-subtitle';
 import DaterButton from '../components/ui-kit/atoms/dater-button';
+import { PhotoType } from '../types';
 
 const takePhotoIcon = require('../assets/icons/take-photo/take-photo-white.png');
 const noCameraIcon = require('../assets/icons/no-camera/no-camera.png');
@@ -42,6 +43,7 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
   camera: RNCamera;
   styles: typeof StyleSheet;
   volumeListener: any;
+  photoType: PhotoType;
 
   constructor(props: any) {
     super(props);
@@ -65,6 +67,7 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
         hasCameraPermission: true,
       });
     }
+    this.photoType = this.props.navigation.getParam('photoType');
   }
 
   onCameraReady = () => {
@@ -140,12 +143,18 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
     this.props.dispatch({
       type: 'UPLOAD_PHOTO_START',
       payload: {
-        type: 'microDateSelfie',
+        type: this.photoType,
         uri: this.state.photoURI,
         aspectRatio: this.state.width / this.state.height,
       },
     });
-    this.props.navigation.goBack();
+
+    if (this.props.photoType === 'microDateSelfie') {
+      this.props.navigation.goBack();
+    } else {
+      this.props.navigation.popToTop();
+      this.props.navigation.goBack(null);
+    }
   }
 
   render() {

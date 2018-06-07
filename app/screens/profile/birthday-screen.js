@@ -50,7 +50,7 @@ class BirthdayScreen extends Component<Props, State> {
 
   onBirthdaySelected = () => {
     this.props.dispatch({ type: 'CURRENT_USER_SET_PROFILE_FIELDS', payload: { birthday: this.state.birthday } });
-    this.props.navigation.navigate('RegisterUploadPhoto');
+    this.props.navigation.navigate('RegisterMakePhotoSelfie', { photoType: 'profilePhoto' });
   }
 
   render() {

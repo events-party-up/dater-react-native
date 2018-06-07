@@ -6,6 +6,7 @@ import GenderScreen from '../screens/profile/gender-screen';
 import NameScreen from '../screens/profile/name-screen';
 import BirthdayScreen from '../screens/profile/birthday-screen';
 import UploadPhotoScreen from '../screens/profile/upload-photo-screen';
+import MakePhotoSelfieScreen from '../screens/make-photo-selfie-screen';
 
 const LoginNavigator = StackNavigator(
   {
@@ -29,6 +30,9 @@ const LoginNavigator = StackNavigator(
     },
     RegisterUploadPhoto: {
       screen: UploadPhotoScreen,
+    },
+    RegisterMakePhotoSelfie: {
+      screen: MakePhotoSelfieScreen,
     },
   },
   {

@@ -79,3 +79,5 @@ export type PrivateUserRecord = {
   birthday: Date,
 }
 
+export type PhotoType = 'microDateSelfie' | 'profilePhoto';
+

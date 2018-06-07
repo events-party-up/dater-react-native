@@ -80,7 +80,14 @@ function* authStateChangedSaga(user) {
         payload: user,
       });
       yield take('CURRENT_USER_SIGN_IN'); // temp
-      yield Actions.navigate({ routeName: 'RegisterBirthday' });
+      // yield Actions.navigate({ routeName: 'RegisterBirthday' });
+
+      yield Actions.navigate({
+        routeName: 'RegisterMakePhotoSelfie',
+        params: {
+          photoType: 'profilePhoto',
+        },
+      });
     } else {
       yield put({ type: 'AUTH_SHOW_LOGIN_SCREEN' });
       yield Actions.navigate({ routeName: 'Login' });

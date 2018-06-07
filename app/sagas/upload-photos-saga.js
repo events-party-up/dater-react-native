@@ -2,41 +2,72 @@ import { takeEvery, call, put, take, cancel, select } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
 
-import { MICRO_DATES_COLLECTION } from '../constants';
+import {
+  MICRO_DATES_COLLECTION,
+  PROFILE_PHOTOS_STORAGE_PATH,
+} from '../constants';
 
 export default function* uploadPhotosSaga() {
   const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
   if (!isUserAuthenticated) { // user must be authorized
     yield take('AUTH_SUCCESS');
   }
-  const uid = yield select((state) => state.auth.uid);
 
   while (true) {
     const uploadStartAction = yield take('UPLOAD_PHOTO_START');
-    const metadata = {
-      contentType: 'image/jpeg',
-    };
-    const fileName = uploadStartAction.payload.uri.replace(/^.*[\\/]/, '');
-    const microDate = yield select((state) => state.microDate);
-    const myCoords = yield select((state) => state.location.coords);
-    const uploadTask = firebase.storage()
-      .ref(`${MICRO_DATES_COLLECTION}/${microDate.id}/${uid}/${fileName}`)
-      .put(uploadStartAction.payload.uri, metadata);
-    const uploadTaskChannel = yield call(createUploadTaskChannel, uploadTask);
-    const progressTask = yield takeEvery(uploadTaskChannel, uploadTaskProgress);
-    yield take('UPLOAD_PHOTO_SUCCESS');
-    yield yield firebase.firestore()
-      .collection(MICRO_DATES_COLLECTION)
-      .doc(microDate.id)
-      .update({
-        selfieGeoPoint: new firebase.firestore.GeoPoint(myCoords.latitude, myCoords.longitude),
-      });
-
-    yield uploadTaskChannel.close();
-    yield cancel(progressTask);
+    switch (uploadStartAction.payload.type) {
+      case 'microDateSelfie':
+        yield* uploadMicroDateSelfieSaga(uploadStartAction);
+        break;
+      case 'profilePhoto':
+        yield* uploadProfilePhotoSaga(uploadStartAction);
+        break;
+      default:
+        break;
+    }
   }
 }
 
+function* uploadMicroDateSelfieSaga(uploadStartAction) {
+  const uid = yield select((state) => state.auth.uid);
+  const metadata = {
+    contentType: 'image/jpeg',
+  };
+  const fileName = uploadStartAction.payload.uri.replace(/^.*[\\/]/, '');
+  const microDate = yield select((state) => state.microDate);
+  const myCoords = yield select((state) => state.location.coords);
+  const uploadTask = firebase.storage()
+    .ref(`${MICRO_DATES_COLLECTION}/${microDate.id}/${uid}/${fileName}`)
+    .put(uploadStartAction.payload.uri, metadata);
+  const uploadTaskChannel = yield call(createUploadTaskChannel, uploadTask);
+  const progressTask = yield takeEvery(uploadTaskChannel, uploadTaskProgress);
+  yield take('UPLOAD_PHOTO_SUCCESS');
+  yield yield firebase.firestore()
+    .collection(MICRO_DATES_COLLECTION)
+    .doc(microDate.id)
+    .update({
+      selfieGeoPoint: new firebase.firestore.GeoPoint(myCoords.latitude, myCoords.longitude),
+    });
+
+  yield uploadTaskChannel.close();
+  yield cancel(progressTask);
+}
+
+function* uploadProfilePhotoSaga(uploadStartAction) {
+  const uid = yield select((state) => state.auth.uid);
+  const metadata = {
+    contentType: 'image/jpeg',
+  };
+  const fileName = uploadStartAction.payload.uri.replace(/^.*[\\/]/, '');
+  const uploadTask = firebase.storage()
+    .ref(`${PROFILE_PHOTOS_STORAGE_PATH}/${uid}/${fileName}`)
+    .put(uploadStartAction.payload.uri, metadata);
+  const uploadTaskChannel = yield call(createUploadTaskChannel, uploadTask);
+  const progressTask = yield takeEvery(uploadTaskChannel, uploadTaskProgress);
+  yield take('UPLOAD_PHOTO_SUCCESS');
+  yield uploadTaskChannel.close();
+  yield cancel(progressTask);
+}
 
 function* uploadTaskProgress(progress) {
   if (progress.running === true) {
