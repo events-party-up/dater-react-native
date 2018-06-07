@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect, Dispatch } from 'react-redux';
 import {
   StyleSheet,
   Image,
@@ -10,11 +11,20 @@ import { H2 } from '../../components/ui-kit/typography';
 
 const genderIcon = require('../../assets/icons/gender/gender.png');
 
+const mapStateToProps = () => ({
+});
+
 type Props = {
+  dispatch: Dispatch,
   navigation: any,
 };
 
-export default class GenderScreen extends Component<Props> {
+class GenderScreen extends Component<Props> {
+  onGenderSelected = (gender: string) => {
+    this.props.dispatch({ type: 'CURRENT_USER_SET_GENDER', payload: { gender } });
+    this.props.navigation.navigate('RegisterName');
+  }
+
   render() {
     return (
       <DaterModal
@@ -29,13 +39,13 @@ export default class GenderScreen extends Component<Props> {
         />
         <H2 style={styles.header}>Кто ты?</H2>
         <DaterButton
-          onPress={() => this.props.navigation.navigate('RegisterName')}
+          onPress={() => this.onGenderSelected('male')}
           style={styles.button}
         >
           Я Мужчина
         </DaterButton>
         <DaterButton
-          onPress={() => this.props.navigation.navigate('RegisterName')}
+          onPress={() => this.onGenderSelected('female')}
           style={styles.button}
         >
           Я Девушка
@@ -62,3 +72,5 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
 });
+
+export default connect(mapStateToProps)(GenderScreen);

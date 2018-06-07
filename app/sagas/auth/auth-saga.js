@@ -79,11 +79,10 @@ function* authStateChangedSaga(user) {
         type: 'AUTH_SUCCESS',
         payload: user,
       });
-      yield Actions.navigate({ routeName: 'GenderScreen' });
+      yield Actions.navigate({ routeName: 'RegisterName' });
     } else {
       yield put({ type: 'AUTH_SHOW_LOGIN_SCREEN' });
-      // yield Actions.navigate({ routeName: 'PhoneNumber' });
-      yield Actions.navigate({ routeName: 'GenderScreen' });
+      yield Actions.navigate({ routeName: 'Login' });
     }
   } catch (error) {
     yield put({ type: 'AUTH_STATE_CHANGED_ERROR', payload: error });

@@ -28,8 +28,8 @@ type Props = {
 };
 
 class PhoneNumberScreen extends Component<Props, State> {
-  phoneNumber: string = '+16505553434';
-  phoneNumberOnlyNumbers: string = '+16505553434';
+  phoneNumber: string; // = '+16505553434';
+  phoneNumberOnlyNumbers: string; // = '+16505553434';
   phoneNumberFinal: string = '';
   phonePlaceholder = '8 926 333 22 11';
 
