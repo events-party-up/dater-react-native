@@ -230,7 +230,6 @@ function createMicroDateChannel(myCoords, currentUser, microDateState) {
 
       targetUser.id = snapshot.id;
       targetUser.shortId = snapshot.id.substring(0, 4);
-      targetUser.distance = GeoUtils.distance(myCoords, targetUser[geoPointPath]); // TODO: BUG, this will display incorrect results when user starts moving
 
       emit(targetUser);
     };
