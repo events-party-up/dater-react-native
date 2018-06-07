@@ -1,7 +1,7 @@
 const types = {
   CURRENT_USER_SIGN_IN: 'CURRENT_USER_SIGN_IN',
   CURRENT_USER_SIGN_OUT: 'CURRENT_USER_SIGN_OUT',
-  CURRENT_USER_SET_GENDER: 'CURRENT_USER_SET_GENDER',
+  CURRENT_USER_SET_PROFILE_FIELDS: 'CURRENT_USER_SET_PROFILE_FIELDS',
   CURRENT_USER_SET_ERROR: 'CURRENT_USER_SET_ERROR',
 };
 
@@ -14,13 +14,13 @@ const currentUserReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
-    case types.CURRENT_USER_SET_GENDER: {
+    case types.CURRENT_USER_SIGN_IN: {
       return {
         ...state,
-        gender: payload.gender,
+        ...payload,
       };
     }
-    case types.CURRENT_USER_SIGN_IN: {
+    case types.CURRENT_USER_SET_PROFILE_FIELDS: {
       return {
         ...state,
         ...payload,

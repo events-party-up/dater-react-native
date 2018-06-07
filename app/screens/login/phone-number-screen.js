@@ -37,7 +37,7 @@ class PhoneNumberScreen extends Component<Props, State> {
     super(props);
 
     this.state = {
-      isNumberValid: true,
+      isNumberValid: false,
     };
   }
 

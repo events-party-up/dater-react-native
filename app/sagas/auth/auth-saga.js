@@ -79,7 +79,7 @@ function* authStateChangedSaga(user) {
         type: 'AUTH_SUCCESS',
         payload: user,
       });
-      yield Actions.navigate({ routeName: 'RegisterName' });
+      yield Actions.navigate({ routeName: 'RegisterBirthday' });
     } else {
       yield put({ type: 'AUTH_SHOW_LOGIN_SCREEN' });
       yield Actions.navigate({ routeName: 'Login' });

@@ -74,4 +74,6 @@ export type PublicUserGeoPoint = {
 
 export type PrivateUserRecord = {
   gender: 'male' | 'female',
+  name: string,
+  uid: string,
 }

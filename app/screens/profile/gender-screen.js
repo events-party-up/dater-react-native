@@ -21,7 +21,7 @@ type Props = {
 
 class GenderScreen extends Component<Props> {
   onGenderSelected = (gender: string) => {
-    this.props.dispatch({ type: 'CURRENT_USER_SET_GENDER', payload: { gender } });
+    this.props.dispatch({ type: 'CURRENT_USER_SET_PROFILE_FIELDS', payload: { gender } });
     this.props.navigation.navigate('RegisterName');
   }
 
