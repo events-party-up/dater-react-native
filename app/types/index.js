@@ -71,3 +71,7 @@ export type PublicUserGeoPoint = {
   speed: number,
   timestamp: Date,
 }
+
+export type PrivateUserRecord = {
+  gender: 'male' | 'female',
+}

@@ -17,14 +17,16 @@ export default function* authPhoneSaga() {
       'AUTH_SUCCESS',
       'AUTH_PHONE_INVALID_NUMBER_ERROR',
       'AUTH_PHONE_NUMBER_UNKNOWN_ERROR',
+      'BACK_BUTTON_PRESSED',
+      'AUTH_PHONE_NUMBER_SMS_CODE_SCREEN_BACK_BUTTON',
     ]);
 
     if (stopAction.type === 'AUTH_SUCCESS') {
-      yield Actions.navigate({ routeName: 'RegisterGender' });
-    } else {
+      yield Actions.navigate({ routeName: 'GenderScreen' });
+    } else if (stopAction.type !== 'AUTH_PHONE_NUMBER_SMS_CODE_SCREEN_BACK_BUTTON') {
       Alert.alert(
         'Что то пошло не так',
-        stopAction.payload.nativeErrorMessage,
+        stopAction.payload ? stopAction.payload.nativeErrorMessage : '',
         [
           { text: 'ОК' },
         ],
@@ -67,7 +69,7 @@ function* authPhoneCodeSubmittedSaga(verificationId, action) {
 
 function* authPhoneStatesSaga(phoneAuthSnapshot) {
   try {
-    yield console.log(phoneAuthSnapshot);
+    // yield console.log(phoneAuthSnapshot);
 
     // How you handle these state events is entirely up to your ui flow and whether
     // you need to support both ios and android. In short: not all of them need to
@@ -99,7 +101,6 @@ function* authPhoneStatesSaga(phoneAuthSnapshot) {
           yield put({ type: 'AUTH_PHONE_INVALID_NUMBER_ERROR', payload: phoneAuthSnapshot.error });
         } else {
           yield put({ type: 'AUTH_PHONE_NUMBER_UNKNOWN_ERROR', payload: phoneAuthSnapshot.error });
-          console.log(phoneAuthSnapshot.error);
         }
         break;
       // ---------------------

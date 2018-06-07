@@ -1,10 +1,15 @@
 
-import { takeEvery, select, take, fork } from 'redux-saga/effects';
+import { takeEvery, select, take } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 
 import { GEO_POINTS_COLLECTION } from '../../constants';
 
 export default function* mapViewMyVisibilitySaga() {
+  const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
+  if (!isUserAuthenticated) { // user must be authorized
+    yield take('AUTH_SUCCESS');
+  }
+
   yield takeEvery([
     'MICRO_DATE_OUTGOING_REMOVE',
     'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
@@ -23,18 +28,15 @@ export default function* mapViewMyVisibilitySaga() {
     'GEO_LOCATION_STOP',
   ], setMyMapVisibilityModeTo, 'private');
 
-  yield fork(microDateVisibilitySaga);
+  yield takeEvery([
+    'MICRO_DATE_INCOMING_START',
+    'MICRO_DATE_OUTGOING_STARTED',
+  ], microDateVisibilitySaga);
 }
 
-function* microDateVisibilitySaga() {
-  while (true) {
-    const action = yield take([
-      'MICRO_DATE_INCOMING_START',
-      'MICRO_DATE_OUTGOING_STARTED',
-    ]);
-    const { targetUser } = action.payload;
-    yield* setMyMapVisibilityModeTo(targetUser.id);
-  }
+function* microDateVisibilitySaga(action) {
+  const { targetUser } = action.payload;
+  yield* setMyMapVisibilityModeTo(targetUser.id);
 }
 
 function* setMyMapVisibilityModeTo(visibility) {

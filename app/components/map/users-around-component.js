@@ -3,10 +3,12 @@ import { connect, Dispatch } from 'react-redux';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
 import UserOnMapMarker from './user-on-map-marker';
+import GeoUtils from '../../utils/geo-utils';
+import { FireStoreGeoPoint } from '../../types';
 
 const mapStateToProps = (state) => ({
   usersAround: state.usersAround.users,
-  microDate: state.microDate,
+  myCoords: state.location.coords,
   mapViewBearingAngle: state.mapView.heading,
 });
 
@@ -14,13 +16,17 @@ type Props = {
   usersAround: Array<mixed>,
   dispatch: Dispatch,
   mapViewBearingAngle: number,
+  myCoords: FireStoreGeoPoint,
 };
 
 class UsersAroundComponent extends React.Component<Props> {
   onPressOrSelect = (targetUser) => {
     this.props.dispatch({
       type: 'USERS_AROUND_ITEM_PRESSED',
-      payload: targetUser,
+      payload: {
+        ...targetUser,
+        distance: GeoUtils.distance(this.props.myCoords, targetUser.geoPoint),
+      },
     });
   }
 

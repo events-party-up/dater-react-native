@@ -69,12 +69,17 @@ class SmsCodeScreen extends Component<Props, State> {
     );
   }
 
+  backButtonPress = () => {
+    this.props.navigation.goBack();
+    this.props.dispatch({ type: 'AUTH_PHONE_NUMBER_SMS_CODE_SCREEN_BACK_BUTTON' });
+  }
+
   render() {
     return (
       <DaterModal
         fullscreen
         backButton
-        backButtonPress={() => this.props.navigation.goBack()}
+        backButtonPress={this.backButtonPress}
         style={styles.modal}
       >
         <ScrollView
