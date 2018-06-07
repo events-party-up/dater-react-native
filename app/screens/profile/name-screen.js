@@ -15,7 +15,8 @@ import { H2 } from '../../components/ui-kit/typography';
 
 const nameIcon = require('../../assets/icons/name/name.png');
 
-const mapStateToProps = () => ({
+const mapStateToProps = (state) => ({
+  name: state.currentUser.name,
 });
 
 type State = {
@@ -25,11 +26,11 @@ type State = {
 type Props = {
   navigation: any,
   dispatch: Dispatch,
+  name: string,
 };
 
 class NameScreen extends Component<Props, State> {
   name: string;
-
 
   constructor(props) {
     super(props);
@@ -39,12 +40,10 @@ class NameScreen extends Component<Props, State> {
     };
   }
 
-
   onNameSubmit = () => {
     this.props.navigation.navigate('RegisterBirthday');
     this.props.dispatch({ type: 'CURRENT_USER_SET_PROFILE_FIELDS', payload: { name: this.name } });
   }
-
 
   onInvalidNameSubmit = () => {
     Alert.alert(
@@ -88,6 +87,7 @@ class NameScreen extends Component<Props, State> {
             style={styles.input}
             onChangeText={this.onChangeText}
             maxLength={15}
+            initialValue={this.props.name}
           />
           <DaterButton
             onPress={this.onNameSubmit}
@@ -101,7 +101,6 @@ class NameScreen extends Component<Props, State> {
     );
   }
 }
-
 
 const styles = StyleSheet.create({
   modal: {

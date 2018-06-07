@@ -1,4 +1,4 @@
-import { put, takeEvery, call } from 'redux-saga/effects';
+import { put, takeEvery, call, take } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
 import DeviceInfo from 'react-native-device-info';
@@ -79,6 +79,7 @@ function* authStateChangedSaga(user) {
         type: 'AUTH_SUCCESS',
         payload: user,
       });
+      yield take('CURRENT_USER_SIGN_IN'); // temp
       yield Actions.navigate({ routeName: 'RegisterBirthday' });
     } else {
       yield put({ type: 'AUTH_SHOW_LOGIN_SCREEN' });

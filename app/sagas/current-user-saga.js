@@ -26,6 +26,7 @@ function* currentUserSignIn(action) {
       uid,
       gender: currentUser.gender,
       name: currentUser.name,
+      birthday: currentUser.birthday,
     },
   });
 }

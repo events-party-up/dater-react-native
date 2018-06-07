@@ -76,4 +76,6 @@ export type PrivateUserRecord = {
   gender: 'male' | 'female',
   name: string,
   uid: string,
+  birthday: Date,
 }
+

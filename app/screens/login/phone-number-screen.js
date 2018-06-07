@@ -15,7 +15,7 @@ import { H2 } from '../../components/ui-kit/typography';
 const phoneIcon = require('../../assets/icons/phone/phone.png');
 
 const mapStateToProps = (state) => ({
-  auth: state.auth,
+  isAuthenticated: state.auth.isAuthenticated,
 });
 
 type State = {
@@ -25,6 +25,7 @@ type State = {
 type Props = {
   navigation: any,
   dispatch: Dispatch,
+  isAuthenticated: boolean,
 };
 
 class PhoneNumberScreen extends Component<Props, State> {
@@ -39,6 +40,12 @@ class PhoneNumberScreen extends Component<Props, State> {
     this.state = {
       isNumberValid: false,
     };
+  }
+
+  componentDidMount() { // TODO: temporary route guard
+    if (this.props.isAuthenticated) {
+      this.props.navigation.navigate('RegisterGender');
+    }
   }
 
   onPhoneSubmit = () => {
@@ -63,7 +70,7 @@ class PhoneNumberScreen extends Component<Props, State> {
   }
 
   isPhoneValid() {
-    return this.phoneNumberOnlyNumbers.length > 10;
+    return this.phoneNumberOnlyNumbers.length >= 10;
   }
 
   onInvalidPhoneSubmit = () => {

@@ -25,6 +25,7 @@ type Props = {
   placeholder: string,
   style: typeof StyleSheet,
   onChangeText: (string) => void,
+  initialValue: string,
   // label: string,
 };
 
@@ -40,7 +41,7 @@ export default class DaterTextInput extends Component<Props, State> {
     super(props);
     this.state = {
       isFocused: false,
-      text: '',
+      text: this.props.initialValue || '',
     };
   }
 

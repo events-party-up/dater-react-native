@@ -19,6 +19,7 @@ type Props = {
   confirmButtonPress: () => void,
   headerTitle: string,
   style: typeof StyleSheet,
+  backButtonHeightOffset: number,
 };
 
 export default class DaterModal extends React.Component<Props> {
@@ -34,7 +35,7 @@ export default class DaterModal extends React.Component<Props> {
             {this.props.headerTitle}
           </DaterHeader>)}
         {this.props.backButton && Platform.OS !== 'android' && (
-          <View style={styles.backButton}>
+          <View style={[styles.backButton, { bottom: this.props.backButtonHeightOffset || 16 }]}>
             <CircleButton type="back" onPress={() => this.props.backButtonPress()} />
           </View>)}
         {this.props.closeButton && (
