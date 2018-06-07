@@ -6,10 +6,10 @@ import {
   Image,
 } from 'react-native';
 
-import { H3, Body } from './typography';
+import { H3, Body } from '../typography';
 
-const xpImage = require('../../assets/icons/xp/xp.png');
-const coinImage = require('../../assets/icons/small-coin/small-coin.png');
+const xpImage = require('../../../assets/icons/xp/xp.png');
+const coinImage = require('../../../assets/icons/small-coin/small-coin.png');
 
 const DaterButton = (props) => {
   let buttonTextColor = '#fff';

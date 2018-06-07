@@ -16,7 +16,7 @@ import RNANAndroidSettingsLibrary from 'react-native-android-settings-library';
 import DaterModal from '../components/ui-kit/dater-modal';
 import CircleButton from '../components/ui-kit/circle-button';
 import IconTitleSubtitleMolecule from '../components/ui-kit/molecules/icon-title-subtitle';
-import DaterButton from '../components/ui-kit/dater-button';
+import DaterButton from '../components/ui-kit/atoms/dater-button';
 
 const takePhotoIcon = require('../assets/icons/take-photo/take-photo-white.png');
 const noCameraIcon = require('../assets/icons/no-camera/no-camera.png');

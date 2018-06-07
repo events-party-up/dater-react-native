@@ -3,7 +3,7 @@ import { ScrollView } from 'react-native';
 
 import DaterTextInput from '../../components/ui-kit/atoms/dater-text-input';
 import DaterModal from '../../components/ui-kit/dater-modal';
-import DaterButton from '../../components/ui-kit/dater-button';
+import DaterButton from '../../components/ui-kit/atoms/dater-button';
 
 type Props = {
   navigation: any,

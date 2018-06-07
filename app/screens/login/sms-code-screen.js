@@ -8,7 +8,7 @@ import {
 
 import DaterTextInput from '../../components/ui-kit/atoms/dater-text-input';
 import DaterModal from '../../components/ui-kit/dater-modal';
-import DaterButton from '../../components/ui-kit/dater-button';
+import DaterButton from '../../components/ui-kit/atoms/dater-button';
 import { H2 } from '../../components/ui-kit/typography';
 
 const smsCodeIcon = require('../../assets/icons/sms-code/sms-code.png');

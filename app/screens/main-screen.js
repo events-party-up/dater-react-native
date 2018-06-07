@@ -6,7 +6,7 @@ import {
 import { connect, Dispatch } from 'react-redux';
 
 import DaterMapView from '../components/dater-map-view';
-import DaterButton from '../components/ui-kit/dater-button';
+import DaterButton from '../components/ui-kit/atoms/dater-button';
 import MapPanelComponent from '../components/map-panel/map-panel-component';
 import OnMapRightButtons from '../components/map/on-map-right-buttons';
 import { GeoCompass, GeoCoordinates } from '../types';

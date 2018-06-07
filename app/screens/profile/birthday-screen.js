@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 
 import DaterModal from '../../components/ui-kit/dater-modal';
-import DaterButton from '../../components/ui-kit/dater-button';
+import DaterButton from '../../components/ui-kit/atoms/dater-button';
 import { H2, Body } from '../../components/ui-kit/typography';
 
 const birthdayIcon = require('../../assets/icons/birthday/birthday.png');
