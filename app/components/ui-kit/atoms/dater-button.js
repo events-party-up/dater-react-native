@@ -5,124 +5,162 @@ import {
   TouchableHighlight,
   Image,
 } from 'react-native';
+import * as _ from 'lodash';
 
 import { H3, Body } from '../typography';
+import { BUTTONS_ONPRESS_THROTTLE_THRESHOLD } from '../../../constants';
 
 const xpImage = require('../../../assets/icons/xp/xp.png');
 const coinImage = require('../../../assets/icons/small-coin/small-coin.png');
 
-const DaterButton = (props) => {
-  let buttonTextColor = '#fff';
-  let buttonBackgroundColor = '#000';
-  let underlayColor = 'gray';
-  let borderWidth = 0;
-  let dividerBackgroundColor = 'rgba(242, 242, 242, 0.3)'; // opacity 0.3 is for inactive button
+type Props = {
+  type: 'secondary' | 'text',
+  xpReward: number,
+  coinReward: number,
+  onPress: () => void,
+  onDisabledPress: () => void,
+  style: typeof StyleSheet,
+  children: any,
+  disabled: boolean,
+}
 
-  switch (props.type) {
-    case 'secondary': {
-      buttonTextColor = '#000';
-      buttonBackgroundColor = '#fff';
-      underlayColor = 'gray';
-      borderWidth = 1;
-      dividerBackgroundColor = 'rgba(0,0,0,0.05)';
-      break;
+export default class DaterButton extends React.Component<Props> {
+  onPressThrottled;
+  buttonTextColor = '#fff';
+  buttonBackgroundColor = '#000';
+  underlayColor = 'gray';
+  borderWidth = 0;
+  dividerBackgroundColor = 'rgba(242, 242, 242, 0.3)'; // opacity 0.3 is for inactive button
+  styles: any;
+  opacity = 1;
+
+  componentWillMount() {
+    this.onPressThrottled = _.throttle(this.onPress, BUTTONS_ONPRESS_THROTTLE_THRESHOLD);
+
+    if (this.props.disabled === true) {
+      this.opacity = 0.5;
     }
-    case 'text': {
-      buttonTextColor = '#000';
-      buttonBackgroundColor = '#fff';
-      borderWidth = 0;
-      break;
+
+    switch (this.props.type) {
+      case 'secondary': {
+        this.buttonTextColor = '#000';
+        this.buttonBackgroundColor = '#fff';
+        this.underlayColor = 'gray';
+        this.borderWidth = 1;
+        this.dividerBackgroundColor = 'rgba(0,0,0,0.05)';
+        break;
+      }
+      case 'text': {
+        this.buttonTextColor = '#000';
+        this.buttonBackgroundColor = '#fff';
+        this.borderWidth = 0;
+        break;
+      }
+      default:
+        break;
     }
-    default:
-      break;
+
+    this.styles = StyleSheet.create({
+      button: {
+        width: 216,
+        height: 48,
+        backgroundColor: this.buttonBackgroundColor,
+        borderRadius: 5,
+        borderWidth: this.borderWidth,
+        marginBottom: 8,
+        flexDirection: 'row',
+        opacity: this.opacity,
+      },
+      textContainer: {
+        flex: 1,
+        justifyContent: (this.props.xpReward || this.props.coinReward) ? 'flex-start' : 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+      },
+      image: {
+        marginRight: 4,
+      },
+      rewardContainer: {
+        justifyContent: 'center',
+        flexDirection: 'row',
+      },
+      divider: {
+        marginLeft: 16,
+        marginRight: 16,
+        width: 1,
+        height: 28,
+        backgroundColor: this.dividerBackgroundColor,
+      },
+      xpContainer: {
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        flexDirection: 'row',
+        marginLeft: 16,
+      },
+    });
   }
 
-  const styles = StyleSheet.create({
-    button: {
-      width: 216,
-      height: 48,
-      backgroundColor: buttonBackgroundColor,
-      borderRadius: 5,
-      borderWidth,
-      marginBottom: 8,
-      flexDirection: 'row',
-    },
-    textContainer: {
-      flex: 1,
-      justifyContent: (props.xpReward || props.coinReward) ? 'flex-start' : 'center',
-      alignItems: 'center',
-      flexDirection: 'row',
-    },
-    image: {
-      marginRight: 4,
-    },
-    rewardContainer: {
-      justifyContent: 'center',
-      flexDirection: 'row',
-    },
-    divider: {
-      marginLeft: 16,
-      marginRight: 16,
-      width: 1,
-      height: 28,
-      backgroundColor: dividerBackgroundColor,
-    },
-    xpContainer: {
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-      flexDirection: 'row',
-      marginLeft: 16,
-    },
-  });
-
-  const onPress = () => {
-    if (props.onPress) {
-      props.onPress();
+  onPress = () => {
+    if (this.props.onPress && !this.props.disabled) {
+      this.props.onPress();
+    } else if (this.props.onDisabledPress && this.props.disabled) {
+      this.props.onDisabledPress();
     }
   };
 
-  return (
-    <TouchableHighlight
-      style={[styles.button, props.style]}
-      onPress={() => onPress()}
-      underlayColor={underlayColor}
-      hitSlop={{
-      top: 10,
-      bottom: 10,
-      left: 10,
-      right: 10,
-    }}
-    >
-      <View style={styles.textContainer}>
-        {props.xpReward && (
-          <View style={styles.rewardContainer}>
-            <View style={styles.xpContainer}>
-              <Image
-                style={styles.image}
-                source={xpImage}
-              />
-              <Body color="#6FCF97">{props.xpReward}</Body>
-            </View>
-            <View style={styles.divider} />
-          </View>)}
-        {props.coinReward && (
-          <View style={styles.rewardContainer}>
-            <View style={styles.xpContainer}>
-              <Image
-                style={styles.image}
-                source={coinImage}
-              />
-              <Body color={buttonTextColor}>{props.coinReward}</Body>
-            </View>
-            <View style={styles.divider} />
-          </View>)}
+  render() {
+    return (
+      <TouchableHighlight
+        style={[{
+          width: 216,
+          height: 48,
+          backgroundColor: this.buttonBackgroundColor,
+          borderRadius: 5,
+          borderWidth: this.borderWidth,
+          marginBottom: 8,
+          flexDirection: 'row',
+          opacity: this.props.disabled ? 0.5 : 1,
+        }, this.props.style]}
+        onPress={this.onPressThrottled}
+        underlayColor={this.props.disabled ? this.buttonBackgroundColor : this.underlayColor}
+        activeOpacity={this.props.disabled ? this.opacity : 0.2}
+        hitSlop={{
+          top: 10,
+          bottom: 10,
+          left: 10,
+          right: 10,
+        }}
+      >
+        <View style={this.styles.textContainer}>
+          {this.props.xpReward && (
+            <View style={this.styles.rewardContainer}>
+              <View style={this.styles.xpContainer}>
+                <Image
+                  style={this.styles.image}
+                  source={xpImage}
+                />
+                <Body color="#6FCF97">{this.props.xpReward}</Body>
+              </View>
+              <View style={this.styles.divider} />
+            </View>)}
+          {this.props.coinReward && (
+            <View style={this.styles.rewardContainer}>
+              <View style={this.styles.xpContainer}>
+                <Image
+                  style={this.styles.image}
+                  source={coinImage}
+                />
+                <Body color={this.buttonTextColor}>{this.props.coinReward}</Body>
+              </View>
+              <View style={this.styles.divider} />
+            </View>)}
 
-        <H3 buttonText color={buttonTextColor} align="center">
-          {props.children.toUpperCase()}
-        </H3>
-      </View>
-    </TouchableHighlight>
-  );
-};
+          <H3 buttonText color={this.buttonTextColor} align="center">
+            {this.props.children.toUpperCase()}
+          </H3>
+        </View>
+      </TouchableHighlight>
+    );
+  }
+}
 
-export default DaterButton;

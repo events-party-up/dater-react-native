@@ -4,6 +4,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 
 import DaterTextInput from '../../components/ui-kit/atoms/dater-text-input';
@@ -17,32 +18,61 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
+type State = {
+  isNumberValid: boolean,
+}
+
 type Props = {
   navigation: any,
   dispatch: Dispatch,
 };
 
-class PhoneNumberScreen extends Component<Props> {
-  phoneNumber: string = '+16505553434';
+class PhoneNumberScreen extends Component<Props, State> {
+  phoneNumber: string = ''; // '+16505553434';
+  phoneNumberOnlyNumbers: string = '';
+  phoneNumberFinal: string = '';
+  phonePlaceholder = '8 926 333 22 11';
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isNumberValid: false,
+    };
+  }
 
   onPhoneSubmit = () => {
-    const phoneNumbers = this.phoneNumber.replace(/\D/g, ''); // remove non numbers
-    let phoneNumberFinal;
-
-    if (phoneNumbers.length === 10) {
-      phoneNumberFinal = `+7${phoneNumbers}`;
-    } else if (phoneNumbers.length === 11 && /^7.*/.test(phoneNumbers)) {
-      phoneNumberFinal = `+${phoneNumbers}`;
-    } else if (phoneNumbers.length === 11 && /^8.*/.test(phoneNumbers)) {
-      phoneNumberFinal = `+7${phoneNumbers.substring(1, 11)}`;
+    if (this.phoneNumberOnlyNumbers.length === 10) {
+      this.phoneNumberFinal = `+7${this.phoneNumberOnlyNumbers}`;
+    } else if (this.phoneNumberOnlyNumbers.length === 11 && /^7.*/.test(this.phoneNumberOnlyNumbers)) {
+      this.phoneNumberFinal = `+${this.phoneNumberOnlyNumbers}`;
+    } else if (this.phoneNumberOnlyNumbers.length === 11 && /^8.*/.test(this.phoneNumberOnlyNumbers)) {
+      this.phoneNumberFinal = `+7${this.phoneNumberOnlyNumbers.substring(1, 11)}`;
     } else {
-      phoneNumberFinal = `+${phoneNumbers}`;
+      this.phoneNumberFinal = `+${this.phoneNumberOnlyNumbers}`;
     }
-    this.props.dispatch({ type: 'AUTH_PHONE_NUMBER_VERIFY', payload: { phoneNumber: phoneNumberFinal } });
+    this.props.dispatch({ type: 'AUTH_PHONE_NUMBER_VERIFY', payload: { phoneNumber: this.phoneNumberFinal } });
   }
 
   onChangeInput = (phoneNumber) => {
     this.phoneNumber = phoneNumber;
+    this.phoneNumberOnlyNumbers = this.phoneNumber.replace(/\D/g, ''); // remove non numbers
+    this.setState({
+      isNumberValid: this.isPhoneValid(),
+    });
+  }
+
+  isPhoneValid() {
+    return this.phoneNumberOnlyNumbers.length > 10;
+  }
+
+  onInvalidPhoneSubmit = () => {
+    Alert.alert(
+      'Будь внимательней!',
+      `Введи корректный номер телефона в формате \n${this.phonePlaceholder}`,
+      [
+        { text: 'Исправлюсь!' },
+      ],
+    );
   }
 
   render() {
@@ -65,7 +95,7 @@ class PhoneNumberScreen extends Component<Props> {
           />
           <H2 style={styles.header}>Твой номер{'\n'}телефона?</H2>
           <DaterTextInput
-            placeholder="8 (926) 333 22 11"
+            placeholder={this.phonePlaceholder}
             keyboardType="phone-pad"
             returnKeyType="go"
             style={styles.input}
@@ -73,6 +103,8 @@ class PhoneNumberScreen extends Component<Props> {
           />
           <DaterButton
             onPress={this.onPhoneSubmit}
+            disabled={!this.state.isNumberValid}
+            onDisabledPress={this.onInvalidPhoneSubmit}
           >
             Далее
           </DaterButton>
@@ -81,7 +113,6 @@ class PhoneNumberScreen extends Component<Props> {
     );
   }
 }
-
 
 const styles = StyleSheet.create({
   modal: {

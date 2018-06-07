@@ -81,7 +81,8 @@ function* authStateChangedSaga(user) {
       });
     } else {
       yield put({ type: 'AUTH_SHOW_LOGIN_SCREEN' });
-      yield Actions.navigate({ routeName: 'Login' });
+      // yield Actions.navigate({ routeName: 'Login' });
+      yield Actions.navigate({ routeName: 'PhoneNumber' });
     }
   } catch (error) {
     yield put({ type: 'AUTH_STATE_CHANGED_ERROR', payload: error });
