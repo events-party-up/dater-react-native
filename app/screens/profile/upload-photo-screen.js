@@ -15,6 +15,12 @@ type Props = {
 };
 
 export default class UploadPhotoScreen extends Component<Props> {
+  navigationFlowType: string;
+
+  componentWillMount() {
+    this.navigationFlowType = this.props.navigation.getParam('navigationFlowType');
+  }
+
   render() {
     return (
       <DaterModal
@@ -39,7 +45,6 @@ export default class UploadPhotoScreen extends Component<Props> {
     );
   }
 }
-
 
 const styles = StyleSheet.create({
   modal: {

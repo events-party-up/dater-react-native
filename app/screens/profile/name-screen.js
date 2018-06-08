@@ -31,6 +31,7 @@ type Props = {
 
 class NameScreen extends Component<Props, State> {
   name: string;
+  navigationFlowType: string;
 
   constructor(props) {
     super(props);
@@ -40,9 +41,17 @@ class NameScreen extends Component<Props, State> {
     };
   }
 
+  componentWillMount() {
+    this.navigationFlowType = this.props.navigation.getParam('navigationFlowType');
+  }
+
   onNameSubmit = () => {
-    this.props.navigation.navigate('RegisterBirthday');
     this.props.dispatch({ type: 'CURRENT_USER_SET_PROFILE_FIELDS', payload: { name: this.name } });
+    if (this.navigationFlowType === 'editProfile') {
+      this.props.navigation.goBack();
+    } else {
+      this.props.navigation.navigate('RegisterBirthday');
+    }
   }
 
   onInvalidNameSubmit = () => {
@@ -88,13 +97,14 @@ class NameScreen extends Component<Props, State> {
             onChangeText={this.onChangeText}
             maxLength={15}
             initialValue={this.props.name}
+            autoFocus
           />
           <DaterButton
             onPress={this.onNameSubmit}
             disabled={!this.state.isNameValid}
             onDisabledPress={this.onInvalidNameSubmit}
           >
-            Далее
+            {this.navigationFlowType === 'editProfile' ? 'Сохранить' : 'Далее'}
           </DaterButton>
         </ScrollView>
       </DaterModal>

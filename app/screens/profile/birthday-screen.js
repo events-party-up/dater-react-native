@@ -9,9 +9,9 @@ import {
 } from 'react-native';
 
 import DaterModal from '../../components/ui-kit/dater-modal';
-import DaterButton from '../../components/ui-kit/atoms/dater-button';
+// import DaterButton from '../../components/ui-kit/atoms/dater-button';
 import { H2, Body } from '../../components/ui-kit/typography';
-import calculateAgeFrom from '../../utils/date-utils';
+import { calculateAgeFrom, ageWithTextPostfix } from '../../utils/date-utils';
 
 const birthdayIcon = require('../../assets/icons/birthday/birthday.png');
 
@@ -33,6 +33,7 @@ type State = {
 class BirthdayScreen extends Component<Props, State> {
   setDate;
   initialDate = new Date(new Date().setFullYear(new Date().getFullYear() - 25));
+  navigationFlowType: string;
 
   constructor(props) {
     super(props);
@@ -44,13 +45,21 @@ class BirthdayScreen extends Component<Props, State> {
     this.setDate = this.setDate.bind(this);
   }
 
+  componentWillMount() {
+    this.navigationFlowType = this.props.navigation.getParam('navigationFlowType');
+  }
+
   setDate(newDate) {
     this.setState({ birthday: newDate });
   }
 
   onBirthdaySelected = () => {
     this.props.dispatch({ type: 'CURRENT_USER_SET_PROFILE_FIELDS', payload: { birthday: this.state.birthday } });
-    this.props.navigation.navigate('RegisterMakePhotoSelfie', { photoType: 'profilePhoto' });
+    if (this.navigationFlowType === 'editProfile') {
+      this.props.navigation.goBack();
+    } else {
+      this.props.navigation.navigate('RegisterMakePhotoSelfie', { photoType: 'profilePhoto' });
+    }
   }
 
   render() {
@@ -59,7 +68,9 @@ class BirthdayScreen extends Component<Props, State> {
         fullscreen
         backButton
         backButtonPress={() => this.props.navigation.goBack()}
-        backButtonHeightOffset={this.state.birthdayKeyboardHeight}
+        confirmButtonPress={this.onBirthdaySelected}
+        confirmButton={this.initialDate !== this.state.birthday && this.state.birthday !== this.props.birthday}
+        bottomButtonsHeightOffset={this.state.birthdayKeyboardHeight}
         style={styles.modal}
       >
         <ScrollView
@@ -78,15 +89,16 @@ class BirthdayScreen extends Component<Props, State> {
           }
           {this.initialDate !== this.state.birthday &&
             <Body style={styles.subHeader}>
-              Тебе сейчас {calculateAgeFrom(this.state.birthday)} полных лет{'\n'}Вход разрешен!
+            Тебе сейчас {ageWithTextPostfix(calculateAgeFrom(this.state.birthday), ['год', 'года', 'лет'])} {' '}
+              {'\n'}Вход разрешен!
             </Body>
           }
-          <DaterButton
+          {/* <DaterButton
             onPress={this.onBirthdaySelected}
             disabled={this.initialDate === this.state.birthday}
           >
             Далее
-          </DaterButton>
+          </DaterButton> */}
         </ScrollView>
         <View
           onLayout={(event) => { this.setState({ birthdayKeyboardHeight: event.nativeEvent.layout.height }); }}

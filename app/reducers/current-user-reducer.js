@@ -2,6 +2,7 @@ const types = {
   CURRENT_USER_SIGN_IN: 'CURRENT_USER_SIGN_IN',
   CURRENT_USER_SIGN_OUT: 'CURRENT_USER_SIGN_OUT',
   CURRENT_USER_SET_PROFILE_FIELDS: 'CURRENT_USER_SET_PROFILE_FIELDS',
+  CURRENT_USER_UPDATED_IN_FIRESTORE: 'CURRENT_USER_UPDATED_IN_FIRESTORE',
   CURRENT_USER_SET_ERROR: 'CURRENT_USER_SET_ERROR',
 };
 
@@ -20,7 +21,7 @@ const currentUserReducer = (state = initialState, action) => {
         ...payload,
       };
     }
-    case types.CURRENT_USER_SET_PROFILE_FIELDS: {
+    case types.CURRENT_USER_UPDATED_IN_FIRESTORE: {
       return {
         ...state,
         ...payload,

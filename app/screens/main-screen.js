@@ -59,14 +59,6 @@ class MainScreen extends Component<Props> {
             Floating Screen
           </DaterButton> */}
 
-          <DaterButton
-            style={styles.button}
-            onPress={() => this.props.navigation.navigate('PhoneNumber')}
-            type="secondary"
-          >
-            Phone Screen
-          </DaterButton>
-
           {/* <DaterButton
             style={styles.button}
             onPress={() => this.props.navigation.navigate('UIKit')}

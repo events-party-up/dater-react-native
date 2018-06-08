@@ -100,6 +100,7 @@ class SmsCodeScreen extends Component<Props, State> {
             style={styles.input}
             onChangeText={this.onChangeInput}
             maxLength={6}
+            autoFocus
           />
           <DaterButton
             onPress={this.onSmsCodeSubmit}

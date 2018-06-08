@@ -44,6 +44,7 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
   styles: typeof StyleSheet;
   volumeListener: any;
   photoType: PhotoType;
+  navigationFlowType: string;
 
   constructor(props: any) {
     super(props);
@@ -57,6 +58,7 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
   }
 
   async componentWillMount() {
+    this.navigationFlowType = this.props.navigation.getParam('navigationFlowType');
     this.volumeListener = SystemSetting.addVolumeListener(() => {
       this.takePicture();
     });
@@ -149,11 +151,10 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
       },
     });
 
-    if (this.props.photoType === 'microDateSelfie') {
+    if (this.props.photoType === 'microDateSelfie' || this.navigationFlowType === 'editProfile') {
       this.props.navigation.goBack();
     } else {
-      this.props.navigation.popToTop();
-      this.props.navigation.goBack(null);
+      this.props.navigation.navigate('RegisterProfile');
     }
   }
 

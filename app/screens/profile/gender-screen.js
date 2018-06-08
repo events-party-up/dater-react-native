@@ -20,9 +20,19 @@ type Props = {
 };
 
 class GenderScreen extends Component<Props> {
+  navigationFlowType: string;
+
+  componentWillMount() {
+    this.navigationFlowType = this.props.navigation.getParam('navigationFlowType');
+  }
+
   onGenderSelected = (gender: string) => {
     this.props.dispatch({ type: 'CURRENT_USER_SET_PROFILE_FIELDS', payload: { gender } });
-    this.props.navigation.navigate('RegisterName');
+    if (this.navigationFlowType === 'editProfile') {
+      this.props.navigation.goBack();
+    } else {
+      this.props.navigation.navigate('RegisterName');
+    }
   }
 
   render() {
@@ -54,7 +64,6 @@ class GenderScreen extends Component<Props> {
     );
   }
 }
-
 
 const styles = StyleSheet.create({
   modal: {

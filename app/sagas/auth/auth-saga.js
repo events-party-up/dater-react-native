@@ -4,12 +4,7 @@ import { eventChannel } from 'redux-saga';
 import DeviceInfo from 'react-native-device-info';
 import { Platform } from 'react-native';
 import { Actions } from '../../navigators/navigator-actions';
-
-import {
-  deleteFirestoreDoc,
-  setFirestore,
-  updateFirestore,
-} from '../../utils/firebase-utils';
+import { CURRENT_USER_COLLECTION, GEO_POINTS_COLLECTION } from '../../constants';
 
 export default function* authSaga() {
   try {
@@ -24,48 +19,33 @@ export default function* authSaga() {
 
 function* authSignOutSaga() {
   try {
-    const { currentUser } = firebase.auth();
-    if (currentUser && currentUser.isAnonymous) {
-      yield call(deleteFirestoreDoc, {
-        collection: 'users',
-        doc: currentUser.uid,
-      });
-      yield call(deleteFirestoreDoc, {
-        collection: 'geoPoints',
-        doc: currentUser.uid,
-      });
-      yield call([currentUser, 'delete']);
-    } else {
-      yield firebase.auth().signOut();
-    }
+    yield firebase.auth().signOut();
   } catch (error) {
     yield put({ type: 'AUTH_SIGNOUT_ERROR', payload: error });
   }
 }
 
-function* authStateChangedSaga(user) {
+function* authStateChangedSaga(userInFirebaseAuthState) {
   try {
-    if (user.uid) {
-      yield call(setFirestore, {
-        collection: 'users',
-        doc: user.uid,
-        data: {},
-        args: {
-          merge: true,
-        },
-      });
-      yield call(setFirestore, {
-        collection: 'geoPoints',
-        doc: user.uid,
-        data: {},
-        args: {
-          merge: true,
-        },
-      });
-      yield call(updateFirestore, {
-        collection: 'users',
-        doc: user.uid,
-        data: {
+    if (userInFirebaseAuthState.uid) {
+      // initializing firestore write locations
+      yield firebase.firestore()
+        .collection(GEO_POINTS_COLLECTION)
+        .doc(userInFirebaseAuthState.uid)
+        .set({
+        }, { merge: true });
+
+      yield firebase.firestore()
+        .collection(CURRENT_USER_COLLECTION)
+        .doc(userInFirebaseAuthState.uid)
+        .set({
+        }, { merge: true });
+
+      yield firebase.firestore()
+        .collection(CURRENT_USER_COLLECTION)
+        .doc(userInFirebaseAuthState.uid)
+        .update({
+          phoneNumber: userInFirebaseAuthState.phoneNumber,
           device: {
             isEmulator: DeviceInfo.isEmulator(),
             osVersion: DeviceInfo.getSystemVersion(),
@@ -73,23 +53,36 @@ function* authStateChangedSaga(user) {
             platform: Platform.OS,
             locale: DeviceInfo.getDeviceLocale(),
           },
-        },
-      });
+        });
+
       yield put({
         type: 'AUTH_SUCCESS',
-        payload: user,
+        payload: userInFirebaseAuthState,
       });
-      yield take('CURRENT_USER_SIGN_IN'); // temp
-      // yield Actions.navigate({ routeName: 'RegisterBirthday' });
 
-      yield Actions.navigate({
-        routeName: 'RegisterMakePhotoSelfie',
-        params: {
-          photoType: 'profilePhoto',
-        },
-      });
+      const currentUserSignInAction = yield take('CURRENT_USER_SIGN_IN'); // temp
+      const currentUserProfile = currentUserSignInAction.payload;
+
+      if (!currentUserProfile.gender) {
+        yield Actions.navigate({ routeName: 'RegisterGender' });
+      } else if (!currentUserProfile.name) {
+        yield Actions.navigate({ routeName: 'RegisterName' });
+      } else if (!currentUserProfile.birthday) {
+        yield Actions.navigate({ routeName: 'RegisterBirthday' });
+      } else if (!currentUserProfile.mainPhoto) {
+        yield Actions.navigate({ routeName: 'RegisterMakePhotoSelfie' });
+      } else {
+        yield Actions.navigate({ routeName: 'RegisterProfile' });
+      }
+
+      // yield Actions.navigate({
+      //   routeName: 'RegisterMakePhotoSelfie',
+      //   params: {
+      //     photoType: 'profilePhoto',
+      //   },
+      // });
     } else {
-      yield put({ type: 'AUTH_SHOW_LOGIN_SCREEN' });
+      yield put({ type: 'AUTH_SHOW_LOGIN_SCREEN' }); // TODO: remove
       yield Actions.navigate({ routeName: 'Login' });
     }
   } catch (error) {

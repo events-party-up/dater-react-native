@@ -109,6 +109,7 @@ class PhoneNumberScreen extends Component<Props, State> {
             style={styles.input}
             onChangeText={this.onChangeInput}
             maxLength={15}
+            autoFocus
           />
           <DaterButton
             onPress={this.onPhoneSubmit}
