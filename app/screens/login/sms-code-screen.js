@@ -16,6 +16,7 @@ const smsCodeIcon = require('../../assets/icons/sms-code/sms-code.png');
 
 const mapStateToProps = (state) => ({
   wrongSmsCode: state.auth.wrongSmsCode,
+  verifySmsCodeTimeout: state.auth.verifySmsCodeTimeout,
 });
 
 type State = {
@@ -42,7 +43,7 @@ class SmsCodeScreen extends Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.wrongSmsCode) {
+    if (nextProps.wrongSmsCode || nextProps.verifySmsCodeTimeout) {
       this.textInput.textInput.clear();
       this.setState({
         isCodeValid: false,

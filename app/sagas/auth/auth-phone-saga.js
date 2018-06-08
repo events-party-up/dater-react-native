@@ -1,10 +1,15 @@
-import { take, cancel, takeEvery, put, fork } from 'redux-saga/effects';
+import { take, cancel, takeEvery, put, fork, race } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 import { eventChannel, delay } from 'redux-saga';
 import { Alert } from 'react-native';
 // import { StackActions, NavigationActions } from 'react-navigation';
 
 import { Actions } from '../../navigators/navigator-actions';
+import {
+  SEND_SMS_TIMEOUT,
+  SEND_SMS_ARTIFICIAL_UI_DELAY,
+  VERIFY_SMS_CODE_TIMEOUT,
+} from '../../constants';
 
 export default function* authPhoneSaga() {
   while (true) {
@@ -19,6 +24,7 @@ export default function* authPhoneSaga() {
       'AUTH_PHONE_NUMBER_UNKNOWN_ERROR',
       'BACK_BUTTON_PRESSED',
       'AUTH_PHONE_NUMBER_SMS_CODE_SCREEN_BACK_BUTTON',
+      'AUTH_PHONE_NUMBER_SEND_SMS_TIMEOUT',
     ]);
 
     if (stopAction.type === 'AUTH_SUCCESS') {
@@ -29,13 +35,7 @@ export default function* authPhoneSaga() {
     } else if (
       stopAction.type !== 'AUTH_PHONE_NUMBER_SMS_CODE_SCREEN_BACK_BUTTON'
     ) {
-      Alert.alert(
-        'Что то пошло не так',
-        stopAction.payload ? stopAction.payload.nativeErrorMessage : '',
-        [
-          { text: 'ОК' },
-        ],
-      );
+      alertSomethingWentWrong(stopAction);
     }
     yield cancel(authPhoneStateChannel);
     yield cancel(task1);
@@ -45,11 +45,20 @@ export default function* authPhoneSaga() {
 }
 
 function* authPhoneCodeSentSaga() {
-  const codeSentAction = yield take('AUTH_PHONE_NUMBER_CODE_SENT');
-  yield delay(2000); // artificial delay, so users wait a bit for SMS to come
-  yield Actions.navigate({ key: 'SmsCode', routeName: 'SmsCode' });
-  const { verificationId } = codeSentAction.payload;
-  yield takeEvery('AUTH_PHONE_NUMBER_SMS_CODE_SUBMITTED', authPhoneCodeSubmittedSaga, verificationId);
+  // cancel on timeout
+  const { codeSentAction } = yield race({
+    codeSentAction: take('AUTH_PHONE_NUMBER_CODE_SENT'),
+    timeout: delay(SEND_SMS_TIMEOUT),
+  });
+
+  if (codeSentAction) {
+    yield delay(SEND_SMS_ARTIFICIAL_UI_DELAY); // artificial delay, so users wait a bit for SMS to come
+    yield Actions.navigate({ key: 'SmsCode', routeName: 'SmsCode' });
+    const { verificationId } = codeSentAction.payload;
+    yield takeEvery('AUTH_PHONE_NUMBER_SMS_CODE_SUBMITTED', authPhoneCodeSubmittedSaga, verificationId);
+  } else {
+    yield put({ type: 'AUTH_PHONE_NUMBER_SEND_SMS_TIMEOUT', payload: 'Timeout while sending sms code' });
+  }
 }
 
 function* authPhoneCodeSubmittedSaga(verificationId, action) {
@@ -59,8 +68,16 @@ function* authPhoneCodeSubmittedSaga(verificationId, action) {
       verificationId,
       smsCode,
     );
-    const currentUser = yield firebase.auth().signInAndRetrieveDataWithCredential(authCredentials);
-    yield put({ type: 'AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL', payload: currentUser });
+    const { currentUser } = yield race({
+      currentUser: firebase.auth().signInAndRetrieveDataWithCredential(authCredentials),
+      timeout: delay(VERIFY_SMS_CODE_TIMEOUT),
+    });
+    if (currentUser) {
+      yield put({ type: 'AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL', payload: currentUser });
+    } else {
+      alertSomethingWentWrong({});
+      yield put({ type: 'AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_TIMEOUT', payload: currentUser });
+    }
   } catch (error) {
     Alert.alert(
       'Неверный СМС код',
@@ -151,4 +168,15 @@ function createAuthPhoneChannel(phoneNumber: string) {
 
     return () => { };
   });
+}
+
+function alertSomethingWentWrong(action) {
+  Alert.alert(
+    'Что то пошло не так',
+    action.payload && action.payload.nativeErrorMessage ?
+      action.payload.nativeErrorMessage : 'Попробуйте еще раз',
+    [
+      { text: 'ОК' },
+    ],
+  );
 }

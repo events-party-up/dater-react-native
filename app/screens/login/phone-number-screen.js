@@ -18,6 +18,7 @@ const phoneIcon = require('../../assets/icons/phone/phone.png');
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
   wrongPhoneNumber: state.auth.wrongPhoneNumber,
+  sendSmsTimeout: state.auth.sendSmsTimeout,
 });
 
 type State = {
@@ -53,7 +54,7 @@ class PhoneNumberScreen extends Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.wrongPhoneNumber) {
+    if (nextProps.wrongPhoneNumber || nextProps.sendSmsTimeout) {
       this.setState({
         isNumberValid: false,
         inProgress: false,

@@ -10,6 +10,8 @@ const types = {
   AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_ERROR: 'AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_ERROR',
   AUTH_PHONE_INVALID_NUMBER_ERROR: 'AUTH_PHONE_INVALID_NUMBER_ERROR',
   AUTH_PHONE_NUMBER_UNKNOWN_ERROR: 'AUTH_PHONE_NUMBER_UNKNOWN_ERROR',
+  AUTH_PHONE_NUMBER_SEND_SMS_TIMEOUT: 'AUTH_PHONE_NUMBER_SEND_SMS_TIMEOUT',
+  AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_TIMEOUT: 'AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_TIMEOUT',
   AUTH_MAINSAGA_ERROR: 'AUTH_MAINSAGA_ERROR',
   AUTH_SIGNOUT_ERROR: 'AUTH_SIGNOUT_ERROR',
   AUTH_STATE_CHANGED_ERROR: 'AUTH_STATE_CHANGED_ERROR',
@@ -25,6 +27,8 @@ const initialState = {
   lastSignInTime: null,
   wrongSmsCode: false,
   wrongPhoneNumber: false,
+  sendSmsTimeout: false,
+  verifySmsCodeTimeout: false,
 };
 
 const authReducer = (state = initialState, action) => {
@@ -64,12 +68,26 @@ const authReducer = (state = initialState, action) => {
         ...state,
         wrongSmsCode: false,
         wrongPhoneNumber: false,
+        sendSmsTimeout: false,
+        verifySmsCodeTimeout: false,
       };
     }
     case types.AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_ERROR: {
       return {
         ...state,
         wrongSmsCode: true,
+      };
+    }
+    case types.AUTH_PHONE_NUMBER_SEND_SMS_TIMEOUT: {
+      return {
+        ...state,
+        sendSmsTimeout: true,
+      };
+    }
+    case types.AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_TIMEOUT: {
+      return {
+        ...state,
+        verifySmsCodeTimeout: true,
       };
     }
     case types.AUTH_PHONE_NUMBER_UNKNOWN_ERROR:
