@@ -22,7 +22,10 @@ export default function* authPhoneSaga() {
     ]);
 
     if (stopAction.type === 'AUTH_SUCCESS') {
-      yield Actions.navigate({ routeName: 'GenderScreen' });
+      yield Actions.navigate({
+        key: 'GenderScreen',
+        routeName: 'GenderScreen',
+      });
     } else if (stopAction.type !== 'AUTH_PHONE_NUMBER_SMS_CODE_SCREEN_BACK_BUTTON') {
       Alert.alert(
         'Что то пошло не так',

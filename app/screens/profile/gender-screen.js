@@ -31,7 +31,7 @@ class GenderScreen extends Component<Props> {
     if (this.navigationFlowType === 'editProfile') {
       this.props.navigation.goBack();
     } else {
-      this.props.navigation.navigate('RegisterName');
+      this.props.navigation.navigate({ key: 'RegisterName', routeName: 'RegisterName' });
     }
   }
 

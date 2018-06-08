@@ -50,7 +50,7 @@ class NameScreen extends Component<Props, State> {
     if (this.navigationFlowType === 'editProfile') {
       this.props.navigation.goBack();
     } else {
-      this.props.navigation.navigate('RegisterBirthday');
+      this.props.navigation.navigate({ key: 'RegisterBirthday', routeName: 'RegisterBirthday' });
     }
   }
 

@@ -6,6 +6,7 @@ import {
   ScrollView,
   View,
 } from 'react-native';
+import ImageLoad from 'react-native-image-placeholder';
 
 import DaterModal from '../../components/ui-kit/dater-modal';
 import DaterButton from '../../components/ui-kit/atoms/dater-button';
@@ -34,7 +35,13 @@ class ProfileScreen extends Component<Props> {
     this.props.navigation.goBack(null);
   }
 
-  // TODO: implement upload in progress
+  onChangePhotoPress = () => {
+    this.props.navigation.navigate({
+      key: 'EditProfilePhoto',
+      routeName: 'RegisterMakePhotoSelfie',
+      params: { navigationFlowType: 'editProfile' },
+    });
+  }
 
   render() {
     return (
@@ -48,8 +55,9 @@ class ProfileScreen extends Component<Props> {
           style={styles.scrollViewContainer}
         >
           {this.props.currentUser.mainPhoto &&
-            !this.props.uploadPhotos.running &&
-            <Image
+            !this.props.uploadPhotos.uri &&
+            <ImageLoad
+              loadingStyle={{ size: 'large', color: 'gray' }}
               style={{
                 width: SCREEN_WIDTH,
                 height: 336,
@@ -71,7 +79,7 @@ class ProfileScreen extends Component<Props> {
               }}
             />
           }
-          {this.props.uploadPhotos.uri && this.props.uploadPhotos.running &&
+          {this.props.uploadPhotos.uri &&
             <Image
               style={{
                 width: SCREEN_WIDTH,
@@ -86,15 +94,7 @@ class ProfileScreen extends Component<Props> {
             />
           }
           <DaterButton
-            onPress={
-              () => this.props.navigation.navigate(
-                'RegisterMakePhotoSelfie',
-                {
-                  navigationFlowType: 'editProfile',
-                  photoType: 'profilePhoto',
-                },
-              )
-            }
+            onPress={this.onChangePhotoPress}
             type="secondary"
             style={styles.photoButton}
           >
@@ -107,14 +107,24 @@ class ProfileScreen extends Component<Props> {
               style={{
                 padding: 4,
               }}
-              onPress={() => this.props.navigation.navigate('RegisterName', { navigationFlowType: 'editProfile' })}
+              onPress={() =>
+                this.props.navigation.navigate({
+                  key: 'EditProfileName',
+                  routeName: 'RegisterName',
+                  params: { navigationFlowType: 'editProfile' },
+                })}
             />
             {ageWithTextPostfix(calculateAgeFrom(this.props.currentUser.birthday), ['год', 'года', 'лет'])} {' '}
             <EditCardItemAtom
               style={{
                 padding: 4,
               }}
-              onPress={() => this.props.navigation.navigate('RegisterBirthday', { navigationFlowType: 'editProfile' })}
+              onPress={() =>
+                this.props.navigation.navigate({
+                  key: 'EditProfileBirthday',
+                  routeName: 'RegisterBirthday',
+                  params: { navigationFlowType: 'editProfile' },
+                })}
             />
           </H2>
           <CardInfoItemMolecule
@@ -123,7 +133,12 @@ class ProfileScreen extends Component<Props> {
           >
             {this.props.currentUser.gender === 'male' ? 'Мужчина' : 'Девушка'}
             <EditCardItemAtom
-              onPress={() => this.props.navigation.navigate('RegisterGender', { navigationFlowType: 'editProfile' })}
+              onPress={() =>
+                this.props.navigation.navigate({
+                  key: 'EditProfileGender',
+                  routeName: 'RegisterGender',
+                  params: { navigationFlowType: 'editProfile' },
+                })}
             />
           </CardInfoItemMolecule>
           <CardInfoItemMolecule

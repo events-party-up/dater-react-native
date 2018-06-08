@@ -64,15 +64,30 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
       const currentUserProfile = currentUserSignInAction.payload;
 
       if (!currentUserProfile.gender) {
-        yield Actions.navigate({ routeName: 'RegisterGender' });
+        yield Actions.navigate({
+          key: 'RegisterGender',
+          routeName: 'RegisterGender',
+        });
       } else if (!currentUserProfile.name) {
-        yield Actions.navigate({ routeName: 'RegisterName' });
+        yield Actions.navigate({
+          key: 'RegisterName',
+          routeName: 'RegisterName',
+        });
       } else if (!currentUserProfile.birthday) {
-        yield Actions.navigate({ routeName: 'RegisterBirthday' });
+        yield Actions.navigate({
+          key: 'RegisterBirthday',
+          routeName: 'RegisterBirthday',
+        });
       } else if (!currentUserProfile.mainPhoto) {
-        yield Actions.navigate({ routeName: 'RegisterMakePhotoSelfie' });
+        yield Actions.navigate({
+          key: 'RegisterMakePhotoSelfie',
+          routeName: 'RegisterMakePhotoSelfie',
+        });
       } else {
-        yield Actions.navigate({ routeName: 'RegisterProfile' });
+        yield Actions.navigate({
+          key: 'RegisterProfile',
+          routeName: 'RegisterProfile',
+        });
       }
 
       // yield Actions.navigate({
@@ -83,7 +98,10 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
       // });
     } else {
       yield put({ type: 'AUTH_SHOW_LOGIN_SCREEN' }); // TODO: remove
-      yield Actions.navigate({ routeName: 'Login' });
+      yield Actions.navigate({
+        key: 'Login',
+        routeName: 'Login',
+      });
     }
   } catch (error) {
     yield put({ type: 'AUTH_STATE_CHANGED_ERROR', payload: error });

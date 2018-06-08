@@ -58,7 +58,11 @@ class BirthdayScreen extends Component<Props, State> {
     if (this.navigationFlowType === 'editProfile') {
       this.props.navigation.goBack();
     } else {
-      this.props.navigation.navigate('RegisterMakePhotoSelfie', { photoType: 'profilePhoto' });
+      this.props.navigation.navigate({
+        key: 'RegisterMakePhotoSelfie',
+        routeName: 'RegisterMakePhotoSelfie',
+        params: { photoType: 'profilePhoto' },
+      });
     }
   }
 

@@ -7,6 +7,7 @@ import {
   PROFILE_PHOTOS_STORAGE_PATH,
 } from '../constants';
 
+// TODO: watch for Cloud function to finish its task and fire proper actions / update reducers
 export default function* uploadPhotosSaga() {
   const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
   if (!isUserAuthenticated) { // user must be authorized
