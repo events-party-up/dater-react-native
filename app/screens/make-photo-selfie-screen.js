@@ -70,6 +70,9 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
       });
     }
     this.photoType = this.props.navigation.getParam('photoType');
+    if (!this.photoType) {
+      throw new Error('Empty photoType navigation route param!');
+    }
   }
 
   onCameraReady = () => {

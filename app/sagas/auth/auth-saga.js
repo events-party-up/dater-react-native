@@ -85,13 +85,17 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
         yield Actions.navigate({
           key: 'RegisterMakePhotoSelfie',
           routeName: 'RegisterMakePhotoSelfie',
+          params: { photoType: 'profilePhoto' },
         });
       } else {
         // yield Actions.popToTop(); // TODO: this does not work for some reason
         // yield Actions.back(null);
-        yield Actions.navigate({
-          key: 'RegisterProfile',
+        Actions.navigate({
+          key: 'EditProfile',
           routeName: 'RegisterProfile',
+          params: {
+            navigationFlowType: 'mapViewModal',
+          },
         });
       }
     } else {

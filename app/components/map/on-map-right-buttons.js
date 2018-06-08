@@ -87,7 +87,7 @@ class OnMapRightButtons extends Component<Props> {
       key: 'EditProfile',
       routeName: 'RegisterProfile',
       params: {
-        navigationFlowType: 'editProfile',
+        navigationFlowType: 'mapViewModal',
       },
     });
   }

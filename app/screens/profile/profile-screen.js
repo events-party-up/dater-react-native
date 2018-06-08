@@ -34,7 +34,13 @@ type Props = {
 };
 
 class ProfileScreen extends Component<Props> {
-  onPress = () => {
+  navigationFlowType;
+
+  componentWillMount() {
+    this.navigationFlowType = this.props.navigation.getParam('navigationFlowType');
+  }
+
+  onClosePress = () => {
     this.props.navigation.popToTop();
     this.props.navigation.goBack(null);
   }
@@ -63,8 +69,10 @@ class ProfileScreen extends Component<Props> {
       <DaterModal
         fullscreen
         style={styles.modal}
-        confirmButtonPress={this.onPress}
-        confirmButton
+        confirmButtonPress={this.onClosePress}
+        confirmButton={this.navigationFlowType !== 'mapViewModal'}
+        closeButtonPress={this.onClosePress}
+        closeButton={this.navigationFlowType === 'mapViewModal'}
       >
         <ScrollView
           style={styles.scrollViewContainer}
