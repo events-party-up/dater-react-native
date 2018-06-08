@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect, Dispatch } from 'react-redux';
 import {
   StyleSheet,
   Image,
   ScrollView,
   View,
+  TouchableOpacity,
 } from 'react-native';
 import ImageLoad from 'react-native-image-placeholder';
 
@@ -18,6 +19,8 @@ import { calculateAgeFrom, ageWithTextPostfix } from '../../utils/date-utils';
 import CardInfoItemMolecule from '../../components/ui-kit/molecules/card-info-item-molecule';
 import EditCardItemAtom from '../../components/ui-kit/atoms/edit-card-item-atom';
 
+const signOutIcon = require('../../assets/icons/sign-out/sign-out.png');
+
 const mapStateToProps = (state) => ({
   uploadPhotos: state.uploadPhotos,
   currentUser: state.currentUser,
@@ -27,6 +30,7 @@ type Props = {
   navigation: any,
   currentUser: PrivateUserRecord,
   uploadPhotos: any,
+  dispatch: Dispatch,
 };
 
 class ProfileScreen extends Component<Props> {
@@ -43,6 +47,14 @@ class ProfileScreen extends Component<Props> {
         navigationFlowType: 'editProfile',
         photoType: 'profilePhoto',
       },
+    });
+  }
+
+  onPressLogout = () => {
+    this.props.navigation.popToTop();
+    this.props.navigation.goBack(null);
+    this.props.dispatch({
+      type: 'AUTH_SIGNOUT',
     });
   }
 
@@ -103,6 +115,24 @@ class ProfileScreen extends Component<Props> {
           >
             Сменить фото
           </DaterButton>
+          <TouchableOpacity
+            onPress={this.onPressLogout}
+            style={{
+              width: 24,
+              height: 24,
+              position: 'absolute',
+              top: 32,
+              right: 8,
+            }}
+          >
+            <Image
+              style={{
+                width: 24,
+                height: 24,
+              }}
+              source={signOutIcon}
+            />
+          </TouchableOpacity>
 
           <H2 style={styles.header}>
             {this.props.currentUser.name} {' '}
@@ -117,7 +147,8 @@ class ProfileScreen extends Component<Props> {
                   params: { navigationFlowType: 'editProfile' },
                 })}
             />
-            {ageWithTextPostfix(calculateAgeFrom(this.props.currentUser.birthday), ['год', 'года', 'лет'])} {' '}
+            {this.props.currentUser.birthday &&
+              ageWithTextPostfix(calculateAgeFrom(this.props.currentUser.birthday), ['год', 'года', 'лет'])} {' '}
             <EditCardItemAtom
               style={{
                 padding: 4,

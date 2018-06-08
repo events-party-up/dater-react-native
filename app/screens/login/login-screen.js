@@ -12,6 +12,7 @@ import { H1, Body, Caption2 } from '../../components/ui-kit/typography';
 import { width } from '../../constants';
 
 const bgImage = require('../../assets/images/login-screen/login-selfie.jpg');
+const signInIcon = require('../../assets/icons/sign-in/sign-in.png');
 
 type Props = {
   navigation: any,
@@ -44,6 +45,7 @@ export default class LoginScreen extends React.Component<Props> {
               style={styles.button}
               onPress={() => this.props.navigation.navigate({ key: 'PhoneNumber', routeName: 'PhoneNumber' })}
               type="secondary"
+              leftIconImage={signInIcon}
             >
               Войти
             </DaterButton>

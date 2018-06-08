@@ -36,7 +36,7 @@ export default class UploadPhotoScreen extends Component<Props> {
         <H2 style={styles.header}>Загрузи фото</H2>
         <Body style={styles.subHeader}>Выбери портрет{'\n'}хорошего качества</Body>
         <DaterButton
-          onPress={() => this.props.navigation.navigate('RegisterProfile')}
+          onPress={() => this.props.navigation.navigate({ key: 'RegisterProfile', routeName: 'RegisterProfile' })}
           style={styles.button}
         >
           Загрузить

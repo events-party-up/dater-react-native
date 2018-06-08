@@ -3,10 +3,9 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { connect, Dispatch } from 'react-redux';
+import { connect } from 'react-redux';
 
 import DaterMapView from '../components/dater-map-view';
-import DaterButton from '../components/ui-kit/atoms/dater-button';
 import MapPanelComponent from '../components/map-panel/map-panel-component';
 import OnMapRightButtons from '../components/map/on-map-right-buttons';
 import { GeoCompass, GeoCoordinates } from '../types';
@@ -17,20 +16,12 @@ const mapStateToProps = (state) => ({
 });
 
 type Props = {
-  dispatch: Dispatch,
   navigation: any,
   compass: GeoCompass,
   location: GeoCoordinates,
-  auth: any,
 };
 
 class MainScreen extends Component<Props> {
-  signOut = async () => {
-    this.props.dispatch({
-      type: 'AUTH_SIGNOUT',
-    });
-  }
-
   render() {
     return (
       <View style={styles.mainContainer}>
@@ -65,14 +56,6 @@ class MainScreen extends Component<Props> {
           >
             UI Kit
           </DaterButton> */}
-          {this.props.auth.isAuthenticated &&
-            <DaterButton
-              style={styles.button}
-              onPress={this.signOut}
-            >
-              Выйти
-            </DaterButton>
-          }
         </View>
       </View>
     );

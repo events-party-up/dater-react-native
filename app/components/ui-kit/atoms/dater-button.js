@@ -18,6 +18,7 @@ type Props = {
   type: 'secondary' | 'text',
   xpReward: number,
   coinReward: number,
+  leftIconImage: any,
   onPress: () => void,
   onDisabledPress: () => void,
   style: typeof StyleSheet,
@@ -103,6 +104,12 @@ export default class DaterButton extends React.Component<Props> {
         flexDirection: 'row',
         marginLeft: 16,
       },
+      leftIcon: {
+        position: 'absolute',
+        left: 16,
+        width: 16,
+        height: 16,
+      },
     });
   }
 
@@ -138,6 +145,12 @@ export default class DaterButton extends React.Component<Props> {
         }}
       >
         <View style={this.styles.textContainer}>
+          {this.props.leftIconImage &&
+            <Image
+              style={this.styles.leftIcon}
+              source={this.props.leftIconImage}
+            />
+          }
           {this.props.xpReward && (
             <View style={this.styles.rewardContainer}>
               <View style={this.styles.xpContainer}>
