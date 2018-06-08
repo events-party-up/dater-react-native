@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Image,
   Alert,
+  Keyboard,
 } from 'react-native';
 
 import DaterTextInput from '../../components/ui-kit/atoms/dater-text-input';
@@ -16,10 +17,12 @@ const phoneIcon = require('../../assets/icons/phone/phone.png');
 
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
+  wrongPhoneNumber: state.auth.wrongPhoneNumber,
 });
 
 type State = {
   isNumberValid: boolean,
+  inProgress: boolean,
 }
 
 type Props = {
@@ -39,12 +42,22 @@ class PhoneNumberScreen extends Component<Props, State> {
 
     this.state = {
       isNumberValid: false,
+      inProgress: false,
     };
   }
 
   componentDidMount() { // TODO: temporary route guard
     if (this.props.isAuthenticated) {
       this.props.navigation.navigate({ key: 'RegisterGender', routeName: 'RegisterGender' });
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.wrongPhoneNumber) {
+      this.setState({
+        isNumberValid: false,
+        inProgress: false,
+      });
     }
   }
 
@@ -58,7 +71,11 @@ class PhoneNumberScreen extends Component<Props, State> {
     } else {
       this.phoneNumberFinal = `+${this.phoneNumberOnlyNumbers}`;
     }
+    Keyboard.dismiss();
     this.props.dispatch({ type: 'AUTH_PHONE_NUMBER_VERIFY', payload: { phoneNumber: this.phoneNumberFinal } });
+    this.setState({
+      inProgress: true,
+    });
   }
 
   onChangeInput = (phoneNumber) => {
@@ -92,7 +109,7 @@ class PhoneNumberScreen extends Component<Props, State> {
         style={styles.modal}
       >
         <ScrollView
-          keyboardShouldPersistTaps="handled"
+          keyboardShouldPersistTaps="handled" // if 'none' the button's first action will dismiss keyboard, instead of submitting
           scrollEnabled={false}
           style={styles.scrollView}
           contentContainerStyle={styles.scrollViewContainer}
@@ -113,10 +130,11 @@ class PhoneNumberScreen extends Component<Props, State> {
           />
           <DaterButton
             onPress={this.onPhoneSubmit}
-            disabled={!this.state.isNumberValid}
+            disabled={!this.state.isNumberValid || this.state.inProgress}
             onDisabledPress={this.onInvalidPhoneSubmit}
+            inProgress={this.state.inProgress}
           >
-            Далее
+            {this.state.inProgress ? 'Отправка СМС...' : 'Далее'}
           </DaterButton>
         </ScrollView>
       </DaterModal>

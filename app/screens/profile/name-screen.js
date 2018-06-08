@@ -55,13 +55,15 @@ class NameScreen extends Component<Props, State> {
   }
 
   onInvalidNameSubmit = () => {
-    Alert.alert(
-      'Будь внимательней!',
-      'Введи свое настоящее имя, от 2х символов',
-      [
-        { text: 'Исправлюсь!' },
-      ],
-    );
+    if (this.navigationFlowType !== 'editProfile') {
+      Alert.alert(
+        'Будь внимательней!',
+        'Введи свое настоящее имя, от 2х символов',
+        [
+          { text: 'Исправлюсь!' },
+        ],
+      );
+    }
   }
 
   onChangeText = (name) => {
@@ -97,7 +99,7 @@ class NameScreen extends Component<Props, State> {
             onChangeText={this.onChangeText}
             maxLength={15}
             initialValue={this.props.name}
-            autoFocus
+            autoFocus={this.navigationFlowType !== 'editProfile'}
           />
           <DaterButton
             onPress={this.onNameSubmit}

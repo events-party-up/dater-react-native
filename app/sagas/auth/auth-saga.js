@@ -89,13 +89,6 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
           routeName: 'RegisterProfile',
         });
       }
-
-      // yield Actions.navigate({
-      //   routeName: 'RegisterMakePhotoSelfie',
-      //   params: {
-      //     photoType: 'profilePhoto',
-      //   },
-      // });
     } else {
       yield put({ type: 'AUTH_SHOW_LOGIN_SCREEN' }); // TODO: remove
       yield Actions.navigate({

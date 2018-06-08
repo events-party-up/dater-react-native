@@ -14,11 +14,13 @@ import { H2 } from '../../components/ui-kit/typography';
 
 const smsCodeIcon = require('../../assets/icons/sms-code/sms-code.png');
 
-const mapStateToProps = () => ({
+const mapStateToProps = (state) => ({
+  wrongSmsCode: state.auth.wrongSmsCode,
 });
 
 type State = {
   isCodeValid: boolean,
+  inProgress: boolean,
 }
 
 type Props = {
@@ -28,17 +30,31 @@ type Props = {
 
 class SmsCodeScreen extends Component<Props, State> {
   smsCode: string;
+  textInput: any;
 
   constructor(props) {
     super(props);
 
     this.state = {
       isCodeValid: false,
+      inProgress: false,
     };
   }
 
-  isCodeValid() {
-    return this.smsCode.length === 6;
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.wrongSmsCode) {
+      this.textInput.textInput.clear();
+      this.setState({
+        isCodeValid: false,
+        inProgress: false,
+      });
+      this.smsCode = '';
+    }
+  }
+
+  backButtonPress = () => {
+    this.props.navigation.goBack();
+    this.props.dispatch({ type: 'AUTH_PHONE_NUMBER_SMS_CODE_SCREEN_BACK_BUTTON' });
   }
 
   onChangeInput = (smsCode) => {
@@ -48,7 +64,14 @@ class SmsCodeScreen extends Component<Props, State> {
     });
   }
 
+  isCodeValid() {
+    return this.smsCode.length === 6;
+  }
+
   onSmsCodeSubmit = () => {
+    this.setState({
+      inProgress: true,
+    });
     this.smsCode = this.smsCode.replace(/\D/g, ''); // remove non numbers
     this.props.dispatch({
       type:
@@ -69,11 +92,6 @@ class SmsCodeScreen extends Component<Props, State> {
     );
   }
 
-  backButtonPress = () => {
-    this.props.navigation.goBack();
-    this.props.dispatch({ type: 'AUTH_PHONE_NUMBER_SMS_CODE_SCREEN_BACK_BUTTON' });
-  }
-
   render() {
     return (
       <DaterModal
@@ -83,7 +101,7 @@ class SmsCodeScreen extends Component<Props, State> {
         style={styles.modal}
       >
         <ScrollView
-          keyboardShouldPersistTaps="handled"
+          keyboardShouldPersistTaps="handled" // if 'none' the button's first action will dismiss keyboard, instead of submitting
           scrollEnabled={false}
           style={styles.scrollView}
           contentContainerStyle={styles.scrollViewContainer}
@@ -94,6 +112,7 @@ class SmsCodeScreen extends Component<Props, State> {
           />
           <H2 style={styles.header}>Введи код из SMS</H2>
           <DaterTextInput
+            ref={(component) => { this.textInput = component; }}
             placeholder="XXXXXX"
             keyboardType="numeric"
             returnKeyType="go"
@@ -104,10 +123,11 @@ class SmsCodeScreen extends Component<Props, State> {
           />
           <DaterButton
             onPress={this.onSmsCodeSubmit}
-            disabled={!this.state.isCodeValid}
+            disabled={!this.state.isCodeValid || this.state.inProgress}
             onDisabledPress={this.onInvalidCodeSubmit}
+            inProgress={this.state.inProgress}
           >
-            Далее
+            {this.state.inProgress ? 'Проверка...' : 'Далее'}
           </DaterButton>
         </ScrollView>
       </DaterModal>

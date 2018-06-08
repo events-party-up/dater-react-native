@@ -1,7 +1,8 @@
 import { take, cancel, takeEvery, put, fork } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
-import { eventChannel } from 'redux-saga';
+import { eventChannel, delay } from 'redux-saga';
 import { Alert } from 'react-native';
+// import { StackActions, NavigationActions } from 'react-navigation';
 
 import { Actions } from '../../navigators/navigator-actions';
 
@@ -10,7 +11,6 @@ export default function* authPhoneSaga() {
     const startAction = yield take('AUTH_PHONE_NUMBER_VERIFY');
     const authPhoneChannel = yield createAuthPhoneChannel(startAction.payload.phoneNumber);
     const authPhoneStateChannel = yield takeEvery(authPhoneChannel, authPhoneStatesSaga);
-
     const task1 = yield fork(authPhoneCodeSentSaga);
 
     const stopAction = yield take([
@@ -26,7 +26,9 @@ export default function* authPhoneSaga() {
         key: 'GenderScreen',
         routeName: 'GenderScreen',
       });
-    } else if (stopAction.type !== 'AUTH_PHONE_NUMBER_SMS_CODE_SCREEN_BACK_BUTTON') {
+    } else if (
+      stopAction.type !== 'AUTH_PHONE_NUMBER_SMS_CODE_SCREEN_BACK_BUTTON'
+    ) {
       Alert.alert(
         'Что то пошло не так',
         stopAction.payload ? stopAction.payload.nativeErrorMessage : '',
@@ -44,7 +46,8 @@ export default function* authPhoneSaga() {
 
 function* authPhoneCodeSentSaga() {
   const codeSentAction = yield take('AUTH_PHONE_NUMBER_CODE_SENT');
-  yield Actions.navigate({ routeName: 'SmsCode' });
+  yield delay(2000); // artificial delay, so users wait a bit for SMS to come
+  yield Actions.navigate({ key: 'SmsCode', routeName: 'SmsCode' });
   const { verificationId } = codeSentAction.payload;
   yield takeEvery('AUTH_PHONE_NUMBER_SMS_CODE_SUBMITTED', authPhoneCodeSubmittedSaga, verificationId);
 }
@@ -72,7 +75,7 @@ function* authPhoneCodeSubmittedSaga(verificationId, action) {
 
 function* authPhoneStatesSaga(phoneAuthSnapshot) {
   try {
-    // yield console.log(phoneAuthSnapshot);
+    yield console.log(phoneAuthSnapshot);
 
     // How you handle these state events is entirely up to your ui flow and whether
     // you need to support both ios and android. In short: not all of them need to

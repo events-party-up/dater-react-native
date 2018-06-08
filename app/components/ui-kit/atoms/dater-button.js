@@ -4,6 +4,7 @@ import {
   View,
   TouchableHighlight,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import * as _ from 'lodash';
 
@@ -22,6 +23,7 @@ type Props = {
   style: typeof StyleSheet,
   children: any,
   disabled: boolean,
+  inProgress: boolean,
 }
 
 export default class DaterButton extends React.Component<Props> {
@@ -61,6 +63,10 @@ export default class DaterButton extends React.Component<Props> {
     }
 
     this.styles = StyleSheet.create({
+      activityIndicator: {
+        position: 'absolute',
+        right: 8,
+      },
       button: {
         width: 216,
         height: 48,
@@ -158,6 +164,12 @@ export default class DaterButton extends React.Component<Props> {
           <H3 buttonText color={this.buttonTextColor} align="center">
             {this.props.children.toUpperCase()}
           </H3>
+          {this.props.inProgress &&
+            <ActivityIndicator
+              style={this.styles.activityIndicator}
+              color={this.props.type === 'secondary' ? 'gray' : 'white'}
+            />
+          }
         </View>
       </TouchableHighlight>
     );

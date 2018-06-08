@@ -39,7 +39,10 @@ class ProfileScreen extends Component<Props> {
     this.props.navigation.navigate({
       key: 'EditProfilePhoto',
       routeName: 'RegisterMakePhotoSelfie',
-      params: { navigationFlowType: 'editProfile' },
+      params: {
+        navigationFlowType: 'editProfile',
+        photoType: 'profilePhoto',
+      },
     });
   }
 
