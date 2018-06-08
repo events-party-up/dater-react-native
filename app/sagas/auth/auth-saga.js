@@ -67,6 +67,9 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
         yield Actions.navigate({
           key: 'RegisterGender',
           routeName: 'RegisterGender',
+          params: {
+            navigationFlowType: 'register',
+          },
         });
       } else if (!currentUserProfile.name) {
         yield Actions.navigate({
