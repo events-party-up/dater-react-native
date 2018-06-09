@@ -63,6 +63,16 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
       const currentUserSignInAction = yield take('CURRENT_USER_SIGN_IN'); // temp
       const currentUserProfile = currentUserSignInAction.payload;
 
+      yield firebase.firestore()
+        .collection(GEO_POINTS_COLLECTION)
+        .doc(userInFirebaseAuthState.uid)
+        .update({
+          gender: currentUserProfile.gender,
+          name: currentUserProfile.name,
+          birthday: currentUserProfile.birthday,
+          mainPhoto: currentUserProfile.mainPhoto,
+        });
+
       if (!currentUserProfile.gender) {
         yield Actions.navigate({
           key: 'RegisterGender',

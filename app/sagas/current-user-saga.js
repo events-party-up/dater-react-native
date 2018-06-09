@@ -2,7 +2,7 @@ import { put, takeEvery, select, take, cancel, takeLatest } from 'redux-saga/eff
 import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
 
-import { CURRENT_USER_COLLECTION } from '../constants';
+import { CURRENT_USER_COLLECTION, GEO_POINTS_COLLECTION } from '../constants';
 
 export default function* currentUserSaga() {
   // yield takeEvery('AUTH_SUCCESS', currentUserSignIn);
@@ -58,6 +58,13 @@ function* currentUserSetProfileFieldSaga(action) {
 
   yield firebase.firestore()
     .collection(CURRENT_USER_COLLECTION)
+    .doc(myUid)
+    .update({
+      ...fields,
+    });
+
+  yield firebase.firestore()
+    .collection(GEO_POINTS_COLLECTION)
     .doc(myUid)
     .update({
       ...fields,
