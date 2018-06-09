@@ -1,4 +1,4 @@
-import { put, throttle, takeEvery, select } from 'redux-saga/effects';
+import { put, takeEvery, select } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 
 import GeoUtils from '../../utils/geo-utils';
@@ -12,7 +12,6 @@ import {
 
 export default function* microDateUserMovementsSaga() {
   try {
-    yield throttle(3000, 'MICRO_DATE_MY_MOVE', microDateUserMovementsMyMoveSaga);
     yield takeEvery('MICRO_DATE_TARGET_MOVE', microDateUserMovementsTargetMoveSaga);
     yield takeEvery([
       'MICRO_DATE_OUTGOING_STARTED',
@@ -40,19 +39,29 @@ function* microDateUserMovementsOnOutgoingStartedSaga() {
     });
 }
 
-function* microDateUserMovementsMyMoveSaga(action) {
+export function* microDateUserMovementsMyMoveSaga(newCoords) {
   try {
-    // yield console.log('handleMyMoveSaga', action);
     const microDate = yield select((state) => state.microDate);
+    const isMicroDateEnabled = yield select((state) => state.microDate.enabled);
+
+    if (!isMicroDateEnabled) return;
+
+    yield put({
+      type: 'MICRO_DATE_MY_MOVE',
+      payload: {
+        latitude: newCoords.latitude,
+        longitude: newCoords.longitude,
+        accuracy: newCoords.accuracy,
+        clientTS: new Date(),
+      },
+    });
+
     const myUid = yield select((state) => state.auth.uid);
     const myUidDB = myUid.substring(0, 8);
-    const newCoords = action.payload;
     const myPreviousCoords = yield select((state) => state.microDate.myPreviousCoords);
 
-    yield* checkDistance(microDate, newCoords, microDate.targetCurrentCoords);
-
     if (myPreviousCoords) {
-      const timeDelta = (newCoords.clientTS - myPreviousCoords.clientTS) / 1000; // in seconds
+      const timeDelta = (new Date() - myPreviousCoords.clientTS) / 1000; // in seconds
       const distanceDelta = GeoUtils.distance(myPreviousCoords, newCoords);
       const velocity = Math.floor(distanceDelta / timeDelta); // in seconds
 
@@ -71,7 +80,7 @@ function* microDateUserMovementsMyMoveSaga(action) {
           velocity,
           geoPoint: new firebase.firestore.GeoPoint(newCoords.latitude, newCoords.longitude),
           serverTS: firebase.firestore.FieldValue.serverTimestamp(),
-          clientTS: newCoords.clientTS,
+          clientTS: new Date(),
           heading: GeoUtils.getBearing(myPreviousCoords, newCoords),
         });
     }
@@ -79,7 +88,7 @@ function* microDateUserMovementsMyMoveSaga(action) {
     let myScore = yield select((state) => state.microDate.myScore);
     const targetPreviousCoords = yield select((state) => state.microDate.targetPreviousCoords);
 
-    if (targetPreviousCoords) {
+    if (targetPreviousCoords && myPreviousCoords) {
       const currentDistanceFromOpponent = GeoUtils.distance(newCoords, targetPreviousCoords);
       const pastDistanceFromOpponent = GeoUtils.distance(myPreviousCoords, targetPreviousCoords);
       const opponentDistanceDelta = pastDistanceFromOpponent - currentDistanceFromOpponent;
@@ -103,6 +112,8 @@ function* microDateUserMovementsMyMoveSaga(action) {
         myScore,
       },
     });
+
+    yield* checkDistance(microDate, newCoords, microDate.targetCurrentCoords);
   } catch (error) {
     yield put({ type: 'MICRO_DATE_USER_MOVEMENTS_HANDLE_MY_MOVE_ERROR', payload: error });
   }
@@ -116,7 +127,9 @@ function* microDateUserMovementsTargetMoveSaga(action) {
 }
 
 function* checkDistance(microDate, myCoords, targetCoords) {
-  if (!microDate.targetCurrentCoords) {
+  const appState = yield select((state) => state.appState.state);
+
+  if (!microDate.targetCurrentCoords || appState !== 'active') {
     return;
   }
 

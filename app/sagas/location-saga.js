@@ -3,10 +3,14 @@ import { eventChannel } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 
-import BackgroundGeolocation from '../services/background-geolocation';
+import {
+  USERS_AROUND_SEARCH_RADIUS_KM,
+  GEO_POINTS_COLLECTION,
+} from '../constants';
 import { getFirestore } from '../utils/firebase-utils';
+import { microDateUserMovementsMyMoveSaga } from './micro-date/micro-date-user-movements-saga';
 import GeoUtils from '../utils/geo-utils';
-import { USERS_AROUND_SEARCH_RADIUS_KM, GEO_POINTS_COLLECTION } from '../constants';
+import BackgroundGeolocation from '../services/background-geolocation';
 
 export default function* locationSaga() {
   try {
@@ -78,24 +82,12 @@ function* startGeoLocationOnInit() {
 
 function* locationUpdatedSaga(action) {
   const isCentered = yield select((state) => state.mapView.centered);
-  const isMicroDateEnabled = yield select((state) => state.microDate.enabled);
   const currentCoords = action.payload;
   const firstCoords = yield select((state) => state.location.firstCoords);
   const appState = yield select((state) => state.appState.state);
 
   if (isCentered && appState === 'active') {
     yield* setCamera(action);
-  }
-  if (isMicroDateEnabled) {
-    yield put({
-      type: 'MICRO_DATE_MY_MOVE',
-      payload: {
-        latitude: currentCoords.latitude,
-        longitude: currentCoords.longitude,
-        accuracy: currentCoords.accuracy,
-        clientTS: new Date(),
-      },
-    });
   }
   if (!firstCoords || !currentCoords) return;
 
@@ -136,6 +128,7 @@ function* updateLocation(coords) {
       payload: coords,
     });
     yield* writeCoordsToFirestore(coords);
+    yield* microDateUserMovementsMyMoveSaga(coords);
   } else if (coords.error) {
     yield put({
       type: 'GEO_LOCATION_UPDATE_CHANNEL_ERROR',
@@ -202,4 +195,3 @@ function createLocationChannel() {
     return unsubscribe;
   });
 }
-
