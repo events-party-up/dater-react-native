@@ -16,7 +16,7 @@ export default function* mapPanelSagaNew() {
         'MICRO_DATE_INCOMING_REQUEST',
         'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
         'MICRO_DATE_INCOMING_CANCELLED',
-        'MICRO_DATE_INCOMING_ACCEPT',
+        'MICRO_DATE_INCOMING_START',
         'MICRO_DATE_OUTGOING_ACCEPT',
         'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
         'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
@@ -110,6 +110,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
           payload: {
             mode: 'outgoingMicroDateAwaitingAccept',
             canHide: false,
+            targetUser,
             microDate: {
               id: nextAction.payload.id,
               requestFor: nextAction.payload.requestFor,
@@ -150,12 +151,13 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
           },
         });
         break;
-      case 'MICRO_DATE_INCOMING_ACCEPT':
+      case 'MICRO_DATE_INCOMING_START':
         yield put({
           type: 'UI_MAP_PANEL_SET_MODE',
           payload: {
             canHide: true,
             mode: 'activeMicroDate',
+            targetUser,
             distance: GeoUtils.distance(targetUserSnap.data().geoPoint, myCoords),
           },
         });
@@ -165,6 +167,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
           type: 'UI_MAP_PANEL_SET_MODE',
           payload: {
             mode: 'activeMicroDate',
+            targetUser,
             canHide: true,
             distance: GeoUtils.distance(targetUserSnap.data().geoPoint, myCoords),
           },
