@@ -100,7 +100,7 @@ const microDateReducer = (state = initialState, action) => {
         id: payload.microDateId,
         myPreviousCoords: {
           ...payload.myCoords,
-          clientTS: Date.now(),
+          clientTS: new Date(),
         },
         targetCurrentCoords: payload.targetUser.geoPoint,
       };

@@ -40,7 +40,6 @@ class PastLocationsPath extends React.Component<Props, State> {
     },
   });
 
-
   queryUnsubscribe;
   pastLocations = [];
 
@@ -48,7 +47,7 @@ class PastLocationsPath extends React.Component<Props, State> {
     const pastLocationsQuery = firebase.firestore()
       .collection(MICRO_DATES_COLLECTION)
       .doc(this.props.microDateId)
-      .collection(`pastLocations_${this.props.uid.substring(0, 8)}`)
+      .collection(`${this.props.uid.substring(0, 8)}_pastLocations`)
       .orderBy('serverTS', 'desc')
       .limit(this.props.limit || 15);
 

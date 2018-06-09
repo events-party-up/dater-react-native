@@ -93,7 +93,7 @@ function* locationUpdatedSaga(action) {
         latitude: currentCoords.latitude,
         longitude: currentCoords.longitude,
         accuracy: currentCoords.accuracy,
-        clientTS: Date.now(),
+        clientTS: new Date(),
       },
     });
   }
