@@ -14,6 +14,7 @@ import PastLocationsPath from './map/past-locations-path';
 import { Caption2 } from './ui-kit/typography';
 import MicroDateStats from './micro-date/micro-date-stats';
 import { MAX_VISIBLE_PAST_LOCATIONS } from '../constants';
+import MyLocationOnNonCenteredMap from './map/my-location-on-non-centered-map';
 
 const mapStateToProps = (state) => ({
   location: state.location,
@@ -128,7 +129,6 @@ class DaterMapView extends React.Component<Props> {
     }
   }
 
-
   render() {
     return (
       // <PanGestureHandler
@@ -149,12 +149,13 @@ class DaterMapView extends React.Component<Props> {
         <MyLocationOnCenteredMap
           accuracy={this.props.location.coords.accuracy}
           visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
-          moveHeadingAngle={this.props.location.moveHeadingAngle}
-          mapViewheadingAngle={this.props.mapView.headingAngle}
+          // heading={this.props.location.moveHeadingAngle}
+          // mapViewheadingAngle={this.props.mapView.headingAngle}
         />}
         <MapboxGL.MapView
           ref={(component) => { this.mapView = component; }}
-          showUserLocation={!this.props.mapView.centered && this.props.location.enabled}
+          // showUserLocation={!this.props.mapView.centered && this.props.location.enabled}
+          showUserLocation={false}
           // showUserLocation
           userTrackingMode={0}
           zoomLevel={17}
@@ -195,6 +196,13 @@ class DaterMapView extends React.Component<Props> {
           />
         }
           <UsersAroundComponent />
+          {this.props.location.coords && !this.props.mapView.centered &&
+            <MyLocationOnNonCenteredMap
+              moveHeadingAngle={this.props.location.moveHeadingAngle}
+              mapViewHeadingAngle={this.props.mapView.heading}
+              coords={this.props.location.coords}
+            />
+          }
         </MapboxGL.MapView>
         <View style={styles.debugView} pointerEvents="none">
           <Caption2 style={styles.debugText}>

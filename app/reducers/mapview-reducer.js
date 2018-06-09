@@ -24,7 +24,6 @@ const types = {
   MAPVIEW_MOVE_TO: 'MAPVIEW_MOVE_TO',
   MAPVIEW_MOVE_TO_ERROR: 'MAPVIEW_MOVE_TO_ERROR',
 
-
   MAPVIEW_SWITCH_VIEW_MODE_START: 'MAPVIEW_SWITCH_VIEW_MODE_START',
   MAPVIEW_SWITCH_VIEW_MODE_FINISH: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH',
   MAPVIEW_SWITCH_VIEW_MODE_ERROR: 'MAPVIEW_SWITCH_VIEW_MODE_ERROR',
@@ -113,7 +112,7 @@ const mapViewReducer = (state = initialState, action) => {
     case types.MAPVIEW_SHOW_MY_LOCATION_FINISH: {
       return {
         ...state,
-        centered: true,
+        // centered: true,
       };
     }
     case types.MAPVIEW_SWITCH_VIEW_MODE_FINISH: {
