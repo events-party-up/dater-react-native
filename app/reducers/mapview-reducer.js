@@ -112,7 +112,7 @@ const mapViewReducer = (state = initialState, action) => {
     case types.MAPVIEW_SHOW_MY_LOCATION_FINISH: {
       return {
         ...state,
-        // centered: true,
+        centered: true,
       };
     }
     case types.MAPVIEW_SWITCH_VIEW_MODE_FINISH: {

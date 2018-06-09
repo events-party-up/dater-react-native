@@ -2,10 +2,12 @@ import * as React from 'react';
 import {
   StyleSheet,
   View,
+  NativeEventEmitter,
 } from 'react-native';
 import { connect, Dispatch } from 'react-redux';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 // import { PanGestureHandler } from 'react-native-gesture-handler';
+import ReactNativeHeading from '@zsajjad/react-native-heading';
 
 import { GeoCoordinates } from '../types';
 import MyLocationOnCenteredMap from './map/my-location-on-centered-map';
@@ -64,9 +66,39 @@ type Props = {
   microDate: any,
 };
 
-class DaterMapView extends React.Component<Props> {
+type State = {
+  compassHeading: number,
+}
+
+class DaterMapView extends React.Component<Props, State> {
   mapView: MapboxGL.MapView;
   defZoomLevel = 17;
+  compassListener;
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      compassHeading: 0,
+    };
+  }
+
+  componentWillMount() {
+    this.compassListener = new NativeEventEmitter(ReactNativeHeading);
+    this.compassListener.addListener('headingUpdated', this.onCompassHeadingUpdated);
+  }
+
+  componentWillUnmount() {
+    this.compassListener.removeAllListeners('headingUpdated');
+    this.props.dispatch({
+      type: 'MAPVIEW_UNLOAD',
+    });
+  }
+
+  onCompassHeadingUpdated = (compassHeading) => {
+    this.setState({
+      compassHeading,
+    });
+  };
 
   onRegionDidChange = (event) => {
     // console.log('onRegionDidChange: ', event);
@@ -84,12 +116,6 @@ class DaterMapView extends React.Component<Props> {
         type: 'MAPVIEW_DRAG_START',
       });
     }
-  }
-
-  componentWillUnmount() {
-    this.props.dispatch({
-      type: 'MAPVIEW_UNLOAD',
-    });
   }
 
   onMapReady= () => {
@@ -117,16 +143,6 @@ class DaterMapView extends React.Component<Props> {
       type: 'MAPVIEW_DRAG_END',
       payload: event.nativeEvent,
     });
-  }
-
-  onGestureEvent = (event) => {
-    console.log('onGestureEvent: ', event.nativeEvent);
-    console.log('zoomChange: ', zoomChange(event.nativeEvent.velocityY));
-    // this.mapView.zoomTo(this.clampedZoom(event.nativeEvent.translationY, event.nativeEvent.velocityY), 0);
-
-    function zoomChange(velocityY) {
-      console.log(velocityY);
-    }
   }
 
   render() {
@@ -198,6 +214,7 @@ class DaterMapView extends React.Component<Props> {
           <UsersAroundComponent />
           {this.props.location.coords && !this.props.mapView.centered &&
             <MyLocationOnNonCenteredMap
+              compassHeading={this.state.compassHeading}
               moveHeadingAngle={this.props.location.moveHeadingAngle}
               mapViewHeadingAngle={this.props.mapView.heading}
               coords={this.props.location.coords}
@@ -247,7 +264,6 @@ const styles = StyleSheet.create({
   },
   mapView: {
     flex: 1,
-    // zIndex: -1,
   },
   debugView: {
     position: 'absolute',
@@ -268,7 +284,6 @@ const styles = StyleSheet.create({
     top: 40,
     right: 20,
     padding: 8,
-    // margin: 8,
     flex: 1,
     shadowColor: 'rgba(0, 0, 0, 0.1)',
     backgroundColor: '#ffffff',

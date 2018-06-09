@@ -14,6 +14,7 @@
     "@mapbox/react-native-mapbox-gl": "^6.1.2-beta",
     "@zsajjad/react-native-heading": "https://github.com/zsajjad/react-native-heading.git",
     "cloudinary-core": "^2.5.0",
+    "eventemitter3": "^2.0.3",
     "moment": "^2.21.0",
     "prop-types": "^15.6.1",
     "react": "^16.3.1",
