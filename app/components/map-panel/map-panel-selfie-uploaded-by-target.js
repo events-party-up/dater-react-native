@@ -6,7 +6,7 @@ import {
 
 import MapPanelStyles from './map-panel-styles';
 import { H2, Caption2 } from '../../components/ui-kit/typography';
-import DaterButton from '../../components/ui-kit/dater-button';
+import DaterButton from '../../components/ui-kit/atoms/dater-button';
 import cloudinaryUrl from '../../utils/cloudinary-utils';
 
 type Props = {

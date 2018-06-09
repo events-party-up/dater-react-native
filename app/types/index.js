@@ -1,6 +1,3 @@
-
-// import firebase from 'react-native-firebase';
-
 export type GeoCoordinates = {
   accuracy: number,
   altitude: number,
@@ -48,14 +45,15 @@ export type FireStoreGeoPoint = {
 }
 
 export type PhotoSelfie = {
+  publicId: string, // cloudinary Public Id
   cloudinaryUrl: string,
   width: number,
   height: number,
-  version: number,
+  version: number, // version of file in Cloudinary
   format: string,
   timestamp: Date,
   uploadedBy: string,
-  storageUrl: string,
+  storageUrl: string, // url in Firebase Storage
 };
 
 export type CloudinaryPhoto = {
@@ -71,3 +69,15 @@ export type PublicUserGeoPoint = {
   speed: number,
   timestamp: Date,
 }
+
+export type PrivateUserRecord = {
+  gender: 'male' | 'female',
+  name: string,
+  uid: string,
+  birthday: Date,
+  mainPhoto: PhotoSelfie,
+  phoneNumber: string,
+}
+
+export type PhotoType = 'microDateSelfie' | 'profilePhoto';
+

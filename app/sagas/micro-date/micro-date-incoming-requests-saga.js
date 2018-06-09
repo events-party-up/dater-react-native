@@ -243,7 +243,11 @@ function* incomingMicroDateFinishedSaga() {
     .update({
       [`${microDate.requestFor}_firstAlert`]: true,
     });
-  yield Actions.navigate({ routeName: 'MicroDate', params: { microDate } });
+  yield Actions.navigate({
+    key: 'MicroDate',
+    routeName: 'MicroDate',
+    params: { microDate },
+  });
   yield put({ type: 'MICRO_DATE_INCOMING_FINISHED' });
 }
 

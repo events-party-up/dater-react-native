@@ -1,12 +1,16 @@
 import { put, select, call, take, takeEvery, cancel } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
+import * as _ from 'lodash';
+
 import GeoUtils from '../utils/geo-utils';
 
 import {
   USERS_AROUND_SEARCH_RADIUS_KM,
   USERS_AROUND_SHOW_LAST_SEEN_HOURS_AGO,
   GEO_POINTS_COLLECTION,
+  USERS_AROUND_PUBLIC_UPDATE_INTERVAL,
+  USERS_AROUND_MICRODATE_UPDATE_INTERVAL,
 } from '../constants';
 
 const ONE_HOUR = 1000 * 60 * 60;
@@ -129,7 +133,7 @@ function* updateMicroDate(targetUser) {
   }
 }
 
-function createAllUsersAroundChannel(userCoords, currentUser) {
+async function createAllUsersAroundChannel(userCoords, currentUser) {
   const queryArea = {
     center: {
       latitude: userCoords.latitude,
@@ -147,30 +151,23 @@ function createAllUsersAroundChannel(userCoords, currentUser) {
     .where(geoPointPath, '>', lesserGeopoint)
     .where(geoPointPath, '<', greaterGeopoint)
     .where('visibility', '==', 'public');
+  let firstSnapshot = true;
 
   return eventChannel((emit) => {
-    const onSnapshotUpdated = (snapshot) => {
-      if (snapshot.metadata.hasPendingWrites) { // do not process local updates triggered by local writes
+    const throttledEmit = _.throttle(emit, USERS_AROUND_PUBLIC_UPDATE_INTERVAL);
+
+    const onSnapshotUpdated = (snapShots) => {
+      if (firstSnapshot) { // emit results immediately if its first result of query
+        firstSnapshot = false;
+        throttledEmit(filterSnapshots(snapShots));
+      }
+
+      if (snapShots.metadata.hasPendingWrites) { // do not process local updates triggered by local writes
         return;
       }
 
-      const usersAround = [];
-      snapshot.forEach((userSnapshot) => {
-        const userData = userSnapshot.data();
-        userData.id = userSnapshot.id;
-
-        if (currentUser && userData.id === currentUser.uid) {
-          return;
-        } else if (Date.now() - new Date(userData.timestamp) > ONE_HOUR * USERS_AROUND_SHOW_LAST_SEEN_HOURS_AGO) {
-          // only show users with fresh timestamps
-          return;
-        }
-
-        userData.shortId = userSnapshot.id.substring(0, 4);
-        userData.distance = GeoUtils.distance(queryArea.center, userData[geoPointPath]);
-        usersAround.push(userData);
-      });
-      emit(usersAround);
+      const usersAround = filterSnapshots(snapShots);
+      throttledEmit(usersAround);
 
     //   snapshot.docChanges.forEach((change) => {
     //     if (change.type === 'added') {
@@ -193,10 +190,31 @@ function createAllUsersAroundChannel(userCoords, currentUser) {
         error,
       });
     };
+
     const unsubscribe = query.onSnapshot(onSnapshotUpdated, onError);
 
     return unsubscribe;
   });
+
+  function filterSnapshots(snapShots) {
+    const filteredResults = [];
+
+    snapShots.forEach((userSnapshot) => {
+      const userData = userSnapshot.data();
+      userData.id = userSnapshot.id;
+
+      if (currentUser && userData.id === currentUser.uid) {
+        return;
+      } else if (Date.now() - new Date(userData.timestamp) > ONE_HOUR * USERS_AROUND_SHOW_LAST_SEEN_HOURS_AGO) {
+        // only show users with fresh timestamps
+        return;
+      }
+
+      userData.shortId = userSnapshot.id.substring(0, 4);
+      filteredResults.push(userData);
+    });
+    return filteredResults;
+  }
 }
 
 
@@ -207,26 +225,23 @@ function createMicroDateChannel(myCoords, currentUser, microDateState) {
 
   return eventChannel((emit) => {
     const onSnapshotUpdated = (snapshot) => {
-      if (snapshot.metadata.hasPendingWrites) { // do not process local updates triggered by local writes
-        return;
-      }
-
       const targetUser = snapshot.data();
       if (!targetUser) return;
 
       targetUser.id = snapshot.id;
       targetUser.shortId = snapshot.id.substring(0, 4);
-      targetUser.distance = GeoUtils.distance(myCoords, targetUser[geoPointPath]);
 
       emit(targetUser);
     };
+
+    const throttledOnSnapshotUpdated = _.throttle(onSnapshotUpdated, USERS_AROUND_MICRODATE_UPDATE_INTERVAL);
 
     const onError = (error) => {
       emit({
         error,
       });
     };
-    const unsubscribe = query.onSnapshot(onSnapshotUpdated, onError);
+    const unsubscribe = query.onSnapshot(throttledOnSnapshotUpdated, onError);
 
     return unsubscribe;
   });

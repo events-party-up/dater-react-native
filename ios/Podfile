@@ -14,6 +14,7 @@ target 'DaterReactNative' do
   pod 'Firebase/RemoteConfig'
   pod 'Firebase/Performance'
   pod 'Firebase/Storage'
+  pod 'Firebase/Messaging'
 
   pod 'yoga', path: "#{rn_path}/ReactCommon/yoga/yoga.podspec"
   pod 'React', path: rn_path, subspecs: [

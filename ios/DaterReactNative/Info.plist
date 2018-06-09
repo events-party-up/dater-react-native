@@ -9,7 +9,7 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -20,6 +20,17 @@
 	<string>1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.569828839948-ru1vmhhjd9m5tfmte2gpohckmh7ngr47</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -35,6 +46,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Taking selfie or adding photo to your profile.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Required to work with maps.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
@@ -43,11 +56,9 @@
 	<string>Required to work with maps.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>Required to work with location services.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Taking selfie or adding photo to your profile.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Add photos to your Dater profile.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Add photos to your Dater profile.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Add photos to your Dater profile.</string>
 	<key>UIAppFonts</key>
 	<array>

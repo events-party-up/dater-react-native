@@ -9,6 +9,7 @@ import mapPanelReducer from './map-panel-reducer';
 import microDateReducer from './micro-date-reducer';
 import appStateReducer from './app-state-reducer';
 import uploadPhotosReducer from './upload-photos-reducer';
+import currentUserReducer from './current-user-reducer';
 
 export const rootReducer = combineReducers({
   auth: authReducer,
@@ -20,6 +21,7 @@ export const rootReducer = combineReducers({
   microDate: microDateReducer,
   appState: appStateReducer,
   uploadPhotos: uploadPhotosReducer,
+  currentUser: currentUserReducer,
 });
 
 export default rootReducer;

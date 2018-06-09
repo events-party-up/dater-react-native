@@ -65,20 +65,22 @@ export default function* mapPanelSagaNew() {
 }
 
 function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
-  let userSnap = {};
+  let targetUserSnap = {};
   let targetUser;
 
   try {
     const microDateState = yield select((state) => state.microDate);
     const mapPanelState = yield select((state) => state.mapPanel);
     const myCoords = yield select((state) => state.location.coords);
+    const myUid = yield select((state) => state.auth.uid);
 
     if (microDateState.microDate) {
-      userSnap = yield microDateState.microDate.requestByRef.get();
+      const targetRefPath = myUid === microDateState.microDate.requestBy ? 'requestForRef' : 'requestByRef';
+      targetUserSnap = yield microDateState.microDate[targetRefPath].get();
       targetUser = {
-        id: userSnap.id,
-        shortId: userSnap.id.substring(0, 4),
-        ...userSnap.data(),
+        id: targetUserSnap.id,
+        shortId: targetUserSnap.id.substring(0, 4),
+        ...targetUserSnap.data(),
       };
     }
 
@@ -122,7 +124,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
           payload: {
             mode: 'incomingMicroDateRequest',
             targetUser,
-            distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
+            distance: GeoUtils.distance(targetUserSnap.data().geoPoint, myCoords),
             canHide: false,
             microDateId: microDateState.microDate.id,
           },
@@ -154,7 +156,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
           payload: {
             canHide: true,
             mode: 'activeMicroDate',
-            distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
+            distance: GeoUtils.distance(targetUserSnap.data().geoPoint, myCoords),
           },
         });
         break;
@@ -164,7 +166,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
           payload: {
             mode: 'activeMicroDate',
             canHide: true,
-            distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
+            distance: GeoUtils.distance(targetUserSnap.data().geoPoint, myCoords),
           },
         });
         break;

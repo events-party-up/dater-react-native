@@ -14,6 +14,14 @@
     "no-underscore-dangle": 0,
     "react/prop-types": 0,
     "no-console": 0,
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 1,
+        "maxEOF": 1,
+        "maxBOF": 0
+      }
+    ],
     "import/no-extraneous-dependencies": 0,
     "import/no-unresolved": [2, { "ignore": ["^react-native-maps"] }],
     "arrow-parens": [2, "always", {

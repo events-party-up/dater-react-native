@@ -28,9 +28,20 @@ export const USERS_AROUND_SHOW_LAST_SEEN_HOURS_AGO = 12;
 // Firebase
 export const MICRO_DATES_COLLECTION = 'microDates';
 export const GEO_POINTS_COLLECTION = 'geoPoints';
+export const CURRENT_USER_COLLECTION = 'users';
+export const PROFILE_PHOTOS_STORAGE_PATH = 'profilePhotos';
 
 // Micro Dates
 export const DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD = 30;
 
 // Cloudinary
 
+// Users around
+export const USERS_AROUND_PUBLIC_UPDATE_INTERVAL = 2000;
+export const USERS_AROUND_MICRODATE_UPDATE_INTERVAL = 1000;
+
+// Timeouts & Delays
+export const SEND_SMS_TIMEOUT = 15000;
+export const SEND_SMS_ARTIFICIAL_UI_DELAY = 2000;
+export const VERIFY_SMS_CODE_TIMEOUT = 10000;
+export const BUTTONS_ONPRESS_THROTTLE_THRESHOLD = 500;

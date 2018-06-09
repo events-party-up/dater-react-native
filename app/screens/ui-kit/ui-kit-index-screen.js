@@ -4,7 +4,7 @@ import {
   ScrollView,
 } from 'react-native';
 
-import DaterButton from '../../components/ui-kit/dater-button';
+import DaterButton from '../../components/ui-kit/atoms/dater-button';
 import DaterModal from '../../components/ui-kit/dater-modal';
 
 type Props = {

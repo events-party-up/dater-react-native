@@ -7,10 +7,12 @@ import { connect, Dispatch } from 'react-redux';
 
 import { GeoCoordinates, GeoCompass } from '../../types';
 import CircleButton from '../ui-kit/circle-button';
+import { Actions } from '../../navigators/navigator-actions';
 
 const myLocationIcon = require('../../assets/icons/my-location/48/my-location.png');
 const playIcon = require('../../assets/icons/play/play.png');
 const stopIcon = require('../../assets/icons/stop/stop.png');
+const myProfileIcon = require('../../assets/icons/my-profile/my-profile.png');
 // const rotateIcon = require('../../assets/icons/rotate-map/rotate-map.png');
 // const compassIcon = require('../../assets/icons/compass-colored/compass-colored.png');
 
@@ -80,6 +82,16 @@ class OnMapRightButtons extends Component<Props> {
     }
   }
 
+  onMyProfilePress = () => {
+    Actions.navigate({
+      key: 'EditProfile',
+      routeName: 'RegisterProfile',
+      params: {
+        navigationFlowType: 'mapViewModal',
+      },
+    });
+  }
+
   render() {
     return (
       <View style={styles.buttonContainer}>
@@ -95,6 +107,14 @@ class OnMapRightButtons extends Component<Props> {
           image={rotateIcon}
           size="medium"
         /> */}
+        {this.props.isAuthenticated &&
+          <CircleButton
+            style={[styles.button, { opacity: 0.8 }]}
+            onPress={this.onMyProfilePress}
+            image={myProfileIcon}
+            size="medium"
+          />
+        }
         {!this.props.microDateIsEnabled &&
           <CircleButton
             style={styles.button}
@@ -145,6 +165,7 @@ const styles = StyleSheet.create({
     right: 10,
     backgroundColor: 'transparent',
     alignItems: 'center',
+    zIndex: 1,
   },
 });
 
