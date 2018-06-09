@@ -13,8 +13,7 @@ const myLocationIcon = require('../../assets/icons/my-location/48/my-location.pn
 const playIcon = require('../../assets/icons/play/play.png');
 const stopIcon = require('../../assets/icons/stop/stop.png');
 const myProfileIcon = require('../../assets/icons/my-profile/my-profile.png');
-// const rotateIcon = require('../../assets/icons/rotate-map/rotate-map.png');
-// const compassIcon = require('../../assets/icons/compass-colored/compass-colored.png');
+const rotateIcon = require('../../assets/icons/rotate-map/rotate-map.png');
 
 type Props = {
   dispatch: Dispatch,
@@ -95,18 +94,12 @@ class OnMapRightButtons extends Component<Props> {
   render() {
     return (
       <View style={styles.buttonContainer}>
-        {/* <CircleButton
-          style={styles.button}
-          onPress={this.toggleCompass}
-          image={compassIcon}
-          size="medium"
-        /> */}
-        {/* <CircleButton
+        <CircleButton
           style={styles.button}
           onPress={this.rotateMap}
           image={rotateIcon}
           size="medium"
-        /> */}
+        />
         {this.props.isAuthenticated &&
           <CircleButton
             style={[styles.button, { opacity: 0.8 }]}

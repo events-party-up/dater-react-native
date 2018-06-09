@@ -1,25 +1,19 @@
-import { put, take, throttle, select, call, takeEvery } from 'redux-saga/effects';
+import { put, take } from 'redux-saga/effects';
 import ReactNativeHeading from '@zsajjad/react-native-heading';
-import { eventChannel } from 'redux-saga';
-import { DeviceEventEmitter } from 'react-redux';
-import { NativeEventEmitter } from 'react-native';
-import GeoUtils from '../utils/geo-utils';
+// import { eventChannel } from 'redux-saga';
+// import { NativeEventEmitter } from 'react-native';
 
-import { updateFirestore } from '../utils/firebase-utils';
-
-const HEADING_UPDATE_ON_DEGREE_CHANGED = 10;
-const getUid = (state) => state.auth.uid;
+import { HEADING_UPDATE_ON_DEGREE_CHANGED } from '../constants';
 
 export default function* compassSaga() {
   try {
-    const compassChannel = yield call(createCompassChannel);
-    yield takeEvery(compassChannel, updateCompassHeading);
-    yield throttle(5000, 'GEO_COMPASS_HEADING_UPDATE', writeHeadingToFirestore);
-
     while (true) {
-      yield take('GEO_COMPASS_HEADING_START');
+      yield take('GEO_LOCATION_STARTED');
+      // const compassChannel = yield createCompassChannel();
       yield* compassStart();
-      yield take('GEO_COMPASS_HEADING_STOP', compassStop);
+
+      yield take('GEO_LOCATION_STOP', compassStop);
+      // yield compassChannel.close();
       yield* compassStop();
     }
   } catch (error) {
@@ -29,7 +23,7 @@ export default function* compassSaga() {
 
 function* compassStart() {
   try {
-    const didStart = yield call([ReactNativeHeading, 'start'], HEADING_UPDATE_ON_DEGREE_CHANGED);
+    const didStart = yield ReactNativeHeading.start(HEADING_UPDATE_ON_DEGREE_CHANGED);
     if (didStart) {
       yield put({ type: 'GEO_COMPASS_HEADING_STARTED' });
     } else {
@@ -42,59 +36,42 @@ function* compassStart() {
 
 function* compassStop() {
   try {
-    yield call([ReactNativeHeading, 'stop']);
+    yield ReactNativeHeading.stop();
     yield put({ type: 'GEO_COMPASS_HEADING_STOPPED' });
   } catch (error) {
     yield put({ type: 'GEO_COMPASS_STOP_ERROR', payload: error });
   }
 }
 
-function* updateCompassHeading(heading) {
-  const gpsCoords = yield select((state) => state.location.coords);
-  if (gpsCoords && gpsCoords.heading > 0) return; // do not rotate map if GPS heading is active
+// function* updateCompassHeading(heading) {
+//   const gpsCoords = yield select((state) => state.location.coords);
+//   if (gpsCoords && gpsCoords.heading > 0) return; // do not rotate map if GPS heading is active
 
-  const wrappedHeading = GeoUtils.wrapCompassHeading(heading);
-  yield put({ type: 'GEO_COMPASS_HEADING_UPDATE', payload: heading });
-  yield put({
-    type: 'MAPVIEW_ANIMATE_TO_HEADING_COMPASS_HEADING',
-    payload: {
-      heading: wrappedHeading,
-    },
-  });
-}
+//   const wrappedHeading = GeoUtils.wrapCompassHeading(heading);
+//   yield put({ type: 'GEO_COMPASS_HEADING_UPDATE', payload: heading });
+//   yield put({
+//     type: 'MAPVIEW_ANIMATE_TO_HEADING_COMPASS_HEADING',
+//     payload: {
+//       heading: wrappedHeading,
+//     },
+//   });
+// }
 
-function* writeHeadingToFirestore(action) {
-  try {
-    const heading = action.payload;
-    const uid = yield select(getUid);
-    if (!uid) return;
+// function createCompassChannel() {
+//   const compassListener = new NativeEventEmitter(ReactNativeHeading);
 
-    yield call(updateFirestore, {
-      collection: 'geoPoints',
-      doc: uid,
-      data: {
-        compassHeading: heading,
-      },
-    });
-  } catch (error) {
-    yield put({ type: 'GEO_COMPASS_UPDATE_ERROR', payload: error });
-  }
-}
+//   return eventChannel((emit) => {
+//     const onHeadingUpdated = (heading) => {
+//       emit(heading);
+//     };
 
-function createCompassChannel() {
-  const compassListener = new NativeEventEmitter(ReactNativeHeading);
+//     compassListener.addListener('headingUpdated', onHeadingUpdated);
 
-  return eventChannel((emit) => {
-    const onHeadingUpdated = (heading) => {
-      emit(heading);
-    };
-
-    compassListener.addListener('headingUpdated', onHeadingUpdated);
-
-    // this will be invoked when the saga calls `channel.close` method
-    const unsubscribe = () => {
-      DeviceEventEmitter.removeAllListeners('headingUpdated');
-    };
-    return unsubscribe;
-  });
-}
+//     // this will be invoked when the saga calls `channel.close` method
+//     const unsubscribe = () => {
+//       // DeviceEventEmitter.removeAllListeners('headingUpdated');
+//       compassListener.removeAllListeners('headingUpdated');
+//     };
+//     return unsubscribe;
+//   });
+// }

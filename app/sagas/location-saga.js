@@ -1,12 +1,12 @@
-import { throttle, takeEvery, select, take, put, call, cancel, all } from 'redux-saga/effects';
+import { throttle, takeEvery, select, take, put, cancel, all } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 
 import BackgroundGeolocation from '../services/background-geolocation';
-import { updateFirestore, getFirestore } from '../utils/firebase-utils';
+import { getFirestore } from '../utils/firebase-utils';
 import GeoUtils from '../utils/geo-utils';
-import { USERS_AROUND_SEARCH_RADIUS_KM } from '../constants';
+import { USERS_AROUND_SEARCH_RADIUS_KM, GEO_POINTS_COLLECTION } from '../constants';
 
 export default function* locationSaga() {
   try {
@@ -19,7 +19,7 @@ export default function* locationSaga() {
     }
     const uid = yield select((state) => state.auth.uid);
 
-    yield call([BackgroundGeolocation, 'init']);
+    yield BackgroundGeolocation.init();
     yield put({ type: 'GEO_LOCATION_INITIALIZED' });
 
     while (true) {
@@ -29,26 +29,26 @@ export default function* locationSaga() {
       ]);
 
       if (startAction.type === 'GEO_LOCATION_START_AUTO') {
-        const myStatus = yield call(getFirestore, {
-          collection: 'geoPoints',
+        const myGeoPoint = yield getFirestore({
+          collection: GEO_POINTS_COLLECTION,
           doc: uid,
         });
 
-        if (myStatus.visibility === 'private') {
+        if (myGeoPoint.visibility === 'private') {
           continue; // eslint-disable-line
         }
       }
 
-      const locationChannel = yield call(createLocationChannel);
+      const locationChannel = yield createLocationChannel();
       const task1 = yield takeEvery(locationChannel, updateLocation);
       const task2 = yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeCoordsToFirestore);
       const task3 = yield throttle(500, 'GEO_LOCATION_UPDATED', locationUpdatedSaga);
 
-      yield call([BackgroundGeolocation, 'start']);
+      yield BackgroundGeolocation.start();
 
       // start both tasks at the same time since GEO_LOCATION_UPDATED fires right away after changePace
       const [start, action] = yield all([ // eslint-disable-line
-        call([BackgroundGeolocation, 'changePace'], true),
+        BackgroundGeolocation.changePace(true),
         take('GEO_LOCATION_UPDATED'), // wait for first update!
       ]);
       yield put({ type: 'GEO_LOCATION_STARTED', payload: action.payload });
@@ -61,7 +61,7 @@ export default function* locationSaga() {
 
       yield take('GEO_LOCATION_STOP');
 
-      yield call([BackgroundGeolocation, 'stop']);
+      yield BackgroundGeolocation.stop();
       yield cancel(task1, task2, task3, task4);
       yield locationChannel.close();
 
@@ -155,17 +155,16 @@ function* writeCoordsToFirestore(coords) {
 
     if (!uid || !coords) return;
 
-    yield call(updateFirestore, {
-      collection: 'geoPoints',
-      doc: uid,
-      data: {
+    yield firebase.firestore()
+      .collection(GEO_POINTS_COLLECTION)
+      .doc(uid)
+      .update({
         accuracy: coords.accuracy,
         heading: coords.heading > 0 ? coords.heading : moveHeadingAngle, // use calculated heading if GPS has no heading data
         speed: coords.speed,
         geoPoint: new firebase.firestore.GeoPoint(coords.latitude, coords.longitude),
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      },
-    });
+      });
   } catch (error) {
     yield put({ type: 'GEO_LOCATION_UPDATE_FIRESTORE_ERROR', payload: error });
   }
@@ -173,7 +172,7 @@ function* writeCoordsToFirestore(coords) {
 
 function* forceUpdate() {
   try {
-    yield call([BackgroundGeolocation, 'changePace'], true);
+    yield BackgroundGeolocation.changePace(true);
   } catch (error) {
     yield put({ type: 'GEO_LOCATION_MAINSAGA_ERROR', payload: error });
   }

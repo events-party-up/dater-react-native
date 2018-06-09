@@ -21,7 +21,7 @@ const DIAGONAL = Math.sqrt((width * width) + (height * height));
 type Props = {
   accuracy: number,
   visibleRadiusInMeters: number,
-  moveHeadingAngle: number,
+  heading: number,
   mapViewHeadingAngle: number,
 };
 
@@ -32,7 +32,7 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props> 
     const pixelsPerMeter = DIAGONAL / (visibleRadiusInMeters * 2);
     const RADIUS = pixelsPerMeter * accuracy;
     // console.log(`Visible radius: ${visibleRadiusInMeters}, DIAGONAL: ${DIAGONAL}, pixelsPerMeter: ${pixelsPerMeter}, Radius: ${RADIUS}`);
-    const rotation = this.props.moveHeadingAngle - this.props.mapViewHeadingAngle;
+    const rotation = (this.props.heading || 0) - (this.props.mapViewHeadingAngle || 0); // zeros protect from undefined values
     const rotate = `${rotation}deg`;
     // console.log(`moveHeadingAngle: ${this.props.moveHeadingAngle}, mapViewHeadingAngle: ${this.props.mapViewHeadingAngle}, rotation: ${rotation}`);
 
