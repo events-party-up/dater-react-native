@@ -18,6 +18,7 @@ import MapPanelSelfieUploading from './map-panel-selfie-uploading';
 import MapPanelSelfieUploadedByMe from './map-panel-selfie-uploaded-by-me';
 import MapPanelSelfieUploadedByTarget from './map-panel-selfie-uploaded-by-target';
 import MapPanelUserCard from './map-panel-user-card';
+import MapPanelMakeSelfie from './map-panel-make-selfie';
 
 import { calculateAgeFrom } from '../../utils/date-utils';
 
@@ -262,35 +263,10 @@ class MapPanelComponent extends Component<Props> {
         );
       case 'makeSelfie':
         return (
-          <View>
-            <H2 style={MapPanelStyles.panelHeader}>Сделайте селфи с {this.props.microDate.targetUserUid &&
-              this.props.microDate.targetUserUid.substring(0, 4)}!
-            </H2>
-            <Caption2 style={MapPanelStyles.panelBody}>
-              Вы уже очень близко к {this.props.microDate.targetUserUid &&
-                this.props.microDate.targetUserUid.substring(0, 4)}!{' '}
-              Для завершения встречи сделайте совместное селфи.
-            </Caption2>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-evenly',
-              }}
-            >
-              <DaterButton
-                style={[MapPanelStyles.panelButton, { width: 130 }]}
-                onPress={this.stopMicroDate}
-              >
-                Остановить
-              </DaterButton>
-              <DaterButton
-                style={[MapPanelStyles.panelButton, { width: 130 }]}
-                onPress={this.openCamera}
-              >
-                Камера
-              </DaterButton>
-            </View>
-          </View>
+          <MapPanelMakeSelfie
+            mapPanel={this.props.mapPanel}
+            onPressOpenCamera={this.openCamera}
+          />
         );
       case 'selfieUploading':
         return (

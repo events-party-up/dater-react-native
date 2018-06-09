@@ -170,9 +170,7 @@ class DaterMapView extends React.Component<Props, State> {
         />}
         <MapboxGL.MapView
           ref={(component) => { this.mapView = component; }}
-          // showUserLocation={!this.props.mapView.centered && this.props.location.enabled}
           showUserLocation={false}
-          // showUserLocation
           userTrackingMode={0}
           zoomLevel={17}
           style={styles.mapView}
