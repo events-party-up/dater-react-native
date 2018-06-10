@@ -2,7 +2,7 @@ import { put, takeEvery, call, take } from 'redux-saga/effects';
 import { eventChannel, delay } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import DeviceInfo from 'react-native-device-info';
-import { Platform, Alert } from 'react-native';
+import { Platform } from 'react-native';
 
 import { Actions } from '../../navigators/navigator-actions';
 import { CURRENT_USER_COLLECTION, GEO_POINTS_COLLECTION } from '../../constants';
@@ -101,7 +101,7 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
       } else {
         // yield Actions.popToTop(); // TODO: this does not work for some reason
         // yield Actions.back(null);
-
+        yield put({ type: 'GEO_LOCATION_START_AUTO' }); // user is fully registered, start geolocation services
         yield Actions.navigate({
           key: 'EditProfile',
           routeName: 'RegisterProfile',

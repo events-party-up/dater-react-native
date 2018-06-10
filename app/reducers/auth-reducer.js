@@ -1,7 +1,6 @@
 const types = {
   AUTH_INIT: 'AUTH_INIT',
   AUTH_SUCCESS: 'AUTH_SUCCESS',
-  AUTH_SUCCESS_NEW_USER: 'AUTH_SUCCESS_NEW_USER',
   AUTH_NEW_REGISTRATION: 'AUTH_NEW_REGISTRATION',
   AUTH_SIGNOUT: 'AUTH_SIGNOUT',
 
@@ -41,7 +40,6 @@ const authReducer = (state = initialState, action) => {
         isAuthenticating: true,
       };
     }
-    case types.AUTH_SUCCESS_NEW_USER:
     case types.AUTH_SUCCESS: {
       return {
         ...state,

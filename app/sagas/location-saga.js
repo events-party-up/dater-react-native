@@ -14,17 +14,14 @@ import BackgroundGeolocation from '../services/background-geolocation';
 
 export default function* locationSaga() {
   try {
-    yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit); // I don't know why it works
     yield put({ type: 'GEO_LOCATION_INITIALIZE' });
 
     const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
+
     if (!isUserAuthenticated) { // user must be authorized
       yield take('AUTH_SUCCESS');
     }
     const uid = yield select((state) => state.auth.uid);
-
-    yield BackgroundGeolocation.init();
-    yield put({ type: 'GEO_LOCATION_INITIALIZED' });
 
     while (true) {
       const startAction = yield take([
@@ -32,20 +29,26 @@ export default function* locationSaga() {
         'GEO_LOCATION_START_MANUALLY',
       ]);
 
+      const isAlreadyInitizlied = yield select((state) => state.location.isBackgroundGeolocationInitialized);
+      if (!isAlreadyInitizlied) {
+        yield BackgroundGeolocation.init();
+        yield put({ type: 'GEO_LOCATION_INITIALIZED' });
+      }
+
       if (startAction.type === 'GEO_LOCATION_START_AUTO') {
         const myGeoPoint = yield getFirestore({
           collection: GEO_POINTS_COLLECTION,
           doc: uid,
         });
 
-        if (myGeoPoint.visibility === 'private') {
+        if (myGeoPoint.visibility === 'private' || !myGeoPoint.visibility) {
           continue; // eslint-disable-line
         }
       }
 
       const locationChannel = yield createLocationChannel();
       const task1 = yield takeEvery(locationChannel, updateLocation);
-      const task2 = yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeCoordsToFirestore);
+      const task2 = yield takeEvery(['AUTH_SUCCESS'], writeCoordsToFirestore);
       const task3 = yield throttle(500, 'GEO_LOCATION_UPDATED', locationUpdatedSaga);
 
       yield BackgroundGeolocation.start();
@@ -74,10 +77,6 @@ export default function* locationSaga() {
   } catch (error) {
     yield put({ type: 'GEO_LOCATION_MAINSAGA_ERROR', payload: error });
   }
-}
-
-function* startGeoLocationOnInit() {
-  yield put({ type: 'GEO_LOCATION_START_AUTO' });
 }
 
 function* locationUpdatedSaga(action) {
