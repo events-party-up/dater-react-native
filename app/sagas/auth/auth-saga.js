@@ -1,8 +1,9 @@
 import { put, takeEvery, call, take } from 'redux-saga/effects';
+import { eventChannel, delay } from 'redux-saga';
 import firebase from 'react-native-firebase';
-import { eventChannel } from 'redux-saga';
 import DeviceInfo from 'react-native-device-info';
-import { Platform } from 'react-native';
+import { Platform, Alert } from 'react-native';
+
 import { Actions } from '../../navigators/navigator-actions';
 import { CURRENT_USER_COLLECTION, GEO_POINTS_COLLECTION } from '../../constants';
 
@@ -100,7 +101,8 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
       } else {
         // yield Actions.popToTop(); // TODO: this does not work for some reason
         // yield Actions.back(null);
-        Actions.navigate({
+
+        yield Actions.navigate({
           key: 'EditProfile',
           routeName: 'RegisterProfile',
           params: {
@@ -109,7 +111,7 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
         });
       }
     } else {
-      yield put({ type: 'AUTH_SHOW_LOGIN_SCREEN' }); // TODO: remove
+      yield delay(1000); // artificial delay, otherwise will not show in some cases, TODO: find out why
       yield Actions.navigate({
         key: 'Login',
         routeName: 'Login',
