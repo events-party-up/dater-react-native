@@ -89,6 +89,7 @@ function* showMyLocation(action) {
         latitude: coords.latitude,
         longitude: coords.longitude,
         zoom: (action.payload && action.payload.zoom) || 17,
+        duration: 2000,
       },
     });
     yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });

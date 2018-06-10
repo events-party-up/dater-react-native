@@ -17,11 +17,13 @@ export default class MapPanelMakeSelfie extends React.Component<Props> {
       <View>
         <H2 style={MapPanelStyles.panelHeader}>Сделайте селфи!
         </H2>
-        <Caption2 style={MapPanelStyles.panelBody}>
-          Вы уже очень близко к {this.props.mapPanel.targetUser.name} {this.props.mapPanel.targetUser.birthday &&
-            calculateAgeFrom(this.props.mapPanel.targetUser.birthday)}!{'\n'}
-          Для завершения встречи сделайте совместное селфи.
-        </Caption2>
+        {this.props.mapPanel.targetUser &&
+          <Caption2 style={MapPanelStyles.panelBody}>
+            Вы уже очень близко к {this.props.mapPanel.targetUser.name} {this.props.mapPanel.targetUser.birthday &&
+              calculateAgeFrom(this.props.mapPanel.targetUser.birthday)}!{'\n'}
+            Для завершения встречи сделайте совместное селфи.
+          </Caption2>
+        }
         <View
           style={{
             flexDirection: 'row',

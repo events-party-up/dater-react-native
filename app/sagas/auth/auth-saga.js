@@ -101,13 +101,16 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
         // yield Actions.popToTop(); // TODO: this does not work for some reason
         // yield Actions.back(null);
         yield put({ type: 'GEO_LOCATION_START_AUTO' }); // user is fully registered, start geolocation services
-        yield Actions.navigate({
-          key: 'EditProfile',
-          routeName: 'RegisterProfile',
-          params: {
-            navigationFlowType: 'mapViewModal',
-          },
-        });
+        yield delay(1000); // artificial delay, otherwise will not show in some cases, TODO: find out why
+        yield Actions.popToTop(); // TODO: this does not work for some reason
+        yield Actions.back(null);
+        // yield Actions.navigate({
+        //   key: 'EditProfile',
+        //   routeName: 'RegisterProfile',
+        //   params: {
+        //     navigationFlowType: 'mapViewModal',
+        //   },
+        // });
       }
     } else {
       yield delay(1000); // artificial delay, otherwise will not show in some cases, TODO: find out why
