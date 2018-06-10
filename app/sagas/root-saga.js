@@ -14,6 +14,7 @@ import microDateSaga from './micro-date/micro-date-saga';
 import uploadPhotosSaga from './upload-photos-saga';
 import currentUserSaga from './current-user-saga';
 import hapticFeedbackSaga from './haptic-feedback-saga';
+import fcmPushSaga from './fcm-push-saga';
 
 export default function* rootSaga() {
   yield all([
@@ -32,5 +33,6 @@ export default function* rootSaga() {
     uploadPhotosSaga(),
     currentUserSaga(),
     hapticFeedbackSaga(),
+    fcmPushSaga(),
   ]);
 }

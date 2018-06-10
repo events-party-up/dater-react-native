@@ -40,21 +40,20 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
         .collection(CURRENT_USER_COLLECTION)
         .doc(userInFirebaseAuthState.uid)
         .set({
+          phoneNumber: userInFirebaseAuthState.phoneNumber,
         }, { merge: true });
 
       yield firebase.firestore()
         .collection(CURRENT_USER_COLLECTION)
         .doc(userInFirebaseAuthState.uid)
-        .update({
-          phoneNumber: userInFirebaseAuthState.phoneNumber,
-          device: {
-            isEmulator: DeviceInfo.isEmulator(),
-            osVersion: DeviceInfo.getSystemVersion(),
-            uuid: DeviceInfo.getUniqueID(),
-            platform: Platform.OS,
-            locale: DeviceInfo.getDeviceLocale(),
-          },
-        });
+        .collection('devices')
+        .doc(DeviceInfo.getUniqueID())
+        .set({
+          isEmulator: DeviceInfo.isEmulator(),
+          osVersion: DeviceInfo.getSystemVersion(),
+          platform: Platform.OS,
+          locale: DeviceInfo.getDeviceLocale(),
+        }, { merge: true });
 
       yield put({
         type: 'AUTH_SUCCESS',
