@@ -2,8 +2,7 @@ import { put, takeEvery, call, take } from 'redux-saga/effects';
 import { eventChannel, delay } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import DeviceInfo from 'react-native-device-info';
-import { Platform } from 'react-native';
-
+import { Platform, Keyboard } from 'react-native';
 import { Actions } from '../../navigators/navigator-actions';
 import { CURRENT_USER_COLLECTION, GEO_POINTS_COLLECTION } from '../../constants';
 
@@ -98,22 +97,14 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
           params: { photoType: 'profilePhoto' },
         });
       } else {
-        // yield Actions.popToTop(); // TODO: this does not work for some reason
-        // yield Actions.back(null);
         yield put({ type: 'GEO_LOCATION_START_AUTO' }); // user is fully registered, start geolocation services
-        yield delay(1000); // artificial delay, otherwise will not show in some cases, TODO: find out why
-        yield Actions.popToTop(); // TODO: this does not work for some reason
-        yield Actions.back(null);
-        // yield Actions.navigate({
-        //   key: 'EditProfile',
-        //   routeName: 'RegisterProfile',
-        //   params: {
-        //     navigationFlowType: 'mapViewModal',
-        //   },
-        // });
+        yield Keyboard.dismiss();
+        yield delay(2000); // artificial delay, to allow keyboard hiding
+        yield Actions.popToTop();
+        yield Actions.back();
       }
     } else {
-      yield delay(1000); // artificial delay, otherwise will not show in some cases, TODO: find out why
+      yield delay(2000); // artificial delay, otherwise will not show in some cases, TODO: find out why
       yield Actions.navigate({
         key: 'Login',
         routeName: 'Login',
