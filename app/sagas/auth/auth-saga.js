@@ -100,13 +100,13 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
       } else {
         // yield Actions.popToTop(); // TODO: this does not work for some reason
         // yield Actions.back(null);
-        // Actions.navigate({
-        //   key: 'EditProfile',
-        //   routeName: 'RegisterProfile',
-        //   params: {
-        //     navigationFlowType: 'mapViewModal',
-        //   },
-        // });
+        Actions.navigate({
+          key: 'EditProfile',
+          routeName: 'RegisterProfile',
+          params: {
+            navigationFlowType: 'mapViewModal',
+          },
+        });
       }
     } else {
       yield put({ type: 'AUTH_SHOW_LOGIN_SCREEN' }); // TODO: remove

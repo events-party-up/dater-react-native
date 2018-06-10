@@ -18,6 +18,7 @@ export default function* mapPanelSagaNew() {
         'MICRO_DATE_INCOMING_CANCELLED',
         'MICRO_DATE_INCOMING_START',
         'MICRO_DATE_OUTGOING_ACCEPT',
+        'MICRO_DATE_INCOMING_ACCEPT',
         'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
         'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
         'MICRO_DATE_CLOSE_DISTANCE_MOVE',
@@ -27,6 +28,7 @@ export default function* mapPanelSagaNew() {
         'MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_TARGET',
         'MICRO_DATE_DECLINE_SELFIE_BY_ME',
         'UPLOAD_PHOTO_START',
+        // MICRO_DATE_INCOMING_ACCEPT when outoing selfie is declined
       ], buffers.none());
 
       const hideActions = yield actionChannel([
@@ -49,6 +51,7 @@ export default function* mapPanelSagaNew() {
         'UPLOAD_PHOTO_START',
         'MICRO_DATE_APPROVE_SELFIE',
         'UI_MAP_PANEL_HIDE_WITH_BUTTON',
+        'MICRO_DATE_OUTGOING_ACCEPT',
       ]);
 
       const task1 = yield takeLatest(showActions, mapPanelShowActionsSaga, mapPanelSnapper);
@@ -152,6 +155,14 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
         });
         break;
       case 'MICRO_DATE_INCOMING_START':
+        if (
+          mapPanelState.mode === 'selfieUploadedByTarget' ||
+            mapPanelState.mode === 'selfieUploadedByMe' ||
+            mapPanelState.mode === 'selfieUploading' ||
+            mapPanelState.mode === 'makeSelfie'
+        ) {
+          return;
+        }
         yield put({
           type: 'UI_MAP_PANEL_SET_MODE',
           payload: {
@@ -162,6 +173,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
           },
         });
         break;
+      case 'MICRO_DATE_INCOMING_ACCEPT':
       case 'MICRO_DATE_OUTGOING_ACCEPT':
         yield put({
           type: 'UI_MAP_PANEL_SET_MODE',
@@ -196,27 +208,27 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
       case 'MICRO_DATE_CLOSE_DISTANCE_MOVE':
         console.log('here 1');
         if (
-          (mapPanelState.mode !== 'selfieUploadedByTarget' &&
-          mapPanelState.mode !== 'selfieUploadedByMe' &&
-          mapPanelState.mode !== 'selfieUploading' &&
-          mapPanelState.mode !== 'makeSelfie') ||
-          (mapPanelState.mode !== 'makeSelfie' && microDateState.microDate.status === 'ACCEPT') // hacky!
+          mapPanelState.mode === 'selfieUploadedByTarget' ||
+          mapPanelState.mode === 'selfieUploadedByMe' ||
+          mapPanelState.mode === 'selfieUploading' ||
+          mapPanelState.mode === 'makeSelfie'
+          // (mapPanelState.mode === 'makeSelfie' && microDateState.microDate.status === 'ACCEPT') // hacky!
         ) {
-          console.log('here 2');
-          yield put({
-            type: 'UI_MAP_PANEL_SET_MODE',
-            payload: {
-              mode: 'makeSelfie',
-              canHide: false,
-            },
-          });
-        } else {
-          console.log('here 3');
           return;
         }
-        console.log('here 4');
+        console.log('here 2');
+        yield put({
+          type: 'UI_MAP_PANEL_SET_MODE',
+          payload: {
+            targetUser,
+            mode: 'makeSelfie',
+            canHide: false,
+          },
+        });
+
         break;
       case 'UPLOAD_PHOTO_START':
+        if (nextAction.payload.type !== 'microDateSelfie') return;
         yield put({
           type: 'UI_MAP_PANEL_SET_MODE',
           payload: {
@@ -258,12 +270,21 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
           payload: {
             mode: 'makeSelfie',
             canHide: false,
+            targetUser,
           },
         });
         break;
       default:
         break;
     }
+
+    // if (
+    //   mapPanelState.previousMode === mapPanelState.mode === 'selfieUploadedByTarget' ||
+    //   mapPanelState.previousMode === mapPanelState.mode === 'selfieUploadedByMe' ||
+    //   mapPanelState.previousMode === mapPanelState.mode === 'selfieUploading'
+    // ) {
+    //   return;
+    // }
 
     yield call(mapPanelSnapper, { index: 0 }); // show
     yield take('UI_MAP_PANEL_SHOW_SNAPPED');

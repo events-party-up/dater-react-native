@@ -43,13 +43,14 @@ const mapPanelReducer = (state = initialState, action) => {
         ...state,
         canHide: true,
         previousMode: '',
+        mode: '',
       };
     }
     case types.UI_MAP_PANEL_HIDE_SNAPPED: {
       return {
         ...state,
         visible: false,
-        previousMode: '',
+        // previousMode: '',
       };
     }
     case types.UI_MAP_PANEL_ERROR: {

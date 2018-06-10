@@ -105,7 +105,14 @@ class MapPanelComponent extends Component<Props> {
   }
 
   openCamera = () => {
-    this.props.navigation.navigate('MakePhotoSelfie', { photoType: 'microDateSelfie' });
+    this.props.navigation.navigate({
+      key: 'MicroDateSelfie',
+      routeName: 'MakePhotoSelfie',
+      params: {
+        photoType: 'microDateSelfie',
+        navigationFlowType: 'mapViewModal',
+      },
+    });
   }
 
   onSelfieDeclinedByMe = () => {
