@@ -32,7 +32,6 @@ const mapPanelReducer = (state = initialState, action) => {
     case types.UI_MAP_PANEL_SHOW_FINISHED: {
       return {
         ...state,
-        ...payload,
         visible: true,
         pendingShow: false,
         previousMode: state.mode || (payload && payload.mode),
@@ -43,7 +42,7 @@ const mapPanelReducer = (state = initialState, action) => {
         ...state,
         canHide: true,
         previousMode: '',
-        mode: '',
+        // mode: '',
       };
     }
     case types.UI_MAP_PANEL_HIDE_SNAPPED: {

@@ -289,7 +289,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
 
     yield call(mapPanelSnapper, { index: 0 }); // show
     yield take('UI_MAP_PANEL_SHOW_SNAPPED');
-    yield put({ type: 'UI_MAP_PANEL_SHOW_FINISHED', payload: nextAction.payload });
+    yield put({ type: 'UI_MAP_PANEL_SHOW_FINISHED' });
   } catch (error) {
     yield put({ type: 'UI_MAP_PANEL_ERROR', payload: error });
   }
