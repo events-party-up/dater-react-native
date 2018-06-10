@@ -226,6 +226,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
           },
         });
 
+        yield put({ type: 'HAPTIC_HEAVY' });
         break;
       case 'UPLOAD_PHOTO_START':
         if (nextAction.payload.type !== 'microDateSelfie') return;

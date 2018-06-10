@@ -35,7 +35,7 @@ const mapPanelReducer = (state = initialState, action) => {
         ...payload,
         visible: true,
         pendingShow: false,
-        previousMode: state.mode || payload.mode,
+        previousMode: state.mode || (payload && payload.mode),
       };
     }
     case types.UI_MAP_PANEL_HIDE_FORCE: {
