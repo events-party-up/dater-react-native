@@ -1,4 +1,3 @@
-
 import { takeEvery, select, take } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 

@@ -16,6 +16,7 @@ const initialState = {
   user: {},
   error: null,
   canHide: true,
+  previousState: {},
 };
 
 const mapPanelReducer = (state = initialState, action) => {
@@ -42,6 +43,7 @@ const mapPanelReducer = (state = initialState, action) => {
         ...state,
         canHide: true,
         previousMode: '',
+        previousState: {},
         // mode: '',
       };
     }

@@ -6,7 +6,6 @@ import mapViewMyVisibilitySaga from './mapview/mapview-my-visibility-saga';
 import locationSaga from './location-saga';
 import authSaga from './auth/auth-saga';
 import authPhoneSaga from './auth/auth-phone-saga';
-import startGeolocationOnFirstUpdate from './location-start-saga';
 import mapPanelSagaNew from './map-panel-saga-new';
 import usersAroundSaga from './users-around-saga';
 import appStateSaga from './app-state-saga';
@@ -25,7 +24,6 @@ export default function* rootSaga() {
     authPhoneSaga(),
     compassSaga(),
     locationSaga(),
-    startGeolocationOnFirstUpdate(),
     mapPanelSagaNew(),
     usersAroundSaga(),
     appStateSaga(),

@@ -128,8 +128,11 @@ function* microDateUserMovementsTargetMoveSaga(action) {
 
 function* checkDistance(microDate, myCoords, targetCoords) {
   const appState = yield select((state) => state.appState.state);
+  const photoMode = yield select((state) => state.microDate.photoMode);
 
-  if (!microDate.targetCurrentCoords || appState !== 'active') {
+  if (!microDate.targetCurrentCoords ||
+    appState !== 'active' ||
+    photoMode) {
     return;
   }
 

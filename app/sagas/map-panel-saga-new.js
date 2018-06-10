@@ -1,4 +1,4 @@
-import { call, take, put, actionChannel, cancel, takeLatest, select } from 'redux-saga/effects';
+import { call, take, put, actionChannel, cancel, takeLatest, select, throttle } from 'redux-saga/effects';
 import { buffers, delay } from 'redux-saga';
 
 import GeoUtils from '../utils/geo-utils';
@@ -21,13 +21,13 @@ export default function* mapPanelSagaNew() {
         'MICRO_DATE_INCOMING_ACCEPT',
         'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
         'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
-        'MICRO_DATE_CLOSE_DISTANCE_MOVE',
+        // 'MICRO_DATE_CLOSE_DISTANCE_MOVE',
         'MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_ME',
         'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME',
         'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_TARGET',
         'MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_TARGET',
         'MICRO_DATE_DECLINE_SELFIE_BY_ME',
-        'UPLOAD_PHOTO_START',
+        'MICRO_DATE_UPLOAD_PHOTO_START',
         // MICRO_DATE_INCOMING_ACCEPT when outoing selfie is declined
       ], buffers.none());
 
@@ -48,19 +48,20 @@ export default function* mapPanelSagaNew() {
         'MICRO_DATE_INCOMING_FINISHED',
         'MICRO_DATE_OUTGOING_FINISHED',
         'MICRO_DATE_DECLINE_SELFIE_BY_ME',
-        'UPLOAD_PHOTO_START',
+        'MICRO_DATE_UPLOAD_PHOTO_START',
         'MICRO_DATE_APPROVE_SELFIE',
         'UI_MAP_PANEL_HIDE_WITH_BUTTON',
         'MICRO_DATE_OUTGOING_ACCEPT',
       ]);
-
+      const throttledActionsTask =
+        yield throttle(5000, 'MICRO_DATE_CLOSE_DISTANCE_MOVE', mapPanelShowActionsSaga, mapPanelSnapper);
       const task1 = yield takeLatest(showActions, mapPanelShowActionsSaga, mapPanelSnapper);
       const task2 = yield takeLatest(hideActions, mapPanelHideActionsSaga, mapPanelSnapper);
       const task3 = yield takeLatest(forceHideActions, mapPanelForceHideActionsSaga, mapPanelSnapper);
       const task4 = yield takeLatest('UI_MAP_PANEL_HIDE_SNAPPED', showAgainIfCantHide, mapPanelSnapper);
 
       yield take('UI_MAP_PANEL_UNLOAD');
-      yield cancel(task1, task2, task3, task4);
+      yield cancel(throttledActionsTask, task1, task2, task3, task4);
     }
   } catch (error) {
     yield put({ type: 'UI_MAP_PANEL_ERROR', payload: error });
@@ -77,6 +78,10 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
     const myCoords = yield select((state) => state.location.coords);
     const myUid = yield select((state) => state.auth.uid);
 
+    if (mapPanelState.mode === mapPanelState.previousMode === 'makeSelfie') {
+      return;
+    }
+
     if (microDateState.microDate) {
       const targetRefPath = myUid === microDateState.microDate.requestBy ? 'requestForRef' : 'requestByRef';
       targetUserSnap = yield microDateState.microDate[targetRefPath].get();
@@ -87,8 +92,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
       };
     }
 
-    const mapPanelVisible = yield select((state) => state.mapPanel.visible);
-    if (mapPanelVisible) {
+    if (mapPanelState.visible) {
       // hide pannel without any actions
       yield call(mapPanelSnapper, { index: 3 }); // hide
       yield call(delay, mapPanelReplaceDelay);
@@ -206,30 +210,28 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
         });
         break;
       case 'MICRO_DATE_CLOSE_DISTANCE_MOVE':
-        console.log('here 1');
         if (
-          mapPanelState.mode === 'selfieUploadedByTarget' ||
-          mapPanelState.mode === 'selfieUploadedByMe' ||
-          mapPanelState.mode === 'selfieUploading' ||
-          mapPanelState.mode === 'makeSelfie'
+          mapPanelState.mode === 'makeSelfie' ||
+          mapPanelState.previousMode === 'makeSelfie' ||
+          microDateState.photoMode
           // (mapPanelState.mode === 'makeSelfie' && microDateState.microDate.status === 'ACCEPT') // hacky!
         ) {
           return;
         }
-        console.log('here 2');
+        // console.log('here 2');
         yield put({
           type: 'UI_MAP_PANEL_SET_MODE',
           payload: {
             targetUser,
             mode: 'makeSelfie',
             canHide: false,
+            source: 'MICRO_DATE_CLOSE_DISTANCE_MOVE',
           },
         });
 
         yield put({ type: 'HAPTICFEEDBACK_HEAVY' });
         break;
-      case 'UPLOAD_PHOTO_START':
-        if (nextAction.payload.type !== 'microDateSelfie') return;
+      case 'MICRO_DATE_UPLOAD_PHOTO_START':
         yield put({
           type: 'UI_MAP_PANEL_SET_MODE',
           payload: {
