@@ -219,29 +219,27 @@ class DaterMapView extends React.Component<Props, State> {
             />
           }
         </MapboxGL.MapView>
-        <View style={styles.debugView} pointerEvents="none">
+        {/* <View style={styles.debugView} pointerEvents="none">
           <Caption2 style={styles.debugText}>
-            Accuracy: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
+            Точность: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
             GPS Heading: {this.props.location.coords && Math.floor(this.props.location.coords.heading)}{'\n'}
             Move Heading: {Math.floor(this.props.location.moveHeadingAngle)}{'\n'}
-            {/* Compass Heading: {this.props.compass.heading}{'\n'} */}
-            GeoUpdates: {this.props.location && this.props.location.geoUpdates}{'\n'}
             UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}
           </Caption2>
-        </View>
+        </View> */}
         {this.props.microDate.enabled &&
         <View style={styles.microDateContainer} pointerEvents="none">
           <Caption2 style={styles.microDateText}>
-            Date ID: {this.props.microDate.id.substring(0, 4)}{'\n'}
-            Distance: {Math.floor(this.props.microDate.distance)}{'\n'}
-            My Score:{' '}
+            ID Встречи: {this.props.microDate.id.substring(0, 4)}{'\n'}
+            Дистанция: {Math.floor(this.props.microDate.distance)}{'\n'}
+            Мои Очки:{' '}
             <MicroDateStats
               microDateId={this.props.microDate.id}
               uid={this.props.auth.uid && this.props.auth.uid}
               style={styles.microDateText}
             />
             {'\n'}
-            {this.props.microDate.targetUserUid && this.props.microDate.targetUserUid.substring(0, 4)}: {' '}
+            Оппонента: {' '}
             <MicroDateStats
               microDateId={this.props.microDate.id}
               uid={this.props.microDate.targetUserUid}
