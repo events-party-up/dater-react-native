@@ -23,6 +23,9 @@ DerivedData
 project.xcworkspace
 ios/Pods
 
+# Do not store this in github, bring it to folder manually
+GoogleService-Info.plist
+
 # Android/IntelliJ
 #
 build/
