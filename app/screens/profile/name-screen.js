@@ -56,6 +56,7 @@ class NameScreen extends Component<Props, State> {
 
   onInvalidNameSubmit = () => {
     if (this.navigationFlowType !== 'editProfile') {
+      this.props.dispatch({ type: 'HAPTICFEEDBACK_ERROR' });
       Alert.alert(
         'Будь внимательней!',
         'Введи свое настоящее имя, от 2х символов',

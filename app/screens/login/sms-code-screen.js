@@ -84,6 +84,7 @@ class SmsCodeScreen extends Component<Props, State> {
   }
 
   onInvalidCodeSubmit = () => {
+    this.props.dispatch({ type: 'HAPTICFEEDBACK_ERROR' });
     Alert.alert(
       'Неверный код',
       'Введи корректный код из СМС, 6 цифр',

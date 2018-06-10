@@ -4,6 +4,9 @@ import { Vibration } from 'react-native';
 
 // Docs https://facebook.github.io/react-native/docs/vibration.html
 // https://github.com/mkuczera/react-native-haptic-feedback
+// Possible values for Hapcit Feedback are
+// "selection", "impactLight", "impactMedium", "impactHeavy", "notificationSuccess",
+// "notificationWarning", "notificationError"(default: "selection")
 
 export default function* hapticFeedbackSaga() {
   yield takeLatest([
@@ -24,8 +27,17 @@ export default function* hapticFeedbackSaga() {
     'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_TARGET',
     'MICRO_DATE_INCOMING_CANCELLED',
     'MICRO_DATE_OUTGOING_ACCEPT',
-    'HAPTIC_HEAVY',
+    'HAPTICFEEDBACK_HEAVY',
   ], hapticFeedbackHeavyImpact);
+
+  yield takeLatest([
+    'AUTH_PHONE_INVALID_NUMBER_ERROR',
+    'AUTH_PHONE_NUMBER_UNKNOWN_ERROR',
+    'AUTH_PHONE_NUMBER_SEND_SMS_TIMEOUT',
+    'AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_TIMEOUT',
+    'AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_ERROR',
+    'HAPTICFEEDBACK_ERROR',
+  ], hapticFeedbackError);
 }
 
 function hapticFeedbackSelection() {
@@ -40,4 +52,8 @@ function hapticFeedbackVibrationOnly() {
 
 function hapticFeedbackHeavyImpact() {
   ReactNativeHapticFeedback.trigger('impactHeavy', true);
+}
+
+function hapticFeedbackError() {
+  ReactNativeHapticFeedback.trigger('notificationError', false);
 }
