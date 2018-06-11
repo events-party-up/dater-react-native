@@ -3,9 +3,9 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { connect, Dispatch } from 'react-redux';
+import { Dispatch } from 'react-redux';
 
-import { GeoCoordinates, GeoCompass } from '../../types';
+import { GeoCoordinates } from '../../types';
 import CircleButton from '../ui-kit/circle-button';
 import { Actions } from '../../navigators/navigator-actions';
 
@@ -21,17 +21,10 @@ type Props = {
     coords: GeoCoordinates,
     enabled: boolean,
   },
-  compass: GeoCompass,
+  heading: number,
   microDateIsEnabled: boolean,
   isAuthenticated: boolean,
 };
-
-const mapStateToProps = (state) => ({
-  location: state.location,
-  mapView: state.mapView,
-  isAuthenticated: state.auth.isAuthenticated,
-  microDateIsEnabled: state.microDate.enabled,
-});
 
 class OnMapRightButtons extends Component<Props> {
   rotate = 0;
@@ -40,6 +33,9 @@ class OnMapRightButtons extends Component<Props> {
     if (this.props.location.enabled === true) {
       this.props.dispatch({
         type: 'MAPVIEW_SWITCH_VIEW_MODE_START',
+        payload: {
+          heading: this.props.heading,
+        },
       });
     }
   }
@@ -65,18 +61,6 @@ class OnMapRightButtons extends Component<Props> {
           heading: this.rotate,
           duration: 500,
         },
-      });
-    }
-  }
-
-  toggleCompass = () => {
-    if (this.props.compass.enabled) {
-      this.props.dispatch({
-        type: 'GEO_COMPASS_HEADING_STOP',
-      });
-    } else {
-      this.props.dispatch({
-        type: 'GEO_COMPASS_HEADING_START',
       });
     }
   }
@@ -162,4 +146,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps)(OnMapRightButtons);
+export default OnMapRightButtons;

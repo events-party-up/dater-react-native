@@ -17,6 +17,7 @@ import { Caption2 } from './ui-kit/typography';
 import MicroDateStats from './micro-date/micro-date-stats';
 import { MAX_VISIBLE_PAST_LOCATIONS } from '../constants';
 import MyLocationOnNonCenteredMap from './map/my-location-on-non-centered-map';
+import OnMapRightButtons from '../components/map/on-map-right-buttons';
 
 const mapStateToProps = (state) => ({
   location: state.location,
@@ -53,6 +54,7 @@ function creatMapViewProxy(mapView: MapboxGL.MapView) {
 type Props = {
   auth: {
     uid: string,
+    isAuthenticated: boolean,
   },
   dispatch: Dispatch,
   location: {
@@ -161,12 +163,20 @@ class DaterMapView extends React.Component<Props, State> {
         // }}
         // onResponderRelease={this.onMapDragEnd}
       >
+        <OnMapRightButtons
+          location={this.props.location}
+          heading={this.state.compassHeading || this.props.location.moveHeadingAngle}
+          dispatch={this.props.dispatch}
+          isAuthenticated={this.props.auth.isAuthenticated}
+          microDateIsEnabled={this.props.microDate.enabled}
+        />
         {this.props.location.enabled && this.props.location.coords && this.props.mapView.centered &&
         <MyLocationOnCenteredMap
           accuracy={this.props.location.coords.accuracy}
           visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
-          // heading={this.props.location.moveHeadingAngle}
-          // mapViewheadingAngle={this.props.mapView.headingAngle}
+          heading={this.state.compassHeading || this.props.location.moveHeadingAngle}
+          mapViewHeadingAngle={this.props.mapView.heading}
+          mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
         />}
         <MapboxGL.MapView
           ref={(component) => { this.mapView = component; }}
@@ -188,7 +198,7 @@ class DaterMapView extends React.Component<Props, State> {
           // zoomEnabled={false}
           // rotateEnabled={false}
           pitchEnabled={false}
-          minZoomLevel={11}
+          minZoomLevel={9}
           maxZoomLevel={18}
         >
           {this.props.microDate.enabled &&

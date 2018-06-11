@@ -7,8 +7,6 @@ import { connect } from 'react-redux';
 
 import DaterMapView from '../components/dater-map-view';
 import MapPanelComponent from '../components/map-panel/map-panel-component';
-import OnMapRightButtons from '../components/map/on-map-right-buttons';
-import { GeoCompass, GeoCoordinates } from '../types';
 // import FirebaseSetup from '../components/firebase-setup';
 
 const mapStateToProps = (state) => ({
@@ -17,8 +15,6 @@ const mapStateToProps = (state) => ({
 
 type Props = {
   navigation: any,
-  compass: GeoCompass,
-  location: GeoCoordinates,
 };
 
 class MainScreen extends Component<Props> {
@@ -30,10 +26,6 @@ class MainScreen extends Component<Props> {
           navigation={this.props.navigation}
         />
         <DaterMapView />
-        <OnMapRightButtons
-          location={this.props.location}
-          compass={this.props.compass}
-        />
         <View style={styles.buttons}>
           {/* <DaterButton
             style={styles.button}

@@ -23,6 +23,7 @@ type Props = {
   visibleRadiusInMeters: number,
   heading: number,
   mapViewHeadingAngle: number,
+  mapViewModeIsSwitching: boolean,
 };
 
 export default class MyLocationOnCenteredMap extends React.PureComponent<Props> {
@@ -53,9 +54,11 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props> 
         />
         <View style={styles.container}>
           <View style={styles.markerHalo} />
-          <View style={[styles.heading, { transform: [{ rotate }] }]}>
-            <View style={styles.headingPointer} />
-          </View>
+          {!this.props.mapViewModeIsSwitching &&
+            <View style={[styles.heading, { transform: [{ rotate }] }]}>
+              <View style={styles.headingPointer} />
+            </View>
+          }
           <View style={styles.marker} />
         </View>
       </View>

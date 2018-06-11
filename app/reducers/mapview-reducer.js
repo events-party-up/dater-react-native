@@ -47,6 +47,7 @@ const initialState = {
   visibleBounds: [],
   mapReady: false, // has the map been loaded?
   centered: false, // should map be in centered mode?
+  modeIsSwitching: false,
 };
 
 const mapViewReducer = (state = initialState, action) => {
@@ -96,6 +97,18 @@ const mapViewReducer = (state = initialState, action) => {
         mapReady: true,
       };
     }
+    case types.MAPVIEW_SWITCH_VIEW_MODE_START: {
+      return {
+        ...state,
+        modeIsSwitching: true,
+      };
+    }
+    case types.MAPVIEW_SWITCH_VIEW_MODE_FINISH: {
+      return {
+        ...state,
+        modeIsSwitching: false,
+      };
+    }
     case types.MAPVIEW_UNLOAD: {
       return {
         ...state,
@@ -113,11 +126,6 @@ const mapViewReducer = (state = initialState, action) => {
       return {
         ...state,
         centered: true,
-      };
-    }
-    case types.MAPVIEW_SWITCH_VIEW_MODE_FINISH: {
-      return {
-        ...state,
         mapViewSwitchMode: payload,
       };
     }

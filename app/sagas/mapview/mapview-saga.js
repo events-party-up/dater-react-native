@@ -1,4 +1,6 @@
 import { takeLatest, call, take, put, cancel, select, fork } from 'redux-saga/effects';
+import { delay } from 'redux-saga';
+
 import { DEFAULT_MAPVIEW_ANIMATION_DURATION } from '../../constants';
 
 export default function* mapViewSaga() {
@@ -102,8 +104,9 @@ function* switchMapViewMode(mapView) {
   let myCoords;
   try {
     while (true) {
-      yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
+      const firstSwitchAction = yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
       const isMicroDateActive = yield select((state) => state.microDate.enabled);
+
       if (isMicroDateActive) {
         // show me and target user in find user mode
         yield put({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE' });
@@ -114,19 +117,23 @@ function* switchMapViewMode(mapView) {
         yield call(mapView.setCamera, {
           ...myCoords,
           zoom: 14,
+          heading: firstSwitchAction.payload.heading,
         });
+        yield delay(500); // allow map finish switching
         yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'zoomOut' });
         yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
       }
 
       // zoom in on myself
-      yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
+      const zoomOutAction = yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
       myCoords = yield select((state) => state.location.coords);
       yield call(mapView.setCamera, {
         ...myCoords,
         zoom: 17,
+        heading: zoomOutAction.payload.heading,
       });
       yield put({ type: 'GEO_LOCATION_FORCE_UPDATE' });
+      yield delay(500); // allow map finish switching
       yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'zoomIn' });
       yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
     }
