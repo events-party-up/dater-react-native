@@ -154,7 +154,7 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
       },
     });
 
-    if (this.props.photoType === 'microDateSelfie' || this.navigationFlowType === 'editProfile') {
+    if (this.navigationFlowType === 'mapViewModal' || this.navigationFlowType === 'editProfile') {
       this.props.navigation.goBack();
     } else {
       this.props.navigation.navigate({ key: 'RegisterProfile', routeName: 'RegisterProfile' });

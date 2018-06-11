@@ -3,24 +3,25 @@ import { eventChannel } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 
-import BackgroundGeolocation from '../services/background-geolocation';
+import {
+  USERS_AROUND_SEARCH_RADIUS_KM,
+  GEO_POINTS_COLLECTION,
+} from '../constants';
 import { getFirestore } from '../utils/firebase-utils';
+import { microDateUserMovementsMyMoveSaga } from './micro-date/micro-date-user-movements-saga';
 import GeoUtils from '../utils/geo-utils';
-import { USERS_AROUND_SEARCH_RADIUS_KM, GEO_POINTS_COLLECTION } from '../constants';
+import BackgroundGeolocation from '../services/background-geolocation';
 
 export default function* locationSaga() {
   try {
-    yield takeEvery('GEO_LOCATION_INITIALIZED', startGeoLocationOnInit); // I don't know why it works
     yield put({ type: 'GEO_LOCATION_INITIALIZE' });
 
     const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
+
     if (!isUserAuthenticated) { // user must be authorized
       yield take('AUTH_SUCCESS');
     }
     const uid = yield select((state) => state.auth.uid);
-
-    yield BackgroundGeolocation.init();
-    yield put({ type: 'GEO_LOCATION_INITIALIZED' });
 
     while (true) {
       const startAction = yield take([
@@ -28,20 +29,26 @@ export default function* locationSaga() {
         'GEO_LOCATION_START_MANUALLY',
       ]);
 
+      const isAlreadyInitizlied = yield select((state) => state.location.isBackgroundGeolocationInitialized);
+      if (!isAlreadyInitizlied) {
+        yield BackgroundGeolocation.init();
+        yield put({ type: 'GEO_LOCATION_INITIALIZED' });
+      }
+
       if (startAction.type === 'GEO_LOCATION_START_AUTO') {
         const myGeoPoint = yield getFirestore({
           collection: GEO_POINTS_COLLECTION,
           doc: uid,
         });
 
-        if (myGeoPoint.visibility === 'private') {
+        if (myGeoPoint.visibility === 'private' || !myGeoPoint.visibility) {
           continue; // eslint-disable-line
         }
       }
 
       const locationChannel = yield createLocationChannel();
       const task1 = yield takeEvery(locationChannel, updateLocation);
-      const task2 = yield takeEvery(['AUTH_SUCCESS_NEW_USER', 'AUTH_SUCCESS'], writeCoordsToFirestore);
+      const task2 = yield takeEvery(['AUTH_SUCCESS'], writeCoordsToFirestore);
       const task3 = yield throttle(500, 'GEO_LOCATION_UPDATED', locationUpdatedSaga);
 
       yield BackgroundGeolocation.start();
@@ -72,30 +79,14 @@ export default function* locationSaga() {
   }
 }
 
-function* startGeoLocationOnInit() {
-  yield put({ type: 'GEO_LOCATION_START_AUTO' });
-}
-
 function* locationUpdatedSaga(action) {
   const isCentered = yield select((state) => state.mapView.centered);
-  const isMicroDateEnabled = yield select((state) => state.microDate.enabled);
   const currentCoords = action.payload;
   const firstCoords = yield select((state) => state.location.firstCoords);
   const appState = yield select((state) => state.appState.state);
 
   if (isCentered && appState === 'active') {
     yield* setCamera(action);
-  }
-  if (isMicroDateEnabled) {
-    yield put({
-      type: 'MICRO_DATE_MY_MOVE',
-      payload: {
-        latitude: currentCoords.latitude,
-        longitude: currentCoords.longitude,
-        accuracy: currentCoords.accuracy,
-        clientTS: Date.now(),
-      },
-    });
   }
   if (!firstCoords || !currentCoords) return;
 
@@ -136,6 +127,7 @@ function* updateLocation(coords) {
       payload: coords,
     });
     yield* writeCoordsToFirestore(coords);
+    yield* microDateUserMovementsMyMoveSaga(coords);
   } else if (coords.error) {
     yield put({
       type: 'GEO_LOCATION_UPDATE_CHANNEL_ERROR',
@@ -202,4 +194,3 @@ function createLocationChannel() {
     return unsubscribe;
   });
 }
-

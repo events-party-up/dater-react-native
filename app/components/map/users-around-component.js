@@ -50,7 +50,9 @@ class UsersAroundComponent extends React.Component<Props> {
       >
         <UserOnMapMarker
           onPress={() => { this.onPressOrSelect(user); }}
-          title={user.shortId && user.shortId.substring(0, 1).toUpperCase()}
+          title={user.name ?
+            user.name.substring(0, 1).toUpperCase() :
+            user.shortId && user.shortId.substring(0, 1).toUpperCase()}
           heading={user.heading}
           mapViewBearingAngle={this.props.mapViewBearingAngle}
         />

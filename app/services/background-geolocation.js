@@ -13,7 +13,7 @@ const geoOptions = async () => {
   return {
     useSignificantChanges: false,
     enableHighAccuracy: true,
-    distanceFilter: 2,
+    distanceFilter: 5,
     desiredAccuracy: RNBackgroundGeolocation.DESIRED_ACCURACY_HIGH,
     // stopTimeout: 1,
     debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
@@ -22,14 +22,14 @@ const geoOptions = async () => {
     stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.
     enableHeadless: true, // <-- Android Headless mode
     foregroundService: false, // <-- Android, enforced to true on Android 8
+    preventSuspend: true, // iOS only
     startOnBoot: true, // <-- Auto start tracking when device is powered-up.
     batchSync: false, // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
     autoSync: true, // <-- [Default: true] Set true to sync each location to server as it arrives.
-    url: `https://dater-geolocation-console.herokuapp.com/locations/${uid}`,
+    // url: `https://dater-geolocation-console.herokuapp.com/locations/${uid}`,
     notificationPriority: RNBackgroundGeolocation.NOTIFICATION_PRIORITY_LOW,
     notificationTitle: 'Dater.com',
     notificationText: 'Dater Mode ON',
-    preventSuspend: true, // iOS only
     params: {
       device: {
         platform: Platform.OS,
@@ -45,7 +45,6 @@ const geoOptions = async () => {
     },
   };
 };
-
 
 const updateGeoPointInFirestore = (options: {
   uid: string,

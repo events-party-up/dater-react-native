@@ -10,6 +10,7 @@ import microDateReducer from './micro-date-reducer';
 import appStateReducer from './app-state-reducer';
 import uploadPhotosReducer from './upload-photos-reducer';
 import currentUserReducer from './current-user-reducer';
+import permissionsReducer from './permissions-reducer';
 
 export const rootReducer = combineReducers({
   auth: authReducer,
@@ -22,6 +23,7 @@ export const rootReducer = combineReducers({
   appState: appStateReducer,
   uploadPhotos: uploadPhotosReducer,
   currentUser: currentUserReducer,
+  permissions: permissionsReducer,
 });
 
 export default rootReducer;

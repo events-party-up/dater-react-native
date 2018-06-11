@@ -27,7 +27,7 @@ class MyLocationOnNonCenteredMap extends React.Component<Props, State> {
         key="heading-non-centered"
         id="heading-non-centered"
         selected={false}
-        anchor={{ x: 0.5, y: 1 }} // anchor so that bottom tip of the marker is at the geo point
+        anchor={{ x: 0.5, y: 0.5 }} // anchor so that bottom tip of the marker is at the geo point
       >
         <MyLocationOnCenteredMap
           heading={this.props.compassHeading || this.props.moveHeadingAngle}

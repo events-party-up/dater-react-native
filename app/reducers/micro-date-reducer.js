@@ -29,6 +29,7 @@ const types = {
   MICRO_DATE_OUTGOING_STOPPED_BY_ME: 'MICRO_DATE_OUTGOING_STOPPED_BY_ME',
   MICRO_DATE_OUTGOING_STOPPED_BY_TARGET: 'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
 
+  MICRO_DATE_UPLOAD_PHOTO_START: 'MICRO_DATE_UPLOAD_PHOTO_START',
   MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_ME: 'MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_ME',
   MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_TARGET: 'MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_TARGET',
   MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME: 'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME',
@@ -57,6 +58,7 @@ const initialState = {
   id: null,
   enabled: false,
   pending: false,
+  photoMode: false,
   targetUserUid: null,
   targetCurrentCoords: null,
   targetPreviousCoords: null,
@@ -78,6 +80,7 @@ const microDateReducer = (state = initialState, action) => {
         targetUserUid: payload.requestFor,
         microDate: payload,
         pending: true,
+        photoMode: false,
       };
     }
     case types.MICRO_DATE_OUTGOING_DECLINED_BY_TARGET:
@@ -87,6 +90,7 @@ const microDateReducer = (state = initialState, action) => {
       return {
         ...state,
         pending: false,
+        photoMode: false,
       };
     }
     case types.MICRO_DATE_OUTGOING_STARTED:
@@ -100,7 +104,7 @@ const microDateReducer = (state = initialState, action) => {
         id: payload.microDateId,
         myPreviousCoords: {
           ...payload.myCoords,
-          clientTS: Date.now(),
+          clientTS: new Date(),
         },
         targetCurrentCoords: payload.targetUser.geoPoint,
       };
@@ -121,6 +125,7 @@ const microDateReducer = (state = initialState, action) => {
         microDate: payload,
         enabled: false,
         pending: false,
+        photoMode: false,
       };
     }
     case types.MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME:
@@ -129,7 +134,14 @@ const microDateReducer = (state = initialState, action) => {
     case types.MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_TARGET: {
       return {
         ...state,
+        photoMode: true,
         microDate: payload,
+      };
+    }
+    case types.MICRO_DATE_UPLOAD_PHOTO_START: {
+      return {
+        ...state,
+        photoMode: true,
       };
     }
     case types.MICRO_DATE_TARGET_MOVE: {

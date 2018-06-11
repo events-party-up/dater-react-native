@@ -92,6 +92,7 @@ class PhoneNumberScreen extends Component<Props, State> {
   }
 
   onInvalidPhoneSubmit = () => {
+    this.props.dispatch({ type: 'HAPTICFEEDBACK_ERROR' });
     Alert.alert(
       'Будь внимательней!',
       `Введи корректный номер телефона в формате \n${this.phonePlaceholder}`,

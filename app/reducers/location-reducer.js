@@ -31,8 +31,8 @@ const initialState = {
   starting: false,
   stopping: false,
   updating: false,
-  initializing: false,
   moveHeadingAngle: -1,
+  isBackgroundGeolocationInitialized: false,
 };
 
 const locationReducer = (state = initialState, action) => {
@@ -48,7 +48,7 @@ const locationReducer = (state = initialState, action) => {
     case types.GEO_LOCATION_INITIALIZED: {
       return {
         ...state,
-        initializing: false,
+        isBackgroundGeolocationInitialized: true,
       };
     }
     case types.GEO_LOCATION_START_AUTO:

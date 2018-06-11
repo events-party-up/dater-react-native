@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import firebase from 'react-native-firebase';
 import SplashScreen from 'react-native-splash-screen';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
-import type { RemoteMessage, Notification } from 'react-native-firebase';
+// import type { RemoteMessage, Notification } from 'react-native-firebase';
 
 import { AppNavigator } from './navigators/navigator-actions';
 import configureStore from './config/configure-store';
@@ -24,21 +24,21 @@ export default class App extends Component<Props> {
   notificationListener;
 
   async componentDidMount() {
-    await firebase.messaging().requestPermission();
-    const fcmToken = await firebase.messaging().getToken();
-    console.log('fcmToken: ', fcmToken);
+    // await firebase.messaging().requestPermission();
+    // const fcmToken = await firebase.messaging().getToken();
+    // console.log('fcmToken: ', fcmToken);
 
     SplashScreen.hide();
     firebase.analytics().logEvent('App_Started', {
       platform: Platform.OS,
     });
 
-    this.messageListener = firebase.messaging().onMessage((message: RemoteMessage) => {
-      console.log('New Push message: ', message);
-    });
-    this.notificationListener = firebase.notifications().onNotification((notification: Notification) => {
-      console.log('New Push notification: ', notification);
-    });
+    // this.messageListener = firebase.messaging().onMessage((message: RemoteMessage) => {
+    //   console.log('New Push message: ', message);
+    // });
+    // this.notificationListener = firebase.notifications().onNotification((notification: Notification) => {
+    //   console.log('New Push notification: ', notification);
+    // });
   }
 
   componentWillUnmount() {

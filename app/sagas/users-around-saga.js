@@ -217,7 +217,6 @@ async function createAllUsersAroundChannel(userCoords, currentUser) {
   }
 }
 
-
 function createMicroDateChannel(myCoords, currentUser, microDateState) {
   const query = firebase.firestore()
     .collection(GEO_POINTS_COLLECTION)

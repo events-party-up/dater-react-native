@@ -1,8 +1,8 @@
 import { put, takeEvery, call, take } from 'redux-saga/effects';
+import { eventChannel, delay } from 'redux-saga';
 import firebase from 'react-native-firebase';
-import { eventChannel } from 'redux-saga';
 import DeviceInfo from 'react-native-device-info';
-import { Platform } from 'react-native';
+import { Platform, Keyboard } from 'react-native';
 import { Actions } from '../../navigators/navigator-actions';
 import { CURRENT_USER_COLLECTION, GEO_POINTS_COLLECTION } from '../../constants';
 
@@ -39,21 +39,20 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
         .collection(CURRENT_USER_COLLECTION)
         .doc(userInFirebaseAuthState.uid)
         .set({
+          phoneNumber: userInFirebaseAuthState.phoneNumber,
         }, { merge: true });
 
       yield firebase.firestore()
         .collection(CURRENT_USER_COLLECTION)
         .doc(userInFirebaseAuthState.uid)
-        .update({
-          phoneNumber: userInFirebaseAuthState.phoneNumber,
-          device: {
-            isEmulator: DeviceInfo.isEmulator(),
-            osVersion: DeviceInfo.getSystemVersion(),
-            uuid: DeviceInfo.getUniqueID(),
-            platform: Platform.OS,
-            locale: DeviceInfo.getDeviceLocale(),
-          },
-        });
+        .collection('devices')
+        .doc(DeviceInfo.getUniqueID())
+        .set({
+          isEmulator: DeviceInfo.isEmulator(),
+          osVersion: DeviceInfo.getSystemVersion(),
+          platform: Platform.OS,
+          locale: DeviceInfo.getDeviceLocale(),
+        }, { merge: true });
 
       yield put({
         type: 'AUTH_SUCCESS',
@@ -62,6 +61,16 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
 
       const currentUserSignInAction = yield take('CURRENT_USER_SIGN_IN'); // temp
       const currentUserProfile = currentUserSignInAction.payload;
+
+      yield firebase.firestore()
+        .collection(GEO_POINTS_COLLECTION)
+        .doc(userInFirebaseAuthState.uid)
+        .update({
+          gender: currentUserProfile.gender,
+          name: currentUserProfile.name,
+          birthday: currentUserProfile.birthday,
+          mainPhoto: currentUserProfile.mainPhoto,
+        });
 
       if (!currentUserProfile.gender) {
         yield Actions.navigate({
@@ -88,18 +97,14 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
           params: { photoType: 'profilePhoto' },
         });
       } else {
-        // yield Actions.popToTop(); // TODO: this does not work for some reason
-        // yield Actions.back(null);
-        // Actions.navigate({
-        //   key: 'EditProfile',
-        //   routeName: 'RegisterProfile',
-        //   params: {
-        //     navigationFlowType: 'mapViewModal',
-        //   },
-        // });
+        yield put({ type: 'GEO_LOCATION_START_AUTO' }); // user is fully registered, start geolocation services
+        yield Keyboard.dismiss();
+        yield delay(2000); // artificial delay, to allow keyboard hiding
+        yield Actions.popToTop();
+        yield Actions.back();
       }
     } else {
-      yield put({ type: 'AUTH_SHOW_LOGIN_SCREEN' }); // TODO: remove
+      yield delay(2000); // artificial delay, otherwise will not show in some cases, TODO: find out why
       yield Actions.navigate({
         key: 'Login',
         routeName: 'Login',

@@ -197,6 +197,8 @@ PODS:
     - React
   - RNDeviceInfo (0.21.5):
     - React
+  - RNReactNativeHapticFeedback (1.0.1):
+    - React
   - yoga (0.55.4.React)
 
 DEPENDENCIES:
@@ -236,6 +238,7 @@ DEPENDENCIES:
   - RNBackgroundFetch (from `../node_modules/react-native-background-fetch`)
   - RNBackgroundGeolocation (from `../node_modules/react-native-background-geolocation`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
+  - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga/yoga.podspec`)
 
 SPEC REPOS:
@@ -294,6 +297,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-background-geolocation"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
+  RNReactNativeHapticFeedback:
+    :path: "../node_modules/react-native-haptic-feedback"
   yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga/yoga.podspec"
 
@@ -339,8 +344,9 @@ SPEC CHECKSUMS:
   RNBackgroundFetch: 8c4f77f83c398c659bce82af2f0a885079417b9e
   RNBackgroundGeolocation: c9bbf69b9aa277f0b46754cc5f853bd26051a18f
   RNDeviceInfo: 568c5641057313b4912d08a7742ff0b2f753ed5c
+  RNReactNativeHapticFeedback: 81a9bb493a719cf71b7d4d1cebbd91a124ce5cf5
   yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: 3c01289313ecbe05557a0b8b948cfc3cce85bc0a
+PODFILE CHECKSUM: 18c5107e0919de7a24ff99c5d18115f698a3921d
 
 COCOAPODS: 1.5.2

@@ -289,7 +289,6 @@ function createChannelToMicroDate(microDateId) {
 
   return eventChannel((emit) => {
     const onSnapshotUpdated = (dataSnapshot) => {
-      console.log(dataSnapshot);
       if (dataSnapshot.metadata.hasPendingWrites) {
         return;
       }

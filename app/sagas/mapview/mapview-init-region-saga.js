@@ -9,15 +9,18 @@ export default function* mapViewInitializeRegionSaga() {
 
     const coords = yield select((state) => state.location.coords);
     if (!coords) {
+      yield put({
+        type: 'MAPVIEW_SET_CAMERA',
+        payload: {
+          heading: 0,
+          zoom: 1,
+          latitude: 55.751244,
+          longitude: 37.618423,
+          duration: 2000,
+        },
+      });
       yield take('GEO_LOCATION_UPDATED'); // get first geo update
     }
-
-    const locationServicesEnabled = yield select((state) => state.location.enabled);
-    if (!locationServicesEnabled) {
-      yield take('GEO_LOCATION_STARTED'); // wait for services to start
-    }
-
-    yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_START', payload: { caller: 'mapViewInitializeRegionSaga' } });
   } catch (error) {
     yield put({ type: 'MAPVIEW_INIT_REGION_ERROR', payload: error });
   }

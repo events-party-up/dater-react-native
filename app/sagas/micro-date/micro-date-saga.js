@@ -1,4 +1,4 @@
-import { take, put, select, all } from 'redux-saga/effects';
+import { take, put, select, all, takeEvery } from 'redux-saga/effects';
 import microDateIncomingRequestsSaga from './micro-date-incoming-requests-saga';
 import microDateOutgoingRequestsSaga from './micro-date-outgoing-requests-saga';
 import microDateUserMovementsSaga from './micro-date-user-movements-saga';
@@ -13,6 +13,7 @@ export default function* microDateSaga() {
     if (!isGeolocationEnabled) {
       yield take('GEO_LOCATION_STARTED'); // geo location must be enabled
     }
+    yield takeEvery('UPLOAD_PHOTO_START', microDateUploadingPhoto);
     yield all([
       microDateIncomingRequestsSaga(),
       microDateOutgoingRequestsSaga(),
@@ -20,5 +21,11 @@ export default function* microDateSaga() {
     ]);
   } catch (error) {
     yield put({ type: 'MICRO_DATE_ROOT_SAGA_ERROR', payload: error });
+  }
+}
+
+function* microDateUploadingPhoto(action) {
+  if (action.payload.type === 'microDateSelfie') {
+    yield put({ type: 'MICRO_DATE_UPLOAD_PHOTO_START', payload: action.payload });
   }
 }
