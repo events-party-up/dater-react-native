@@ -14,6 +14,7 @@ type Props = {
   mapViewHeadingAngle: number,
   compassHeading: number,
   coords: GeoCoordinates,
+  mapViewModeIsSwitching: boolean,
 };
 
 class MyLocationOnNonCenteredMap extends React.Component<Props, State> {
@@ -32,6 +33,7 @@ class MyLocationOnNonCenteredMap extends React.Component<Props, State> {
         <MyLocationOnCenteredMap
           heading={this.props.compassHeading || this.props.moveHeadingAngle}
           mapViewHeadingAngle={this.props.mapViewHeadingAngle}
+          mapViewModeIsSwitching={this.props.mapViewModeIsSwitching}
         />
       </MapboxGL.PointAnnotation>
     );

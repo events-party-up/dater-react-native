@@ -102,10 +102,13 @@ function* showMyLocation(action) {
 
 function* switchMapViewMode(mapView) {
   let myCoords;
+  let isCenteredMode;
+
   try {
     while (true) {
       const firstSwitchAction = yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
       const isMicroDateActive = yield select((state) => state.microDate.enabled);
+      isCenteredMode = yield select((state) => state.mapView.centered);
 
       if (isMicroDateActive) {
         // show me and target user in find user mode
@@ -116,8 +119,9 @@ function* switchMapViewMode(mapView) {
         myCoords = yield select((state) => state.location.coords);
         yield call(mapView.setCamera, {
           ...myCoords,
-          zoom: 14,
+          zoom: isCenteredMode ? 14 : undefined,
           heading: firstSwitchAction.payload.heading,
+          duration: 500,
         });
         yield delay(500); // allow map finish switching
         yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'zoomOut' });
@@ -126,11 +130,13 @@ function* switchMapViewMode(mapView) {
 
       // zoom in on myself
       const zoomOutAction = yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
+      isCenteredMode = yield select((state) => state.mapView.centered);
       myCoords = yield select((state) => state.location.coords);
       yield call(mapView.setCamera, {
         ...myCoords,
-        zoom: 17,
+        zoom: isCenteredMode ? 17 : undefined,
         heading: zoomOutAction.payload.heading,
+        duration: 500,
       });
       yield put({ type: 'GEO_LOCATION_FORCE_UPDATE' });
       yield delay(500); // allow map finish switching

@@ -38,11 +38,12 @@ function creatMapViewProxy(mapView: MapboxGL.MapView) {
       duration,
       mode: MapboxGL.CameraModes.Ease,
     }),
+    // will not honour duration if zoom is non-null!
     setCamera: (options) => mapView.setCamera({
       centerCoordinate: [options.longitude, options.latitude],
-      heading: options.heading,
-      zoom: options.zoom,
-      duration: options.duration,
+      heading: options.heading || undefined,
+      zoom: options.zoom || undefined,
+      duration: options.duration || undefined,
       mode: MapboxGL.CameraModes.Ease,
     }),
     zoomTo: (...args) => mapView.zoomTo(...args),
@@ -226,6 +227,7 @@ class DaterMapView extends React.Component<Props, State> {
               moveHeadingAngle={this.props.location.moveHeadingAngle}
               mapViewHeadingAngle={this.props.mapView.heading}
               coords={this.props.location.coords}
+              mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
             />
           }
         </MapboxGL.MapView>
