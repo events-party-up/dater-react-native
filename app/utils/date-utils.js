@@ -1,4 +1,8 @@
 export function calculateAgeFrom(birthday: Date) { // birthday is a date
+  if (!birthday || !birthday.getTime) {
+    return null;
+  }
+
   const ageDifMs = Date.now() - birthday.getTime();
   const ageDate = new Date(ageDifMs); // miliseconds from epoch
   return Math.abs(ageDate.getUTCFullYear() - 1970);

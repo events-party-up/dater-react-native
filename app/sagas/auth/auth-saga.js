@@ -5,6 +5,7 @@ import DeviceInfo from 'react-native-device-info';
 import { Platform, Keyboard } from 'react-native';
 import { Actions } from '../../navigators/navigator-actions';
 import { CURRENT_USER_COLLECTION, GEO_POINTS_COLLECTION } from '../../constants';
+import { calculateAgeFrom } from '../../utils/date-utils';
 
 export default function* authSaga() {
   try {
@@ -71,6 +72,14 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
           birthday: currentUserProfile.birthday,
           mainPhoto: currentUserProfile.mainPhoto,
         });
+
+      // TODO: Move to separate analytics saga
+      yield firebase.analytics()
+        .setUserProperty('gender', currentUserProfile.gender || 'unknown');
+      yield firebase.analytics()
+        .setUserProperty('age', String(calculateAgeFrom(currentUserProfile.birthday)));
+      yield firebase.analytics()
+        .setUserId(userInFirebaseAuthState.uid);
 
       if (!currentUserProfile.gender) {
         yield Actions.navigate({
