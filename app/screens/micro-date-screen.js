@@ -88,14 +88,14 @@ export default class MicroDateScreen extends React.Component<Props> {
               uid={this.microDate.requestFor}
               mode="own"
               microDateId={this.microDate.id}
-              isLimited={false}
+              limit={100}
             />
             <PastLocationsPath
               lastLocation={this.microDate.selfieGeoPoint}
               uid={this.microDate.requestBy}
               mode="target"
               microDateId={this.microDate.id}
-              isLimited={false}
+              limit={100}
             />
             <MapboxGL.PointAnnotation
               coordinate={[

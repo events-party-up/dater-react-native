@@ -42,8 +42,8 @@ export default class App extends Component<Props> {
   }
 
   componentWillUnmount() {
-    this.messageListener();
-    this.notificationListener();
+    // this.messageListener();
+    // this.notificationListener();
   }
 
   render() {
