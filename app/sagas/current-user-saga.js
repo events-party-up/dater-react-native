@@ -3,6 +3,7 @@ import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
 
 import { CURRENT_USER_COLLECTION, GEO_POINTS_COLLECTION } from '../constants';
+import { calculateAgeFrom } from '../utils/date-utils';
 
 export default function* currentUserSaga() {
   // yield takeEvery('AUTH_SUCCESS', currentUserSignIn);
@@ -69,6 +70,12 @@ function* currentUserSetProfileFieldSaga(action) {
     .update({
       ...fields,
     });
+
+  // TODO: move to separate analytics saga
+  yield firebase.analytics()
+    .setUserProperty('gender', fields.gender || 'unknown');
+  yield firebase.analytics()
+    .setUserProperty('age', String(calculateAgeFrom(fields.birthday)));
 }
 
 function createChannelToCurrentUserInFirestore(uid) {
