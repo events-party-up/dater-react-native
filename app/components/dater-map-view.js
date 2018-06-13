@@ -99,6 +99,7 @@ class DaterMapView extends React.Component<Props, State> {
   componentDidUpdate() {
     if (this.mapView && this.props.microDate.enabled) {
       this.mapView.setCamera({
+        centerCoordinate: [this.props.location.coords.longitude, this.props.location.coords.latitude],
         heading: this.state.compassHeading || this.props.location.moveHeadingAngle,
         duration: 500,
         mode: MapboxGL.CameraModes.Ease,
@@ -186,7 +187,7 @@ class DaterMapView extends React.Component<Props, State> {
           accuracy={this.props.location.coords.accuracy}
           visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
           heading={this.state.compassHeading || this.props.location.moveHeadingAngle}
-          targetHeading={this.props.microDate.targetHeading}
+          headingToTarget={this.props.microDate.headingToTarget}
           microDateEnabled={this.props.microDate.enabled}
           mapViewHeadingAngle={this.props.mapView.heading}
           mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
@@ -240,19 +241,20 @@ class DaterMapView extends React.Component<Props, State> {
               mapViewHeadingAngle={this.props.mapView.heading}
               coords={this.props.location.coords}
               mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
-              targetHeading={this.props.microDate.targetHeading}
+              headingToTarget={this.props.microDate.headingToTarget}
               microDateEnabled={this.props.microDate.enabled}
             />
           }
         </MapboxGL.MapView>
-        {/* <View style={styles.debugView} pointerEvents="none">
+        <View style={styles.debugView} pointerEvents="none">
           <Caption2 style={styles.debugText}>
             Точность: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
             GPS Heading: {this.props.location.coords && Math.floor(this.props.location.coords.heading)}{'\n'}
+            Compass Heading: {Math.floor(this.state.compassHeading)}{'\n'}
             Move Heading: {Math.floor(this.props.location.moveHeadingAngle)}{'\n'}
             UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}
           </Caption2>
-        </View> */}
+        </View>
         {this.props.microDate.enabled &&
         <View style={styles.microDateContainer} pointerEvents="none">
           <Caption2 style={styles.microDateText}>

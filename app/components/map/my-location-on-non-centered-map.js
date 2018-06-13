@@ -15,7 +15,7 @@ type Props = {
   compassHeading: number,
   coords: GeoCoordinates,
   mapViewModeIsSwitching: boolean,
-  targetHeading: number,
+  headingToTarget: number,
   microDateEnabled: boolean,
 };
 
@@ -36,7 +36,7 @@ class MyLocationOnNonCenteredMap extends React.Component<Props, State> {
           heading={this.props.compassHeading || this.props.moveHeadingAngle}
           mapViewHeadingAngle={this.props.mapViewHeadingAngle}
           mapViewModeIsSwitching={this.props.mapViewModeIsSwitching}
-          targetHeading={this.props.targetHeading}
+          headingToTarget={this.props.headingToTarget}
           microDateEnabled={this.props.microDateEnabled}
         />
       </MapboxGL.PointAnnotation>

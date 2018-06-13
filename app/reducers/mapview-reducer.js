@@ -115,7 +115,7 @@ const mapViewReducer = (state = initialState, action) => {
         mapReady: false,
       };
     }
-    // case types.MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE:
+    case types.MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE:
     case types.MAPVIEW_DRAG_START: {
       return {
         ...state,

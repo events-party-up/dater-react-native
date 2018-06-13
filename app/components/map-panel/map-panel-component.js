@@ -273,6 +273,7 @@ class MapPanelComponent extends Component<Props> {
           <MapPanelMakeSelfie
             mapPanel={this.props.mapPanel}
             onPressOpenCamera={this.openCamera}
+            stopMicroDate={this.stopMicroDate} // TODO: remove
           />
         );
       case 'selfieUploading':

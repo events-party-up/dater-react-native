@@ -62,7 +62,7 @@ const initialState = {
   targetUserUid: null,
   targetCurrentCoords: null,
   targetPreviousCoords: null,
-  targetHeading: 0,
+  headingToTarget: 0,
   myPreviousCoords: null,
   distance: 0,
   myScore: 0,
@@ -108,7 +108,7 @@ const microDateReducer = (state = initialState, action) => {
           clientTS: new Date(),
         },
         targetCurrentCoords: payload.targetUser.geoPoint,
-        targetHeading: GeoUtils.getBearing(payload.myCoords, payload.targetUser.geoPoint),
+        headingToTarget: GeoUtils.getBearing(payload.myCoords, payload.targetUser.geoPoint),
       };
     }
     case types.MICRO_DATE_OUTGOING_FINISHED:
@@ -150,7 +150,7 @@ const microDateReducer = (state = initialState, action) => {
       return {
         ...state,
         distance: state.myPreviousCoords ? GeoUtils.distance(payload.geoPoint, state.myPreviousCoords) : 0,
-        targetHeading: GeoUtils.getBearing(state.myPreviousCoords, payload.geoPoint),
+        headingToTarget: GeoUtils.getBearing(state.myPreviousCoords, payload.geoPoint),
         targetCurrentCoords: {
           accuracy: payload.accuracy,
           latitude: payload.geoPoint.latitude,
@@ -162,6 +162,7 @@ const microDateReducer = (state = initialState, action) => {
       return {
         ...state,
         distance: GeoUtils.distance(payload, state.targetCurrentCoords),
+        headingToTarget: GeoUtils.getBearing(payload, state.targetCurrentCoords),
       };
     }
     case types.MICRO_DATE_MY_MOVE_RECORDED: {

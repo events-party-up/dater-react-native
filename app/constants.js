@@ -23,7 +23,7 @@ export const MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION = 20;
 export const MAX_DISTANCE_FROM_PREVIOUS_PAST_LOCATION = 500;
 export const MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION = 50;
 export const MAX_PAST_LOCATIONS = 25;
-export const MAX_VISIBLE_PAST_LOCATIONS = 15;
+export const MAX_VISIBLE_PAST_LOCATIONS = 115; // TODO: put back 15
 export const MINIMUM_ACCURACY_PAST_LOCATION = 40;
 
 export const USERS_AROUND_SEARCH_RADIUS_KM = 25;
@@ -36,7 +36,7 @@ export const CURRENT_USER_COLLECTION = 'users';
 export const PROFILE_PHOTOS_STORAGE_PATH = 'profilePhotos';
 
 // Micro Dates
-export const DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD = 30;
+export const DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD = 1; // TODO: put back 30
 
 // Cloudinary
 

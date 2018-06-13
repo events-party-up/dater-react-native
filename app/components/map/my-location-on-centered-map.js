@@ -24,7 +24,7 @@ type Props = {
   heading: number,
   mapViewHeadingAngle: number,
   mapViewModeIsSwitching: boolean,
-  targetHeading: number,
+  headingToTarget: number,
   microDateEnabled: boolean,
 };
 
@@ -37,7 +37,7 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props> 
     // console.log(`Visible radius: ${visibleRadiusInMeters}, DIAGONAL: ${DIAGONAL}, pixelsPerMeter: ${pixelsPerMeter}, Radius: ${RADIUS}`);
     const rotation = (this.props.heading || 0) - (this.props.mapViewHeadingAngle || 0); // zeros protect from undefined values
     const rotate = `${rotation}deg`;
-    const rotationTarget = (this.props.targetHeading || 0) - (this.props.mapViewHeadingAngle || 0); // zeros protect from undefined values
+    const rotationTarget = (this.props.headingToTarget || 0) - (this.props.mapViewHeadingAngle || 0); // zeros protect from undefined values
     const rotateTarget = `${rotationTarget}deg`;
     // console.log(`moveHeadingAngle: ${this.props.moveHeadingAngle}, mapViewHeadingAngle: ${this.props.mapViewHeadingAngle}, rotation: ${rotation}`);
 
