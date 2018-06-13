@@ -104,9 +104,27 @@ const CircleButton = (props) => {
     },
   });
 
-  const onPress = () => {
+  const onPress = (event) => {
     if (props.onPress && !props.disabled) {
-      props.onPress();
+      props.onPress(event);
+    }
+  };
+
+  const onLongPress = (event) => {
+    if (props.onPress && !props.disabled) {
+      props.onLongPress(event);
+    }
+  };
+
+  const onPressIn = (event) => {
+    if (props.onPressIn && !props.disabled) {
+      props.onPressIn(event);
+    }
+  };
+
+  const onPressOut = (event) => {
+    if (props.onPressOut && !props.disabled) {
+      props.onPressOut(event);
     }
   };
 
@@ -114,7 +132,11 @@ const CircleButton = (props) => {
     <TouchableOpacity
       style={[styles.buttonContainer, props.style]}
       activeOpacity={props.disabled ? opacity : 0.2}
-      onPress={() => onPress()}
+      onPress={onPress}
+      onLongPress={onLongPress}
+      onPressIn={onPressIn}
+      onPressOut={onPressOut}
+      disabled={props.disabled}
       hitSlop={{
         top: 10,
         bottom: 10,
@@ -133,4 +155,3 @@ const CircleButton = (props) => {
 };
 
 export default CircleButton;
-

@@ -120,6 +120,11 @@ function toDeg(rad) {
  * @return int - The bearing between 0 and 360
  */
 function getBearing(startPosition: GeoCoordinates, nextPosition: GeoCoordinates) {
+  if (!startPosition || !nextPosition) {
+    console.warn('Empty coordinates in getBearing');
+    return 0;
+  }
+
   const φ1 = toRad(startPosition.latitude);
   const φ2 = toRad(nextPosition.latitude);
   const λ1 = toRad(startPosition.longitude);

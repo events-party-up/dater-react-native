@@ -45,7 +45,7 @@ function creatMapViewProxy(mapView: MapboxGL.MapView) {
       duration: options.duration || undefined,
       mode: MapboxGL.CameraModes.Ease,
     }),
-    zoomTo: (...args) => mapView.zoomTo(...args),
+    // zoomTo: (...args) => mapView.zoomTo(...args), // DO NOT use this method, broken in MapBox React Native SDK
     moveTo: (...args) => mapView.moveTo(...args),
     fitBounds: (...args) => mapView.fitBounds(...args),
   };
@@ -179,6 +179,7 @@ class DaterMapView extends React.Component<Props, State> {
           dispatch={this.props.dispatch}
           isAuthenticated={this.props.auth.isAuthenticated}
           microDateIsEnabled={this.props.microDate.enabled}
+          mapViewZoom={this.props.mapView.zoom}
         />
         {this.props.location.enabled && this.props.location.coords && this.props.mapView.centered &&
         <MyLocationOnCenteredMap
@@ -239,6 +240,8 @@ class DaterMapView extends React.Component<Props, State> {
               mapViewHeadingAngle={this.props.mapView.heading}
               coords={this.props.location.coords}
               mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
+              targetHeading={this.props.microDate.targetHeading}
+              microDateEnabled={this.props.microDate.enabled}
             />
           }
         </MapboxGL.MapView>

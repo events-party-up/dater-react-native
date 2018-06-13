@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import {
   StyleSheet,
   View,
@@ -8,12 +8,14 @@ import { Dispatch } from 'react-redux';
 import { GeoCoordinates } from '../../types';
 import CircleButton from '../ui-kit/circle-button';
 import { Actions } from '../../navigators/navigator-actions';
+import { MAP_PLUS_MINUS_ZOOM_INCREMENT, SCREEN_HEIGHT } from '../../constants';
 
 const myLocationIcon = require('../../assets/icons/my-location/48/my-location.png');
 const playIcon = require('../../assets/icons/play/play.png');
 const stopIcon = require('../../assets/icons/stop/stop.png');
 const myProfileIcon = require('../../assets/icons/my-profile/my-profile.png');
-// const rotateIcon = require('../../assets/icons/rotate-map/rotate-map.png');
+const plusIcon = require('../../assets/icons/plus/plus.png');
+const minusIcon = require('../../assets/icons/minus/minus.png');
 
 type Props = {
   dispatch: Dispatch,
@@ -24,10 +26,73 @@ type Props = {
   heading: number,
   microDateIsEnabled: boolean,
   isAuthenticated: boolean,
+  mapViewZoom: number,
 };
 
-class OnMapRightButtons extends Component<Props> {
-  rotate = 0;
+type State = {
+  number: number,
+}
+
+class OnMapRightButtons extends React.Component<Props, State> {
+  nextZoom; // need this to handle quick multiply touches of zoomIn/zoomOut
+  timer;
+
+  constructor() {
+    super();
+    this.timer = null;
+    this.zoomInLongPress = this.zoomInLongPress.bind(this);
+    this.stopTimer = this.stopTimer.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.mapViewZoom !== this.props.mapViewZoom) {
+      this.nextZoom = nextProps.mapViewZoom; // reset nextZoom when MapView received updated zoom
+    }
+  }
+
+  stopTimer = () => {
+    clearTimeout(this.timer);
+  }
+
+  zoomIn = () => {
+    this.props.dispatch({
+      type: 'MAPVIEW_ZOOM_TO',
+      payload: {
+        zoom: this.nextZoom + MAP_PLUS_MINUS_ZOOM_INCREMENT,
+      },
+    });
+    this.nextZoom = this.nextZoom + MAP_PLUS_MINUS_ZOOM_INCREMENT;
+  }
+
+  zoomInLongPress = () => {
+    this.zoomIn();
+    this.timer = setTimeout(this.zoomInLongPress, 200);
+  }
+
+  zoomOut = () => {
+    this.props.dispatch({
+      type: 'MAPVIEW_ZOOM_TO',
+      payload: {
+        zoom: this.nextZoom - MAP_PLUS_MINUS_ZOOM_INCREMENT,
+      },
+    });
+    this.nextZoom = this.nextZoom - MAP_PLUS_MINUS_ZOOM_INCREMENT;
+  }
+
+  zoomOutLongPress = () => {
+    this.zoomOut();
+    this.timer = setTimeout(this.zoomOutLongPress, 200);
+  }
+
+  onMyProfilePress = () => {
+    Actions.navigate({
+      key: 'EditProfile',
+      routeName: 'RegisterProfile',
+      params: {
+        navigationFlowType: 'mapViewModal',
+      },
+    });
+  }
 
   centerMe = () => {
     if (this.props.location.enabled === true) {
@@ -51,64 +116,59 @@ class OnMapRightButtons extends Component<Props> {
       });
     }
   }
-  rotateMap = () => {
-    if (this.props.location.enabled === true) {
-      this.rotate = this.rotate + 90;
-      if (this.rotate >= 360) this.rotate = 0;
-      this.props.dispatch({
-        type: 'MAPVIEW_ANIMATE_TO_HEADING_MANUALLY',
-        payload: {
-          heading: this.rotate,
-          duration: 500,
-        },
-      });
-    }
-  }
-
-  onMyProfilePress = () => {
-    Actions.navigate({
-      key: 'EditProfile',
-      routeName: 'RegisterProfile',
-      params: {
-        navigationFlowType: 'mapViewModal',
-      },
-    });
-  }
 
   render() {
     return (
-      <View style={styles.buttonContainer}>
-        {/* <CircleButton
-          style={styles.button}
-          onPress={this.rotateMap}
-          image={rotateIcon}
-          size="medium"
-        /> */}
-        {this.props.isAuthenticated &&
+      <React.Fragment>
+        <View style={styles.zoomInZoomOutContainer}>
           <CircleButton
-            style={[styles.button, { opacity: 0.8 }]}
-            onPress={this.onMyProfilePress}
-            image={myProfileIcon}
+            style={[styles.button, {
+              opacity: 0.8,
+              marginBottom: 16,
+            }]}
+            onPressIn={this.zoomInLongPress}
+            onPressOut={this.stopTimer}
+            image={plusIcon}
             size="medium"
           />
-        }
-        {!this.props.microDateIsEnabled &&
+          <CircleButton
+            style={[styles.button, {
+              opacity: 0.8,
+              marginBottom: 64,
+            }]}
+            onPressIn={this.zoomOutLongPress}
+            onPressOut={this.stopTimer}
+            image={minusIcon}
+            size="medium"
+          />
+        </View>
+        <View style={styles.buttonContainer}>
+          {this.props.isAuthenticated &&
+            <CircleButton
+              style={[styles.button, { opacity: 0.8 }]}
+              onPress={this.onMyProfilePress}
+              image={myProfileIcon}
+              size="medium"
+            />
+          }
+          {!this.props.microDateIsEnabled &&
+            <CircleButton
+              style={styles.button}
+              onPress={this.onGeoTogglePress}
+              image={this.props.location.enabled ? stopIcon : playIcon}
+              size="medium"
+              disabled={!this.props.isAuthenticated}
+            />
+          }
           <CircleButton
             style={styles.button}
-            onPress={this.onGeoTogglePress}
-            image={this.props.location.enabled ? stopIcon : playIcon}
+            onPress={this.centerMe}
+            image={myLocationIcon}
             size="medium"
-            disabled={!this.props.isAuthenticated}
+            disabled={!this.props.location.enabled}
           />
-        }
-        <CircleButton
-          style={styles.button}
-          onPress={this.centerMe}
-          image={myLocationIcon}
-          size="medium"
-          disabled={!this.props.location.enabled}
-        />
-      </View>
+        </View>
+      </React.Fragment>
     );
   }
 }
@@ -135,6 +195,14 @@ const styles = StyleSheet.create({
   button: {
     opacity: 0.6,
     margin: 4,
+  },
+  zoomInZoomOutContainer: {
+    position: 'absolute',
+    top: SCREEN_HEIGHT / 3,
+    right: 10,
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    zIndex: 1,
   },
   buttonContainer: {
     position: 'absolute',

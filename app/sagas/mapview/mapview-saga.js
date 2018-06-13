@@ -9,17 +9,18 @@ export default function* mapViewSaga() {
       const { mapView } = yield take('MAPVIEW_READY');
       const task1 = yield takeLatest('MAPVIEW_SET_CAMERA', setCamera, mapView);
       const task2 = yield takeLatest('MAPVIEW_MOVE_TO', moveTo, mapView);
-      const task3 = yield takeLatest([
+      const task3 = yield takeLatest('MAPVIEW_ZOOM_TO', zoomTo, mapView);
+      const task4 = yield takeLatest([
         'MAPVIEW_ANIMATE_TO_HEADING_MANUALLY',
         'MAPVIEW_ANIMATE_TO_HEADING_GPS_HEADING',
         'MAPVIEW_ANIMATE_TO_HEADING_COMPASS_HEADING'], animateToHeading, mapView);
-      const task4 = yield takeLatest('MAPVIEW_SHOW_MY_LOCATION_START', showMyLocation);
-      const task5 = yield takeLatest('MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE', showMeAndTargetMicroDate, mapView);
-      const task6 = yield fork(switchMapViewMode, mapView);
+      const task5 = yield takeLatest('MAPVIEW_SHOW_MY_LOCATION_START', showMyLocation);
+      const task6 = yield takeLatest('MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE', showMeAndTargetMicroDate, mapView);
+      const task7 = yield fork(switchMapViewMode, mapView);
 
       yield put({ type: 'MAPVIEW_MAIN_SAGA_READY' });
       yield take('MAPVIEW_UNLOAD');
-      yield cancel(task1, task2, task3, task4, task5, task6);
+      yield cancel(task1, task2, task3, task4, task5, task6, task7);
     }
   } catch (error) {
     yield put({ type: 'MAPVIEW_MAINSAGA_ERROR', payload: error });
@@ -56,6 +57,23 @@ function* moveTo(mapView, action) {
     yield call(mapView.moveTo, [coords.longitude, coords.latitude], animationDuration);
   } catch (error) {
     yield put({ type: 'MAPVIEW_MOVE_TO_ERROR', payload: error });
+  }
+}
+
+function* zoomTo(mapView, action) {
+  try {
+    const myCoords = yield select((state) => state.location.coords);
+    const mapViewHeading = yield select((state) => state.mapView.heading);
+    const { zoom, duration } = action.payload;
+    const animationDuration = duration || DEFAULT_MAPVIEW_ANIMATION_DURATION;
+    yield mapView.setCamera({
+      zoom,
+      duration: animationDuration,
+      ...myCoords,
+      heading: mapViewHeading,
+    });
+  } catch (error) {
+    yield put({ type: 'MAPVIEW_ZOOM_TO_ERROR', payload: error });
   }
 }
 
