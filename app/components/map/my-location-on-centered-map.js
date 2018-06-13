@@ -24,6 +24,8 @@ type Props = {
   heading: number,
   mapViewHeadingAngle: number,
   mapViewModeIsSwitching: boolean,
+  targetHeading: number,
+  microDateEnabled: boolean,
 };
 
 export default class MyLocationOnCenteredMap extends React.PureComponent<Props> {
@@ -35,6 +37,8 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props> 
     // console.log(`Visible radius: ${visibleRadiusInMeters}, DIAGONAL: ${DIAGONAL}, pixelsPerMeter: ${pixelsPerMeter}, Radius: ${RADIUS}`);
     const rotation = (this.props.heading || 0) - (this.props.mapViewHeadingAngle || 0); // zeros protect from undefined values
     const rotate = `${rotation}deg`;
+    const rotationTarget = (this.props.targetHeading || 0) - (this.props.mapViewHeadingAngle || 0); // zeros protect from undefined values
+    const rotateTarget = `${rotationTarget}deg`;
     // console.log(`moveHeadingAngle: ${this.props.moveHeadingAngle}, mapViewHeadingAngle: ${this.props.mapViewHeadingAngle}, rotation: ${rotation}`);
 
     return (
@@ -57,6 +61,14 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props> 
           {!this.props.mapViewModeIsSwitching &&
             <View style={[styles.heading, { transform: [{ rotate }] }]}>
               <View style={styles.headingPointer} />
+            </View>
+          }
+          {this.props.microDateEnabled &&
+            <View style={[styles.heading, { transform: [{ rotate: rotateTarget }] }]}>
+              <View style={[styles.headingPointer, {
+                borderBottomColor: 'green',
+              }]}
+              />
             </View>
           }
           <View style={styles.marker} />

@@ -23,7 +23,6 @@ const mapStateToProps = (state) => ({
   location: state.location,
   mapView: state.mapView,
   auth: state.auth,
-  compass: state.compass,
   mapPanel: state.mapPanel,
   microDate: state.microDate,
 });
@@ -95,6 +94,16 @@ class DaterMapView extends React.Component<Props, State> {
     this.props.dispatch({
       type: 'MAPVIEW_UNLOAD',
     });
+  }
+
+  componentDidUpdate() {
+    if (this.mapView && this.props.microDate.enabled) {
+      this.mapView.setCamera({
+        heading: this.state.compassHeading || this.props.location.moveHeadingAngle,
+        duration: 500,
+        mode: MapboxGL.CameraModes.Ease,
+      });
+    }
   }
 
   onCompassHeadingUpdated = (compassHeading) => {
@@ -176,6 +185,8 @@ class DaterMapView extends React.Component<Props, State> {
           accuracy={this.props.location.coords.accuracy}
           visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
           heading={this.state.compassHeading || this.props.location.moveHeadingAngle}
+          targetHeading={this.props.microDate.targetHeading}
+          microDateEnabled={this.props.microDate.enabled}
           mapViewHeadingAngle={this.props.mapView.heading}
           mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
         />}
@@ -195,9 +206,9 @@ class DaterMapView extends React.Component<Props, State> {
           styleURL="mapbox://styles/olegwn/cjggmap8l002u2rmu63wda2nk"
           onRegionDidChange={(event) => this.onRegionDidChange(event)}
           onRegionWillChange={(event) => this.onRegionWillChange(event)}
-          // scrollEnabled={false}
+          scrollEnabled={!this.props.microDate.enabled}
           // zoomEnabled={false}
-          // rotateEnabled={false}
+          rotateEnabled={!this.props.microDate.enabled}
           pitchEnabled={false}
           minZoomLevel={9}
           maxZoomLevel={18}

@@ -1,7 +1,8 @@
-import { throttle, takeEvery, select, take, put, cancel, all } from 'redux-saga/effects';
-import { eventChannel } from 'redux-saga';
+import { takeLatest, takeEvery, select, take, put, cancel, all } from 'redux-saga/effects';
+import { eventChannel, delay } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
+import * as _ from 'lodash';
 
 import {
   USERS_AROUND_SEARCH_RADIUS_KM,
@@ -49,7 +50,7 @@ export default function* locationSaga() {
       const locationChannel = yield createLocationChannel();
       const task1 = yield takeEvery(locationChannel, updateLocation);
       const task2 = yield takeEvery(['AUTH_SUCCESS'], writeCoordsToFirestore);
-      const task3 = yield throttle(500, 'GEO_LOCATION_UPDATED', locationUpdatedSaga);
+      const task3 = yield takeLatest('GEO_LOCATION_UPDATED', locationUpdatedSaga);
 
       yield BackgroundGeolocation.start();
 
@@ -80,6 +81,7 @@ export default function* locationSaga() {
 }
 
 function* locationUpdatedSaga(action) {
+  yield delay(500); // debouncing location update handling
   const isCentered = yield select((state) => state.mapView.centered);
   const currentCoords = action.payload;
   const firstCoords = yield select((state) => state.location.firstCoords);
@@ -167,9 +169,13 @@ function* forceUpdate() {
 
 function createLocationChannel() {
   return eventChannel((emit) => {
+    const debouncedEmit = _.debounce(emit, 500, {
+      leading: true,
+    });
+
     const onLocation = (location) => {
       const coords = location.location ? location.location.coords : location.coords; // handle location & heartbeat callback params
-      emit(coords);
+      debouncedEmit(coords);
     };
 
     const onError = (error) => {

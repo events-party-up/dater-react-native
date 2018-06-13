@@ -123,6 +123,13 @@ function* outgoingMicroDateRequestInitSaga() {
   }
 }
 
+function* outgoingMicroDateAcceptSaga() {
+  const action = yield take('MICRO_DATE_OUTGOING_ACCEPT');
+  const microDate = action.payload;
+  const isMicroDateMode = yield select((state) => state.microDate.enabled);
+  if (!isMicroDateMode) yield* startMicroDateSaga(microDate);
+}
+
 function* startMicroDateSaga(microDate) {
   const myCoords = yield select((state) => state.location.coords);
   const userSnap = yield microDate.requestForRef.get();
@@ -141,13 +148,7 @@ function* startMicroDateSaga(microDate) {
       microDateId: microDate.id,
     },
   });
-}
-
-function* outgoingMicroDateAcceptSaga() {
-  const action = yield take('MICRO_DATE_OUTGOING_ACCEPT');
-  const microDate = action.payload;
-  const isMicroDateMode = yield select((state) => state.microDate.enabled);
-  if (!isMicroDateMode) yield* startMicroDateSaga(microDate);
+  yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_START' });
 }
 
 function* outgoingMicroDateCancelSaga(microDate: MicroDate) {

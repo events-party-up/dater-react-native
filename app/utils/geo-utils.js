@@ -11,7 +11,6 @@ const GeoUtils = {
   destinationPoint,
 };
 
-
 /**
  * Calculates the distance, in meters, between two locations, via the
  * Haversine formula. Note that this is approximate due to the fact that
