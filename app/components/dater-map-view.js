@@ -25,6 +25,7 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
   mapPanel: state.mapPanel,
   microDate: state.microDate,
+  appState: state.appState.state,
 });
 
 function creatMapViewProxy(mapView: MapboxGL.MapView) {
@@ -74,7 +75,6 @@ type State = {
 
 class DaterMapView extends React.Component<Props, State> {
   mapView: MapboxGL.MapView;
-  defZoomLevel = 17;
   compassListener;
 
   constructor(props) {
@@ -97,7 +97,10 @@ class DaterMapView extends React.Component<Props, State> {
   }
 
   componentDidUpdate() {
-    if (this.mapView && this.props.microDate.enabled) {
+    if (this.mapView &&
+      this.props.microDate.enabled &&
+      this.props.appState === 'active'
+    ) {
       this.mapView.setCamera({
         centerCoordinate: [this.props.location.coords.longitude, this.props.location.coords.latitude],
         heading: this.state.compassHeading || this.props.location.moveHeadingAngle,
@@ -192,60 +195,62 @@ class DaterMapView extends React.Component<Props, State> {
           mapViewHeadingAngle={this.props.mapView.heading}
           mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
         />}
-        <MapboxGL.MapView
-          ref={(component) => { this.mapView = component; }}
-          showUserLocation={false}
-          userTrackingMode={0}
-          zoomLevel={17}
-          style={styles.mapView}
-          animated
-          logoEnabled={false}
-          compassEnabled={false}
-          localizeLabels
-          onPress={() => { this.onMapPressed(); }}
-          pitch={0}
-          onWillStartLoadingMap={this.onMapReady}
-          styleURL="mapbox://styles/olegwn/cjggmap8l002u2rmu63wda2nk"
-          onRegionDidChange={(event) => this.onRegionDidChange(event)}
-          onRegionWillChange={(event) => this.onRegionWillChange(event)}
-          scrollEnabled={!this.props.microDate.enabled}
-          // zoomEnabled={false}
-          rotateEnabled={!this.props.microDate.enabled}
-          pitchEnabled={false}
-          minZoomLevel={9}
-          maxZoomLevel={18}
-        >
-          {this.props.microDate.enabled &&
-            <PastLocationsPath
-              lastLocation={this.props.location.coords}
-              uid={this.props.auth && this.props.auth.uid}
-              mode="own"
-              microDateId={this.props.microDate.id}
-              limit={MAX_VISIBLE_PAST_LOCATIONS}
-            />
-          }
-          {this.props.microDate.enabled &&
-          <PastLocationsPath
-            lastLocation={this.props.microDate.targetCurrentCoords}
-            uid={this.props.microDate.targetUserUid}
-            mode="target"
-            microDateId={this.props.microDate.id}
-            limit={MAX_VISIBLE_PAST_LOCATIONS}
-          />
+        {this.props.appState !== 'background' && this.props.appState !== 'init' && true &&
+          <MapboxGL.MapView
+            ref={(component) => { this.mapView = component; }}
+            showUserLocation={false}
+            userTrackingMode={0}
+            zoomLevel={17}
+            style={styles.mapView}
+            animated
+            logoEnabled={false}
+            compassEnabled={false}
+            localizeLabels
+            onPress={() => { this.onMapPressed(); }}
+            pitch={0}
+            onWillStartLoadingMap={this.onMapReady}
+            styleURL="mapbox://styles/olegwn/cjggmap8l002u2rmu63wda2nk"
+            onRegionDidChange={(event) => this.onRegionDidChange(event)}
+            onRegionWillChange={(event) => this.onRegionWillChange(event)}
+            scrollEnabled={!this.props.microDate.enabled}
+            // zoomEnabled={false}
+            rotateEnabled={!this.props.microDate.enabled}
+            pitchEnabled={false}
+            minZoomLevel={9}
+            maxZoomLevel={18}
+          >
+            {this.props.microDate.enabled &&
+              <PastLocationsPath
+                lastLocation={this.props.location.coords}
+                uid={this.props.auth && this.props.auth.uid}
+                mode="own"
+                microDateId={this.props.microDate.id}
+                limit={MAX_VISIBLE_PAST_LOCATIONS}
+              />
+            }
+            {this.props.microDate.enabled &&
+              <PastLocationsPath
+                lastLocation={this.props.microDate.targetCurrentCoords}
+                uid={this.props.microDate.targetUserUid}
+                mode="target"
+                microDateId={this.props.microDate.id}
+                limit={MAX_VISIBLE_PAST_LOCATIONS}
+              />
+            }
+            <UsersAroundComponent />
+            {this.props.location.coords && !this.props.mapView.centered &&
+              <MyLocationOnNonCenteredMap
+                compassHeading={this.state.compassHeading}
+                moveHeadingAngle={this.props.location.moveHeadingAngle}
+                mapViewHeadingAngle={this.props.mapView.heading}
+                coords={this.props.location.coords}
+                mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
+                headingToTarget={this.props.microDate.headingToTarget}
+                microDateEnabled={this.props.microDate.enabled}
+              />
+            }
+          </MapboxGL.MapView>
         }
-          <UsersAroundComponent />
-          {this.props.location.coords && !this.props.mapView.centered &&
-            <MyLocationOnNonCenteredMap
-              compassHeading={this.state.compassHeading}
-              moveHeadingAngle={this.props.location.moveHeadingAngle}
-              mapViewHeadingAngle={this.props.mapView.heading}
-              coords={this.props.location.coords}
-              mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
-              headingToTarget={this.props.microDate.headingToTarget}
-              microDateEnabled={this.props.microDate.enabled}
-            />
-          }
-        </MapboxGL.MapView>
         <View style={styles.debugView} pointerEvents="none">
           <Caption2 style={styles.debugText}>
             Точность: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}

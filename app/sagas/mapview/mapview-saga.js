@@ -19,7 +19,10 @@ export default function* mapViewSaga() {
       const task7 = yield fork(switchMapViewMode, mapView);
 
       yield put({ type: 'MAPVIEW_MAIN_SAGA_READY' });
-      yield take('MAPVIEW_UNLOAD');
+      yield take([
+        'MAPVIEW_UNLOAD',
+        'APP_STATE_BACKGROUND',
+      ]);
       yield cancel(task1, task2, task3, task4, task5, task6, task7);
     }
   } catch (error) {

@@ -56,7 +56,7 @@ class MainScreen extends Component<Props> {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    backgroundColor: 'gray',
+    backgroundColor: '#ede5dd',
     opacity: 1,
     alignSelf: 'stretch',
     flex: 1,

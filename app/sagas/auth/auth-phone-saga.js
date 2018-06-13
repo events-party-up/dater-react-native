@@ -12,35 +12,39 @@ import {
 } from '../../constants';
 
 export default function* authPhoneSaga() {
-  while (true) {
-    const startAction = yield take('AUTH_PHONE_NUMBER_VERIFY');
-    const authPhoneChannel = yield createAuthPhoneChannel(startAction.payload.phoneNumber);
-    const authPhoneStateChannel = yield takeEvery(authPhoneChannel, authPhoneStatesSaga);
-    const task1 = yield fork(authPhoneCodeSentSaga);
+  try {
+    while (true) {
+      const startAction = yield take('AUTH_PHONE_NUMBER_VERIFY');
+      const authPhoneChannel = yield createAuthPhoneChannel(startAction.payload.phoneNumber);
+      const authPhoneStateChannel = yield takeEvery(authPhoneChannel, authPhoneStatesSaga);
+      const task1 = yield fork(authPhoneCodeSentSaga);
 
-    const stopAction = yield take([
-      'AUTH_SUCCESS',
-      'AUTH_PHONE_INVALID_NUMBER_ERROR',
-      'AUTH_PHONE_NUMBER_UNKNOWN_ERROR',
-      'BACK_BUTTON_PRESSED',
-      'AUTH_PHONE_NUMBER_SMS_CODE_SCREEN_BACK_BUTTON',
-      'AUTH_PHONE_NUMBER_SEND_SMS_TIMEOUT',
-    ]);
+      const stopAction = yield take([
+        'AUTH_SUCCESS',
+        'AUTH_PHONE_INVALID_NUMBER_ERROR',
+        'AUTH_PHONE_NUMBER_UNKNOWN_ERROR',
+        'BACK_BUTTON_PRESSED',
+        'AUTH_PHONE_NUMBER_SMS_CODE_SCREEN_BACK_BUTTON',
+        'AUTH_PHONE_NUMBER_SEND_SMS_TIMEOUT',
+      ]);
 
-    if (stopAction.type === 'AUTH_SUCCESS') {
-      yield Actions.navigate({
-        key: 'GenderScreen',
-        routeName: 'GenderScreen',
-      });
-    } else if (
-      stopAction.type !== 'AUTH_PHONE_NUMBER_SMS_CODE_SCREEN_BACK_BUTTON'
-    ) {
-      alertSomethingWentWrong(stopAction);
+      if (stopAction.type === 'AUTH_SUCCESS') {
+        yield Actions.navigate({
+          key: 'GenderScreen',
+          routeName: 'GenderScreen',
+        });
+      } else if (
+        stopAction.type !== 'AUTH_PHONE_NUMBER_SMS_CODE_SCREEN_BACK_BUTTON'
+      ) {
+        alertSomethingWentWrong(stopAction);
+      }
+      yield cancel(authPhoneStateChannel);
+      yield cancel(task1);
+      yield authPhoneChannel.close();
+      yield put({ type: 'AUTH_PHONE_NUMBER_TASKS_STOPPED', payload: stopAction.type });
     }
-    yield cancel(authPhoneStateChannel);
-    yield cancel(task1);
-    yield authPhoneChannel.close();
-    yield put({ type: 'AUTH_PHONE_NUMBER_TASKS_STOPPED', payload: stopAction.type });
+  } catch (error) {
+    yield put({ type: 'AUTH_PHONE_NUMBER_ERROR', payload: error });
   }
 }
 
