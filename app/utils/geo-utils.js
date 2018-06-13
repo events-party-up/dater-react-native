@@ -138,7 +138,7 @@ function getBearing(startPosition: GeoCoordinates, nextPosition: GeoCoordinates)
   return (bearing + 360) % 360;
 }
 
-function wrapCompassHeading(heading) {
+export function wrapCompassHeading(heading) {
   if (heading > 180) {
     return -(360 - heading);
   }

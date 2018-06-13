@@ -14,6 +14,7 @@ export const DEFAULT_LONGITUDE_DELTA = DEFAULT_LATITUDE_DELTA * SCREEN_ASPECT_RA
 export const DEFAULT_MAPVIEW_ANIMATION_DURATION = 500;
 export const EARTH_RADIUS_M = 6371e3;
 export const MAP_PLUS_MINUS_ZOOM_INCREMENT = 1;
+export const MICRO_DATE_MAPMAKER_POSITIVE_THRESHOLD_ANGLE = 40;
 
 // Geolocation
 export const HEADING_UPDATE_ON_DEGREE_CHANGED = 10;
@@ -36,8 +37,7 @@ export const CURRENT_USER_COLLECTION = 'users';
 export const PROFILE_PHOTOS_STORAGE_PATH = 'profilePhotos';
 
 // Micro Dates
-export const DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD = 1; // TODO: put back 30
-
+export const DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD = 30;
 // Cloudinary
 
 // Users around

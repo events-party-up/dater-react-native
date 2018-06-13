@@ -16,7 +16,7 @@ const geoOptions = async () => {
     distanceFilter: 5,
     desiredAccuracy: RNBackgroundGeolocation.DESIRED_ACCURACY_HIGH,
     // stopTimeout: 1,
-    debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
+    debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
     // disableStopDetection: process.env.NODE_ENV === 'development' || false, // disable stop detection in dev mode
     logLevel: RNBackgroundGeolocation.LOG_LEVEL_DEBUG,
     stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.

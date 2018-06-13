@@ -29,14 +29,14 @@ class PastLocationsPath extends React.Component<Props, State> {
   pathStyle = MapboxGL.StyleSheet.create({
     lines: {
       lineColor: this.props.mode ===
-        'own' ? 'rgba(128, 128, 128, 1)' : '#1F8BFF',
+        'own' ? '#1F8BFF' : '#3DB770',
       lineWidth: 1.5,
       lineOpacity: 0.84,
       lineDasharray: [3, 3],
     },
     arrows: {
       fillAntialias: true,
-      fillColor: this.props.mode === 'own' ? 'rgba(128, 128, 128, 1)' : '#1F8BFF',
+      fillColor: this.props.mode === 'own' ? '#1F8BFF' : '#3DB770',
     },
   });
 
