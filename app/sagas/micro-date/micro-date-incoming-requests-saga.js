@@ -147,7 +147,6 @@ function* startMicroDateSaga(microDate) {
     shortId: userSnap.id.substring(0, 4),
     ...userSnap.data(),
   };
-
   yield put({
     type: 'MICRO_DATE_INCOMING_START',
     payload: {
@@ -157,6 +156,7 @@ function* startMicroDateSaga(microDate) {
       microDateId: microDate.id,
     },
   });
+  yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_START' });
 }
 
 function* incomingMicroDateDeclineByMeSaga(microDate) {

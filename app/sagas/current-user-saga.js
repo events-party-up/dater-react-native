@@ -3,23 +3,26 @@ import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
 
 import { CURRENT_USER_COLLECTION, GEO_POINTS_COLLECTION } from '../constants';
+import { calculateAgeFrom } from '../utils/date-utils';
 
 export default function* currentUserSaga() {
-  // yield takeEvery('AUTH_SUCCESS', currentUserSignIn);
-  // yield takeEvery('AUTH_SIGNOUT', currentUserSignOut);
-  yield takeEvery('CURRENT_USER_SET_PROFILE_FIELDS', currentUserSetProfileFieldSaga);
+  try {
+    yield takeEvery('CURRENT_USER_SET_PROFILE_FIELDS', currentUserSetProfileFieldSaga);
 
-  while (true) {
-    const authSuccessAction = yield take('AUTH_SUCCESS');
-    const { uid } = authSuccessAction.payload;
-    yield* currentUserSignIn(authSuccessAction); // need this to immediately initialize currentUser
-    const currentUserChannel = yield createChannelToCurrentUserInFirestore(uid);
-    const currentUserUpdatedTask = yield takeLatest(currentUserChannel, currentUserUpdatedInFirebaseSaga);
+    while (true) {
+      const authSuccessAction = yield take('AUTH_SUCCESS');
+      const { uid } = authSuccessAction.payload;
+      yield* currentUserSignIn(authSuccessAction); // need this to immediately initialize currentUser
+      const currentUserChannel = yield createChannelToCurrentUserInFirestore(uid);
+      const currentUserUpdatedTask = yield takeLatest(currentUserChannel, currentUserUpdatedInFirebaseSaga);
 
-    yield take('AUTH_SIGNOUT');
-    yield* currentUserSignOut();
-    currentUserChannel.close();
-    cancel(currentUserUpdatedTask);
+      yield take('AUTH_SIGNOUT');
+      yield* currentUserSignOut();
+      currentUserChannel.close();
+      cancel(currentUserUpdatedTask);
+    }
+  } catch (error) {
+    yield put({ type: 'CURRENT_USER_SET_ERROR', payload: error });
   }
 }
 
@@ -69,6 +72,12 @@ function* currentUserSetProfileFieldSaga(action) {
     .update({
       ...fields,
     });
+
+  // TODO: move to separate analytics saga
+  yield firebase.analytics()
+    .setUserProperty('gender', fields.gender || 'unknown');
+  yield firebase.analytics()
+    .setUserProperty('age', String(calculateAgeFrom(fields.birthday)));
 }
 
 function createChannelToCurrentUserInFirestore(uid) {

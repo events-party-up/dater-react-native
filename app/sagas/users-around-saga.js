@@ -162,27 +162,12 @@ async function createAllUsersAroundChannel(userCoords, currentUser) {
         throttledEmit(filterSnapshots(snapShots));
       }
 
-      if (snapShots.metadata.hasPendingWrites) { // do not process local updates triggered by local writes
-        return;
-      }
+      // if (snapShots.metadata.hasPendingWrites) { // do not process local updates triggered by local writes
+      //   return;
+      // }
 
       const usersAround = filterSnapshots(snapShots);
       throttledEmit(usersAround);
-
-    //   snapshot.docChanges.forEach((change) => {
-    //     if (change.type === 'added') {
-    //       console.log('New locaiton: ', change.doc.data());
-    //     }
-    //     if (change.type === 'modified') {
-    //       console.log('Modified locaiton: ', change.doc.data());
-    //     }
-    //     if (change.type === 'removed') {
-    //       console.log('Removed location: ', change.doc.data());
-    //     }
-    //     if (change.type) {
-    //       console.log('User ID: ', change.doc.id);
-    //     }
-    //   });
     };
 
     const onError = (error) => {

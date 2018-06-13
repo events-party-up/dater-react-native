@@ -1,4 +1,4 @@
-import { throttle, takeEvery, select, take, put, cancel, all } from 'redux-saga/effects';
+import { call, takeEvery, select, take, put, cancel, all, fork, actionChannel } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
@@ -15,7 +15,10 @@ import BackgroundGeolocation from '../services/background-geolocation';
 export default function* locationSaga() {
   try {
     yield put({ type: 'GEO_LOCATION_INITIALIZE' });
-
+    const startActionChannel = yield actionChannel([
+      'GEO_LOCATION_START_AUTO',
+      'GEO_LOCATION_START_MANUALLY',
+    ]);
     const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
 
     if (!isUserAuthenticated) { // user must be authorized
@@ -24,10 +27,7 @@ export default function* locationSaga() {
     const uid = yield select((state) => state.auth.uid);
 
     while (true) {
-      const startAction = yield take([
-        'GEO_LOCATION_START_AUTO',
-        'GEO_LOCATION_START_MANUALLY',
-      ]);
+      const startAction = yield take(startActionChannel);
 
       const isAlreadyInitizlied = yield select((state) => state.location.isBackgroundGeolocationInitialized);
       if (!isAlreadyInitizlied) {
@@ -49,7 +49,7 @@ export default function* locationSaga() {
       const locationChannel = yield createLocationChannel();
       const task1 = yield takeEvery(locationChannel, updateLocation);
       const task2 = yield takeEvery(['AUTH_SUCCESS'], writeCoordsToFirestore);
-      const task3 = yield throttle(500, 'GEO_LOCATION_UPDATED', locationUpdatedSaga);
+      const task3 = yield takeLeading('GEO_LOCATION_UPDATED', locationUpdatedSaga);
 
       yield BackgroundGeolocation.start();
 
@@ -81,11 +81,15 @@ export default function* locationSaga() {
 
 function* locationUpdatedSaga(action) {
   const isCentered = yield select((state) => state.mapView.centered);
+  const isMicroDateEnabled = yield select((state) => state.microDate.enabled);
   const currentCoords = action.payload;
   const firstCoords = yield select((state) => state.location.firstCoords);
   const appState = yield select((state) => state.appState.state);
 
-  if (isCentered && appState === 'active') {
+  if (isCentered &&
+    appState === 'active' &&
+    !isMicroDateEnabled
+  ) {
     yield* setCamera(action);
   }
   if (!firstCoords || !currentCoords) return;
@@ -105,14 +109,9 @@ function* locationUpdatedSaga(action) {
 }
 
 function* setCamera(action) {
-  const mapHeading = yield select((state) => state.mapView.heading);
-  const moveHeadingAngle = yield select((state) => state.location.moveHeadingAngle);
-  const heading = action.payload.heading >= 0 ? action.payload.heading : moveHeadingAngle || mapHeading;
-
   yield put({
     type: 'MAPVIEW_SET_CAMERA',
     payload: {
-      heading,
       latitude: action.payload.latitude,
       longitude: action.payload.longitude,
       duration: 500,
@@ -126,8 +125,8 @@ function* updateLocation(coords) {
       type: 'GEO_LOCATION_UPDATED',
       payload: coords,
     });
-    yield* writeCoordsToFirestore(coords);
-    yield* microDateUserMovementsMyMoveSaga(coords);
+    yield fork(microDateUserMovementsMyMoveSaga, coords);
+    yield fork(writeCoordsToFirestore, coords);
   } else if (coords.error) {
     yield put({
       type: 'GEO_LOCATION_UPDATE_CHANNEL_ERROR',
@@ -194,3 +193,10 @@ function createLocationChannel() {
     return unsubscribe;
   });
 }
+
+const takeLeading = (patternOrChannel, saga, ...args) => fork(function* () { // eslint-disable-line func-names
+  while (true) {
+    const action = yield take(patternOrChannel);
+    yield call(saga, ...args.concat(action));
+  }
+});

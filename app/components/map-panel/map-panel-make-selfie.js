@@ -30,12 +30,14 @@ export default class MapPanelMakeSelfie extends React.Component<Props> {
             justifyContent: 'space-evenly',
           }}
         >
-          {/* <DaterButton
-            style={[MapPanelStyles.panelButton, { width: 130 }]}
-            onPress={this.stopMicroDate}
-          >
-            Остановить
-          </DaterButton> */}
+          {this.props.stopMicroDate &&
+            <DaterButton
+              style={[MapPanelStyles.panelButton, { width: 130 }]}
+              onPress={this.props.stopMicroDate}
+            >
+              Остановить
+            </DaterButton>
+          }
           <DaterButton
             style={[MapPanelStyles.panelButton, { width: 130 }]}
             onPress={this.props.onPressOpenCamera}

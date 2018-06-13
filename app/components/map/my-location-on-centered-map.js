@@ -6,14 +6,16 @@ import {
   Dimensions,
 } from 'react-native';
 
+import { wrapCompassHeading } from '../../utils/geo-utils';
+import { MICRO_DATE_MAPMAKER_POSITIVE_THRESHOLD_ANGLE } from '../../constants';
+
 const SIZE: number = 17;
 const HALO_RADIUS = 5;
 const ARROW_SIZE = 7;
 const ARROW_DISTANCE = 10;
 const HALO_SIZE = SIZE + HALO_RADIUS;
 const HEADING_BOX_SIZE = HALO_SIZE + ARROW_SIZE + ARROW_DISTANCE;
-const colorOfmyLocationMapMarker = '#2c7cf6';
-// const colorOfHalo = '#add0fb';
+const colorOfmyLocationMapMarker = '#1F8BFF'; // '#2c7cf6';
 const colorOfHalo = 'rgba(30,144,255,0.2)';
 const { width, height } = Dimensions.get('window');
 const DIAGONAL = Math.sqrt((width * width) + (height * height));
@@ -23,6 +25,9 @@ type Props = {
   visibleRadiusInMeters: number,
   heading: number,
   mapViewHeadingAngle: number,
+  mapViewModeIsSwitching: boolean,
+  headingToTarget: number,
+  microDateEnabled: boolean,
 };
 
 export default class MyLocationOnCenteredMap extends React.PureComponent<Props> {
@@ -34,7 +39,14 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props> 
     // console.log(`Visible radius: ${visibleRadiusInMeters}, DIAGONAL: ${DIAGONAL}, pixelsPerMeter: ${pixelsPerMeter}, Radius: ${RADIUS}`);
     const rotation = (this.props.heading || 0) - (this.props.mapViewHeadingAngle || 0); // zeros protect from undefined values
     const rotate = `${rotation}deg`;
-    // console.log(`moveHeadingAngle: ${this.props.moveHeadingAngle}, mapViewHeadingAngle: ${this.props.mapViewHeadingAngle}, rotation: ${rotation}`);
+    const rotationTarget = (this.props.headingToTarget || 0) - (this.props.mapViewHeadingAngle || 0); // zeros protect from undefined values
+    const rotateTarget = `${rotationTarget}deg`;
+    const deltaMeAndTargetHeading =
+      Math.abs(wrapCompassHeading(wrapCompassHeading(this.props.heading) -
+               wrapCompassHeading(this.props.headingToTarget)));
+    const microDateMarkerColor =
+      deltaMeAndTargetHeading <= MICRO_DATE_MAPMAKER_POSITIVE_THRESHOLD_ANGLE ? '#3DB770' : '#EB5757';
+    const markerColor = this.props.microDateEnabled ? microDateMarkerColor : colorOfmyLocationMapMarker;
 
     return (
       <View
@@ -53,10 +65,23 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props> 
         />
         <View style={styles.container}>
           <View style={styles.markerHalo} />
-          <View style={[styles.heading, { transform: [{ rotate }] }]}>
-            <View style={styles.headingPointer} />
-          </View>
-          <View style={styles.marker} />
+          {!this.props.mapViewModeIsSwitching &&
+            <View style={[styles.heading, { transform: [{ rotate }] }]}>
+              <View style={styles.headingPointer} />
+            </View>
+          }
+          {this.props.microDateEnabled &&
+            <View style={[styles.heading, { transform: [{ rotate: rotateTarget }] }]}>
+              <View style={[styles.headingPointer, {
+                borderBottomColor: markerColor,
+              }]}
+              />
+            </View>
+          }
+          <View style={[styles.marker, {
+              backgroundColor: markerColor,
+            }]}
+          />
         </View>
       </View>
     );

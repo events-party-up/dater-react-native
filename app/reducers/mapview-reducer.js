@@ -32,6 +32,7 @@ const types = {
   MAPVIEW_SHOW_MY_LOCATION_FINISH: 'MAPVIEW_SHOW_MY_LOCATION_FINISH',
   MAPVIEW_SHOW_MY_LOCATION_ERROR: 'MAPVIEW_SHOW_MY_LOCATION_ERROR',
 
+  MAPVIEW_MY_VISIBILITY_ERROR: 'MAPVIEW_MY_VISIBILITY_ERROR',
   MAPVIEW_FIT_TO_BOUNDS_ERROR: 'MAPVIEW_FIT_TO_BOUNDS_ERROR',
   MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE: 'MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE',
   MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE_ERROR: 'MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE_ERROR',
@@ -47,6 +48,7 @@ const initialState = {
   visibleBounds: [],
   mapReady: false, // has the map been loaded?
   centered: false, // should map be in centered mode?
+  modeIsSwitching: false,
 };
 
 const mapViewReducer = (state = initialState, action) => {
@@ -96,6 +98,18 @@ const mapViewReducer = (state = initialState, action) => {
         mapReady: true,
       };
     }
+    case types.MAPVIEW_SWITCH_VIEW_MODE_START: {
+      return {
+        ...state,
+        modeIsSwitching: true,
+      };
+    }
+    case types.MAPVIEW_SWITCH_VIEW_MODE_FINISH: {
+      return {
+        ...state,
+        modeIsSwitching: false,
+      };
+    }
     case types.MAPVIEW_UNLOAD: {
       return {
         ...state,
@@ -113,14 +127,10 @@ const mapViewReducer = (state = initialState, action) => {
       return {
         ...state,
         centered: true,
-      };
-    }
-    case types.MAPVIEW_SWITCH_VIEW_MODE_FINISH: {
-      return {
-        ...state,
         mapViewSwitchMode: payload,
       };
     }
+    case types.MAPVIEW_MY_VISIBILITY_ERROR:
     case types.MAPVIEW_SWITCH_VIEW_MODE_ERROR:
     case types.MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE_ERROR:
     case types.MAPVIEW_FIT_TO_BOUNDS_ERROR:
