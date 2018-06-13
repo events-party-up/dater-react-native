@@ -200,7 +200,7 @@ class DaterMapView extends React.Component<Props, State> {
             ref={(component) => { this.mapView = component; }}
             showUserLocation={false}
             userTrackingMode={0}
-            zoomLevel={17}
+            zoomLevel={this.props.mapView.zoom}
             style={styles.mapView}
             animated
             logoEnabled={false}
