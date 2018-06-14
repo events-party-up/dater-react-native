@@ -325,7 +325,7 @@ async function getPendingViewFinishedMicroDate(uid) {
   // console.log(uid);
   // const microDate = firebase.firestore()
   //   .collection(MICRO_DATES_COLLECTION)
-  //   .doc('3uloX6P8tvZaxqodH23e');
+  //   .doc('lkYF2Aq6lKN9JVzXS155');
   // const microDateSnapshot = await microDate.get();
   return microDateSnapshot ? microDateSnapshot.data() : null;
 }
