@@ -1,6 +1,6 @@
-import { take, cancel, takeEvery, put, fork, race } from 'redux-saga/effects';
+import { take, cancel, takeEvery, put, fork, race, delay } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
-import { eventChannel, delay } from 'redux-saga';
+import { eventChannel } from 'redux-saga';
 import { Alert } from 'react-native';
 // import { StackActions, NavigationActions } from 'react-navigation';
 

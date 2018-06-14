@@ -1,4 +1,4 @@
-import { call, takeEvery, select, take, put, cancel, all, fork, actionChannel } from 'redux-saga/effects';
+import { takeEvery, select, take, put, cancel, all, fork, actionChannel, takeLeading } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
@@ -193,10 +193,3 @@ function createLocationChannel() {
     return unsubscribe;
   });
 }
-
-const takeLeading = (patternOrChannel, saga, ...args) => fork(function* () { // eslint-disable-line func-names
-  while (true) {
-    const action = yield take(patternOrChannel);
-    yield call(saga, ...args.concat(action));
-  }
-});

@@ -39,7 +39,7 @@
     "react-redux": "^5.0.7",
     "redux": "^3.7.2",
     "redux-persist": "^5.9.1",
-    "redux-saga": "^0.16.0"
+    "redux-saga": "^1.0.0-beta.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.2",
@@ -57,9 +57,9 @@
     "jest": "22.4.2",
     "lodash": "^4.17.5",
     "react-test-renderer": "^16.3.0-alpha.1",
-    "reactotron-react-native": "2.0.0-beta.1",
-    "reactotron-redux": "^2.0.0-beta.1",
-    "reactotron-redux-saga": "^2.0.0-beta.1",
+    "reactotron-react-native": "^2.0.0-beta.6",
+    "reactotron-redux": "^2.0.0-beta.6",
+    "reactotron-redux-saga": "^2.0.0-beta.6",
     "redux-logger": "^3.0.6"
   },
   "jest": {

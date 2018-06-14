@@ -1,5 +1,5 @@
-import { put, takeEvery, call, take, race } from 'redux-saga/effects';
-import { eventChannel, delay } from 'redux-saga';
+import { put, takeEvery, call, take, race, delay } from 'redux-saga/effects';
+import { eventChannel } from 'redux-saga';
 
 import {
   AppState,
