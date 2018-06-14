@@ -1,5 +1,4 @@
-import { takeLatest, call, take, put, cancel, select, fork } from 'redux-saga/effects';
-import { delay } from 'redux-saga';
+import { takeLatest, call, take, put, cancel, select, fork, delay } from 'redux-saga/effects';
 
 import { DEFAULT_MAPVIEW_ANIMATION_DURATION } from '../../constants';
 

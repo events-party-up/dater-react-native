@@ -1,5 +1,5 @@
-import { put, takeEvery, call, take } from 'redux-saga/effects';
-import { eventChannel, delay } from 'redux-saga';
+import { put, takeEvery, call, take, delay } from 'redux-saga/effects';
+import { eventChannel } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import DeviceInfo from 'react-native-device-info';
 import { Platform, Keyboard } from 'react-native';

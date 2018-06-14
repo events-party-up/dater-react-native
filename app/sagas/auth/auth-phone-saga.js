@@ -57,7 +57,7 @@ function* authPhoneCodeSentSaga() {
 
   if (codeSentAction) {
     yield delay(SEND_SMS_ARTIFICIAL_UI_DELAY); // artificial delay, so users wait a bit for SMS to come
-    yield Actions.navigate({ key: 'SmsCodeScreen', routeName: 'SmsCodeScreen' });
+    yield Actions.navigate({ key: 'SmsCode', routeName: 'SmsCode' });
     const { verificationId } = codeSentAction.payload;
     yield takeEvery('AUTH_PHONE_NUMBER_SMS_CODE_SUBMITTED', authPhoneCodeSubmittedSaga, verificationId);
   } else {
