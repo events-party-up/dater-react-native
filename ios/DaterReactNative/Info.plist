@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>0.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -40,7 +40,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>2</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -54,20 +54,28 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>$(PRODUCT_NAME) uses music.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>$(PRODUCT_NAME) uses bluetooth to improve your location tracking.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>$(PRODUCT_NAME) uses your calendar.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Taking selfie or adding photo to your profile.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Required to work with maps.</string>
+	<string>Required to work with maps including background mode.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Required to work with maps when the app is closed.</string>
+	<string>Required to work with maps when the app is in background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Required to work with maps.</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Required to work with location services.</string>
+	<string>Dater track your steps and motion activity.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Add photos to your Dater profile.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Add photos to your Dater profile.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>$(PRODUCT_NAME) uses speech recognition.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>OpenSans-Bold.ttf</string>
