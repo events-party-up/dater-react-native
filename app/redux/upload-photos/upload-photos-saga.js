@@ -5,7 +5,7 @@ import { eventChannel } from 'redux-saga';
 import {
   MICRO_DATES_COLLECTION,
   PROFILE_PHOTOS_STORAGE_PATH,
-} from '../constants';
+} from '../../constants';
 
 // TODO: watch for Cloud function to finish its task and fire proper actions / update reducers
 export default function* uploadPhotosSaga() {

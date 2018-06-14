@@ -3,7 +3,7 @@ import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
 import * as _ from 'lodash';
 
-import GeoUtils from '../utils/geo-utils';
+import GeoUtils from '../../utils/geo-utils';
 
 import {
   USERS_AROUND_SEARCH_RADIUS_KM,
@@ -11,7 +11,7 @@ import {
   GEO_POINTS_COLLECTION,
   USERS_AROUND_PUBLIC_UPDATE_INTERVAL,
   USERS_AROUND_MICRODATE_UPDATE_INTERVAL,
-} from '../constants';
+} from '../../constants';
 
 const ONE_HOUR = 1000 * 60 * 60;
 const geoPointPath = 'geoPoint';

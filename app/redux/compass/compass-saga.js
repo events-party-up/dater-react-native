@@ -1,7 +1,7 @@
 import { put, take, takeEvery, cancel } from 'redux-saga/effects';
 import ReactNativeHeading from '@zsajjad/react-native-heading';
 
-import { HEADING_UPDATE_ON_DEGREE_CHANGED } from '../constants';
+import { HEADING_UPDATE_ON_DEGREE_CHANGED } from '../../constants';
 
 export default function* compassSaga() {
   try {

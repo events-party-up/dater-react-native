@@ -1,4 +1,4 @@
-import GeoUtils from '../utils/geo-utils';
+import GeoUtils from '../../utils/geo-utils';
 
 const types = {
   MAPVIEW_READY: 'MAPVIEW_READY',

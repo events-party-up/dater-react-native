@@ -41,9 +41,7 @@ export default function* hapticFeedbackSaga() {
 }
 
 function hapticFeedbackSelection() {
-  // ReactNativeHapticFeedback.trigger('impactLight', false);
   ReactNativeHapticFeedback.trigger('selection', false);
-  // ReactNativeHapticFeedback.trigger('notificationError', false);
 }
 
 function hapticFeedbackVibrationOnly() {

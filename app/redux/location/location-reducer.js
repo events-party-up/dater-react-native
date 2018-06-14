@@ -1,4 +1,4 @@
-import GeoUtils from '../utils/geo-utils';
+import GeoUtils from '../../utils/geo-utils';
 
 const types = {
   GEO_PERMISSION_REQUESTED: 'GEO_PERMISSION_REQUESTED',

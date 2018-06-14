@@ -6,11 +6,11 @@ import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 import {
   USERS_AROUND_SEARCH_RADIUS_KM,
   GEO_POINTS_COLLECTION,
-} from '../constants';
-import { getFirestoreDocData } from '../utils/firebase-utils';
-import { microDateUserMovementsMyMoveSaga } from './micro-date/micro-date-user-movements-saga';
-import GeoUtils from '../utils/geo-utils';
-import BackgroundGeolocation from '../services/background-geolocation';
+} from '../../constants';
+import { getFirestoreDocData } from '../../utils/firebase-utils';
+import { microDateUserMovementsMyMoveSaga } from '../micro-date/micro-date-user-movements-saga';
+import GeoUtils from '../../utils/geo-utils';
+import BackgroundGeolocation from '../../services/background-geolocation';
 
 export default function* locationSaga() {
   try {

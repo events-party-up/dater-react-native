@@ -6,7 +6,7 @@ import {
   Platform,
 } from 'react-native';
 
-import { APP_STATE_ACTIVATE_BACKGROUND_MODE_AFTER } from '../constants';
+import { APP_STATE_ACTIVATE_BACKGROUND_MODE_AFTER } from '../../constants';
 
 export default function* appStateSaga() {
   try {

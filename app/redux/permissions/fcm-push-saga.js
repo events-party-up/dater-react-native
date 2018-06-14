@@ -2,7 +2,7 @@ import { select, take, put, fork } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 import DeviceInfo from 'react-native-device-info';
 
-import { CURRENT_USER_COLLECTION } from '../constants';
+import { CURRENT_USER_COLLECTION } from '../../constants';
 
 // TODO: store granted state in firestore & reenable in redux store
 export default function* fcmPushSaga() {
