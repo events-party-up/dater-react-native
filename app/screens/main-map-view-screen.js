@@ -6,18 +6,20 @@ import {
 } from 'react-native';
 import { connect, Dispatch } from 'react-redux';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
-// import { PanGestureHandler } from 'react-native-gesture-handler';
 import ReactNativeHeading from '@zsajjad/react-native-heading';
 
 import { GeoCoordinates } from '../types';
-import MyLocationOnCenteredMap from './map/my-location-on-centered-map';
-import UsersAroundComponent from './map/users-around-component';
-import PastLocationsPath from './map/past-locations-path';
-import { Caption2 } from './ui-kit/atoms/typography';
-import MicroDateStats from './micro-date/micro-date-stats';
+import MyLocationOnCenteredMap from '../components/map/my-location-on-centered-map';
+import UsersAroundComponent from '../components/map/users-around-component';
+import PastLocationsPath from '../components/map/past-locations-path';
+import { Caption2 } from '../components/ui-kit/atoms/typography';
+import MicroDateStats from '../components/micro-date/micro-date-stats';
 import { MAX_VISIBLE_PAST_LOCATIONS } from '../constants';
-import MyLocationOnNonCenteredMap from './map/my-location-on-non-centered-map';
+import MyLocationOnNonCenteredMap from '../components/map/my-location-on-non-centered-map';
 import OnMapRightButtons from '../components/map/on-map-right-buttons';
+import MapPanelComponent from '../components/map-panel/map-panel-component';
+// import DaterButton from '../components/ui-kit/atoms/dater-button';
+// import FirebaseSetup from '../components/firebase-setup';
 
 const mapStateToProps = (state) => ({
   location: state.location,
@@ -67,13 +69,14 @@ type Props = {
   },
   mapView: MapboxGL.MapView,
   microDate: any,
+  navigation: any,
 };
 
 type State = {
   compassHeading: number,
 }
 
-class DaterMapView extends React.Component<Props, State> {
+class MainMapViewScreen extends React.Component<Props, State> {
   mapView: MapboxGL.MapView;
   compassListener;
 
@@ -163,20 +166,13 @@ class DaterMapView extends React.Component<Props, State> {
 
   render() {
     return (
-      // <PanGestureHandler
-      //   // style={styles.mapViewContainer}
-      //   onGestureEvent={this.onGestureEvent}
-      //   id="dragbox"
-      //   enabled
-      // >
       <View
         style={styles.mapViewContainer}
-        // onMoveShouldSetResponder={(event) => {
-        //   this.onMapDragStart(event);
-        //   return true;
-        // }}
-        // onResponderRelease={this.onMapDragEnd}
       >
+        {/* <FirebaseSetup /> */}
+        <MapPanelComponent
+          navigation={this.props.navigation}
+        />
         <OnMapRightButtons
           location={this.props.location}
           heading={this.state.compassHeading || this.props.location.moveHeadingAngle}
@@ -195,7 +191,7 @@ class DaterMapView extends React.Component<Props, State> {
           mapViewHeadingAngle={this.props.mapView.heading}
           mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
         />}
-        {this.props.appState !== 'background' && this.props.appState !== 'init' && true &&
+        {this.props.appState !== 'background' && this.props.appState !== 'init' &&
           <MapboxGL.MapView
             ref={(component) => { this.mapView = component; }}
             showUserLocation={false}
@@ -283,14 +279,31 @@ class DaterMapView extends React.Component<Props, State> {
           </Caption2>
         </View>
         }
+        {/* <View style={styles.buttons}>
+          <DaterButton
+            style={styles.button}
+            onPress={() => this.props.navigation.navigate('FloatingNavigator')}
+            type="secondary"
+          >
+            Floating Screen
+          </DaterButton>
+          <DaterButton
+            style={styles.debugButtons}
+            onPress={() => this.props.navigation.navigate('UIKitNavigator')}
+          >
+            UI Kit
+          </DaterButton>
+        </View> */}
       </View>
-      // </PanGestureHandler>
     );
   }
 }
 
 const styles = StyleSheet.create({
   mapViewContainer: {
+    backgroundColor: '#ede5dd',
+    opacity: 1,
+    alignSelf: 'stretch',
     flex: 1,
   },
   mapView: {
@@ -304,6 +317,13 @@ const styles = StyleSheet.create({
   debugText: {
     opacity: 0.7,
     color: 'rgba(0, 0, 0, 0.9)',
+  },
+  debugButtons: {
+    position: 'absolute',
+    bottom: 30,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
   },
   microDateText: {
     opacity: 0.8,
@@ -328,4 +348,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps)(DaterMapView);
+export default connect(mapStateToProps)(MainMapViewScreen);
