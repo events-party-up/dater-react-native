@@ -10,31 +10,31 @@ import FullscreenPhotoScreen from '../screens/fullscreen-photo-screen';
 
 const RootStack = StackNavigator(
   {
-    RootHome: {
+    MainScreen: {
       screen: MainScreen,
     },
-    MakePhotoSelfie: {
+    MakePhotoSelfieScreen: {
       screen: MakePhotoSelfieScreen,
     },
-    MicroDate: {
+    MicroDateScreen: {
       screen: MicroDateScreen,
     },
-    FullscreenPhoto: {
+    FullscreenPhotoScreen: {
       screen: FullscreenPhotoScreen,
     },
-    Login: {
+    LoginNavigator: {
       screen: LoginNavigator,
     },
-    Floating: {
+    FloatingNavigator: {
       screen: FloatingNavigator,
     },
-    UIKit: {
+    UIKitNavigator: {
       screen: UIKitNavigator,
     },
   },
   {
     mode: 'modal',
-    initialRouteName: 'RootHome',
+    initialRouteName: 'MainScreen',
     headerMode: 'none',
     header: null,
     cardStyle: {

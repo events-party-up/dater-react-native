@@ -3,12 +3,12 @@ import FloatingScreen from '../screens/floating-screen';
 
 const FloatingNavigator = StackNavigator(
   {
-    Login: {
+    FloatingScreen: {
       screen: FloatingScreen,
     },
   },
   {
-    initialRouteName: 'Login',
+    initialRouteName: 'LoginScreen',
     headerMode: 'none',
     transitionConfig: () => ({
       containerStyle: {

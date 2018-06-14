@@ -7,6 +7,8 @@ import { connect } from 'react-redux';
 
 import DaterMapView from '../components/dater-map-view';
 import MapPanelComponent from '../components/map-panel/map-panel-component';
+
+// import DaterButton from '../components/ui-kit/atoms/dater-button';
 // import FirebaseSetup from '../components/firebase-setup';
 
 const mapStateToProps = (state) => ({
@@ -26,29 +28,21 @@ class MainScreen extends Component<Props> {
           navigation={this.props.navigation}
         />
         <DaterMapView />
-        <View style={styles.buttons}>
-          {/* <DaterButton
+        {/* <View style={styles.buttons}>
+          <DaterButton
             style={styles.button}
-            onPress={() => this.props.navigation.navigate('MakePhotoSelfie')}
-            type="secondary"
-          >
-            Фото
-          </DaterButton> */}
-          {/* <DaterButton
-            style={styles.button}
-            onPress={() => this.props.navigation.navigate('Floating')}
+            onPress={() => this.props.navigation.navigate('FloatingNavigator')}
             type="secondary"
           >
             Floating Screen
-          </DaterButton> */}
-
-          {/* <DaterButton
+          </DaterButton>
+          <DaterButton
             style={styles.button}
-            onPress={() => this.props.navigation.navigate('UIKit')}
+            onPress={() => this.props.navigation.navigate('UIKitNavigator')}
           >
             UI Kit
-          </DaterButton> */}
-        </View>
+          </DaterButton>
+        </View> */}
       </View>
     );
   }

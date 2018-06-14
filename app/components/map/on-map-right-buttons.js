@@ -87,7 +87,7 @@ class OnMapRightButtons extends React.Component<Props, State> {
   onMyProfilePress = () => {
     Actions.navigate({
       key: 'EditProfile',
-      routeName: 'RegisterProfile',
+      routeName: 'ProfileScreen',
       params: {
         navigationFlowType: 'mapViewModal',
       },

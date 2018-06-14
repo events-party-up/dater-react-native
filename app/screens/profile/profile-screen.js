@@ -48,7 +48,7 @@ class ProfileScreen extends Component<Props> {
   onChangePhotoPress = () => {
     this.props.navigation.navigate({
       key: 'EditProfilePhoto',
-      routeName: 'RegisterMakePhotoSelfie',
+      routeName: 'MakePhotoSelfieScreen',
       params: {
         navigationFlowType: 'editProfile',
         photoType: 'profilePhoto',
@@ -151,7 +151,7 @@ class ProfileScreen extends Component<Props> {
               onPress={() =>
                 this.props.navigation.navigate({
                   key: 'EditProfileName',
-                  routeName: 'RegisterName',
+                  routeName: 'NameScreen',
                   params: { navigationFlowType: 'editProfile' },
                 })}
             />
@@ -164,7 +164,7 @@ class ProfileScreen extends Component<Props> {
               onPress={() =>
                 this.props.navigation.navigate({
                   key: 'EditProfileBirthday',
-                  routeName: 'RegisterBirthday',
+                  routeName: 'BirthdayScreen',
                   params: { navigationFlowType: 'editProfile' },
                 })}
             />
@@ -178,7 +178,7 @@ class ProfileScreen extends Component<Props> {
               onPress={() =>
                 this.props.navigation.navigate({
                   key: 'EditProfileGender',
-                  routeName: 'RegisterGender',
+                  routeName: 'GenderScreen',
                   params: { navigationFlowType: 'editProfile' },
                 })}
             />

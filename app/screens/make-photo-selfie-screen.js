@@ -157,7 +157,7 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
     if (this.navigationFlowType === 'mapViewModal' || this.navigationFlowType === 'editProfile') {
       this.props.navigation.goBack();
     } else {
-      this.props.navigation.navigate({ key: 'RegisterProfile', routeName: 'RegisterProfile' });
+      this.props.navigation.navigate({ key: 'ProfileScreen', routeName: 'ProfileScreen' });
     }
   }
 

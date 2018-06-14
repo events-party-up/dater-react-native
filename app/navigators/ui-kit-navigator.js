@@ -7,24 +7,24 @@ import UIKitIndexScreen from '../screens/ui-kit/ui-kit-index-screen';
 
 const UIKitNavigator = StackNavigator(
   {
-    UIKitIndex: {
+    UIKitIndexScreen: {
       screen: UIKitIndexScreen,
     },
-    Typography: {
+    TypographyScreen: {
       screen: TypographyScreen,
       headerMode: 'none',
     },
-    Buttons: {
+    DaterButtonsScreen: {
       screen: DaterButtonsScreen,
     },
-    TextInputs: {
+    TextInputsScreen: {
       screen: TextInputsScreen,
     },
   },
   {
     headerMode: 'none',
     header: null,
-    initialRouteName: 'UIKitIndex',
+    initialRouteName: 'UIKitIndexScreen',
   },
 );
 

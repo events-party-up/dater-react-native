@@ -49,7 +49,7 @@ class PhoneNumberScreen extends Component<Props, State> {
 
   componentDidMount() { // TODO: temporary route guard
     if (this.props.isAuthenticated) {
-      this.props.navigation.navigate({ key: 'RegisterGender', routeName: 'RegisterGender' });
+      this.props.navigation.navigate({ key: 'GenderScreen', routeName: 'GenderScreen' });
     }
   }
 

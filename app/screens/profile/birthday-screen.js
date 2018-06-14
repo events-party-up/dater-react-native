@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 
 import DaterModal from '../../components/ui-kit/organisms/dater-modal';
-// import DaterButton from '../../components/ui-kit/atoms/dater-button';
 import { H2, Body } from '../../components/ui-kit/atoms/typography';
 import { calculateAgeFrom, ageWithTextPostfix } from '../../utils/date-utils';
 
@@ -59,8 +58,8 @@ class BirthdayScreen extends Component<Props, State> {
       this.props.navigation.goBack();
     } else {
       this.props.navigation.navigate({
-        key: 'RegisterMakePhotoSelfie',
-        routeName: 'RegisterMakePhotoSelfie',
+        key: 'MakePhotoSelfieScreen',
+        routeName: 'MakePhotoSelfieScreen',
         params: { photoType: 'profilePhoto' },
       });
     }
@@ -97,12 +96,6 @@ class BirthdayScreen extends Component<Props, State> {
               {'\n'}Вход разрешен!
             </Body>
           }
-          {/* <DaterButton
-            onPress={this.onBirthdaySelected}
-            disabled={this.initialDate === this.state.birthday}
-          >
-            Далее
-          </DaterButton> */}
         </ScrollView>
         <View
           onLayout={(event) => { this.setState({ birthdayKeyboardHeight: event.nativeEvent.layout.height }); }}

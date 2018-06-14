@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 

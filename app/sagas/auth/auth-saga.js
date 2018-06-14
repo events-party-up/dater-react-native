@@ -83,26 +83,26 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
 
       if (!currentUserProfile.gender) {
         yield Actions.navigate({
-          key: 'RegisterGender',
-          routeName: 'RegisterGender',
+          key: 'GenderScreen',
+          routeName: 'GenderScreen',
           params: {
             navigationFlowType: 'register',
           },
         });
       } else if (!currentUserProfile.name) {
         yield Actions.navigate({
-          key: 'RegisterName',
-          routeName: 'RegisterName',
+          key: 'NameScreen',
+          routeName: 'NameScreen',
         });
       } else if (!currentUserProfile.birthday) {
         yield Actions.navigate({
-          key: 'RegisterBirthday',
-          routeName: 'RegisterBirthday',
+          key: 'BirthdayScreen',
+          routeName: 'BirthdayScreen',
         });
       } else if (!currentUserProfile.mainPhoto) {
         yield Actions.navigate({
-          key: 'RegisterMakePhotoSelfie',
-          routeName: 'RegisterMakePhotoSelfie',
+          key: 'MakePhotoSelfieScreen',
+          routeName: 'MakePhotoSelfieScreen',
           params: { photoType: 'profilePhoto' },
         });
       } else {
@@ -115,8 +115,8 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
     } else {
       yield delay(2000); // artificial delay, otherwise will not show in some cases, TODO: find out why
       yield Actions.navigate({
-        key: 'Login',
-        routeName: 'Login',
+        key: 'LoginScreen',
+        routeName: 'LoginScreen',
       });
     }
   } catch (error) {

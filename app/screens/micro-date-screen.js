@@ -34,7 +34,7 @@ export default class MicroDateScreen extends React.Component<Props> {
   }
 
   onSelfieMarkerPress = () => {
-    this.props.navigation.navigate('FullscreenPhoto', {
+    this.props.navigation.navigate('FullscreenPhotoScreen', {
       photo: {
         publicId: `microDates/${this.microDate.id}`,
         version: this.microDate.selfie.version,
