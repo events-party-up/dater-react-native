@@ -5,7 +5,7 @@ import {
   Image,
 } from 'react-native';
 
-import { H2, Caption2, Body } from '../../components/ui-kit/typography';
+import { H2, Caption2, Body } from '../../components/ui-kit/atoms/typography';
 
 const MapPanelSelfieUploading = (props) => (
   <View>

@@ -6,9 +6,9 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
-import DaterModal from '../../components/ui-kit/dater-modal';
+import DaterModal from '../../components/ui-kit/organisms/dater-modal';
 import DaterButton from '../../components/ui-kit/atoms/dater-button';
-import { H1, Body, Caption2 } from '../../components/ui-kit/typography';
+import { H1, Body, Caption2 } from '../../components/ui-kit/atoms/typography';
 import { width } from '../../constants';
 
 const bgImage = require('../../assets/images/login-screen/login-selfie.jpg');
@@ -43,7 +43,7 @@ export default class LoginScreen extends React.Component<Props> {
             <Body style={styles.subHeader}>Играй и знакомься!</Body>
             <DaterButton
               style={styles.button}
-              onPress={() => this.props.navigation.navigate({ key: 'PhoneNumber', routeName: 'PhoneNumber' })}
+              onPress={() => this.props.navigation.navigate({ key: 'PhoneNumberScreen', routeName: 'PhoneNumberScreen' })}
               type="secondary"
               leftIconImage={signInIcon}
             >

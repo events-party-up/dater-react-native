@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 
 import DaterButton from '../../components/ui-kit/atoms/dater-button';
-import DaterModal from '../../components/ui-kit/dater-modal';
+import DaterModal from '../../components/ui-kit/organisms/dater-modal';
 
 type Props = {
   navigation: any,
@@ -24,21 +24,21 @@ export default class UIKitIndexScreen extends Component<Props> {
         <ScrollView>
           <DaterButton
             type="main"
-            onPress={() => this.props.navigation.navigate('Buttons')}
+            onPress={() => this.props.navigation.navigate('DaterButtonsScreen')}
             style={styles.button}
           >
             Buttons
           </DaterButton>
           <DaterButton
             type="main"
-            onPress={() => this.props.navigation.navigate('Typography')}
+            onPress={() => this.props.navigation.navigate('TypographyScreen')}
             style={styles.button}
           >
             Typography
           </DaterButton>
           <DaterButton
             type="main"
-            onPress={() => this.props.navigation.navigate('TextInputs')}
+            onPress={() => this.props.navigation.navigate('TextInputsScreen')}
             style={styles.button}
           >
             Text Inputs

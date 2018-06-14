@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 
-import DaterModal from '../components/ui-kit/dater-modal';
+import DaterModal from '../components/ui-kit/organisms/dater-modal';
 import DaterButton from '../components/ui-kit/atoms/dater-button';
 
 type Props = {

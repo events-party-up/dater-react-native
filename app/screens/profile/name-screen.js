@@ -9,9 +9,9 @@ import {
 } from 'react-native';
 
 import DaterTextInput from '../../components/ui-kit/atoms/dater-text-input';
-import DaterModal from '../../components/ui-kit/dater-modal';
+import DaterModal from '../../components/ui-kit/organisms/dater-modal';
 import DaterButton from '../../components/ui-kit/atoms/dater-button';
-import { H2 } from '../../components/ui-kit/typography';
+import { H2 } from '../../components/ui-kit/atoms/typography';
 
 const nameIcon = require('../../assets/icons/name/name.png');
 
@@ -50,7 +50,7 @@ class NameScreen extends Component<Props, State> {
     if (this.navigationFlowType === 'editProfile') {
       this.props.navigation.goBack();
     } else {
-      this.props.navigation.navigate({ key: 'RegisterBirthday', routeName: 'RegisterBirthday' });
+      this.props.navigation.navigate({ key: 'BirthdayScreen', routeName: 'BirthdayScreen' });
     }
   }
 

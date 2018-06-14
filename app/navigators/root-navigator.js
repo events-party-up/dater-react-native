@@ -1,6 +1,6 @@
 import { StackNavigator } from 'react-navigation';
 
-import MainScreen from '../screens/main-screen';
+import MainMapViewScreen from '../screens/main-map-view-screen';
 import UIKitNavigator from './ui-kit-navigator';
 import LoginNavigator from './login-navigator';
 import FloatingNavigator from './floating-navigator';
@@ -10,31 +10,31 @@ import FullscreenPhotoScreen from '../screens/fullscreen-photo-screen';
 
 const RootStack = StackNavigator(
   {
-    RootHome: {
-      screen: MainScreen,
+    MainMapViewScreen: {
+      screen: MainMapViewScreen,
     },
-    MakePhotoSelfie: {
+    MakePhotoSelfieScreen: {
       screen: MakePhotoSelfieScreen,
     },
-    MicroDate: {
+    MicroDateScreen: {
       screen: MicroDateScreen,
     },
-    FullscreenPhoto: {
+    FullscreenPhotoScreen: {
       screen: FullscreenPhotoScreen,
     },
-    Login: {
+    LoginNavigator: {
       screen: LoginNavigator,
     },
-    Floating: {
+    FloatingNavigator: {
       screen: FloatingNavigator,
     },
-    UIKit: {
+    UIKitNavigator: {
       screen: UIKitNavigator,
     },
   },
   {
     mode: 'modal',
-    initialRouteName: 'RootHome',
+    initialRouteName: 'MainMapViewScreen',
     headerMode: 'none',
     header: null,
     cardStyle: {

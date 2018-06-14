@@ -9,9 +9,9 @@ import {
 } from 'react-native';
 import ImageLoad from 'react-native-image-placeholder';
 
-import DaterModal from '../../components/ui-kit/dater-modal';
+import DaterModal from '../../components/ui-kit/organisms/dater-modal';
 import DaterButton from '../../components/ui-kit/atoms/dater-button';
-import { H2 } from '../../components/ui-kit/typography';
+import { H2 } from '../../components/ui-kit/atoms/typography';
 import cloudinaryUrl from '../../utils/cloudinary-utils';
 import { PrivateUserRecord } from '../../types';
 import { SCREEN_WIDTH } from '../../constants';
@@ -48,7 +48,7 @@ class ProfileScreen extends Component<Props> {
   onChangePhotoPress = () => {
     this.props.navigation.navigate({
       key: 'EditProfilePhoto',
-      routeName: 'RegisterMakePhotoSelfie',
+      routeName: 'MakePhotoSelfieScreen',
       params: {
         navigationFlowType: 'editProfile',
         photoType: 'profilePhoto',
@@ -151,7 +151,7 @@ class ProfileScreen extends Component<Props> {
               onPress={() =>
                 this.props.navigation.navigate({
                   key: 'EditProfileName',
-                  routeName: 'RegisterName',
+                  routeName: 'NameScreen',
                   params: { navigationFlowType: 'editProfile' },
                 })}
             />
@@ -164,7 +164,7 @@ class ProfileScreen extends Component<Props> {
               onPress={() =>
                 this.props.navigation.navigate({
                   key: 'EditProfileBirthday',
-                  routeName: 'RegisterBirthday',
+                  routeName: 'BirthdayScreen',
                   params: { navigationFlowType: 'editProfile' },
                 })}
             />
@@ -178,7 +178,7 @@ class ProfileScreen extends Component<Props> {
               onPress={() =>
                 this.props.navigation.navigate({
                   key: 'EditProfileGender',
-                  routeName: 'RegisterGender',
+                  routeName: 'GenderScreen',
                   params: { navigationFlowType: 'editProfile' },
                 })}
             />

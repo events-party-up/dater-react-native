@@ -4,8 +4,8 @@ import {
   View,
 } from 'react-native';
 
-import { H1, H2, H3, Body, Caption1, Caption2 } from '../../components/ui-kit/typography';
-import DaterModal from '../../components/ui-kit/dater-modal';
+import { H1, H2, H3, Body, Caption1, Caption2 } from '../../components/ui-kit/atoms/typography';
+import DaterModal from '../../components/ui-kit/organisms/dater-modal';
 
 type Props = {
   navigation: any,

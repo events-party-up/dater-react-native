@@ -12,7 +12,7 @@ import { connect, Dispatch } from 'react-redux';
 
 import MapPanelStyles from './map-panel-styles';
 
-import { H2, Caption2 } from '../../components/ui-kit/typography';
+import { H2, Caption2 } from '../../components/ui-kit/atoms/typography';
 import DaterButton from '../../components/ui-kit/atoms/dater-button';
 import MapPanelSelfieUploading from './map-panel-selfie-uploading';
 import MapPanelSelfieUploadedByMe from './map-panel-selfie-uploaded-by-me';
@@ -107,7 +107,7 @@ class MapPanelComponent extends Component<Props> {
   openCamera = () => {
     this.props.navigation.navigate({
       key: 'MicroDateSelfie',
-      routeName: 'MakePhotoSelfie',
+      routeName: 'MakePhotoSelfieScreen',
       params: {
         photoType: 'microDateSelfie',
         navigationFlowType: 'mapViewModal',

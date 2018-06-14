@@ -1,7 +1,9 @@
 import cloudinary from 'cloudinary-core';
 import { PixelRatio } from 'react-native';
 
-const cloudinaryClient = new cloudinary.Cloudinary({ cloud_name: 'dater', secure: true });
+import { CLOUDINARY_ACCOUNT_NAME } from '../constants';
+
+const cloudinaryClient = new cloudinary.Cloudinary({ cloud_name: CLOUDINARY_ACCOUNT_NAME, secure: true });
 /**
  * Generates Pixel Density aware Cloudinary URL
  * @param {*} imageOptions.publicId Cloudinary image public_id

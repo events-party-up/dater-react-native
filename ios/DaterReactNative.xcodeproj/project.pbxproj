@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -30,11 +31,11 @@
 		7C0AAEEB205FF1C00021D04C /* RNBackgroundFetch+AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C0AAEC4205FF1C00021D04C /* RNBackgroundFetch+AppDelegate.m */; };
 		7C8569D02065104D00F73867 /* libReactNativeHeading.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C8569CE2065103500F73867 /* libReactNativeHeading.a */; };
 		7C933D762050480F00E097E7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7C933D4F2050480F00E097E7 /* GoogleService-Info.plist */; };
-		80601FF3439041AC59C3D52A /* libPods-DaterReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5D6C29C0D1F4022F9029135 /* libPods-DaterReactNative.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		94BEA5034B3345A59F5268E9 /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9759A7CB7DEE4A1481E7E896 /* libRNGestureHandler.a */; };
 		A0741949908649E7A4CBB072 /* OpenSans-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5CF1191EFC85455ABFC09B2D /* OpenSans-SemiBoldItalic.ttf */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
+		B245BC2D39DACC0C3EEF5B87 /* libPods-DaterReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B7EAE492849B11632D925B /* libPods-DaterReactNative.a */; };
 		C39DB8E968794595A6D9A3E2 /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5411868A6AF046ECAA976581 /* OpenSans-Bold.ttf */; };
 		C57280E1F0B4408BACA99337 /* OpenSans-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 32CE7D4599F04E379A410BF3 /* OpenSans-ExtraBoldItalic.ttf */; };
 		C92F4279B8D245E9AFABE917 /* OpenSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 537E93988C7947378B438787 /* OpenSans-BoldItalic.ttf */; };
@@ -364,7 +365,6 @@
 		32CE7D4599F04E379A410BF3 /* OpenSans-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-ExtraBoldItalic.ttf"; path = "../assets/fonts/OpenSans-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		3952927F30C144DC982C10FE /* OpenSans-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-LightItalic.ttf"; path = "../assets/fonts/OpenSans-LightItalic.ttf"; sourceTree = "<group>"; };
 		4CA8EC7A55B14C5396D13B33 /* RNGestureHandler.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNGestureHandler.xcodeproj; path = "../node_modules/react-native-gesture-handler/ios/RNGestureHandler.xcodeproj"; sourceTree = "<group>"; };
-		51B34DE67DA828D690DD7A8B /* Pods-DaterReactNative.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DaterReactNative.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DaterReactNative/Pods-DaterReactNative.debug.xcconfig"; sourceTree = "<group>"; };
 		537E93988C7947378B438787 /* OpenSans-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-BoldItalic.ttf"; path = "../assets/fonts/OpenSans-BoldItalic.ttf"; sourceTree = "<group>"; };
 		5411868A6AF046ECAA976581 /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Bold.ttf"; path = "../assets/fonts/OpenSans-Bold.ttf"; sourceTree = "<group>"; };
 		5AEC89E0CF23421EA0E9AF92 /* libRNFirebase.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFirebase.a; sourceTree = "<group>"; };
@@ -379,14 +379,15 @@
 		7CAF4F6C208F29AA00CDF97B /* SplashScreen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SplashScreen.xcodeproj; path = "../node_modules/react-native-splash-screen/ios/SplashScreen.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		85DEE2F333E54CC891E7F0F1 /* OpenSans-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-ExtraBold.ttf"; path = "../assets/fonts/OpenSans-ExtraBold.ttf"; sourceTree = "<group>"; };
+		86B7EAE492849B11632D925B /* libPods-DaterReactNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DaterReactNative.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8925FF4A2D98495F8B986B72 /* OpenSans-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Light.ttf"; path = "../assets/fonts/OpenSans-Light.ttf"; sourceTree = "<group>"; };
 		9759A7CB7DEE4A1481E7E896 /* libRNGestureHandler.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNGestureHandler.a; sourceTree = "<group>"; };
-		9E5F3D372AB40A32FBBAF21C /* Pods-DaterReactNative.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DaterReactNative.release.xcconfig"; path = "Pods/Target Support Files/Pods-DaterReactNative/Pods-DaterReactNative.release.xcconfig"; sourceTree = "<group>"; };
+		9B59F137B560336E858D25BF /* Pods-DaterReactNative.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DaterReactNative.release.xcconfig"; path = "Pods/Target Support Files/Pods-DaterReactNative/Pods-DaterReactNative.release.xcconfig"; sourceTree = "<group>"; };
 		A1F0B4137C67411B968C79A3 /* OpenSans-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Italic.ttf"; path = "../assets/fonts/OpenSans-Italic.ttf"; sourceTree = "<group>"; };
-		A5D6C29C0D1F4022F9029135 /* libPods-DaterReactNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DaterReactNative.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9C8F14F264B4E4BB4C7A991 /* RNFirebase.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFirebase.xcodeproj; path = "../node_modules/react-native-firebase/ios/RNFirebase.xcodeproj"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
 		BC792333A845415CA9ED648D /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Regular.ttf"; path = "../assets/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; };
+		D9F0F402D7467DFE6C068350 /* Pods-DaterReactNative.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DaterReactNative.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DaterReactNative/Pods-DaterReactNative.debug.xcconfig"; sourceTree = "<group>"; };
 		F91568CDC5D14B6485C47BBA /* OpenSans-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-SemiBold.ttf"; path = "../assets/fonts/OpenSans-SemiBold.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -418,9 +419,9 @@
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
-				80601FF3439041AC59C3D52A /* libPods-DaterReactNative.a in Frameworks */,
 				674D397DCA7F4ABF93F90970 /* libRNFirebase.a in Frameworks */,
 				94BEA5034B3345A59F5268E9 /* libRNGestureHandler.a in Frameworks */,
+				B245BC2D39DACC0C3EEF5B87 /* libPods-DaterReactNative.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -568,9 +569,18 @@
 			children = (
 				7C00839020B7FCC600FC598D /* AddressBook.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
-				A5D6C29C0D1F4022F9029135 /* libPods-DaterReactNative.a */,
+				86B7EAE492849B11632D925B /* libPods-DaterReactNative.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5AAE28381CE77A4EBA5B1C00 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D9F0F402D7467DFE6C068350 /* Pods-DaterReactNative.debug.xcconfig */,
+				9B59F137B560336E858D25BF /* Pods-DaterReactNative.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 		5E91572E1DD0AC6500FF2AA8 /* Products */ = {
@@ -672,9 +682,9 @@
 				00E356EF1AD99517003FC87E /* DaterReactNativeTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				94EA59026B7ED43B81182BF6 /* Pods */,
 				7C933D07205043F800E097E7 /* Recovered References */,
 				274F7425C8B348B8A550E1CF /* Resources */,
+				5AAE28381CE77A4EBA5B1C00 /* Pods */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -688,15 +698,6 @@
 				00E356EE1AD99517003FC87E /* DaterReactNativeTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		94EA59026B7ED43B81182BF6 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				51B34DE67DA828D690DD7A8B /* Pods-DaterReactNative.debug.xcconfig */,
-				9E5F3D372AB40A32FBBAF21C /* Pods-DaterReactNative.release.xcconfig */,
-			);
-			name = Pods;
 			sourceTree = "<group>";
 		};
 		ADBDB9201DFEBF0600ED6528 /* Products */ = {
@@ -733,13 +734,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "DaterReactNative" */;
 			buildPhases = (
-				7324623C6D76406CE17507F3 /* [CP] Check Pods Manifest.lock */,
+				4B667A4E8821F61CF8DC4177 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				EE2DEFDEABB91525EB3E38A4 /* [CP] Embed Pods Frameworks */,
-				E293E81E4E99A85847C6F06A /* [CP] Copy Pods Resources */,
+				7C6F6FD020D21BC5006F2447 /* ShellScript */,
+				328A7634BBCF2DE7D59F94F2 /* [CP] Embed Pods Frameworks */,
+				CFF2681497FF48C52F887F7F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1197,7 +1199,25 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
-		7324623C6D76406CE17507F3 /* [CP] Check Pods Manifest.lock */ = {
+		328A7634BBCF2DE7D59F94F2 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-DaterReactNative/Pods-DaterReactNative-frameworks.sh",
+				"${PODS_ROOT}/../../node_modules/@mapbox/react-native-mapbox-gl/ios/Mapbox.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DaterReactNative/Pods-DaterReactNative-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4B667A4E8821F61CF8DC4177 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1215,7 +1235,20 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E293E81E4E99A85847C6F06A /* [CP] Copy Pods Resources */ = {
+		7C6F6FD020D21BC5006F2447 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Fabric/run\"";
+		};
+		CFF2681497FF48C52F887F7F /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1243,24 +1276,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DaterReactNative/Pods-DaterReactNative-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		EE2DEFDEABB91525EB3E38A4 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-DaterReactNative/Pods-DaterReactNative-frameworks.sh",
-				"${PODS_ROOT}/../../node_modules/@mapbox/react-native-mapbox-gl/ios/Mapbox.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DaterReactNative/Pods-DaterReactNative-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1368,7 +1383,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 51B34DE67DA828D690DD7A8B /* Pods-DaterReactNative.debug.xcconfig */;
+			baseConfigurationReference = D9F0F402D7467DFE6C068350 /* Pods-DaterReactNative.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = DaterReactNative/DaterReactNative.entitlements;
@@ -1401,7 +1416,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9E5F3D372AB40A32FBBAF21C /* Pods-DaterReactNative.release.xcconfig */;
+			baseConfigurationReference = 9B59F137B560336E858D25BF /* Pods-DaterReactNative.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = DaterReactNative/DaterReactNative.entitlements;

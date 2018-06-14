@@ -27,7 +27,6 @@ export default class FirebaseSetup extends Component<Props> {
   }
 }
 
-
 const styles = StyleSheet.create({
   modules: {
     flex: 1,

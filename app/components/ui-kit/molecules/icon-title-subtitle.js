@@ -6,7 +6,7 @@ import {
   Image,
 } from 'react-native';
 
-import { H2, Body } from '../../../components/ui-kit/typography';
+import { H2, Body } from '../../../components/ui-kit/atoms/typography';
 
 type Props = {
   icon: Image,

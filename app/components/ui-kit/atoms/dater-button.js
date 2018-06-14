@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import * as _ from 'lodash';
 
-import { H3, Body } from '../typography';
+import { H3, Body } from '../atoms/typography';
 import { BUTTONS_ONPRESS_THROTTLE_THRESHOLD } from '../../../constants';
 
 const xpImage = require('../../../assets/icons/xp/xp.png');

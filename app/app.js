@@ -24,10 +24,6 @@ export default class App extends Component<Props> {
   notificationListener;
 
   async componentDidMount() {
-    // await firebase.messaging().requestPermission();
-    // const fcmToken = await firebase.messaging().getToken();
-    // console.log('fcmToken: ', fcmToken);
-
     SplashScreen.hide();
     firebase.analytics().logEvent('App_Started', {
       platform: Platform.OS,

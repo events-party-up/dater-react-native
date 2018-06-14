@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import ImageZoom from 'react-native-image-pan-zoom';
 
-import DaterModal from '../components/ui-kit/dater-modal';
+import DaterModal from '../components/ui-kit/organisms/dater-modal';
 import cloudinaryUrl from '../utils/cloudinary-utils';
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../constants';
 

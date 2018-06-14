@@ -4,7 +4,7 @@ import {
   Image,
 } from 'react-native';
 
-import { H2, Caption2 } from '../../components/ui-kit/typography';
+import { H2, Caption2 } from '../../components/ui-kit/atoms/typography';
 import cloudinaryUrl from '../../utils/cloudinary-utils';
 
 type Props = {

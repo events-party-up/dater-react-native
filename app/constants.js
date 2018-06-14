@@ -37,8 +37,7 @@ export const CURRENT_USER_COLLECTION = 'users';
 export const PROFILE_PHOTOS_STORAGE_PATH = 'profilePhotos';
 
 // Micro Dates
-export const DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD = 30;
-// Cloudinary
+export const DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD = 3000;
 
 // Users around
 export const USERS_AROUND_PUBLIC_UPDATE_INTERVAL = 2000;
@@ -50,3 +49,6 @@ export const SEND_SMS_ARTIFICIAL_UI_DELAY = 2000;
 export const VERIFY_SMS_CODE_TIMEOUT = 10000;
 export const BUTTONS_ONPRESS_THROTTLE_THRESHOLD = 500;
 export const APP_STATE_ACTIVATE_BACKGROUND_MODE_AFTER = 10000;
+
+// Cloudinary
+export const CLOUDINARY_ACCOUNT_NAME = 'dater';

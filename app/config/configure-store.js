@@ -5,8 +5,8 @@ import Reactotron from 'reactotron-react-native';
 // Logs all actions going through redux into console
 // https://github.com/evgenyrodionov/redux-logger
 import { createLogger } from 'redux-logger';
-import { rootReducer } from '../reducers/root-reducer';
-import rootSaga from '../sagas/root-saga';
+import { rootReducer } from '../redux/root-reducer';
+import rootSaga from '../redux/root-saga';
 
 let storeCreator;
 let sagaMiddleware;

@@ -11,36 +11,36 @@ import ProfileScreen from '../screens/profile/profile-screen';
 
 const LoginNavigator = StackNavigator(
   {
-    Login: {
+    LoginScreen: {
       screen: LoginScreen,
     },
-    PhoneNumber: {
+    PhoneNumberScreen: {
       screen: PhoneNumberScreen,
     },
-    SmsCode: {
+    SmsCodeScreen: {
       screen: SmsCodeScreen,
     },
-    RegisterGender: {
+    GenderScreen: {
       screen: GenderScreen,
     },
-    RegisterName: {
+    NameScreen: {
       screen: NameScreen,
     },
-    RegisterBirthday: {
+    BirthdayScreen: {
       screen: BirthdayScreen,
     },
-    RegisterUploadPhoto: {
+    UploadPhotoScreen: {
       screen: UploadPhotoScreen,
     },
-    RegisterMakePhotoSelfie: {
+    MakePhotoSelfieScreen: {
       screen: MakePhotoSelfieScreen,
     },
-    RegisterProfile: {
+    ProfileScreen: {
       screen: ProfileScreen,
     },
   },
   {
-    initialRouteName: 'Login',
+    initialRouteName: 'LoginScreen',
     headerMode: 'none',
     header: null,
   },

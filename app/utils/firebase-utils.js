@@ -7,7 +7,7 @@ export function deleteFirestoreDoc({
   return firebase.firestore().collection(collection).doc(doc).delete();
 }
 
-export async function getFirestore({
+export async function getFirestoreDocData({
   collection,
   doc,
 }) {

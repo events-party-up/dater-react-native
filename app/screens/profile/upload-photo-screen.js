@@ -4,9 +4,9 @@ import {
   Image,
 } from 'react-native';
 
-import DaterModal from '../../components/ui-kit/dater-modal';
+import DaterModal from '../../components/ui-kit/organisms/dater-modal';
 import DaterButton from '../../components/ui-kit/atoms/dater-button';
-import { H2, Body } from '../../components/ui-kit/typography';
+import { H2, Body } from '../../components/ui-kit/atoms/typography';
 
 const uploadPhotoIcon = require('../../assets/icons/upload-photo/upload-photo.png');
 
@@ -36,7 +36,7 @@ export default class UploadPhotoScreen extends Component<Props> {
         <H2 style={styles.header}>Загрузи фото</H2>
         <Body style={styles.subHeader}>Выбери портрет{'\n'}хорошего качества</Body>
         <DaterButton
-          onPress={() => this.props.navigation.navigate({ key: 'RegisterProfile', routeName: 'RegisterProfile' })}
+          onPress={() => this.props.navigation.navigate({ key: 'ProfileScreen', routeName: 'ProfileScreen' })}
           style={styles.button}
         >
           Загрузить
