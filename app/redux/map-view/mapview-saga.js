@@ -44,7 +44,7 @@ function* setCamera(mapView, action) {
   try {
     const options = action.payload;
     const duration = options.duration || DEFAULT_MAPVIEW_ANIMATION_DURATION;
-    yield call(mapView.setCamera, {
+    yield mapView.setCamera({
       ...options,
       duration,
     });

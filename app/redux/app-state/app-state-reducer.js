@@ -6,8 +6,14 @@ const types = {
   APP_STATE_ERROR: 'APP_STATE_ERROR',
 };
 
-const initialState = {
+type appStateReduxStore = {
+  state: 'init' | 'active' | 'background' | 'inactive',
+  error: any,
+}
+
+const initialState: appStateReduxStore = {
   state: 'init',
+  error: null,
 };
 
 const appStateReducer = (state = initialState, action) => {

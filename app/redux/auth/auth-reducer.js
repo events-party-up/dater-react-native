@@ -18,11 +18,25 @@ const types = {
   AUTH_STATE_CHANGED_ERROR: 'AUTH_STATE_CHANGED_ERROR',
 };
 
-const initialState = {
+type authReduxStore = {
+  isAuthenticating: boolean,
+  isAuthenticated: boolean,
+  isAnonymous: boolean,
+  uid: string,
+  isNewUser: boolean,
+  creationTime: null | number,
+  lastSignInTime: null | number,
+  wrongSmsCode: boolean,
+  wrongPhoneNumber: boolean,
+  sendSmsTimeout: boolean,
+  verifySmsCodeTimeout: boolean,
+}
+
+const initialState: authReduxStore = {
   isAuthenticating: false,
   isAuthenticated: false,
   isAnonymous: false,
-  uid: null,
+  uid: '',
   isNewUser: false,
   creationTime: null,
   lastSignInTime: null,
@@ -32,7 +46,7 @@ const initialState = {
   verifySmsCodeTimeout: false,
 };
 
-const authReducer = (state = initialState, action) => {
+const authReducer = (state: authReduxStore = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {

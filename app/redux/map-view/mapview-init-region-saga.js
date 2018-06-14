@@ -19,7 +19,6 @@ export default function* mapViewInitializeRegionSaga() {
           duration: 2000,
         },
       });
-      yield take('GEO_LOCATION_UPDATED'); // get first geo update
     }
   } catch (error) {
     yield put({ type: 'MAPVIEW_INIT_REGION_ERROR', payload: error });
