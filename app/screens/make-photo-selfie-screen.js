@@ -13,8 +13,8 @@ import SystemSetting from 'react-native-system-setting';
 import Permissions from 'react-native-permissions';
 import RNANAndroidSettingsLibrary from 'react-native-android-settings-library';
 
-import DaterModal from '../components/ui-kit/dater-modal';
-import CircleButton from '../components/ui-kit/circle-button';
+import DaterModal from '../components/ui-kit/organisms/dater-modal';
+import CircleButton from '../components/ui-kit/atoms/circle-button';
 import IconTitleSubtitleMolecule from '../components/ui-kit/molecules/icon-title-subtitle';
 import DaterButton from '../components/ui-kit/atoms/dater-button';
 import { PhotoType } from '../types';

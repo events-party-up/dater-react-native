@@ -5,8 +5,8 @@ import {
 } from 'react-native';
 
 import DaterButton from '../../components/ui-kit/atoms/dater-button';
-import CircleButton from '../../components/ui-kit/circle-button';
-import DaterModal from '../../components/ui-kit/dater-modal';
+import CircleButton from '../../components/ui-kit/atoms/circle-button';
+import DaterModal from '../../components/ui-kit/organisms/dater-modal';
 
 type Props = {
   navigation: any,

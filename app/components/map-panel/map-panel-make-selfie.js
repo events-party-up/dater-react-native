@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { H2, Caption2 } from '../../components/ui-kit/typography';
+import { H2, Caption2 } from '../../components/ui-kit/atoms/typography';
 import DaterButton from '../../components/ui-kit/atoms/dater-button';
 import { calculateAgeFrom } from '../../utils/date-utils';
 import MapPanelStyles from './map-panel-styles';

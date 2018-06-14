@@ -3,11 +3,11 @@ import { ScrollView, StyleSheet, View, Image } from 'react-native';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import Moment from 'react-moment';
 
-import DaterModal from '../components/ui-kit/dater-modal';
+import DaterModal from '../components/ui-kit/organisms/dater-modal';
 import PastLocationsPath from '../components/map/past-locations-path';
 import { MicroDate } from '../types';
 import { SCREEN_WIDTH } from '../constants';
-import { Body } from '../components/ui-kit/typography';
+import { Body } from '../components/ui-kit/atoms/typography';
 import CardInfoItemMolecule from '../components/ui-kit/molecules/card-info-item-molecule';
 import UserOnMapMarker from '../components/map/user-on-map-marker';
 

@@ -8,9 +8,9 @@ import {
   View,
 } from 'react-native';
 
-import DaterModal from '../../components/ui-kit/dater-modal';
+import DaterModal from '../../components/ui-kit/organisms/dater-modal';
 // import DaterButton from '../../components/ui-kit/atoms/dater-button';
-import { H2, Body } from '../../components/ui-kit/typography';
+import { H2, Body } from '../../components/ui-kit/atoms/typography';
 import { calculateAgeFrom, ageWithTextPostfix } from '../../utils/date-utils';
 
 const birthdayIcon = require('../../assets/icons/birthday/birthday.png');

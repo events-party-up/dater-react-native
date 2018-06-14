@@ -6,7 +6,7 @@ import {
 import { Dispatch } from 'react-redux';
 
 import { GeoCoordinates } from '../../types';
-import CircleButton from '../ui-kit/circle-button';
+import CircleButton from '../ui-kit/atoms/circle-button';
 import { Actions } from '../../navigators/navigator-actions';
 import { MAP_PLUS_MINUS_ZOOM_INCREMENT, SCREEN_HEIGHT } from '../../constants';
 

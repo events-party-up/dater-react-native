@@ -6,7 +6,7 @@ import {
   Image,
 } from 'react-native';
 
-import { H3 } from '../ui-kit/typography';
+import { H3 } from '../ui-kit/atoms/typography';
 import cloudinaryUrl from '../../utils/cloudinary-utils';
 import { CloudinaryPhoto } from '../../types';
 

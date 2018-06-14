@@ -3,7 +3,7 @@ import firebase from 'react-native-firebase';
 import { StyleSheet } from 'react-native';
 
 import { MICRO_DATES_COLLECTION } from '../../constants';
-import { Caption2 } from '../ui-kit/typography';
+import { Caption2 } from '../ui-kit/atoms/typography';
 
 type Props = {
   microDateId: string,

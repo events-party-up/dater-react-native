@@ -9,9 +9,9 @@ import {
 } from 'react-native';
 
 import DaterTextInput from '../../components/ui-kit/atoms/dater-text-input';
-import DaterModal from '../../components/ui-kit/dater-modal';
+import DaterModal from '../../components/ui-kit/organisms/dater-modal';
 import DaterButton from '../../components/ui-kit/atoms/dater-button';
-import { H2 } from '../../components/ui-kit/typography';
+import { H2 } from '../../components/ui-kit/atoms/typography';
 
 const phoneIcon = require('../../assets/icons/phone/phone.png');
 

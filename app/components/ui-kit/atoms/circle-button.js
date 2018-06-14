@@ -6,9 +6,9 @@ import {
   Image,
 } from 'react-native';
 
-const closeIcon = require('../../assets/icons/close/close.png');
-const backIcon = require('../../assets/icons/back/back.png');
-const confirmCheckmarkIcon = require('../../assets/icons/checkmark/checkmark-white.png');
+const closeIcon = require('../../../assets/icons/close/close.png');
+const backIcon = require('../../../assets/icons/back/back.png');
+const confirmCheckmarkIcon = require('../../../assets/icons/checkmark/checkmark-white.png');
 
 const CircleButton = (props) => {
   let backgroundColor = '#4F4F4F';

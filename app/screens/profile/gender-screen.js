@@ -5,9 +5,9 @@ import {
   Image,
 } from 'react-native';
 
-import DaterModal from '../../components/ui-kit/dater-modal';
+import DaterModal from '../../components/ui-kit/organisms/dater-modal';
 import DaterButton from '../../components/ui-kit/atoms/dater-button';
-import { H2 } from '../../components/ui-kit/typography';
+import { H2 } from '../../components/ui-kit/atoms/typography';
 
 const genderIcon = require('../../assets/icons/gender/gender.png');
 

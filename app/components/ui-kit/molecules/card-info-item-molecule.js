@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { Caption1, Body } from '../../../components/ui-kit/typography';
+import { Caption1, Body } from '../../../components/ui-kit/atoms/typography';
 
 type Props = {
   children: any,

@@ -13,7 +13,7 @@ import { GeoCoordinates } from '../types';
 import MyLocationOnCenteredMap from './map/my-location-on-centered-map';
 import UsersAroundComponent from './map/users-around-component';
 import PastLocationsPath from './map/past-locations-path';
-import { Caption2 } from './ui-kit/typography';
+import { Caption2 } from './ui-kit/atoms/typography';
 import MicroDateStats from './micro-date/micro-date-stats';
 import { MAX_VISIBLE_PAST_LOCATIONS } from '../constants';
 import MyLocationOnNonCenteredMap from './map/my-location-on-non-centered-map';
@@ -251,15 +251,17 @@ class DaterMapView extends React.Component<Props, State> {
             }
           </MapboxGL.MapView>
         }
-        <View style={styles.debugView} pointerEvents="none">
-          <Caption2 style={styles.debugText}>
-            Точность: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
-            GPS Heading: {this.props.location.coords && Math.floor(this.props.location.coords.heading)}{'\n'}
-            Compass Heading: {Math.floor(this.state.compassHeading)}{'\n'}
-            Move Heading: {Math.floor(this.props.location.moveHeadingAngle)}{'\n'}
-            UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}
-          </Caption2>
-        </View>
+        {process.env.NODE_ENV === 'development' &&
+          <View style={styles.debugView} pointerEvents="none">
+            <Caption2 style={styles.debugText}>
+              Точность: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
+              GPS Heading: {this.props.location.coords && Math.floor(this.props.location.coords.heading)}{'\n'}
+              Compass Heading: {Math.floor(this.state.compassHeading)}{'\n'}
+              Move Heading: {Math.floor(this.props.location.moveHeadingAngle)}{'\n'}
+              UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}
+            </Caption2>
+          </View>
+        }
         {this.props.microDate.enabled &&
         <View style={styles.microDateContainer} pointerEvents="none">
           <Caption2 style={styles.microDateText}>

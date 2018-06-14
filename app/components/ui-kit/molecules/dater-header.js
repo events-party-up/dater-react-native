@@ -5,7 +5,7 @@ import {
   View,
 } from 'react-native';
 
-import { H2 } from '../../components/ui-kit/typography';
+import { H2 } from '../../../components/ui-kit/atoms/typography';
 
 type Props = {
   children: React.Node,

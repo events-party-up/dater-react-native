@@ -7,8 +7,8 @@ import {
 } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 
-import CircleButton from '../../components/ui-kit/circle-button';
-import DaterHeader from '../../components/ui-kit/dater-header';
+import CircleButton from '../../../components/ui-kit/atoms/circle-button';
+import DaterHeader from '../../../components/ui-kit/molecules/dater-header';
 
 type Props = {
   children: React.Node,
