@@ -7,7 +7,7 @@ import {
   USERS_AROUND_SEARCH_RADIUS_KM,
   GEO_POINTS_COLLECTION,
 } from '../constants';
-import { getFirestore } from '../utils/firebase-utils';
+import { getFirestoreDocData } from '../utils/firebase-utils';
 import { microDateUserMovementsMyMoveSaga } from './micro-date/micro-date-user-movements-saga';
 import GeoUtils from '../utils/geo-utils';
 import BackgroundGeolocation from '../services/background-geolocation';
@@ -36,7 +36,7 @@ export default function* locationSaga() {
       }
 
       if (startAction.type === 'GEO_LOCATION_START_AUTO') {
-        const myGeoPoint = yield getFirestore({
+        const myGeoPoint = yield getFirestoreDocData({
           collection: GEO_POINTS_COLLECTION,
           doc: uid,
         });
