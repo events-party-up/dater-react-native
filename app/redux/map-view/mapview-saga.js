@@ -6,26 +6,46 @@ export default function* mapViewSaga() {
   try {
     while (true) {
       const { mapView } = yield take('MAPVIEW_READY');
-      const task1 = yield takeLatest('MAPVIEW_SET_CAMERA', setCamera, mapView);
-      const task2 = yield takeLatest('MAPVIEW_MOVE_TO', moveTo, mapView);
-      const task3 = yield takeLatest('MAPVIEW_ZOOM_TO', zoomTo, mapView);
-      const task4 = yield takeLatest([
-        'MAPVIEW_ANIMATE_TO_HEADING_MANUALLY',
-        'MAPVIEW_ANIMATE_TO_HEADING_GPS_HEADING',
-        'MAPVIEW_ANIMATE_TO_HEADING_COMPASS_HEADING'], animateToHeading, mapView);
-      const task5 = yield takeLatest('MAPVIEW_SHOW_MY_LOCATION_START', showMyLocation);
-      const task6 = yield takeLatest('MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE', showMeAndTargetMicroDate, mapView);
-      const task7 = yield fork(switchMapViewMode, mapView);
+      const eventsTask = yield fork(mapViewEventsSaga, mapView);
 
       yield put({ type: 'MAPVIEW_MAIN_SAGA_READY' });
-      yield take([
-        'MAPVIEW_UNLOAD',
-        'APP_STATE_BACKGROUND',
-      ]);
-      yield cancel(task1, task2, task3, task4, task5, task6, task7);
+      yield take('MAPVIEW_UNLOAD');
+      yield cancel(eventsTask);
     }
   } catch (error) {
     yield put({ type: 'MAPVIEW_MAINSAGA_ERROR', payload: error });
+  }
+}
+
+function* mapViewEventsSaga(mapView) {
+  while (true) {
+    const appStateIsBackground = yield select((state) => state.appState.state === 'background');
+    if (appStateIsBackground) {
+      yield take('APP_STATE_ACTIVE'); // do not process mapView tasks when app is in background!
+    }
+    const task1 = yield takeLatest('MAPVIEW_SET_CAMERA', setCamera, mapView);
+    const task2 = yield takeLatest('MAPVIEW_MOVE_TO', moveTo, mapView);
+    const task3 = yield takeLatest('MAPVIEW_ZOOM_TO', zoomTo, mapView);
+    const task4 = yield takeLatest([
+      'MAPVIEW_ANIMATE_TO_HEADING_MANUALLY',
+      'MAPVIEW_ANIMATE_TO_HEADING_GPS_HEADING',
+      'MAPVIEW_ANIMATE_TO_HEADING_COMPASS_HEADING'], animateToHeading, mapView);
+    const task5 = yield takeLatest('MAPVIEW_SHOW_MY_LOCATION', showMyLocation);
+    const task6 = yield takeLatest('MAPVIEW_SHOW_MY_LOCATION_AND_CENTER_ME', showMyLocationAndCenterMe);
+    const task7 = yield takeLatest('MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE', showMeAndTargetMicroDate, mapView);
+    const task8 = yield fork(switchMapViewMode, mapView);
+    const zoom = yield select((state) => state.mapView.zoom);
+
+    yield put({
+      type: 'MAPVIEW_SHOW_MY_LOCATION',
+      payload: {
+        zoom,
+        caller: 'mapViewEventsSaga',
+      },
+    });
+
+    yield take('APP_STATE_BACKGROUND'); // do not process mapView tasks when app is in background!
+    yield cancel(task1, task2, task3, task4, task5, task6, task7, task8);
   }
 }
 
@@ -105,16 +125,42 @@ function* showMeAndTargetMicroDate(mapView) {
 function* showMyLocation(action) {
   try {
     const coords = yield select((state) => state.location.coords);
+    if (!coords) return;
+
+    const showMyLocationMapAnimationDuration = 500;
     yield put({
       type: 'MAPVIEW_SET_CAMERA',
       payload: {
         latitude: coords.latitude,
         longitude: coords.longitude,
-        zoom: (action.payload && action.payload.zoom) || 17,
-        duration: 2000,
+        [action.payload && action.payload.zoom && 'zoom']: action.payload && action.payload.zoom,
+        duration: showMyLocationMapAnimationDuration,
       },
     });
+    yield delay(showMyLocationMapAnimationDuration);
     yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
+  } catch (error) {
+    yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_ERROR', payload: error });
+  }
+}
+
+function* showMyLocationAndCenterMe(action) {
+  try {
+    const coords = yield select((state) => state.location.coords);
+    if (!coords) return;
+    const showMyLocationMapAnimationDuration = 500;
+    yield put({
+      type: 'MAPVIEW_SET_CAMERA',
+      payload: {
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+        [action.payload && action.payload.zoom && 'zoom']: action.payload && action.payload.zoom,
+        [action.payload && action.payload.heading && 'heading']: action.payload && action.payload.heading,
+        duration: showMyLocationMapAnimationDuration,
+      },
+    });
+    yield delay(showMyLocationMapAnimationDuration);
+    yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_AND_CENTER_ME_FINISH' });
   } catch (error) {
     yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_ERROR', payload: error });
   }
@@ -122,46 +168,32 @@ function* showMyLocation(action) {
 
 function* switchMapViewMode(mapView) {
   let myCoords;
-  let isCenteredMode;
+  const zoomAnimationDuration = 500;
 
   try {
     while (true) {
-      const firstSwitchAction = yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
-      const isMicroDateActive = yield select((state) => state.microDate.enabled);
-      isCenteredMode = yield select((state) => state.mapView.centered);
+      yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
 
-      if (isMicroDateActive) {
-        // show me and target user in find user mode
-        yield put({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE' });
-        yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'showTargetMicroDate' });
-      } else {
-        // zoom out on myself
-        myCoords = yield select((state) => state.location.coords);
-        yield call(mapView.setCamera, {
-          ...myCoords,
-          zoom: isCenteredMode ? 14 : undefined,
-          heading: firstSwitchAction.payload.heading,
-          duration: 500,
-        });
-        yield delay(500); // allow map finish switching
-        yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'zoomOut' });
-        yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
-      }
-
-      // zoom in on myself
-      const zoomOutAction = yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
-      isCenteredMode = yield select((state) => state.mapView.centered);
+      // zoom out on myself
       myCoords = yield select((state) => state.location.coords);
       yield call(mapView.setCamera, {
         ...myCoords,
-        zoom: isCenteredMode ? 17 : undefined,
-        heading: zoomOutAction.payload.heading,
-        duration: 500,
+        zoom: 14,
+        duration: zoomAnimationDuration,
       });
-      yield put({ type: 'GEO_LOCATION_FORCE_UPDATE' });
-      yield delay(500); // allow map finish switching
+      yield delay(zoomAnimationDuration); // allow map finish switching
+      yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'zoomOut' });
+
+      // zoom in on myself
+      yield take('MAPVIEW_SWITCH_VIEW_MODE_START');
+      myCoords = yield select((state) => state.location.coords);
+      yield call(mapView.setCamera, {
+        ...myCoords,
+        zoom: 17,
+        duration: zoomAnimationDuration,
+      });
+      yield delay(zoomAnimationDuration); // allow map finish switching
       yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_FINISH', payload: 'zoomIn' });
-      yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_FINISH' });
     }
   } catch (error) {
     yield put({ type: 'MAPVIEW_SWITCH_VIEW_MODE_ERROR', payload: error });

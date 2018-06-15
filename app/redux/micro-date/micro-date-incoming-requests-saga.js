@@ -157,7 +157,7 @@ function* startMicroDateSaga(microDate) {
     },
   });
   yield put({ type: 'GEO_LOCATION_FORCE_UPDATE' });
-  yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_START' });
+  yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION' });
 }
 
 function* incomingMicroDateDeclineByMeSaga(microDate) {

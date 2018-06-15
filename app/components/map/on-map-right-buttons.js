@@ -95,9 +95,13 @@ class OnMapRightButtons extends React.Component<Props, State> {
   }
 
   centerMe = () => {
-    if (this.props.location.enabled === true) {
+    if (this.props.microDateIsEnabled) { // two modes of operation, center me or zoom in zoom out
       this.props.dispatch({
         type: 'MAPVIEW_SWITCH_VIEW_MODE_START',
+      });
+    } else {
+      this.props.dispatch({
+        type: 'MAPVIEW_SHOW_MY_LOCATION_AND_CENTER_ME',
         payload: {
           heading: this.props.heading,
         },
