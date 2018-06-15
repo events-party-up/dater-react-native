@@ -1,5 +1,5 @@
-import { call, take, put, actionChannel, cancel, takeLatest, select, throttle } from 'redux-saga/effects';
-import { buffers, delay } from 'redux-saga';
+import { call, take, put, actionChannel, cancel, takeLatest, select, throttle, delay } from 'redux-saga/effects';
+import { buffers } from 'redux-saga';
 
 import GeoUtils from '../../utils/geo-utils';
 
