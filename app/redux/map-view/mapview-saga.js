@@ -84,15 +84,15 @@ function* moveTo(mapView, action) {
 
 function* zoomTo(mapView, action) {
   try {
-    const myCoords = yield select((state) => state.location.coords);
-    const mapViewHeading = yield select((state) => state.mapView.heading);
+    const mapViewState = yield select((state) => state.mapView);
     const { zoom, duration } = action.payload;
     const animationDuration = duration || DEFAULT_MAPVIEW_ANIMATION_DURATION;
     yield mapView.setCamera({
       zoom,
       duration: animationDuration,
-      ...myCoords,
-      heading: mapViewHeading,
+      latitude: mapViewState.latitude,
+      longitude: mapViewState.longitude,
+      heading: mapViewState.heading,
     });
   } catch (error) {
     yield put({ type: 'MAPVIEW_ZOOM_TO_ERROR', payload: error });

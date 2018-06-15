@@ -186,6 +186,13 @@ class MainMapViewScreen extends React.Component<Props, State> {
     return (
       <View
         style={styles.mapViewContainer}
+        // this does not work on Android!
+        // it only works if MapView scroll is false
+        onMoveShouldSetResponder={(event) => {
+          this.onMapDragStart(event);
+          return true;
+        }}
+        onResponderRelease={this.onMapDragEnd}
       >
         {/* <FirebaseSetup /> */}
         <MapPanelComponent
@@ -227,7 +234,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
           onWillStartLoadingMap={this.onMapReady}
           styleURL="mapbox://styles/olegwn/cjggmap8l002u2rmu63wda2nk"
           onRegionDidChange={(event) => this.onRegionDidChange(event)}
-          onRegionWillChange={(event) => this.onRegionWillChange(event)}
+          // onRegionWillChange={(event) => this.onRegionWillChange(event)} // until UserInteraction in event is fixed in SDK this doesn't work as intended
           scrollEnabled={!this.props.microDate.enabled}
           // zoomEnabled={false}
           rotateEnabled={!this.props.microDate.enabled}
