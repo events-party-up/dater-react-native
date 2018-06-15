@@ -1,4 +1,4 @@
-import { put, takeEvery, call, take, race, delay } from 'redux-saga/effects';
+import { put, takeLatest, call, take, race, delay, fork } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 
 import {
@@ -12,11 +12,11 @@ export default function* appStateSaga() {
   try {
     const appStateChannel = yield call(createAppStateChannel);
     if (Platform.OS === 'android') {
-      yield* updateStateSaga('unknown'); // initialize state on app start
+      yield fork(updateStateSaga, 'unknown'); // initialize state on app start
     } else {
-      yield* updateStateSaga(AppState.currentState); // initialize state on app start
+      yield fork(updateStateSaga, AppState.currentState); // initialize state on app start
     }
-    yield takeEvery(appStateChannel, updateStateSaga);
+    yield takeLatest(appStateChannel, updateStateSaga);
   } catch (error) {
     yield put({ type: 'APP_STATE_ERROR', payload: error });
   }
