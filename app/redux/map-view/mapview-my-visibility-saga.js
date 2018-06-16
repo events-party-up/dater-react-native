@@ -29,6 +29,7 @@ export default function* mapViewMyVisibilitySaga() {
     ], setMyMapVisibilityModeTo, 'private');
 
     yield takeEvery([
+      // 'MICRO_DATE_OUTGOING_REQUEST', // TODO: future implementation
       'MICRO_DATE_INCOMING_START',
       'MICRO_DATE_OUTGOING_STARTED',
     ], microDateVisibilitySaga);
@@ -38,8 +39,14 @@ export default function* mapViewMyVisibilitySaga() {
 }
 
 function* microDateVisibilitySaga(action) {
-  const { targetUser } = action.payload;
-  yield* setMyMapVisibilityModeTo(targetUser.id);
+  switch (action.type) {
+    case 'MICRO_DATE_OUTGOING_REQUEST':
+      yield* setMyMapVisibilityModeTo(action.payload.requestFor);
+      break;
+    default:
+      yield* setMyMapVisibilityModeTo(action.payload.targetUser.id);
+      break;
+  }
 }
 
 function* setMyMapVisibilityModeTo(visibility) {
