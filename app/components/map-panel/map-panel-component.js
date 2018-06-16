@@ -143,7 +143,6 @@ class MapPanelComponent extends Component<Props> {
           <MapPanelActiveMicroDate
             targetUser={this.props.mapPanel.targetUser}
             distance={this.props.mapPanel.distance}
-            microDateId={this.props.microDate.id}
             onPressStop={this.stopMicroDate}
             onPressShowMeTarget={this.showMeTargetUser}
           />
@@ -198,7 +197,8 @@ class MapPanelComponent extends Component<Props> {
         return (
           <View>
             <H2 style={MapPanelStyles.panelHeader}>
-              Запрос от {this.props.mapPanel.microDate.requestBy.substring(0, 4)} отменен
+              Запрос от {this.props.mapPanel.targetUser.name} {this.props.mapPanel.targetUser.birthday &&
+                calculateAgeFrom(this.props.mapPanel.targetUser.birthday)} отменен
             </H2>
             <Caption2 style={MapPanelStyles.panelBody}>
               Запрос {this.props.mapPanel.microDate.id.substring(0, 4)} был отменен{' '}
@@ -213,7 +213,8 @@ class MapPanelComponent extends Component<Props> {
         return (
           <View>
             <H2 style={MapPanelStyles.panelHeader}>
-              {this.props.mapPanel.microDate.stopBy.substring(0, 4)} отменил встречу
+              {this.props.mapPanel.targetUser.name} {this.props.mapPanel.targetUser.birthday &&
+                calculateAgeFrom(this.props.mapPanel.targetUser.birthday)} отменил встречу
             </H2>
             <Caption2 style={MapPanelStyles.panelBody}>
               Встреча ({this.props.mapPanel.microDate.id.substring(0, 4)}) отменена {' '}
@@ -246,11 +247,7 @@ class MapPanelComponent extends Component<Props> {
             aspectRatio={this.props.mapPanel.microDate.selfie.width / this.props.mapPanel.microDate.selfie.height}
             cloudinaryPublicId={this.props.mapPanel.microDate.id}
             cloudinaryImageVersion={this.props.mapPanel.microDate.selfie.version}
-            targetUserUid={this.props.mapPanel.microDate.selfie.uploadedBy ===
-              this.props.mapPanel.microDate.requestFor ?
-              this.props.mapPanel.microDate.requestBy :
-              this.props.mapPanel.microDate.requestFor
-            }
+            targetUser={this.props.mapPanel.targetUser}
           />
         );
       case 'selfieUploadedByTarget':
@@ -259,7 +256,7 @@ class MapPanelComponent extends Component<Props> {
             aspectRatio={this.props.mapPanel.microDate.selfie.width / this.props.mapPanel.microDate.selfie.height}
             cloudinaryPublicId={this.props.mapPanel.microDate.id}
             cloudinaryImageVersion={this.props.mapPanel.microDate.selfie.version}
-            targetUserUid={this.props.mapPanel.microDate.requestBy}
+            targetUser={this.props.mapPanel.targetUser}
             onDecline={this.onSelfieDeclinedByMe}
             onApprove={this.onSelfieApprovedByMe}
           />

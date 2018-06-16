@@ -284,7 +284,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
                 Курс GPS: {this.props.location.coords && Math.floor(this.props.location.coords.heading)}{'\n'}
                 Курс Компасс: {Math.floor(this.state.compassHeading)}{'\n'}
                 Курс Движения: {Math.floor(this.props.location.moveHeadingAngle)}{'\n'}
-                UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
+                UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}
                 </Caption2>
               }
               <Caption2 style={styles.debugText}>

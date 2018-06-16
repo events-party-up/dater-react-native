@@ -8,12 +8,13 @@ import MapPanelStyles from './map-panel-styles';
 import { H2, Caption2 } from '../../components/ui-kit/atoms/typography';
 import DaterButton from '../../components/ui-kit/atoms/dater-button';
 import cloudinaryUrl from '../../utils/cloudinary-utils';
+import { calculateAgeFrom } from '../../utils/date-utils';
 
 type Props = {
   aspectRatio: number,
   cloudinaryPublicId: string,
   cloudinaryImageVersion: number,
-  targetUserUid: string,
+  targetUser: any,
   onDecline: () => void,
   onApprove: () => void,
 }
@@ -65,7 +66,8 @@ class MapPanelSelfieUploadedByTarget extends React.Component<Props> {
                 style={MapPanelStyles.panelBody}
               >
                 Вы подтверждаете, что это фото сделано только что между вами и {' '}
-                {this.props.targetUserUid.substring(0, 4)}? {'\n\n'}
+                {this.props.targetUser.name} {this.props.targetUser.birthday &&
+                  calculateAgeFrom(this.props.targetUser.birthday)}? {'\n\n'}
                 На фото должны быть видны ваши лица.
               </Caption2>
             </View>

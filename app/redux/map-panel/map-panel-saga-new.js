@@ -217,8 +217,8 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
         if (
           mapPanelState.mode === 'makeSelfie' ||
           mapPanelState.previousMode === 'makeSelfie' ||
-          microDateState.photoMode
-          // (mapPanelState.mode === 'makeSelfie' && microDateState.microDate.status === 'ACCEPT') // hacky!
+          microDateState.photoMode ||
+          !microDateState.enabled
         ) {
           return;
         }
@@ -253,6 +253,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
         yield put({
           type: 'UI_MAP_PANEL_SET_MODE',
           payload: {
+            targetUser,
             mode: 'selfieUploadedByMe',
             canHide: false,
             microDate: microDateState.microDate,
@@ -264,6 +265,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
         yield put({
           type: 'UI_MAP_PANEL_SET_MODE',
           payload: {
+            targetUser,
             mode: 'selfieUploadedByTarget',
             canHide: false,
             microDate: microDateState.microDate,

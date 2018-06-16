@@ -36,7 +36,7 @@ export const CURRENT_USER_COLLECTION = 'users';
 export const PROFILE_PHOTOS_STORAGE_PATH = 'profilePhotos';
 
 // Micro Dates
-export const DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD = 20;
+export const DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD = 2000;
 
 // Users around
 export const USERS_AROUND_PUBLIC_UPDATE_INTERVAL = 2000;

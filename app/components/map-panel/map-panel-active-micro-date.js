@@ -5,14 +5,12 @@ import { H2, Caption2 } from '../../components/ui-kit/atoms/typography';
 import DaterButton from '../../components/ui-kit/atoms/dater-button';
 import { calculateAgeFrom } from '../../utils/date-utils';
 import MapPanelStyles from './map-panel-styles';
-import { MicroDate } from '../../types';
 
 type Props = {
   targetUser: any,
   distance: number,
   onPressStop: () => void,
   onPressShowMeTarget: () => void,
-  microDateId: MicroDate,
 }
 
 export default class MapPanelActiveMicroDate extends React.Component<Props> {
@@ -25,8 +23,7 @@ export default class MapPanelActiveMicroDate extends React.Component<Props> {
         </H2>
         <Caption2 style={MapPanelStyles.panelBody}>
           Расстояние {Math.floor(this.props.distance)} м.{' '}
-          Date ID: {this.props.microDateId && this.props.microDateId.substring(0, 4)}{' '}
-          User ID: ({this.props.targetUser.id.substring(0, 4)} )
+          User ID: {this.props.targetUser.id.substring(0, 4)}
         </Caption2>
         <View
           style={{
