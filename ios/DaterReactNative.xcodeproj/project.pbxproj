@@ -1408,7 +1408,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.dater;
+				PRODUCT_BUNDLE_IDENTIFIER = com.debug.dater;
+				PRODUCT_DISPLAY_NAME = "Dater(Dev)";
 				PRODUCT_NAME = DaterReactNative;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1441,6 +1442,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.dater;
+				PRODUCT_DISPLAY_NAME = Dater;
 				PRODUCT_NAME = DaterReactNative;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
