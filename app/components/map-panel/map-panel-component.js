@@ -20,6 +20,7 @@ import MapPanelSelfieUploadedByTarget from './map-panel-selfie-uploaded-by-targe
 import MapPanelUserCard from './map-panel-user-card';
 import MapPanelMakeSelfie from './map-panel-make-selfie';
 import MapPanelActiveMicroDate from './map-panel-active-micro-date';
+import MapPanelIncomingMicroDateRequest from './map-panel-incoming-micro-date-request';
 
 import { calculateAgeFrom } from '../../utils/date-utils';
 
@@ -149,36 +150,13 @@ class MapPanelComponent extends Component<Props> {
         );
       case 'incomingMicroDateRequest':
         return (
-          <View>
-            <H2 style={MapPanelStyles.panelHeader}>
-              Запрос от {this.props.mapPanel.targetUser.name} {this.props.mapPanel.targetUser.birthday &&
-              calculateAgeFrom(this.props.mapPanel.targetUser.birthday)}
-            </H2>
-            <Caption2 style={MapPanelStyles.panelBody}>
-              Расстояние {Math.floor(this.props.mapPanel.distance)} м.{'\n'}
-              User ID: {this.props.mapPanel.targetUser.shortId}{' '}
-              Date ID: {this.props.mapPanel.microDateId.substring(0, 4)}
-            </Caption2>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-evenly',
-            }}
-            >
-              <DaterButton
-                style={[MapPanelStyles.panelButton, { width: 130 }]}
-                onPress={this.declineIncomingMicroDate}
-              >
-                Отклонить
-              </DaterButton>
-              <DaterButton
-                style={[MapPanelStyles.panelButton, { width: 130 }]}
-                onPress={this.acceptIncomingMicroDate}
-              >
-                Принять
-              </DaterButton>
-            </View>
-          </View>
+          <MapPanelIncomingMicroDateRequest
+            targetUser={this.props.mapPanel.targetUser}
+            distance={this.props.mapPanel.distance}
+            microDateId={this.props.microDate.id}
+            onPressDecline={this.declineIncomingMicroDate}
+            onPressAccept={this.acceptIncomingMicroDate}
+          />
         );
       case 'outgoingMicroDateAwaitingAccept':
         return (
