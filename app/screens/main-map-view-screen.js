@@ -186,13 +186,6 @@ class MainMapViewScreen extends React.Component<Props, State> {
     return (
       <View
         style={styles.mapViewContainer}
-        // this does not work on Android!
-        // it only works if MapView scroll is false
-        onMoveShouldSetResponder={(event) => {
-          this.onMapDragStart(event);
-          return true;
-        }}
-        onResponderRelease={this.onMapDragEnd}
       >
         {/* <FirebaseSetup /> */}
         <MapPanelComponent
@@ -206,120 +199,136 @@ class MainMapViewScreen extends React.Component<Props, State> {
           microDateIsEnabled={this.props.microDate.enabled}
           mapViewZoom={this.props.mapView.zoom}
         />
-        {this.props.location.enabled && this.props.location.coords && this.props.mapView.centered &&
-          <MyLocationOnCenteredMap
-            accuracy={this.props.location.coords.accuracy}
-            visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
-            heading={this.state.compassHeading || this.props.location.moveHeadingAngle}
-            headingToTarget={this.props.microDate.headingToTarget}
-            microDateEnabled={this.props.microDate.enabled}
-            mapViewHeadingAngle={this.props.mapView.heading}
-            mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
-          />}
-        <MapboxGL.MapView
-          // centerCoordinate={this.props.location.coords ?
-          //   [this.props.location.coords.longitude, this.props.location.coords.latitude] :
-          //   [37.618423, 55.751244]}
-          ref={(component) => { this.mapView = component; }}
-          showUserLocation={false}
-          userTrackingMode={0}
-          zoomLevel={this.props.mapView.zoom}
-          style={styles.mapView}
-          animated
-          logoEnabled={false}
-          compassEnabled={false}
-          localizeLabels
-          onPress={() => { this.onMapPressed(); }}
-          pitch={0}
-          onWillStartLoadingMap={this.onMapReady}
-          styleURL="mapbox://styles/olegwn/cjggmap8l002u2rmu63wda2nk"
-          onRegionDidChange={(event) => this.onRegionDidChange(event)}
-          // onRegionWillChange={(event) => this.onRegionWillChange(event)} // until UserInteraction in event is fixed in SDK this doesn't work as intended
-          scrollEnabled={!this.props.microDate.enabled}
-          // zoomEnabled={false}
-          rotateEnabled={!this.props.microDate.enabled}
-          pitchEnabled={false}
-          minZoomLevel={9}
-          maxZoomLevel={18}
+        <View
+          style={styles.mapViewContainer}
+          // this does not work on Android!
+          // it only works if MapView scroll is false
+          // onMoveShouldSetResponder={(event) => {
+          //   this.onMapDragStart(event);
+          //   return true;
+          // }}
+          // onResponderRelease={this.onMapDragEnd}
         >
-          {this.props.microDate.enabled &&
-            <PastLocationsPath
-              lastLocation={this.props.location.coords}
-              uid={this.props.auth && this.props.auth.uid}
-              mode="own"
-              microDateId={this.props.microDate.id}
-              limit={MAX_VISIBLE_PAST_LOCATIONS}
-            />
-          }
-          {this.props.microDate.enabled &&
-            <PastLocationsPath
-              lastLocation={this.props.microDate.targetCurrentCoords}
-              uid={this.props.microDate.targetUserUid}
-              mode="target"
-              microDateId={this.props.microDate.id}
-              limit={MAX_VISIBLE_PAST_LOCATIONS}
-            />
-          }
-          <UsersAroundComponent />
-          {this.props.location.coords && !this.props.mapView.centered &&
-            <MyLocationOnNonCenteredMap
-              compassHeading={this.state.compassHeading}
-              moveHeadingAngle={this.props.location.moveHeadingAngle}
-              mapViewHeadingAngle={this.props.mapView.heading}
-              coords={this.props.location.coords}
-              mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
+          {this.props.location.enabled && this.props.location.coords && this.props.mapView.centered &&
+            <MyLocationOnCenteredMap
+              accuracy={this.props.location.coords.accuracy}
+              visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
+              heading={this.state.compassHeading || this.props.location.moveHeadingAngle}
               headingToTarget={this.props.microDate.headingToTarget}
               microDateEnabled={this.props.microDate.enabled}
-            />
-          }
-        </MapboxGL.MapView>
-        {process.env.NODE_ENV === 'development' &&
-          <View style={styles.debugView} pointerEvents="none">
-            <Caption2 style={styles.debugText}>
-              Точность: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
-              GPS Heading: {this.props.location.coords && Math.floor(this.props.location.coords.heading)}{'\n'}
-              Compass Heading: {Math.floor(this.state.compassHeading)}{'\n'}
-              Move Heading: {Math.floor(this.props.location.moveHeadingAngle)}{'\n'}
-              UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}
-            </Caption2>
-          </View>
-        }
-        {this.props.microDate.enabled &&
-          <View style={styles.microDateContainer} pointerEvents="none">
-            <Caption2 style={styles.microDateText}>
-              ID Встречи: {this.props.microDate.id.substring(0, 4)}{'\n'}
-              Дистанция: {Math.floor(this.props.microDate.distance)}{'\n'}
-              Мои Очки:{' '}
-              <MicroDateStats
+              mapViewHeadingAngle={this.props.mapView.heading}
+              mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
+            />}
+          <MapboxGL.MapView
+            // centerCoordinate={this.props.location.coords ?
+            //   [this.props.location.coords.longitude, this.props.location.coords.latitude] :
+            //   [37.618423, 55.751244]}
+            ref={(component) => { this.mapView = component; }}
+            showUserLocation={false}
+            userTrackingMode={0}
+            zoomLevel={this.props.mapView.zoom}
+            style={styles.mapView}
+            animated
+            logoEnabled={false}
+            compassEnabled={false}
+            localizeLabels
+            onPress={() => { this.onMapPressed(); }}
+            pitch={0}
+            onWillStartLoadingMap={this.onMapReady}
+            styleURL="mapbox://styles/olegwn/cjggmap8l002u2rmu63wda2nk"
+            onRegionDidChange={(event) => this.onRegionDidChange(event)}
+            onRegionWillChange={(event) => this.onRegionWillChange(event)} // until UserInteraction in event is fixed in SDK this doesn't work as intended
+            scrollEnabled={!this.props.microDate.enabled}
+            // zoomEnabled={false}
+            rotateEnabled={!this.props.microDate.enabled}
+            pitchEnabled={false}
+            minZoomLevel={9}
+            maxZoomLevel={18}
+          >
+            {this.props.microDate.enabled &&
+              <PastLocationsPath
+                lastLocation={this.props.location.coords}
+                uid={this.props.auth && this.props.auth.uid}
+                mode="own"
                 microDateId={this.props.microDate.id}
-                uid={this.props.auth.uid && this.props.auth.uid}
-                style={styles.microDateText}
+                limit={MAX_VISIBLE_PAST_LOCATIONS}
               />
-              {'\n'}
-              Оппонента: {' '}
-              <MicroDateStats
-                microDateId={this.props.microDate.id}
+            }
+            {this.props.microDate.enabled &&
+              <PastLocationsPath
+                lastLocation={this.props.microDate.targetCurrentCoords}
                 uid={this.props.microDate.targetUserUid}
-                style={styles.microDateText}
+                mode="target"
+                microDateId={this.props.microDate.id}
+                limit={MAX_VISIBLE_PAST_LOCATIONS}
               />
-            </Caption2>
-          </View>
-        }
-        {/* <View style={styles.buttons}>
-          <DaterButton
-            style={styles.button}
-            onPress={() => this.props.navigation.navigate('FloatingNavigator')}
-            type="secondary"
-          >
-            Floating Screen
-          </DaterButton>
-          <DaterButton
-            style={styles.debugButtons}
-            onPress={() => this.props.navigation.navigate('UIKitNavigator')}
-          >
-            UI Kit
-          </DaterButton>
-        </View> */}
+            }
+            <UsersAroundComponent />
+            {this.props.location.coords && !this.props.mapView.centered &&
+              <MyLocationOnNonCenteredMap
+                compassHeading={this.state.compassHeading}
+                moveHeadingAngle={this.props.location.moveHeadingAngle}
+                mapViewHeadingAngle={this.props.mapView.heading}
+                coords={this.props.location.coords}
+                mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
+                headingToTarget={this.props.microDate.headingToTarget}
+                microDateEnabled={this.props.microDate.enabled}
+              />
+            }
+          </MapboxGL.MapView>
+          {
+            <View style={styles.debugView} pointerEvents="none">
+              { process.env.NODE_ENV === 'development' &&
+                <Caption2 style={styles.debugText}>
+                GPS Точность: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
+                Курс GPS: {this.props.location.coords && Math.floor(this.props.location.coords.heading)}{'\n'}
+                Курс Компасс: {Math.floor(this.state.compassHeading)}{'\n'}
+                Курс Движения: {Math.floor(this.props.location.moveHeadingAngle)}{'\n'}
+                UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}{'\n'}
+                </Caption2>
+              }
+              <Caption2 style={styles.debugText}>
+                Статус: {this.props.auth.uid ? 'Авторизирован' : 'Авторизация...'}
+              </Caption2>
+            </View>
+          }
+          {this.props.microDate.enabled &&
+            <View style={styles.microDateContainer} pointerEvents="none">
+              <Caption2 style={styles.microDateText}>
+                ID Встречи: {this.props.microDate.id.substring(0, 4)}{'\n'}
+                Дистанция: {Math.floor(this.props.microDate.distance)}{'\n'}
+                Мои Очки:{' '}
+                <MicroDateStats
+                  microDateId={this.props.microDate.id}
+                  uid={this.props.auth.uid && this.props.auth.uid}
+                  style={styles.microDateText}
+                />
+                {'\n'}
+                Оппонента: {' '}
+                <MicroDateStats
+                  microDateId={this.props.microDate.id}
+                  uid={this.props.microDate.targetUserUid}
+                  style={styles.microDateText}
+                />
+              </Caption2>
+            </View>
+          }
+          {/* <View style={styles.buttons}>
+            <DaterButton
+              style={styles.button}
+              onPress={() => this.props.navigation.navigate('FloatingNavigator')}
+              type="secondary"
+            >
+              Floating Screen
+            </DaterButton>
+            <DaterButton
+              style={styles.debugButtons}
+              onPress={() => this.props.navigation.navigate('UIKitNavigator')}
+            >
+              UI Kit
+            </DaterButton>
+          </View> */}
+        </View>
       </View>
     );
   }

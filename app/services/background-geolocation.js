@@ -14,6 +14,7 @@ const geoOptions = async () => {
     useSignificantChanges: false,
     enableHighAccuracy: true,
     distanceFilter: 5,
+    // disableElasticity: true,
     desiredAccuracy: RNBackgroundGeolocation.DESIRED_ACCURACY_HIGH,
     // stopTimeout: 1,
     debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.

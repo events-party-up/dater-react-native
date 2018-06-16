@@ -42,6 +42,7 @@ export default function* locationSaga() {
         });
 
         if (myGeoPoint.visibility === 'private' || !myGeoPoint.visibility) {
+          yield put({ type: 'GEO_LOCATION_TURNED_OFF_BY_USER' });
           continue; // eslint-disable-line
         }
       }
