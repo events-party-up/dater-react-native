@@ -19,6 +19,7 @@ import MapPanelSelfieUploadedByMe from './map-panel-selfie-uploaded-by-me';
 import MapPanelSelfieUploadedByTarget from './map-panel-selfie-uploaded-by-target';
 import MapPanelUserCard from './map-panel-user-card';
 import MapPanelMakeSelfie from './map-panel-make-selfie';
+import MapPanelActiveMicroDate from './map-panel-active-micro-date';
 
 import { calculateAgeFrom } from '../../utils/date-utils';
 
@@ -138,36 +139,13 @@ class MapPanelComponent extends Component<Props> {
         );
       case 'activeMicroDate':
         return (
-          <View>
-            <H2 style={MapPanelStyles.panelHeader}>Встеча с{' '}
-              {this.props.mapPanel.targetUser.name} {this.props.mapPanel.targetUser.birthday &&
-                calculateAgeFrom(this.props.mapPanel.targetUser.birthday)}
-            </H2>
-            <Caption2 style={MapPanelStyles.panelBody}>
-              Расстояние {Math.floor(this.props.mapPanel.distance)} м.{' '}
-              Date ID: {this.props.microDate.id && this.props.microDate.id.substring(0, 4)}{' '}
-              User ID: ({this.props.mapPanel.targetUser.id.substring(0, 4)} )
-            </Caption2>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-evenly',
-              }}
-            >
-              <DaterButton
-                style={[MapPanelStyles.panelButton, { width: 130 }]}
-                onPress={this.stopMicroDate}
-              >
-                Отменить
-              </DaterButton>
-              <DaterButton
-                style={[MapPanelStyles.panelButton, { width: 130 }]}
-                onPress={this.showMeTargetUser}
-              >
-                Найти
-              </DaterButton>
-            </View>
-          </View>
+          <MapPanelActiveMicroDate
+            targetUser={this.props.mapPanel.targetUser}
+            distance={this.props.mapPanel.distance}
+            microDateId={this.props.microDate.id}
+            onPressStop={this.stopMicroDate}
+            onPressShowMeTarget={this.showMeTargetUser}
+          />
         );
       case 'incomingMicroDateRequest':
         return (
