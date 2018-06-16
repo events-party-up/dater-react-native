@@ -19,6 +19,7 @@ const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
   wrongPhoneNumber: state.auth.wrongPhoneNumber,
   sendSmsTimeout: state.auth.sendSmsTimeout,
+  resetPhoneNumberScreen: state.auth.resetPhoneNumberScreen,
 });
 
 type State = {
@@ -54,7 +55,11 @@ class PhoneNumberScreen extends Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.wrongPhoneNumber || nextProps.sendSmsTimeout) {
+    if (
+      nextProps.wrongPhoneNumber ||
+      nextProps.sendSmsTimeout ||
+      nextProps.resetPhoneNumberScreen
+    ) {
       this.setState({
         isNumberValid: false,
         inProgress: false,
