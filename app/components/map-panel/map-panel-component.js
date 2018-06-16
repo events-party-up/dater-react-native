@@ -153,7 +153,7 @@ class MapPanelComponent extends Component<Props> {
           <MapPanelIncomingMicroDateRequest
             targetUser={this.props.mapPanel.targetUser}
             distance={this.props.mapPanel.distance}
-            microDateId={this.props.microDate.id}
+            microDateId={this.props.mapPanel.microDateId}
             onPressDecline={this.declineIncomingMicroDate}
             onPressAccept={this.acceptIncomingMicroDate}
           />

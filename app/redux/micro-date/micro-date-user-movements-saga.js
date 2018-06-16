@@ -24,7 +24,7 @@ export default function* microDateUserMovementsSaga() {
 
 function* microDateWriteFirstPastLocationOnStartSaga() {
   const myCoords = yield select((state) => state.location.coords);
-  const microDateId = yield select((state) => state.microDate.microDate.id);
+  const microDateId = yield select((state) => state.microDate.id);
   const myUid = yield select((state) => state.auth.uid);
   const myUidDB = myUid.substring(0, 8);
 

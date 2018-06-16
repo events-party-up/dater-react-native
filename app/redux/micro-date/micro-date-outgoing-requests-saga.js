@@ -20,18 +20,15 @@ export default function* microDateOutgoingRequestsSaga() {
         throw new Error(JSON.stringify(microDate.error));
       }
 
-      const task1 = yield fork(outgoingMicroDateCancelSaga, microDate);
+      const task1 = yield fork(restoreOutgoingMicroDateOnAppLaunchSaga);
 
-      const task2 = yield fork(outgoingMicroDateAcceptSaga);
-
+      const task2 = yield fork(outgoingMicroDateCancelSaga, microDate);
       const task3 = yield fork(outgoingMicroDateStopByMeSaga, microDate);
 
-      const task4 = yield fork(outgoingMicroDateSelfieUploadedByMeSaga);
-      const task5 = yield fork(outgoingMicroDateSelfieUploadedByTargetSaga);
+      const task4 = yield fork(outgoingMicroDateSelfieDeclineByMeSaga, microDate);
+      const task5 = yield fork(outgoingMicroDateSelfieAcceptByMeSaga, microDate);
 
-      const task6 = yield fork(outgoingMicroDateSelfieDeclineByMeSaga, microDate);
-      const task7 = yield fork(outgoingMicroDateSelfieAcceptByMeSaga, microDate);
-      const task8 = yield fork(outgoingMicroDateFinishedSaga);
+      const task6 = yield fork(outgoingMicroDateFinishedSaga);
 
       const microDateChannel = yield call(createChannelToMicroDate, microDate.id);
       const microDateUpdatesTask = yield takeLatest(microDateChannel, handleOutgoingRequestsSaga);
@@ -45,7 +42,7 @@ export default function* microDateOutgoingRequestsSaga() {
         'MICRO_DATE_OUTGOING_FINISHED',
       ]);
       yield put({ type: 'MICRO_DATE_OUTGOING_SAGA_CANCEL_TASKS' });
-      yield cancel(task1, task2, task3, task4, task5, task6, task7, task8);
+      yield cancel(task1, task2, task3, task4, task5, task6);
       yield cancel(microDateUpdatesTask);
       yield microDateChannel.close();
     }
@@ -83,6 +80,13 @@ export default function* microDateOutgoingRequestsSaga() {
           yield put({ type: 'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME', payload: microDate });
         } else if (microDate.selfie.uploadedBy !== microDate.requestBy) {
           yield put({ type: 'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_TARGET', payload: microDate });
+        }
+        break;
+      case 'SELFIE_DECLINED':
+        if (microDate.declinedSelfieBy === microDate.requestFor) {
+          yield put({ type: 'MICRO_DATE_OUTGOING_SELFIE_DECLINED_BY_TARGET', payload: microDate });
+        } else if (microDate.declinedSelfieBy === microDate.requestBy) {
+          yield put({ type: 'MICRO_DATE_OUTGOING_SELFIE_DECLINED_BY_ME', payload: microDate });
         }
         break;
       case 'FINISHED':
@@ -123,11 +127,19 @@ function* outgoingMicroDateRequestInitSaga() {
   }
 }
 
-function* outgoingMicroDateAcceptSaga() {
-  const action = yield take('MICRO_DATE_OUTGOING_ACCEPT');
-  const microDate = action.payload;
-  const isMicroDateMode = yield select((state) => state.microDate.enabled);
-  if (!isMicroDateMode) yield* startMicroDateSaga(microDate);
+function* restoreOutgoingMicroDateOnAppLaunchSaga() {
+  while (true) {
+    const action = yield take([
+      'MICRO_DATE_OUTGOING_ACCEPT',
+      'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME',
+      'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_TARGET',
+      'MICRO_DATE_OUTGOING_SELFIE_DECLINED_BY_TARGET',
+      'MICRO_DATE_OUTGOING_SELFIE_DECLINED_BY_ME',
+    ]);
+    const microDate = action.payload;
+    const isMicroDateMode = yield select((state) => state.microDate.enabled);
+    if (!isMicroDateMode) yield* startMicroDateSaga(microDate);
+  }
 }
 
 function* startMicroDateSaga(microDate) {
@@ -179,24 +191,6 @@ function* outgoingMicroDateStopByMeSaga(microDate: MicroDate) {
   yield put({ type: 'MICRO_DATE_OUTGOING_STOPPED_BY_ME' });
 }
 
-function* outgoingMicroDateSelfieUploadedByMeSaga() {
-  while (true) {
-    const action = yield take('MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME');
-    const microDate = action.payload;
-    const isMicroDateMode = yield select((state) => state.microDate.enabled);
-    if (!isMicroDateMode) yield* startMicroDateSaga(microDate);
-  }
-}
-
-function* outgoingMicroDateSelfieUploadedByTargetSaga() {
-  while (true) {
-    const action = yield take('MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_TARGET');
-    const microDate = action.payload;
-    const isMicroDateMode = yield select((state) => state.microDate.enabled);
-    if (!isMicroDateMode) yield* startMicroDateSaga(microDate);
-  }
-}
-
 function* outgoingMicroDateSelfieDeclineByMeSaga(microDate: MicroDate) {
   while (true) {
     yield take('MICRO_DATE_DECLINE_SELFIE_BY_ME');
@@ -204,7 +198,9 @@ function* outgoingMicroDateSelfieDeclineByMeSaga(microDate: MicroDate) {
       .collection(MICRO_DATES_COLLECTION)
       .doc(microDate.id)
       .update({
-        status: 'ACCEPT',
+        status: 'SELFIE_DECLINED',
+        declinedSelfieBy: microDate.requestBy,
+        selfie: null,
       });
   }
 }
@@ -252,9 +248,9 @@ function createChannelToMicroDate(microDateId) {
   return eventChannel((emit) => {
     const onSnapshotUpdated = (dataSnapshot) => {
       // do not process local updates triggered by local writes
-      if (dataSnapshot.metadata.hasPendingWrites === true) {
-        return;
-      }
+      // if (dataSnapshot.metadata.hasPendingWrites === true) { // sometimes app will miss events becasue of this! Not recommended!
+      //   return;
+      // }
 
       emit({
         ...dataSnapshot.data(),

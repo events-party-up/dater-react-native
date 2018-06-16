@@ -22,6 +22,10 @@ export default function* mapPanelSagaNew() {
         'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
         'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
         // 'MICRO_DATE_CLOSE_DISTANCE_MOVE',
+        'MICRO_DATE_OUTGOING_SELFIE_DECLINED_BY_ME',
+        'MICRO_DATE_INCOMING_SELFIE_DECLINED_BY_ME',
+        'MICRO_DATE_INCOMING_SELFIE_DECLINED_BY_TARGET',
+        'MICRO_DATE_OUTGOING_SELFIE_DECLINED_BY_TARGET',
         'MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_ME',
         'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME',
         'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_TARGET',
@@ -268,6 +272,10 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
         yield call(mapPanelSnapper, { index: 1 }); // show half screen
         return;
       case 'MICRO_DATE_DECLINE_SELFIE_BY_ME':
+      case 'MICRO_DATE_INCOMING_SELFIE_DECLINED_BY_TARGET':
+      case 'MICRO_DATE_OUTGOING_SELFIE_DECLINED_BY_TARGET':
+      case 'MICRO_DATE_OUTGOING_SELFIE_DECLINED_BY_ME':
+      case 'MICRO_DATE_INCOMING_SELFIE_DECLINED_BY_ME':
         yield put({
           type: 'UI_MAP_PANEL_SET_MODE',
           payload: {
