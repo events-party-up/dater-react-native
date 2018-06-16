@@ -150,7 +150,7 @@ const microDateReducer = (state = initialState, action) => {
       return {
         ...state,
         distance: state.myPreviousCoords ? GeoUtils.distance(payload.geoPoint, state.myPreviousCoords) : 0,
-        headingToTarget: GeoUtils.getBearing(state.myPreviousCoords, payload.geoPoint),
+        headingToTarget: state.myPreviousCoords && GeoUtils.getBearing(state.myPreviousCoords, payload.geoPoint),
         targetCurrentCoords: {
           accuracy: payload.accuracy,
           latitude: payload.geoPoint.latitude,
