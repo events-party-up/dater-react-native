@@ -1,13 +1,15 @@
-import { takeEvery, call, put, take, cancel, select } from 'redux-saga/effects';
+import { takeEvery, put, take, cancel, select, fork } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
+import RNFS from 'react-native-fs';
+import { isEqual } from 'lodash';
 
 import {
   MICRO_DATES_COLLECTION,
   PROFILE_PHOTOS_STORAGE_PATH,
+  CURRENT_USER_COLLECTION,
 } from '../../constants';
 
-// TODO: watch for Cloud function to finish its task and fire proper actions / update reducers
 export default function* uploadPhotosSaga() {
   try {
     const isUserAuthenticated = yield select((state) => state.auth.isAuthenticated);
@@ -19,10 +21,10 @@ export default function* uploadPhotosSaga() {
       const uploadStartAction = yield take('UPLOAD_PHOTO_START');
       switch (uploadStartAction.payload.type) {
         case 'microDateSelfie':
-          yield* uploadMicroDateSelfieSaga(uploadStartAction);
+          yield fork(uploadMicroDateSelfieSaga, uploadStartAction);
           break;
         case 'profilePhoto':
-          yield* uploadProfilePhotoSaga(uploadStartAction);
+          yield fork(uploadProfilePhotoSaga, uploadStartAction);
           break;
         default:
           break;
@@ -40,23 +42,31 @@ function* uploadMicroDateSelfieSaga(uploadStartAction) {
       contentType: 'image/jpeg',
     };
     const fileName = uploadStartAction.payload.uri.replace(/^.*[\\/]/, '');
+    const fileExtension = fileName.substr(fileName.lastIndexOf('.') + 1);
     const microDate = yield select((state) => state.microDate);
     const myCoords = yield select((state) => state.location.coords);
+
     const uploadTask = firebase.storage()
-      .ref(`${MICRO_DATES_COLLECTION}/${microDate.id}/${uid}/${fileName}`)
+      .ref(`${MICRO_DATES_COLLECTION}/${microDate.id}/${uid}/selfie.${fileExtension}`)
       .put(uploadStartAction.payload.uri, metadata);
-    const uploadTaskChannel = yield call(createUploadTaskChannel, uploadTask);
+    const uploadTaskChannel = yield createUploadTaskChannel(uploadTask);
     const progressTask = yield takeEvery(uploadTaskChannel, uploadTaskProgress);
     yield take('UPLOAD_PHOTO_SUCCESS');
+    yield uploadTaskChannel.close();
+    yield cancel(progressTask);
+
+    const postUploadChannel = yield createPostUploadChannel(MICRO_DATES_COLLECTION, microDate.id, 'selfie');
+    yield take(postUploadChannel);
+    yield RNFS.unlink(uploadStartAction.payload.uri);
+    yield postUploadChannel.close();
+    yield put({ type: 'UPLOAD_PHOTO_POST_UPLOAD_SUCCESS' });
+
     yield yield firebase.firestore()
       .collection(MICRO_DATES_COLLECTION)
       .doc(microDate.id)
       .update({
         selfieGeoPoint: new firebase.firestore.GeoPoint(myCoords.latitude, myCoords.longitude),
       });
-
-    yield uploadTaskChannel.close();
-    yield cancel(progressTask);
   } catch (error) {
     yield put({ type: 'UPLOAD_PHOTO_MICRO_DATE_SELFIE_ERROR', payload: error });
   }
@@ -69,14 +79,23 @@ function* uploadProfilePhotoSaga(uploadStartAction) {
       contentType: 'image/jpeg',
     };
     const fileName = uploadStartAction.payload.uri.replace(/^.*[\\/]/, '');
+    const fileExtension = fileName.substr(fileName.lastIndexOf('.') + 1);
+
     const uploadTask = firebase.storage()
-      .ref(`${PROFILE_PHOTOS_STORAGE_PATH}/${uid}/${fileName}`)
+      .ref(`${PROFILE_PHOTOS_STORAGE_PATH}/${uid}/mainPhoto.${fileExtension}`)
       .put(uploadStartAction.payload.uri, metadata);
-    const uploadTaskChannel = yield call(createUploadTaskChannel, uploadTask);
+    const uploadTaskChannel = yield createUploadTaskChannel(uploadTask);
     const progressTask = yield takeEvery(uploadTaskChannel, uploadTaskProgress);
     yield take('UPLOAD_PHOTO_SUCCESS');
     yield uploadTaskChannel.close();
     yield cancel(progressTask);
+
+    const postUploadChannel = yield createPostUploadChannel(CURRENT_USER_COLLECTION, uid, 'mainPhoto');
+    yield take(postUploadChannel);
+    yield RNFS.unlink(uploadStartAction.payload.uri);
+    yield postUploadChannel.close();
+
+    yield put({ type: 'UPLOAD_PHOTO_POST_UPLOAD_SUCCESS' });
   } catch (error) {
     yield put({ type: 'UPLOAD_PHOTO_PROFILE_ERROR', payload: error });
   }
@@ -176,3 +195,31 @@ function createUploadTaskChannel(uploadTask) {
   });
 }
 
+function createPostUploadChannel(collection, document, watchKey) {
+  const query = firebase.firestore()
+    .collection(collection)
+    .doc(document);
+  let firstSnapshot = true;
+  let preUploadData;
+
+  return eventChannel((emit) => {
+    const onSnapshotUpdated = (dataSnapshot) => {
+      if (firstSnapshot) { // emit results immediately if its first result of query
+        firstSnapshot = false;
+        preUploadData = dataSnapshot.data()[watchKey];
+      } else if (!isEqual(preUploadData, dataSnapshot.data()[watchKey])) {
+        emit(true);
+      }
+    };
+
+    const onError = (error) => {
+      emit({
+        error,
+      });
+    };
+
+    const unsubscribe = query.onSnapshot(onSnapshotUpdated, onError);
+
+    return unsubscribe;
+  });
+}

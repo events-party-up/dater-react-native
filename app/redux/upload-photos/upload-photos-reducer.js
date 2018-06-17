@@ -2,6 +2,7 @@ export const types = {
   UPLOAD_PHOTO_START: 'UPLOAD_PHOTO_START',
   UPLOAD_PHOTO_SUCCESS: 'UPLOAD_PHOTO_SUCCESS',
   UPLOAD_PHOTO_RUNNING: 'UPLOAD_PHOTO_RUNNING',
+  UPLOAD_PHOTO_POST_UPLOAD_SUCCESS: 'UPLOAD_PHOTO_POST_UPLOAD_SUCCESS',
 
   UPLOAD_PHOTO_ERROR: 'UPLOAD_PHOTO_ERROR',
   UPLOAD_PHOTO_PROFILE_ERROR: 'UPLOAD_PHOTO_PROFILE_ERROR',
@@ -13,6 +14,10 @@ const initialState = {
   running: false,
   progress: 0,
   uri: null,
+  type: '',
+  aspectRatio: null,
+  downloadURL: '',
+  finished: false,
 };
 
 const uploadPhotosReducer = (state = initialState, action) => {
@@ -38,6 +43,9 @@ const uploadPhotosReducer = (state = initialState, action) => {
         ...state,
         ...payload,
       };
+    }
+    case types.UPLOAD_PHOTO_POST_UPLOAD_SUCCESS: {
+      return initialState;
     }
     case types.UPLOAD_PHOTO_PROGRESS_ERROR:
     case types.UPLOAD_PHOTO_MICRO_DATE_SELFIE_ERROR:

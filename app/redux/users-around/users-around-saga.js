@@ -162,10 +162,6 @@ async function createAllUsersAroundChannel(userCoords, currentUser) {
         throttledEmit(filterSnapshots(snapShots));
       }
 
-      // if (snapShots.metadata.hasPendingWrites) { // do not process local updates triggered by local writes
-      //   return;
-      // }
-
       const usersAround = filterSnapshots(snapShots);
       throttledEmit(usersAround);
     };

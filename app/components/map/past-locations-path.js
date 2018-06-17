@@ -55,10 +55,6 @@ class PastLocationsPath extends React.Component<Props, State> {
   }
 
   onLocationsUpdated = (snapshot) => {
-    if (snapshot.metadata.hasPendingWrites) { // do not process local updates triggered by local writes
-      return;
-    }
-
     snapshot.docChanges.forEach((change) => {
       if (change.type === 'added') {
         // console.log('New locaiton added: ', change.doc.data());
