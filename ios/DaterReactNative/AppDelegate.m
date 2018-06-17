@@ -25,11 +25,16 @@
 
   NSURL *jsCodeLocation;
 
-  // dev server debug bundle
-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-
-  // stanalone bundle
-  // jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+  // bundleType is set with ${JSBUNDLE_TYPE} user defined variable in Project Build settings
+  NSString *bundleType = [[[NSBundle mainBundle] infoDictionary] valueForKey:@"RN_JSBundleType"];
+  // NSLog(@"bundleType: %@", bundleType); // example of logging
+  if ([bundleType isEqualToString:@"Remote"]) {
+    // dev server debug bundle
+    jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  } else if([bundleType isEqualToString:@"Standalone"]) {
+    // stanalone bundle
+    jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+  }
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"DaterReactNative"

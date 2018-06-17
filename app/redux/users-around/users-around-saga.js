@@ -27,7 +27,7 @@ export default function* usersAroundSaga() {
     while (true) {
       // only start when app state is active
       const appState = yield select((state) => state.appState.state);
-      if (appState !== 'active') {
+      if (appState === 'background') {
         yield take('APP_STATE_ACTIVE');
       }
 

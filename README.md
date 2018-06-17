@@ -22,15 +22,9 @@ From project root run command:
 
 ## Production Builds
 
-### Building iOS App for production:
+### Building iOS App:
 
-1. Change Google Info plist file to production one
-1. In XCode in Targets in DaterReactNative target Info tab 
-Change URL Schemes to `com.googleusercontent.apps.713519465819-5ufqr6d3ns7q4aajco85lahv8m4titra`
-1. Deploy firebase functions with `firebase deploy -P dater3-production`
-
-### Building iOS App for development:
-1. Change Google Info plist file to development one
-1. In XCode in Targets in DaterReactNative target Info tab 
-Change URL Schemes to `com.googleusercontent.apps.569828839948-ru1vmhhjd9m5tfmte2gpohckmh7ngr47`
-1. Deploy firebase functions with `firebase deploy -P dater3-dev`
+1. Make sure GoogleService-Info.plist files are in ios/Firebase directory by running `prepare:ios` in Dater Private Files rep
+1. Do build in XCode choosing either Debug or Release
+1. For development deploy firebase functions with `firebase deploy -P dater3-dev`
+1. For production deploy firebase functions with `firebase deploy -P dater3-production`

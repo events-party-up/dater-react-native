@@ -42,6 +42,7 @@ export default function* locationSaga() {
         });
 
         if (myGeoPoint.visibility === 'private' || !myGeoPoint.visibility) {
+          yield put({ type: 'GEO_LOCATION_TURNED_OFF_BY_USER' });
           continue; // eslint-disable-line
         }
       }
@@ -59,7 +60,13 @@ export default function* locationSaga() {
         take('GEO_LOCATION_UPDATED'), // wait for first update!
       ]);
       yield put({ type: 'GEO_LOCATION_STARTED', payload: action.payload });
-      yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_START', payload: { caller: 'locationSaga' } });
+      yield put({
+        type: 'MAPVIEW_SHOW_MY_LOCATION',
+        payload: {
+          caller: 'locationSaga',
+          zoom: 17,
+        },
+      });
 
       const task4 = yield takeEvery([
         'GEO_LOCATION_FORCE_UPDATE',
@@ -80,18 +87,9 @@ export default function* locationSaga() {
 }
 
 function* locationUpdatedSaga(action) {
-  const isCentered = yield select((state) => state.mapView.centered);
-  const isMicroDateEnabled = yield select((state) => state.microDate.enabled);
   const currentCoords = action.payload;
   const firstCoords = yield select((state) => state.location.firstCoords);
-  const appState = yield select((state) => state.appState.state);
 
-  if (isCentered &&
-    appState === 'active' &&
-    !isMicroDateEnabled
-  ) {
-    yield* setCamera(action);
-  }
   if (!firstCoords || !currentCoords) return;
 
   const distanceFromFirstCoords = GeoUtils.distance(firstCoords, currentCoords);
@@ -106,17 +104,6 @@ function* locationUpdatedSaga(action) {
     });
     yield put({ type: 'USERS_AROUND_RESTART', payload: distanceFromFirstCoords });
   }
-}
-
-function* setCamera(action) {
-  yield put({
-    type: 'MAPVIEW_SET_CAMERA',
-    payload: {
-      latitude: action.payload.latitude,
-      longitude: action.payload.longitude,
-      duration: 500,
-    },
-  });
 }
 
 function* updateLocation(coords) {

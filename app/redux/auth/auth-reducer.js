@@ -11,6 +11,7 @@ const types = {
   AUTH_PHONE_NUMBER_UNKNOWN_ERROR: 'AUTH_PHONE_NUMBER_UNKNOWN_ERROR',
   AUTH_PHONE_NUMBER_SEND_SMS_TIMEOUT: 'AUTH_PHONE_NUMBER_SEND_SMS_TIMEOUT',
   AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_TIMEOUT: 'AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_TIMEOUT',
+  AUTH_PHONE_NUMBER_SMS_CODE_SCREEN_BACK_BUTTON: 'AUTH_PHONE_NUMBER_SMS_CODE_SCREEN_BACK_BUTTON',
 
   AUTH_PHONE_NUMBER_ERROR: 'AUTH_PHONE_NUMBER_ERROR',
   AUTH_MAINSAGA_ERROR: 'AUTH_MAINSAGA_ERROR',
@@ -44,6 +45,7 @@ const initialState: authReduxStore = {
   wrongPhoneNumber: false,
   sendSmsTimeout: false,
   verifySmsCodeTimeout: false,
+  resetPhoneNumberScreen: false,
 };
 
 const authReducer = (state: authReduxStore = initialState, action) => {
@@ -84,12 +86,19 @@ const authReducer = (state: authReduxStore = initialState, action) => {
         wrongPhoneNumber: false,
         sendSmsTimeout: false,
         verifySmsCodeTimeout: false,
+        resetPhoneNumberScreen: false,
       };
     }
     case types.AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_ERROR: {
       return {
         ...state,
         wrongSmsCode: true,
+      };
+    }
+    case types.AUTH_PHONE_NUMBER_SMS_CODE_SCREEN_BACK_BUTTON: {
+      return {
+        ...state,
+        resetPhoneNumberScreen: true,
       };
     }
     case types.AUTH_PHONE_NUMBER_SEND_SMS_TIMEOUT: {

@@ -734,12 +734,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "DaterReactNative" */;
 			buildPhases = (
+				7CAF540A20D4F8C800CF85DC /* Copy Google plist files */,
 				4B667A4E8821F61CF8DC4177 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				7C6F6FD020D21BC5006F2447 /* ShellScript */,
+				7C6F6FD020D21BC5006F2447 /* Upload Fabric dSYM files */,
 				328A7634BBCF2DE7D59F94F2 /* [CP] Embed Pods Frameworks */,
 				CFF2681497FF48C52F887F7F /* [CP] Copy Pods Resources */,
 			);
@@ -1235,18 +1236,34 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		7C6F6FD020D21BC5006F2447 /* ShellScript */ = {
+		7C6F6FD020D21BC5006F2447 /* Upload Fabric dSYM files */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Upload Fabric dSYM files";
 			outputPaths = (
+				"",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Fabric/run\"";
+		};
+		7CAF540A20D4F8C800CF85DC /* Copy Google plist files */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Google plist files";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "PATH_TO_GOOGLE_PLISTS=\"${PROJECT_DIR}/${PRODUCT_NAME}/Firebase\"\n\necho \"Start copying Firebase Google plist\"\n\ncase \"${CONFIGURATION}\" in\n\n\"Debug\" )\ncp -r \"$PATH_TO_GOOGLE_PLISTS/GoogleService-Info.development.plist\" \"${PROJECT_DIR}/${PRODUCT_NAME}/GoogleService-Info.plist\" ;;\n\n\"Release\" )\ncp -r \"$PATH_TO_GOOGLE_PLISTS/GoogleService-Info.production.plist\" \"${PROJECT_DIR}/${PRODUCT_NAME}/GoogleService-Info.plist\" ;;\n\n*)\n;;\nesac";
 		};
 		CFF2681497FF48C52F887F7F /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1402,13 +1419,15 @@
 				);
 				INFOPLIST_FILE = DaterReactNative/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				JSBUNDLE_TYPE = Remote;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.dater;
+				PRODUCT_BUNDLE_IDENTIFIER = com.debug.dater;
+				PRODUCT_DISPLAY_NAME = "Dater(Dev)";
 				PRODUCT_NAME = DaterReactNative;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1434,6 +1453,7 @@
 				);
 				INFOPLIST_FILE = DaterReactNative/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				JSBUNDLE_TYPE = Standalone;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1441,6 +1461,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.dater;
+				PRODUCT_DISPLAY_NAME = Dater;
 				PRODUCT_NAME = DaterReactNative;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

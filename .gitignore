@@ -25,6 +25,7 @@ ios/Pods
 
 # Do not store this in github, bring it to folder manually
 GoogleService-Info.plist
+GoogleService-Info.*.plist
 
 # Android/IntelliJ
 #

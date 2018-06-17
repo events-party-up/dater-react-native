@@ -16,15 +16,15 @@ export default function* microDateUserMovementsSaga() {
     yield takeEvery([
       'MICRO_DATE_OUTGOING_STARTED',
       'MICRO_DATE_INCOMING_START',
-    ], microDateUserMovementsOnOutgoingStartedSaga);
+    ], microDateWriteFirstPastLocationOnStartSaga);
   } catch (error) {
     yield put({ type: 'MICRO_DATE_USER_MOVEMENTS_ERROR', payload: error });
   }
 }
 
-function* microDateUserMovementsOnOutgoingStartedSaga() {
+function* microDateWriteFirstPastLocationOnStartSaga() {
   const myCoords = yield select((state) => state.location.coords);
-  const microDateId = yield select((state) => state.microDate.microDate.id);
+  const microDateId = yield select((state) => state.microDate.id);
   const myUid = yield select((state) => state.auth.uid);
   const myUidDB = myUid.substring(0, 8);
 

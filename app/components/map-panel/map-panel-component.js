@@ -19,6 +19,8 @@ import MapPanelSelfieUploadedByMe from './map-panel-selfie-uploaded-by-me';
 import MapPanelSelfieUploadedByTarget from './map-panel-selfie-uploaded-by-target';
 import MapPanelUserCard from './map-panel-user-card';
 import MapPanelMakeSelfie from './map-panel-make-selfie';
+import MapPanelActiveMicroDate from './map-panel-active-micro-date';
+import MapPanelIncomingMicroDateRequest from './map-panel-incoming-micro-date-request';
 
 import { calculateAgeFrom } from '../../utils/date-utils';
 
@@ -138,69 +140,22 @@ class MapPanelComponent extends Component<Props> {
         );
       case 'activeMicroDate':
         return (
-          <View>
-            <H2 style={MapPanelStyles.panelHeader}>Встеча с{' '}
-              {this.props.mapPanel.targetUser.name} {this.props.mapPanel.targetUser.birthday &&
-                calculateAgeFrom(this.props.mapPanel.targetUser.birthday)}
-            </H2>
-            <Caption2 style={MapPanelStyles.panelBody}>
-              Расстояние {Math.floor(this.props.mapPanel.distance)} м.{' '}
-              Date ID: {this.props.microDate.id && this.props.microDate.id.substring(0, 4)}{' '}
-              User ID: ({this.props.mapPanel.targetUser.id.substring(0, 4)} )
-            </Caption2>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-evenly',
-              }}
-            >
-              <DaterButton
-                style={[MapPanelStyles.panelButton, { width: 130 }]}
-                onPress={this.stopMicroDate}
-              >
-                Отменить
-              </DaterButton>
-              <DaterButton
-                style={[MapPanelStyles.panelButton, { width: 130 }]}
-                onPress={this.showMeTargetUser}
-              >
-                Найти
-              </DaterButton>
-            </View>
-          </View>
+          <MapPanelActiveMicroDate
+            targetUser={this.props.mapPanel.targetUser}
+            distance={this.props.mapPanel.distance}
+            onPressStop={this.stopMicroDate}
+            onPressShowMeTarget={this.showMeTargetUser}
+          />
         );
       case 'incomingMicroDateRequest':
         return (
-          <View>
-            <H2 style={MapPanelStyles.panelHeader}>
-              Запрос от {this.props.mapPanel.targetUser.name} {this.props.mapPanel.targetUser.birthday &&
-              calculateAgeFrom(this.props.mapPanel.targetUser.birthday)}
-            </H2>
-            <Caption2 style={MapPanelStyles.panelBody}>
-              Расстояние {Math.floor(this.props.mapPanel.distance)} м.{'\n'}
-              User ID: {this.props.mapPanel.targetUser.shortId}{' '}
-              Date ID: {this.props.mapPanel.microDateId.substring(0, 4)}
-            </Caption2>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-evenly',
-            }}
-            >
-              <DaterButton
-                style={[MapPanelStyles.panelButton, { width: 130 }]}
-                onPress={this.declineIncomingMicroDate}
-              >
-                Отклонить
-              </DaterButton>
-              <DaterButton
-                style={[MapPanelStyles.panelButton, { width: 130 }]}
-                onPress={this.acceptIncomingMicroDate}
-              >
-                Принять
-              </DaterButton>
-            </View>
-          </View>
+          <MapPanelIncomingMicroDateRequest
+            targetUser={this.props.mapPanel.targetUser}
+            distance={this.props.mapPanel.distance}
+            microDateId={this.props.mapPanel.microDateId}
+            onPressDecline={this.declineIncomingMicroDate}
+            onPressAccept={this.acceptIncomingMicroDate}
+          />
         );
       case 'outgoingMicroDateAwaitingAccept':
         return (
@@ -242,7 +197,8 @@ class MapPanelComponent extends Component<Props> {
         return (
           <View>
             <H2 style={MapPanelStyles.panelHeader}>
-              Запрос от {this.props.mapPanel.microDate.requestBy.substring(0, 4)} отменен
+              Запрос от {this.props.mapPanel.targetUser.name} {this.props.mapPanel.targetUser.birthday &&
+                calculateAgeFrom(this.props.mapPanel.targetUser.birthday)} отменен
             </H2>
             <Caption2 style={MapPanelStyles.panelBody}>
               Запрос {this.props.mapPanel.microDate.id.substring(0, 4)} был отменен{' '}
@@ -257,7 +213,8 @@ class MapPanelComponent extends Component<Props> {
         return (
           <View>
             <H2 style={MapPanelStyles.panelHeader}>
-              {this.props.mapPanel.microDate.stopBy.substring(0, 4)} отменил встречу
+              {this.props.mapPanel.targetUser.name} {this.props.mapPanel.targetUser.birthday &&
+                calculateAgeFrom(this.props.mapPanel.targetUser.birthday)} отменил встречу
             </H2>
             <Caption2 style={MapPanelStyles.panelBody}>
               Встреча ({this.props.mapPanel.microDate.id.substring(0, 4)}) отменена {' '}
@@ -290,11 +247,7 @@ class MapPanelComponent extends Component<Props> {
             aspectRatio={this.props.mapPanel.microDate.selfie.width / this.props.mapPanel.microDate.selfie.height}
             cloudinaryPublicId={this.props.mapPanel.microDate.id}
             cloudinaryImageVersion={this.props.mapPanel.microDate.selfie.version}
-            targetUserUid={this.props.mapPanel.microDate.selfie.uploadedBy ===
-              this.props.mapPanel.microDate.requestFor ?
-              this.props.mapPanel.microDate.requestBy :
-              this.props.mapPanel.microDate.requestFor
-            }
+            targetUser={this.props.mapPanel.targetUser}
           />
         );
       case 'selfieUploadedByTarget':
@@ -303,7 +256,7 @@ class MapPanelComponent extends Component<Props> {
             aspectRatio={this.props.mapPanel.microDate.selfie.width / this.props.mapPanel.microDate.selfie.height}
             cloudinaryPublicId={this.props.mapPanel.microDate.id}
             cloudinaryImageVersion={this.props.mapPanel.microDate.selfie.version}
-            targetUserUid={this.props.mapPanel.microDate.requestBy}
+            targetUser={this.props.mapPanel.targetUser}
             onDecline={this.onSelfieDeclinedByMe}
             onApprove={this.onSelfieApprovedByMe}
           />

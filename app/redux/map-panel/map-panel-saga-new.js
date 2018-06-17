@@ -1,5 +1,5 @@
-import { call, take, put, actionChannel, cancel, takeLatest, select, throttle } from 'redux-saga/effects';
-import { buffers, delay } from 'redux-saga';
+import { call, take, put, actionChannel, cancel, takeLatest, select, throttle, delay } from 'redux-saga/effects';
+import { buffers } from 'redux-saga';
 
 import GeoUtils from '../../utils/geo-utils';
 
@@ -22,6 +22,10 @@ export default function* mapPanelSagaNew() {
         'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
         'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
         // 'MICRO_DATE_CLOSE_DISTANCE_MOVE',
+        'MICRO_DATE_OUTGOING_SELFIE_DECLINED_BY_ME',
+        'MICRO_DATE_INCOMING_SELFIE_DECLINED_BY_ME',
+        'MICRO_DATE_INCOMING_SELFIE_DECLINED_BY_TARGET',
+        'MICRO_DATE_OUTGOING_SELFIE_DECLINED_BY_TARGET',
         'MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_ME',
         'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME',
         'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_TARGET',
@@ -213,8 +217,8 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
         if (
           mapPanelState.mode === 'makeSelfie' ||
           mapPanelState.previousMode === 'makeSelfie' ||
-          microDateState.photoMode
-          // (mapPanelState.mode === 'makeSelfie' && microDateState.microDate.status === 'ACCEPT') // hacky!
+          microDateState.photoMode ||
+          !microDateState.enabled
         ) {
           return;
         }
@@ -249,6 +253,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
         yield put({
           type: 'UI_MAP_PANEL_SET_MODE',
           payload: {
+            targetUser,
             mode: 'selfieUploadedByMe',
             canHide: false,
             microDate: microDateState.microDate,
@@ -260,6 +265,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
         yield put({
           type: 'UI_MAP_PANEL_SET_MODE',
           payload: {
+            targetUser,
             mode: 'selfieUploadedByTarget',
             canHide: false,
             microDate: microDateState.microDate,
@@ -268,6 +274,10 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
         yield call(mapPanelSnapper, { index: 1 }); // show half screen
         return;
       case 'MICRO_DATE_DECLINE_SELFIE_BY_ME':
+      case 'MICRO_DATE_INCOMING_SELFIE_DECLINED_BY_TARGET':
+      case 'MICRO_DATE_OUTGOING_SELFIE_DECLINED_BY_TARGET':
+      case 'MICRO_DATE_OUTGOING_SELFIE_DECLINED_BY_ME':
+      case 'MICRO_DATE_INCOMING_SELFIE_DECLINED_BY_ME':
         yield put({
           type: 'UI_MAP_PANEL_SET_MODE',
           payload: {
