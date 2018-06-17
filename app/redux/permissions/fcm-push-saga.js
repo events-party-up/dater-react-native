@@ -1,4 +1,4 @@
-import { select, take, put, fork } from 'redux-saga/effects';
+import { select, take, put, fork, takeEvery } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 import DeviceInfo from 'react-native-device-info';
 
@@ -7,6 +7,7 @@ import { CURRENT_USER_COLLECTION } from '../../constants';
 // TODO: store granted state in firestore & reenable in redux store
 export default function* fcmPushSaga() {
   yield fork(fcmPushPermissionSaga);
+  yield takeEvery('APP_STATE_ACTIVE', clearBadgeAndNotificationsOnAppForeground);
 }
 
 function* fcmPushPermissionSaga() {
@@ -46,4 +47,9 @@ function* fcmPushPermissionSaga() {
         fcmToken: null,
       });
   }
+}
+
+async function clearBadgeAndNotificationsOnAppForeground() {
+  await firebase.notifications().setBadge(0);
+  await firebase.notifications().removeAllDeliveredNotifications();
 }

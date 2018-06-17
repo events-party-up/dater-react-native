@@ -78,7 +78,7 @@ function* incomingMicroDateUpdatedSaga(microDate) {
         break;
       case 'DECLINE':
         break;
-      case 'CANCEL_REQUEST':
+      case 'CANCEL':
         yield put({ type: 'MICRO_DATE_INCOMING_CANCELLED', payload: microDate });
         break;
       case 'STOP':
