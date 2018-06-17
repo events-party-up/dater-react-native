@@ -147,6 +147,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
           type: 'UI_MAP_PANEL_SET_MODE',
           payload: {
             mode: 'outgoingMicroDateDeclined',
+            targetUser,
             canHide: true,
             microDate: microDateState.microDate,
           },
@@ -157,6 +158,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
           type: 'UI_MAP_PANEL_SET_MODE',
           payload: {
             mode: 'incomingMicroDateCancelled',
+            targetUser,
             canHide: true,
             microDate: microDateState.microDate,
           },
@@ -198,6 +200,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
           type: 'UI_MAP_PANEL_SET_MODE',
           payload: {
             mode: 'microDateStopped',
+            targetUser,
             canHide: true,
             microDate: microDateState.microDate,
           },
@@ -208,6 +211,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
           type: 'UI_MAP_PANEL_SET_MODE',
           payload: {
             mode: 'microDateStopped',
+            targetUser,
             canHide: true,
             microDate: microDateState.microDate,
           },
