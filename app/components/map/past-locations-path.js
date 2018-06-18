@@ -126,6 +126,7 @@ class PastLocationsPath extends React.Component<Props, State> {
       renderPastLocations = this.state.pastLocations;
     }
 
+    // TODO: remove arrow for microDate.enabled mode
     const arrows = renderPastLocations.slice(1).map((coords, index) => {
       const { heading, distanceDelta } = coords;
       const arrowHeadLength = 7; // in meters
