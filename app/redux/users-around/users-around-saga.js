@@ -14,7 +14,6 @@ import {
 } from '../../constants';
 
 const ONE_HOUR = 1000 * 60 * 60;
-const geoPointPath = 'geoPoint';
 
 export default function* usersAroundSaga() {
   try {
@@ -148,8 +147,8 @@ async function createAllUsersAroundChannel(userCoords, currentUser) {
     .GeoPoint(box.neCorner.latitude, box.neCorner.longitude);
 
   const query = firebase.firestore().collection(GEO_POINTS_COLLECTION)
-    .where(geoPointPath, '>', lesserGeopoint)
-    .where(geoPointPath, '<', greaterGeopoint)
+    .where('geoPoint', '>', lesserGeopoint)
+    .where('geoPoint', '<', greaterGeopoint)
     .where('visibility', '==', 'public');
   let firstSnapshot = true;
 
