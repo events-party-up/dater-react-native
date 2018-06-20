@@ -1,12 +1,10 @@
-import { put, takeLatest, call, take, race, delay, fork } from 'redux-saga/effects';
+import { put, takeLatest, call, fork } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 
 import {
   AppState,
   Platform,
 } from 'react-native';
-
-import { APP_STATE_ACTIVATE_BACKGROUND_MODE_AFTER } from '../../constants';
 
 export default function* appStateSaga() {
   try {
@@ -28,14 +26,6 @@ function* updateStateSaga(nextAppState) {
       yield put({ type: 'APP_STATE_ACTIVE', payload: nextAppState });
       break;
     case 'background': // eslint-disable-line
-      // don't put app immediately in background mode, delay and wait for active state, good for quick app switching
-      const { appIsActive } = yield race({
-        timeout: delay(APP_STATE_ACTIVATE_BACKGROUND_MODE_AFTER),
-        appIsActive: take('APP_STATE_ACTIVE'),
-      });
-      if (appIsActive) {
-        return;
-      }
       yield put({ type: 'APP_STATE_BACKGROUND', payload: nextAppState });
       break;
     case 'inactive':

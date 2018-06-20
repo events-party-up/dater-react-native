@@ -72,7 +72,9 @@ export default function* locationSaga() {
         'GEO_LOCATION_FORCE_UPDATE',
         'APP_STATE_ACTIVE',
       ], forceUpdate);
-
+      // yield RNBackgroundGeolocation.getState(function (state) {
+      //   console.log(state);
+      // });
       yield take('GEO_LOCATION_STOP');
 
       yield BackgroundGeolocation.stop();
@@ -107,6 +109,7 @@ function* locationUpdatedSaga(action) {
 }
 
 function* updateLocation(coords) {
+  console.log(coords);
   if (coords && coords.latitude && coords.longitude) {
     yield put({
       type: 'GEO_LOCATION_UPDATED',
@@ -160,7 +163,10 @@ function createLocationChannel() {
   return eventChannel((emit) => {
     const onLocation = (location) => {
       const coords = location.location ? location.location.coords : location.coords; // handle location & heartbeat callback params
-      emit(coords);
+      emit({
+        type: location.location ? 'heartbeat' : 'location',
+        ...coords,
+      });
     };
 
     const onError = (error) => {

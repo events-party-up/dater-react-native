@@ -27,7 +27,7 @@ export const MAX_VISIBLE_PAST_LOCATIONS = 115; // TODO: put back 15
 export const MINIMUM_ACCURACY_PAST_LOCATION = 40;
 
 export const USERS_AROUND_SEARCH_RADIUS_KM = 25;
-export const USERS_AROUND_SHOW_LAST_SEEN_HOURS_AGO = 12;
+export const USERS_AROUND_SHOW_LAST_SEEN_HOURS_AGO = 1;
 
 // Firebase
 export const MICRO_DATES_COLLECTION = 'microDates';
@@ -47,7 +47,6 @@ export const SEND_SMS_TIMEOUT = 20000;
 export const SEND_SMS_ARTIFICIAL_UI_DELAY = 2000;
 export const VERIFY_SMS_CODE_TIMEOUT = 10000;
 export const BUTTONS_ONPRESS_THROTTLE_THRESHOLD = 500;
-export const APP_STATE_ACTIVATE_BACKGROUND_MODE_AFTER = 15000;
 
 // Cloudinary
 export const CLOUDINARY_ACCOUNT_NAME = 'dater';

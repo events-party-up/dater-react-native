@@ -45,7 +45,7 @@ class UsersAroundComponent extends React.Component<Props> {
         id={user.id}
         onSelected={() => { this.onPressOrSelect(user); }} // TOOD: refactor this, onPress uses same callback
         onDeselected={() => { this.onDeselected(); }}
-        selected={false}
+        // selected={false}
         anchor={{ x: 0.5, y: 1 }} // anchor so that bottom tip of the marker is at the geo point
       >
         <UserOnMapMarker

@@ -24,6 +24,8 @@ const geoOptions = async () => {
     enableHeadless: true, // <-- Android Headless mode
     foregroundService: false, // <-- Android, enforced to true on Android 8
     preventSuspend: true, // iOS only
+    activityType: 'ACTIVITY_TYPE_OTHER_NAVIGATION',
+    // locationAuthorizationRequest: 'Any', // try in the upgraded plugin version
     heartbeatInterval: 60,
     startOnBoot: true, // <-- Auto start tracking when device is powered-up.
     batchSync: false, // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
