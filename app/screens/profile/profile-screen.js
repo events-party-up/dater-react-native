@@ -221,31 +221,28 @@ class ProfileScreen extends Component<Props, State> {
             style={[styles.bodyText, styles.textBodyPadding, {
             }]}
             header="Для разработчиков"
+          />
+          <View style={{
+            flexDirection: 'column',
+          }}
           >
-            <View style={{
-              flexDirection: 'column',
-            }}
+            <DaterButton
+              onPress={this.onSendLog}
+              style={{
+                alignSelf: 'center',
+              }}
             >
-              <DaterButton
-                onPress={this.onSendLog}
-                style={{
-                  marginTop: 16,
-                  justifyContent: 'center',
-                  alignSelf: 'center',
-                }}
-              >
-                Email GEOlogs
-              </DaterButton>
-              <DaterButton
-                onPress={this.onDebugGeolocation}
-                style={{
-                  alignSelf: 'center',
-                }}
-              >
-                {`${(this.state.geoDebug ? 'Выкл. ' : 'Вкл. ')} дебаг GEO`}
-              </DaterButton>
-            </View>
-          </CardInfoItemMolecule>
+              Email GEOlogs
+            </DaterButton>
+            <DaterButton
+              onPress={this.onDebugGeolocation}
+              style={{
+                alignSelf: 'center',
+              }}
+            >
+              {`${(this.state.geoDebug ? 'Выкл. ' : 'Вкл. ')} дебаг GEO`}
+            </DaterButton>
+          </View>
           <View style={styles.bottomButtonsPad} />
         </ScrollView>
       </DaterModal>
