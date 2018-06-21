@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import ImageLoad from 'react-native-image-placeholder';
+import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
 
 import DaterModal from '../../components/ui-kit/organisms/dater-modal';
 import DaterButton from '../../components/ui-kit/atoms/dater-button';
@@ -62,6 +63,10 @@ class ProfileScreen extends Component<Props> {
     this.props.dispatch({
       type: 'AUTH_SIGNOUT',
     });
+  }
+
+  onSendLog = () => {
+    RNBackgroundGeolocation.emailLog('support@dater.com');
   }
 
   render() {
@@ -189,6 +194,14 @@ class ProfileScreen extends Component<Props> {
           >
             {this.props.currentUser.uid}
           </CardInfoItemMolecule>
+          <DaterButton
+            onPress={this.onSendLog}
+            style={{
+              alignSelf: 'center',
+            }}
+          >
+            Email GEO log
+          </DaterButton>
           <View style={styles.bottomButtonsPad} />
         </ScrollView>
       </DaterModal>

@@ -17,14 +17,16 @@ const geoOptions = async () => {
     // disableElasticity: true,
     desiredAccuracy: RNBackgroundGeolocation.DESIRED_ACCURACY_HIGH,
     // stopTimeout: 1,
-    debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
+    debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
     // disableStopDetection: process.env.NODE_ENV === 'development' || false, // disable stop detection in dev mode
     logLevel: RNBackgroundGeolocation.LOG_LEVEL_DEBUG,
     stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.
     enableHeadless: true, // <-- Android Headless mode
     foregroundService: false, // <-- Android, enforced to true on Android 8
     preventSuspend: true, // iOS only
-    activityType: 'ACTIVITY_TYPE_OTHER_NAVIGATION',
+    disableLocationAuthorizationAlert: true,
+    locationAuthorizationRequest: 'Any',
+    // activityType: 'ACTIVITY_TYPE_OTHER_NAVIGATION',
     // locationAuthorizationRequest: 'Any', // try in the upgraded plugin version
     heartbeatInterval: 60,
     startOnBoot: true, // <-- Auto start tracking when device is powered-up.

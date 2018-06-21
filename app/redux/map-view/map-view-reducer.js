@@ -49,7 +49,7 @@ const initialState = {
   pitch: 0,
   visibleBounds: [],
   mapReady: false, // has the map been loaded?
-  centered: false, // should map be in centered mode?
+  centered: true, // should map be in centered mode?
   modeIsSwitching: false,
 };
 
