@@ -34,11 +34,26 @@ type Props = {
   dispatch: Dispatch,
 };
 
-class ProfileScreen extends Component<Props> {
+type State = {
+  geoDebug: boolean,
+}
+
+class ProfileScreen extends Component<Props, State> {
   navigationFlowType;
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      geoDebug: false,
+    };
+  }
   componentWillMount() {
     this.navigationFlowType = this.props.navigation.getParam('navigationFlowType');
+    BackgroundGeolocation.getState((state) => {
+      this.setState({
+        geoDebug: state.debug,
+      });
+    });
   }
 
   onClosePress = () => {
@@ -67,6 +82,14 @@ class ProfileScreen extends Component<Props> {
 
   onSendLog = () => {
     BackgroundGeolocation.emailLog('support@dater.com');
+  }
+  onDebugGeolocation = () => {
+    BackgroundGeolocation.getState((state) => {
+      BackgroundGeolocation.setConfig({ debug: !state.debug });
+      this.setState({
+        geoDebug: !state.debug,
+      });
+    });
   }
 
   render() {
@@ -194,14 +217,35 @@ class ProfileScreen extends Component<Props> {
           >
             {this.props.currentUser.uid}
           </CardInfoItemMolecule>
-          <DaterButton
-            onPress={this.onSendLog}
-            style={{
-              alignSelf: 'center',
-            }}
+          <CardInfoItemMolecule
+            style={[styles.bodyText, styles.textBodyPadding, {
+            }]}
+            header="Для разработчиков"
           >
-            Email GEO log
-          </DaterButton>
+            <View style={{
+              flexDirection: 'column',
+            }}
+            >
+              <DaterButton
+                onPress={this.onSendLog}
+                style={{
+                  marginTop: 16,
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                }}
+              >
+                Email GEOlogs
+              </DaterButton>
+              <DaterButton
+                onPress={this.onDebugGeolocation}
+                style={{
+                  alignSelf: 'center',
+                }}
+              >
+                {`${(this.state.geoDebug ? 'Выкл. ' : 'Вкл. ')} дебаг GEO`}
+              </DaterButton>
+            </View>
+          </CardInfoItemMolecule>
           <View style={styles.bottomButtonsPad} />
         </ScrollView>
       </DaterModal>
