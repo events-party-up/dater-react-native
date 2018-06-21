@@ -108,7 +108,6 @@ function* locationUpdatedSaga(action) {
 }
 
 function* updateLocation(coords) {
-  console.log(coords);
   if (coords && coords.latitude && coords.longitude) {
     yield put({
       type: 'GEO_LOCATION_UPDATED',

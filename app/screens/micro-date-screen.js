@@ -25,7 +25,6 @@ export default class MicroDateScreen extends React.Component<Props> {
   finishTS: Date;
 
   componentWillMount() {
-    console.log(this.props.navigation.getParam('microDate'));
     this.microDate = this.props.navigation.getParam('microDate');
     this.finishTS = this.microDate.finishTS ? this.microDate.finishTS : new Date();
     this.microDateDuration =

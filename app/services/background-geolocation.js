@@ -19,7 +19,7 @@ const geoOptions = async () => {
     // disableElasticity: true,
     desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
     // stopTimeout: 1,
-    debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
+    debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
     // disableStopDetection: process.env.NODE_ENV === 'development' || false, // disable stop detection in dev mode
     logLevel: BackgroundGeolocation.LOG_LEVEL_DEBUG,
     stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.
