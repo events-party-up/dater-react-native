@@ -1,9 +1,10 @@
-import * as RNBackgroundGeolocation from 'react-native-background-geolocation';
+import BackgroundGeolocation from 'react-native-background-geolocation';
 import firebase from 'react-native-firebase';
 import DeviceInfo from 'react-native-device-info';
 import { Platform } from 'react-native';
 
 import { GeoCoordinates } from '../types/index';
+import { GEO_POINTS_COLLECTION } from '../constants';
 
 const geoOptions = async () => {
   const { currentUser } = firebase.auth();
@@ -11,29 +12,36 @@ const geoOptions = async () => {
   const uid = currentUser ? currentUser.uid : 'unknown';
 
   return {
+    reset: true,
     useSignificantChanges: false,
     enableHighAccuracy: true,
     distanceFilter: 5,
     // disableElasticity: true,
-    desiredAccuracy: RNBackgroundGeolocation.DESIRED_ACCURACY_HIGH,
+    desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
     // stopTimeout: 1,
     debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
     // disableStopDetection: process.env.NODE_ENV === 'development' || false, // disable stop detection in dev mode
-    logLevel: RNBackgroundGeolocation.LOG_LEVEL_DEBUG,
+    logLevel: BackgroundGeolocation.LOG_LEVEL_DEBUG,
     stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.
     enableHeadless: true, // <-- Android Headless mode
     foregroundService: false, // <-- Android, enforced to true on Android 8
     preventSuspend: true, // iOS only
-    disableLocationAuthorizationAlert: true,
+    disableLocationAuthorizationAlert: false,
     locationAuthorizationRequest: 'Any',
+    locationAuthorizationAlert: {
+      cancelButton: 'Отменить',
+      instructions: 'Чтобы пользоваться приложением Dater, необходимо дать разрешение на определение вашего местоположения в настройках.', // eslint-disable-line
+      settingsButton: 'Настройки',
+      titleWhenNotEnabled: 'Геолокация не включена!',
+      titleWhenOff: 'Нет доступа к вашей геолокации!',
+    },
     // activityType: 'ACTIVITY_TYPE_OTHER_NAVIGATION',
-    // locationAuthorizationRequest: 'Any', // try in the upgraded plugin version
     heartbeatInterval: 60,
     startOnBoot: true, // <-- Auto start tracking when device is powered-up.
     batchSync: false, // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
     autoSync: true, // <-- [Default: true] Set true to sync each location to server as it arrives.
     // url: `https://dater-geolocation-console.herokuapp.com/locations/${uid}`,
-    notificationPriority: RNBackgroundGeolocation.NOTIFICATION_PRIORITY_LOW,
+    notificationPriority: BackgroundGeolocation.NOTIFICATION_PRIORITY_LOW,
     notificationTitle: 'Dater.com',
     notificationText: 'Dater Mode ON',
     params: {
@@ -58,7 +66,7 @@ const updateGeoPointInFirestore = (options: {
   coords: GeoCoordinates,
 }) => {
   const fireStoreUrl = 'https://firestore.googleapis.com/v1beta1/projects/dater3-dev/databases/(default)/documents';
-  const patchUrl = `${fireStoreUrl}/geoPoints/${options.uid}?currentDocument.exists=true&` +
+  const patchUrl = `${fireStoreUrl}/${GEO_POINTS_COLLECTION}/${options.uid}?currentDocument.exists=true&` +
     'updateMask.fieldPaths=geoPoint&' +
     'updateMask.fieldPaths=speed&' +
     'updateMask.fieldPaths=accuracy&' +
@@ -95,11 +103,11 @@ const updateGeoPointInFirestore = (options: {
     .catch((err) => console.error(err));
 };
 
-const BackgroundGeolocation = {
+const DaterBackgroundGeolocation = {
   init: async () => {
     const GEO_OPTIONS = await geoOptions();
     const bgServiceState = await new Promise((resolve, reject) => {
-      RNBackgroundGeolocation.configure(GEO_OPTIONS, (state) => {
+      BackgroundGeolocation.ready(GEO_OPTIONS, (state) => {
         resolve(state);
       }, (error) => reject(error));
     });
@@ -107,22 +115,18 @@ const BackgroundGeolocation = {
     return bgServiceState;
   },
   start: () => (
-    new Promise((resolve, reject) => {
-      RNBackgroundGeolocation.start(() => resolve(), (error) => reject(error));
-    })),
+    BackgroundGeolocation.start()
+  ),
   stop: () => (
-    new Promise((resolve, reject) => {
-      RNBackgroundGeolocation.stop(() => resolve(), (error) => reject(error));
-    })),
+    BackgroundGeolocation.stop()
+  ),
   changePace: (value: boolean) => (
-    new Promise((resolve, reject) => {
-      RNBackgroundGeolocation.changePace(value, () => resolve(), (error) => reject(error));
-    })),
+    BackgroundGeolocation.changePace(value)
+  ),
   getCurrentPosition: async () => {
-    console.log('Getting geo position manually in getGeoPosition');
     const GEO_OPTIONS = await geoOptions();
     return new Promise((resolve, reject) => {
-      RNBackgroundGeolocation.getCurrentPosition(
+      BackgroundGeolocation.getCurrentPosition(
         GEO_OPTIONS,
         (position) => resolve(position),
         (error) => reject(error),
@@ -132,4 +136,4 @@ const BackgroundGeolocation = {
   updateGeoPointInFirestore,
 };
 
-export default BackgroundGeolocation;
+export default DaterBackgroundGeolocation;

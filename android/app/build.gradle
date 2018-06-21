@@ -151,7 +151,6 @@ dependencies {
     }
     implementation project(':react-native-background-fetch')
 
-    implementation(name: 'tslocationmanager', ext: 'aar')
     implementation project(':react-native-device-info')
     implementation 'com.android.support:multidex:1.0.0'
     implementation ("com.google.android.gms:play-services-base:15.0.0") {
@@ -204,12 +203,6 @@ dependencies {
     }
     implementation project(':react-native-system-setting')
     implementation project(':react-native-android-settings-library')
-}
-
-repositories {
-   flatDir {
-       dirs "../../node_modules/react-native-background-geolocation/android/libs"
-   }
 }
 
 // Run this once to be able to run the application with BUCK
