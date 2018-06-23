@@ -1,4 +1,4 @@
-import { put, select, call, take, takeEvery, cancel } from 'redux-saga/effects';
+import { put, select, take, takeEvery, cancel } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
 import * as _ from 'lodash';
@@ -18,7 +18,7 @@ const ONE_HOUR = 1000 * 60 * 60;
 export default function* usersAroundSaga() {
   try {
     yield take('GEO_LOCATION_STARTED');
-    let isMicroDateMode = false;
+    const myUid = yield select((state) => state.auth.uid);
     let channel;
     let channelTask;
 
@@ -35,49 +35,35 @@ export default function* usersAroundSaga() {
         const newLocationAction = yield take('GEO_LOCATION_UPDATED');
         myCoords = newLocationAction.payload;
       }
+      const isMicroDateMode = yield select((state) => state.microDate.enabled);
 
-      const { currentUser } = yield call(firebase.auth);
       if (isMicroDateMode) {
         const microDateState = yield select((state) => state.microDate);
-        channel = yield call(createMicroDateChannel, myCoords, currentUser, microDateState);
+        channel = yield createMicroDateChannel(myCoords, microDateState);
         channelTask = yield takeEvery(channel, updateMicroDate);
       } else {
-        channel = yield call(createAllUsersAroundChannel, myCoords, currentUser);
+        channel = yield createAllUsersAroundChannel(myCoords, myUid);
         channelTask = yield takeEvery(channel, updateUsersAround);
       }
 
       yield put({ type: 'USERS_AROUND_STARTED' });
 
-      const stopAction = yield take([
+      yield take([
         'USERS_AROUND_RESTART',
         'APP_STATE_BACKGROUND', // stop if app is in background
         'GEO_LOCATION_STOPPED', // stop if location services are disabled
         'MICRO_DATE_INCOMING_START', // app mode switched to find user
-        'MICRO_DATE_OUTGOING_ACCEPT', // app mode switched to find user
+        'MICRO_DATE_OUTGOING_STARTED',
         'MICRO_DATE_STOP',
         'MICRO_DATE_OUTGOING_FINISHED',
         'MICRO_DATE_INCOMING_FINISHED',
         'MICRO_DATE_INCOMING_REMOVE',
         'MICRO_DATE_OUTGOING_REMOVE',
+        'MICRO_DATE_INCOMING_STOPPED_BY_ME',
+        'MICRO_DATE_OUTGOING_STOPPED_BY_ME',
         'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
         'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
       ]);
-
-      if (stopAction.type === 'MICRO_DATE_INCOMING_START' ||
-          stopAction.type === 'MICRO_DATE_OUTGOING_ACCEPT') {
-        isMicroDateMode = true;
-      }
-
-      if (stopAction.type === 'MICRO_DATE_STOP' ||
-        stopAction.type === 'MICRO_DATE_INCOMING_STOPPED_BY_TARGET' ||
-        stopAction.type === 'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET' ||
-        stopAction.type === 'MICRO_DATE_INCOMING_FINISHED' ||
-        stopAction.type === 'MICRO_DATE_OUTGOING_FINISHED' ||
-        stopAction.type === 'MICRO_DATE_INCOMING_REMOVE' ||
-        stopAction.type === 'MICRO_DATE_OUTGOING_REMOVE'
-      ) {
-        isMicroDateMode = false;
-      }
 
       yield cancel(channelTask);
       yield channel.close();
@@ -120,7 +106,7 @@ function* updateMicroDate(targetUser) {
   }
 }
 
-async function createAllUsersAroundChannel(userCoords, currentUser) {
+async function createAllUsersAroundChannel(userCoords, myUid) {
   const queryArea = {
     center: {
       latitude: userCoords.latitude,
@@ -171,7 +157,7 @@ async function createAllUsersAroundChannel(userCoords, currentUser) {
       const userData = userSnapshot.data();
       userData.id = userSnapshot.id;
 
-      if (currentUser && userData.id === currentUser.uid) {
+      if (myUid && userData.id === myUid.uid) {
         return;
       } else if (Date.now() - new Date(userData.timestamp) > ONE_HOUR * USERS_AROUND_SHOW_LAST_SEEN_HOURS_AGO) {
         // only show users with fresh timestamps
@@ -185,7 +171,7 @@ async function createAllUsersAroundChannel(userCoords, currentUser) {
   }
 }
 
-function createMicroDateChannel(myCoords, currentUser, microDateState) {
+function createMicroDateChannel(myCoords, microDateState) {
   const query = firebase.firestore()
     .collection(GEO_POINTS_COLLECTION)
     .doc(microDateState.targetUserUid);
