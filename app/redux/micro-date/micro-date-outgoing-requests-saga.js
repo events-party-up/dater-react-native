@@ -170,7 +170,7 @@ function* outgoingMicroDateCancelSaga(microDate: MicroDate) {
     .collection(MICRO_DATES_COLLECTION)
     .doc(microDate.id)
     .update({
-      status: 'CANCEL_REQUEST',
+      status: 'CANCEL',
       active: false,
       cancelRequestTS: firebase.firestore.FieldValue.serverTimestamp(),
     });

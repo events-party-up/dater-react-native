@@ -48,7 +48,7 @@ class PastLocationsPath extends React.Component<Props, State> {
       .collection(MICRO_DATES_COLLECTION)
       .doc(this.props.microDateId)
       .collection(`${this.props.uid.substring(0, 8)}_pastLocations`)
-      .orderBy('serverTS', 'desc')
+      .orderBy('clientTS', 'desc')
       .limit(this.props.limit || 15);
 
     this.queryUnsubscribe = pastLocationsQuery.onSnapshot(this.onLocationsUpdated, this.onError);
@@ -56,19 +56,32 @@ class PastLocationsPath extends React.Component<Props, State> {
 
   onLocationsUpdated = (snapshot) => {
     snapshot.docChanges.forEach((change) => {
+      // console.log(`New locaiton for ${this.props.mode} change type: `, change.type);
+      // console.log(`New locaiton for ${this.props.mode} change type: `, change.doc.data());
       if (change.type === 'added') {
-        // console.log('New locaiton added: ', change.doc.data());
-        if (this.props.mode === 'own') {
-          this.pastLocations.unshift(change.doc.data()); // own
-        } else if (change.newIndex === 0) { // changes with newIndex 0 are new changes
+        if (change.newIndex === 0) { // newly added location
           this.pastLocations.push(change.doc.data()); // target
-        } else {
-          this.pastLocations.unshift(change.doc.data()); // own
+        } else { // downloaded, existing location
+          this.pastLocations.unshift(change.doc.data());
         }
+        // this.pastLocations.push(change.doc.data()); // own
+        // if (change.newIndex === 0) {
+        //   this.pastLocations.push(change.doc.data()); // target
+        // } else {
+        //   this.pastLocations.unshift(change.doc.data()); // own
+        // }
+        // // console.log('New locaiton added: ', change.doc.data());
+        // if (this.props.mode === 'own') {
+        //   this.pastLocations.unshift(change.doc.data()); // own
+        // } else if (change.newIndex === 0) { // changes with newIndex 0 are new changes
+        //   this.pastLocations.push(change.doc.data()); // target
+        // } else {
+        //   this.pastLocations.unshift(change.doc.data()); // own
+        // }
       }
       if (change.type === 'modified') {
         // console.log('New locaiton modified: ', change.doc.data());
-        this.pastLocations.push(change.doc.data());
+        // this.pastLocations.push(change.doc.data());
       }
       if (this.props.limit && this.pastLocations.length > this.props.limit) {
         this.pastLocations.shift();
@@ -113,6 +126,7 @@ class PastLocationsPath extends React.Component<Props, State> {
       renderPastLocations = this.state.pastLocations;
     }
 
+    // TODO: remove arrow for microDate.enabled mode
     const arrows = renderPastLocations.slice(1).map((coords, index) => {
       const { heading, distanceDelta } = coords;
       const arrowHeadLength = 7; // in meters

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import ImageLoad from 'react-native-image-placeholder';
+import BackgroundGeolocation from 'react-native-background-geolocation';
 
 import DaterModal from '../../components/ui-kit/organisms/dater-modal';
 import DaterButton from '../../components/ui-kit/atoms/dater-button';
@@ -33,11 +34,26 @@ type Props = {
   dispatch: Dispatch,
 };
 
-class ProfileScreen extends Component<Props> {
+type State = {
+  geoDebug: boolean,
+}
+
+class ProfileScreen extends Component<Props, State> {
   navigationFlowType;
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      geoDebug: false,
+    };
+  }
   componentWillMount() {
     this.navigationFlowType = this.props.navigation.getParam('navigationFlowType');
+    BackgroundGeolocation.getState((state) => {
+      this.setState({
+        geoDebug: state.debug,
+      });
+    });
   }
 
   onClosePress = () => {
@@ -61,6 +77,18 @@ class ProfileScreen extends Component<Props> {
     this.props.navigation.goBack(null);
     this.props.dispatch({
       type: 'AUTH_SIGNOUT',
+    });
+  }
+
+  onSendLog = () => {
+    BackgroundGeolocation.emailLog('support@dater.com');
+  }
+  onDebugGeolocation = () => {
+    BackgroundGeolocation.getState((state) => {
+      BackgroundGeolocation.setConfig({ debug: !state.debug });
+      this.setState({
+        geoDebug: !state.debug,
+      });
     });
   }
 
@@ -189,6 +217,32 @@ class ProfileScreen extends Component<Props> {
           >
             {this.props.currentUser.uid}
           </CardInfoItemMolecule>
+          <CardInfoItemMolecule
+            style={[styles.bodyText, styles.textBodyPadding, {
+            }]}
+            header="Для разработчиков"
+          />
+          <View style={{
+            flexDirection: 'column',
+          }}
+          >
+            <DaterButton
+              onPress={this.onSendLog}
+              style={{
+                alignSelf: 'center',
+              }}
+            >
+              Email GEOlogs
+            </DaterButton>
+            <DaterButton
+              onPress={this.onDebugGeolocation}
+              style={{
+                alignSelf: 'center',
+              }}
+            >
+              {`${(this.state.geoDebug ? 'Выкл. ' : 'Вкл. ')} дебаг GEO`}
+            </DaterButton>
+          </View>
           <View style={styles.bottomButtonsPad} />
         </ScrollView>
       </DaterModal>

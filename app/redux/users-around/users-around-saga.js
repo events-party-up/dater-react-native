@@ -14,12 +14,10 @@ import {
 } from '../../constants';
 
 const ONE_HOUR = 1000 * 60 * 60;
-const geoPointPath = 'geoPoint';
 
 export default function* usersAroundSaga() {
   try {
     yield take('GEO_LOCATION_STARTED');
-    let isManuallyStopped = false;
     let isMicroDateMode = false;
     let channel;
     let channelTask;
@@ -30,12 +28,6 @@ export default function* usersAroundSaga() {
       if (appState === 'background') {
         yield take('APP_STATE_ACTIVE');
       }
-
-      if (isManuallyStopped) {
-        yield take('USERS_AROUND_START');
-        isManuallyStopped = false;
-      }
-
       let myCoords = yield select((state) => state.location.coords);
 
       // if there are no location coords, wait for the first coords
@@ -60,7 +52,6 @@ export default function* usersAroundSaga() {
         'USERS_AROUND_RESTART',
         'APP_STATE_BACKGROUND', // stop if app is in background
         'GEO_LOCATION_STOPPED', // stop if location services are disabled
-        'USERS_AROUND_STOP',
         'MICRO_DATE_INCOMING_START', // app mode switched to find user
         'MICRO_DATE_OUTGOING_ACCEPT', // app mode switched to find user
         'MICRO_DATE_STOP',
@@ -71,10 +62,6 @@ export default function* usersAroundSaga() {
         'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
         'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
       ]);
-
-      if (stopAction.type === 'USERS_AROUND_STOP') {
-        isManuallyStopped = true;
-      }
 
       if (stopAction.type === 'MICRO_DATE_INCOMING_START' ||
           stopAction.type === 'MICRO_DATE_OUTGOING_ACCEPT') {
@@ -148,8 +135,8 @@ async function createAllUsersAroundChannel(userCoords, currentUser) {
     .GeoPoint(box.neCorner.latitude, box.neCorner.longitude);
 
   const query = firebase.firestore().collection(GEO_POINTS_COLLECTION)
-    .where(geoPointPath, '>', lesserGeopoint)
-    .where(geoPointPath, '<', greaterGeopoint)
+    .where('geoPoint', '>', lesserGeopoint)
+    .where('geoPoint', '<', greaterGeopoint)
     .where('visibility', '==', 'public');
   let firstSnapshot = true;
 

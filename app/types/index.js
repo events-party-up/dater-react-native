@@ -36,7 +36,8 @@ export type MicroDate = {
 }
 
 export type MicroDateModerationStatus = 'PENDING' | 'DECLINED' | 'APPROVED';
-export type MicroDateStatus = 'REQUEST' | 'ACCEPT' | 'CANCEL_REQUEST' | 'STOP' | 'SELFIE_UPLOADED' | 'FINISHED';
+export type MicroDateStatus = 'REQUEST' | 'ACCEPT' | 'CANCEL' |
+  'STOP' | 'SELFIE_UPLOADED' | 'SELFIE_DECLINED' | 'FINISHED';
 
 export type FireStoreGeoPoint = {
   // ...firebase.firestore.GeoPoint,

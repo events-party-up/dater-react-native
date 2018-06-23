@@ -143,7 +143,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
 
   onRegionWillChange = (event) => {
     if (
-      event.properties.animated === false && //    // the only way to tell if it's user guesture because isUserInteraction always says false
+      event.properties.isUserInteraction === true && //
       event.geometry.coordinates[0] !== 0 && // sometimes MapBox SDK sends events with zero coords
       event.geometry.coordinates[1] !== 0
     ) {

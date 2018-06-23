@@ -28,3 +28,15 @@ From project root run command:
 1. Do build in XCode choosing either Debug or Release
 1. For development deploy firebase functions with `firebase deploy -P dater3-dev`
 1. For production deploy firebase functions with `firebase deploy -P dater3-production`
+
+## Watch Logs
+
+### From iOS Simulator
+
+`./scripts/watch-ios-logs.js`
+
+### From Android Simulator
+
+`adb logcat`
+
+
