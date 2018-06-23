@@ -14,7 +14,11 @@ import UsersAroundComponent from '../components/map/users-around-component';
 import PastLocationsPath from '../components/map/past-locations-path';
 import { Caption2 } from '../components/ui-kit/atoms/typography';
 import MicroDateStats from '../components/micro-date/micro-date-stats';
-import { MAX_VISIBLE_PAST_LOCATIONS } from '../constants';
+import {
+  MAX_VISIBLE_PAST_LOCATIONS,
+  MAP_MAX_ZOOM_LEVEL,
+  MAP_MIN_ZOOM_LEVEL,
+} from '../constants';
 import MyLocationOnNonCenteredMap from '../components/map/my-location-on-non-centered-map';
 import OnMapRightButtons from '../components/map/on-map-right-buttons';
 import MapPanelComponent from '../components/map-panel/map-panel-component';
@@ -242,8 +246,8 @@ class MainMapViewScreen extends React.Component<Props, State> {
             // zoomEnabled={false}
             rotateEnabled={!this.props.microDate.enabled}
             pitchEnabled={false}
-            minZoomLevel={9}
-            maxZoomLevel={18}
+            minZoomLevel={MAP_MIN_ZOOM_LEVEL}
+            maxZoomLevel={MAP_MAX_ZOOM_LEVEL}
           >
             {this.props.microDate.enabled &&
               <PastLocationsPath
