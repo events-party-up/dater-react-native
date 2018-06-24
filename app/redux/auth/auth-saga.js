@@ -1,4 +1,4 @@
-import { put, takeEvery, call, take, delay } from 'redux-saga/effects';
+import { put, takeEvery, call, take, delay, select } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import DeviceInfo from 'react-native-device-info';
@@ -12,7 +12,7 @@ export default function* authSaga() {
     yield put({ type: 'AUTH_INIT' });
     const authStateChannel = yield call(createAuthStateChannel);
     yield takeEvery(authStateChannel, authStateChangedSaga);
-    yield takeEvery('AUTH_SIGNOUT', authSignOutSaga);
+    yield takeEvery('AUTH_SIGNOUT_START', authSignOutSaga);
   } catch (error) {
     yield put({ type: 'AUTH_MAINSAGA_ERROR', payload: error });
   }
@@ -20,7 +20,12 @@ export default function* authSaga() {
 
 function* authSignOutSaga() {
   try {
+    const visibilityMode = yield select((state) => state.mapView.visibility);
+    if (visibilityMode !== 'private') {
+      yield take('MAPVIEW_MY_VISIBILITY_CHANGE');
+    }
     yield firebase.auth().signOut();
+    yield put({ type: 'AUTH_SIGNOUT_FINISH' });
   } catch (error) {
     yield put({ type: 'AUTH_SIGNOUT_ERROR', payload: error });
   }

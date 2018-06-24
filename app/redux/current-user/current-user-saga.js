@@ -16,7 +16,7 @@ export default function* currentUserSaga() {
       const currentUserChannel = yield createChannelToCurrentUserInFirestore(uid);
       const currentUserUpdatedTask = yield takeLatest(currentUserChannel, currentUserUpdatedInFirebaseSaga);
 
-      yield take('AUTH_SIGNOUT');
+      yield take('AUTH_SIGNOUT_START');
       yield* currentUserSignOut();
       currentUserChannel.close();
       cancel(currentUserUpdatedTask);

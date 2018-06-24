@@ -27,6 +27,7 @@ export default function* mapViewMyVisibilitySaga() {
 
     yield takeEvery([
       'GEO_LOCATION_STOP',
+      'AUTH_SIGNOUT_START',
     ], setMyMapVisibilityModeTo, 'private');
 
     yield takeEvery([
@@ -43,19 +44,23 @@ function* microDateVisibilitySaga(action) {
   switch (action.type) {
     case 'MICRO_DATE_OUTGOING_REQUEST':
       yield* setMyMapVisibilityModeTo(action.payload.requestFor);
+      yield put({ type: 'MAPVIEW_MY_VISIBILITY_CHANGE', payload: action.payload.requestFor });
       break;
     default:
       yield* setMyMapVisibilityModeTo(action.payload.targetUser.id);
+      yield put({ type: 'MAPVIEW_MY_VISIBILITY_CHANGE', payload: action.payload.targetUser.id });
       break;
   }
 }
 
 function* setMyMapVisibilityModeTo(visibility) {
-  const myUid = yield select((state) => state.auth.uid);
+  if (!firebase.auth().currentUser) return;
+  const { uid } = firebase.auth().currentUser;
   yield firebase.firestore()
     .collection(GEO_POINTS_COLLECTION)
-    .doc(myUid)
+    .doc(uid)
     .update({
       visibility,
     });
+  yield put({ type: 'MAPVIEW_MY_VISIBILITY_CHANGE', payload: visibility });
 }

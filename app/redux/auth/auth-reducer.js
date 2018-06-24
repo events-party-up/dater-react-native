@@ -2,7 +2,8 @@ const types = {
   AUTH_INIT: 'AUTH_INIT',
   AUTH_SUCCESS: 'AUTH_SUCCESS',
   AUTH_NEW_REGISTRATION: 'AUTH_NEW_REGISTRATION',
-  AUTH_SIGNOUT: 'AUTH_SIGNOUT',
+  AUTH_SIGNOUT_START: 'AUTH_SIGNOUT_START',
+  AUTH_SIGNOUT_FINISH: 'AUTH_SIGNOUT_FINISH',
 
   AUTH_PHONE_NUMBER_SMS_CODE_SUBMITTED: 'AUTH_PHONE_NUMBER_SMS_CODE_SUBMITTED',
   AUTH_PHONE_NUMBER_VERIFY: 'AUTH_PHONE_NUMBER_VERIFY',
@@ -129,7 +130,7 @@ const authReducer = (state: authReduxStore = initialState, action) => {
         error: payload,
       };
     }
-    case types.AUTH_SIGNOUT: {
+    case types.AUTH_SIGNOUT_FINISH: {
       return {
         ...state,
         ...initialState,

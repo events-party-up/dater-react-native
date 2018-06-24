@@ -23,6 +23,7 @@ const types = {
 
   MAPVIEW_MOVE_TO: 'MAPVIEW_MOVE_TO',
   MAPVIEW_MOVE_TO_ERROR: 'MAPVIEW_MOVE_TO_ERROR',
+  MAPVIEW_MY_VISIBILITY_CHANGE: 'MAPVIEW_MY_VISIBILITY_CHANGE',
 
   MAPVIEW_SHOW_MY_LOCATION_AND_CENTER_ME: 'MAPVIEW_SHOW_MY_LOCATION_AND_CENTER_ME',
   MAPVIEW_SHOW_MY_LOCATION_AND_CENTER_ME_FINISH: 'MAPVIEW_SHOW_MY_LOCATION_AND_CENTER_ME_FINISH',
@@ -51,6 +52,7 @@ const initialState = {
   mapReady: false, // has the map been loaded?
   centered: true, // should map be in centered mode?
   modeIsSwitching: false,
+  visibility: 'private',
 };
 
 const mapViewReducer = (state = initialState, action) => {
@@ -132,6 +134,12 @@ const mapViewReducer = (state = initialState, action) => {
         centered: true,
         modeIsSwitching: false,
         mapViewSwitchMode: payload,
+      };
+    }
+    case types.MAPVIEW_MY_VISIBILITY_CHANGE: {
+      return {
+        ...state,
+        visibility: payload,
       };
     }
     case types.MAPVIEW_MY_VISIBILITY_ERROR:
