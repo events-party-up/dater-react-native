@@ -32,6 +32,7 @@ const mapStateToProps = (state) => ({
   mapPanel: state.mapPanel,
   microDate: state.microDate,
   appState: state.appState.state,
+  usersAround: state.usersAround.users,
 });
 
 function creatMapViewProxy(mapView: MapboxGL.MapView) {
@@ -74,6 +75,7 @@ type Props = {
   mapView: MapboxGL.MapView,
   microDate: any,
   navigation: any,
+  usersAround: Array<mixed>,
 };
 
 type State = {
@@ -270,7 +272,13 @@ class MainMapViewScreen extends React.Component<Props, State> {
                 limit={MAX_VISIBLE_PAST_LOCATIONS}
               />
             }
-            <UsersAroundComponent />
+            <UsersAroundComponent
+              usersAround={this.props.usersAround}
+              myCoords={this.props.location.coords}
+              mapViewBearingAngle={this.props.mapView.heading}
+              dispatch={this.props.dispatch}
+              isMicroDateMode={this.props.microDate.enabled}
+            />
             {this.props.location.coords &&
               !this.props.mapView.centered &&
               !this.props.microDate.enabled &&
