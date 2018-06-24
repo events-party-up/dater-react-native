@@ -7,6 +7,7 @@ import { Actions } from '../../navigators/navigator-actions';
 import {
   MICRO_DATES_COLLECTION,
   GEO_POINTS_COLLECTION,
+  GEO_POINTS_PAST_MICRO_DATES_COLLECTION,
 } from '../../constants';
 import { MicroDate } from '../../types';
 
@@ -119,8 +120,8 @@ function* outgoingMicroDateRequestInitSaga() {
       status: 'REQUEST',
       requestBy: myUid,
       requestFor: targetUser.id,
-      requestByRef: firebase.firestore().collection('geoPoints').doc(myUid),
-      requestForRef: firebase.firestore().collection('geoPoints').doc(targetUser.id),
+      requestByRef: firebase.firestore().collection(GEO_POINTS_COLLECTION).doc(myUid),
+      requestForRef: firebase.firestore().collection(GEO_POINTS_COLLECTION).doc(targetUser.id),
       requestTS: firebase.firestore.FieldValue.serverTimestamp(),
       active: true,
       id: microDateRef.id,
@@ -247,7 +248,7 @@ function* writeFinishedStateFor(microDate) {
   yield firebase.firestore()
     .collection(GEO_POINTS_COLLECTION)
     .doc(microDate.requestBy)
-    .collection('microDates')
+    .collection(GEO_POINTS_PAST_MICRO_DATES_COLLECTION)
     .doc(microDate.requestFor)
     .set({
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),

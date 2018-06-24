@@ -11,6 +11,8 @@ import {
   GEO_POINTS_COLLECTION,
   USERS_AROUND_PUBLIC_UPDATE_INTERVAL,
   USERS_AROUND_MICRODATE_UPDATE_INTERVAL,
+  GEO_POINTS_PAST_MICRO_DATES_COLLECTION,
+  USERS_AROUND_NEXT_MICRODATE_TIMEOUT_MS,
 } from '../../constants';
 
 const ONE_HOUR = 1000 * 60 * 60;
@@ -109,6 +111,8 @@ function* updateMicroDate(targetUser) {
 async function createAllUsersAroundChannel(userCoords, myUid) {
   let publicUsers = [];
   let privateUsers = [];
+  let usersWithRecentMicroDates = [];
+
   const queryArea = {
     center: {
       latitude: userCoords.latitude,
@@ -127,23 +131,38 @@ async function createAllUsersAroundChannel(userCoords, myUid) {
     .where('geoPoint', '>', lesserGeopoint)
     .where('geoPoint', '<', greaterGeopoint)
     .where('visibility', '==', 'public');
+
   const privateQuery = firebase.firestore()
     .collection(GEO_POINTS_COLLECTION)
     .where('visibility', '==', myUid);
+
+  const usersWithRecentMicroDatesQuery = firebase.firestore()
+    .collection(GEO_POINTS_COLLECTION)
+    .doc(myUid)
+    .collection(GEO_POINTS_PAST_MICRO_DATES_COLLECTION)
+    .where('timestamp', '>=', new Date(new Date() - USERS_AROUND_NEXT_MICRODATE_TIMEOUT_MS));
 
   return eventChannel((emit) => {
     const throttledEmit = _.throttle(emit, USERS_AROUND_PUBLIC_UPDATE_INTERVAL, { leading: true, trailing: true });
 
     const onPublicSnapshotUpdated = (snapShots) => {
       publicUsers = filterSnapshots(snapShots);
-      const combinedRusers = [...publicUsers, ...privateUsers];
-      throttledEmit(_.uniqBy(combinedRusers, (user) => user.id));
+      emitUsersAround(throttledEmit);
     };
 
     const onPrivateSnapshotUpdated = (snapShots) => {
       privateUsers = filterSnapshots(snapShots);
-      const combinedRusers = [...publicUsers, ...privateUsers];
-      throttledEmit(_.uniqBy(combinedRusers, (user) => user.id));
+      emitUsersAround(throttledEmit);
+    };
+
+    const onUsersWithRecentMicroDatesQueryUpdated = (snapshots) => {
+      usersWithRecentMicroDates = [];
+
+      snapshots.forEach((uidSnapshot) => {
+        usersWithRecentMicroDates.push(uidSnapshot.id);
+      });
+      // console.log('usersWithRecentMicroDates: ', usersWithRecentMicroDates);
+      emitUsersAround(throttledEmit);
     };
 
     const onError = (error) => {
@@ -152,11 +171,17 @@ async function createAllUsersAroundChannel(userCoords, myUid) {
       });
     };
 
-    const unsubscribePublicUsers = publicQuery.onSnapshot(onPublicSnapshotUpdated, onError);
-    const unsubscribePrivateUsers = privateQuery.onSnapshot(onPrivateSnapshotUpdated, onError);
+    const unsubscribeUsersWithRecentMicroDates = usersWithRecentMicroDatesQuery
+      .onSnapshot(onUsersWithRecentMicroDatesQueryUpdated, onError);
+    const unsubscribePublicUsers = publicQuery
+      .onSnapshot(onPublicSnapshotUpdated, onError);
+    const unsubscribePrivateUsers = privateQuery
+      .onSnapshot(onPrivateSnapshotUpdated, onError);
+
     const unsubscribe = () => {
       unsubscribePublicUsers();
       unsubscribePrivateUsers();
+      unsubscribeUsersWithRecentMicroDates();
     };
     return unsubscribe;
   });
@@ -179,6 +204,14 @@ async function createAllUsersAroundChannel(userCoords, myUid) {
       filteredResults.push(userData);
     });
     return filteredResults;
+  }
+
+  function emitUsersAround(throttledEmit) {
+    const combinedUsers = [...publicUsers, ...privateUsers];
+    const withoutRecentMicroDates = combinedUsers.filter((user) => (
+      !usersWithRecentMicroDates.includes(user.id)
+    ));
+    throttledEmit(_.uniqBy(withoutRecentMicroDates, (user) => user.id));
   }
 }
 
@@ -212,4 +245,3 @@ function createMicroDateChannel(myCoords, microDateState, myUid) {
     return unsubscribe;
   });
 }
-

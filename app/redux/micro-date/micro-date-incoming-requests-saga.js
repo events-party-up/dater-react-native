@@ -7,6 +7,7 @@ import GeoUtils from '../../utils/geo-utils';
 import {
   MICRO_DATES_COLLECTION,
   GEO_POINTS_COLLECTION,
+  GEO_POINTS_PAST_MICRO_DATES_COLLECTION,
 } from '../../constants';
 import { MicroDate } from '../../types';
 
@@ -255,7 +256,7 @@ function* writeFinishedStateFor(microDate: MicroDate) {
   yield firebase.firestore()
     .collection(GEO_POINTS_COLLECTION)
     .doc(microDate.requestFor)
-    .collection('microDates')
+    .collection(GEO_POINTS_PAST_MICRO_DATES_COLLECTION)
     .doc(microDate.requestBy)
     .set({
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
