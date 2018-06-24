@@ -22,6 +22,7 @@ export default function* mapViewMyVisibilitySaga() {
       'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
       'MICRO_DATE_INCOMING_FINISHED',
       'GEO_LOCATION_STARTED',
+      'MICRO_DATE_OUTGOING_CANCELLED',
     ], setMyMapVisibilityModeTo, 'public');
 
     yield takeEvery([
@@ -29,7 +30,7 @@ export default function* mapViewMyVisibilitySaga() {
     ], setMyMapVisibilityModeTo, 'private');
 
     yield takeEvery([
-      // 'MICRO_DATE_OUTGOING_REQUEST', // TODO: future implementation
+      'MICRO_DATE_OUTGOING_REQUEST',
       'MICRO_DATE_INCOMING_STARTED',
       'MICRO_DATE_OUTGOING_STARTED',
     ], microDateVisibilitySaga);

@@ -204,7 +204,7 @@ function createPostUploadChannel(collection, document, watchKey) {
 
   return eventChannel((emit) => {
     const onSnapshotUpdated = (dataSnapshot) => {
-      if (firstSnapshot) { // emit results immediately if its first result of query
+      if (firstSnapshot) { // save data before post upload tasks are finished
         firstSnapshot = false;
         preUploadData = dataSnapshot.data()[watchKey];
       } else if (!isEqual(preUploadData, dataSnapshot.data()[watchKey])) {

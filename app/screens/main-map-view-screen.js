@@ -213,7 +213,10 @@ class MainMapViewScreen extends React.Component<Props, State> {
           // }}
           // onResponderRelease={this.onMapDragEnd}
         >
-          {this.props.location.enabled && this.props.location.coords && this.props.mapView.centered &&
+          {this.props.location.enabled &&
+            this.props.location.coords &&
+            (this.props.mapView.centered ||
+            this.props.microDate.enabled) &&
             <MyLocationOnCenteredMap
               accuracy={this.props.location.coords.accuracy}
               visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
@@ -268,7 +271,9 @@ class MainMapViewScreen extends React.Component<Props, State> {
               />
             }
             <UsersAroundComponent />
-            {this.props.location.coords && !this.props.mapView.centered &&
+            {this.props.location.coords &&
+              !this.props.mapView.centered &&
+              !this.props.microDate.enabled &&
               <MyLocationOnNonCenteredMap
                 compassHeading={this.state.compassHeading}
                 moveHeadingAngle={this.props.location.moveHeadingAngle}

@@ -107,6 +107,8 @@ function* updateMicroDate(targetUser) {
 }
 
 async function createAllUsersAroundChannel(userCoords, myUid) {
+  let publicUsers = [];
+  let privateUsers = [];
   const queryArea = {
     center: {
       latitude: userCoords.latitude,
@@ -120,23 +122,26 @@ async function createAllUsersAroundChannel(userCoords, myUid) {
   const greaterGeopoint = new firebase.firestore
     .GeoPoint(box.neCorner.latitude, box.neCorner.longitude);
 
-  const query = firebase.firestore().collection(GEO_POINTS_COLLECTION)
+  const publicQuery = firebase.firestore()
+    .collection(GEO_POINTS_COLLECTION)
     .where('geoPoint', '>', lesserGeopoint)
     .where('geoPoint', '<', greaterGeopoint)
     .where('visibility', '==', 'public');
-  let firstSnapshot = true;
+  const privateQuery = firebase.firestore()
+    .collection(GEO_POINTS_COLLECTION)
+    .where('visibility', '==', myUid);
 
   return eventChannel((emit) => {
-    const throttledEmit = _.throttle(emit, USERS_AROUND_PUBLIC_UPDATE_INTERVAL);
+    const throttledEmit = _.throttle(emit, USERS_AROUND_PUBLIC_UPDATE_INTERVAL, { leading: true, trailing: true });
 
-    const onSnapshotUpdated = (snapShots) => {
-      if (firstSnapshot) { // emit results immediately if its first result of query
-        firstSnapshot = false;
-        throttledEmit(filterSnapshots(snapShots));
-      }
+    const onPublicSnapshotUpdated = (snapShots) => {
+      publicUsers = filterSnapshots(snapShots);
+      throttledEmit([...publicUsers, ...privateUsers]);
+    };
 
-      const usersAround = filterSnapshots(snapShots);
-      throttledEmit(usersAround);
+    const onPrivateSnapshotUpdated = (snapShots) => {
+      privateUsers = filterSnapshots(snapShots);
+      throttledEmit([...publicUsers, ...privateUsers]);
     };
 
     const onError = (error) => {
@@ -145,8 +150,12 @@ async function createAllUsersAroundChannel(userCoords, myUid) {
       });
     };
 
-    const unsubscribe = query.onSnapshot(onSnapshotUpdated, onError);
-
+    const unsubscribePublicUsers = publicQuery.onSnapshot(onPublicSnapshotUpdated, onError);
+    const unsubscribePrivateUsers = privateQuery.onSnapshot(onPrivateSnapshotUpdated, onError);
+    const unsubscribe = () => {
+      unsubscribePublicUsers();
+      unsubscribePrivateUsers();
+    };
     return unsubscribe;
   });
 
