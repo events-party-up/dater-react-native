@@ -159,7 +159,7 @@ function* startMicroDateSaga(microDate) {
     ...userSnap.data(),
   };
   yield put({
-    type: 'MICRO_DATE_INCOMING_START',
+    type: 'MICRO_DATE_INCOMING_STARTED',
     payload: {
       targetUser,
       myCoords,

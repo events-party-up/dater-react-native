@@ -39,7 +39,7 @@ export default function* usersAroundSaga() {
 
       if (isMicroDateMode) {
         const microDateState = yield select((state) => state.microDate);
-        channel = yield createMicroDateChannel(myCoords, microDateState);
+        channel = yield createMicroDateChannel(myCoords, microDateState, myUid);
         channelTask = yield takeEvery(channel, updateMicroDate);
       } else {
         channel = yield createAllUsersAroundChannel(myCoords, myUid);
@@ -52,7 +52,7 @@ export default function* usersAroundSaga() {
         'USERS_AROUND_RESTART',
         'APP_STATE_BACKGROUND', // stop if app is in background
         'GEO_LOCATION_STOPPED', // stop if location services are disabled
-        'MICRO_DATE_INCOMING_START', // app mode switched to find user
+        'MICRO_DATE_INCOMING_STARTED', // app mode switched to find user
         'MICRO_DATE_OUTGOING_STARTED',
         'MICRO_DATE_STOP',
         'MICRO_DATE_OUTGOING_FINISHED',
@@ -157,7 +157,7 @@ async function createAllUsersAroundChannel(userCoords, myUid) {
       const userData = userSnapshot.data();
       userData.id = userSnapshot.id;
 
-      if (myUid && userData.id === myUid.uid) {
+      if (userData.id === myUid) {
         return;
       } else if (Date.now() - new Date(userData.timestamp) > ONE_HOUR * USERS_AROUND_SHOW_LAST_SEEN_HOURS_AGO) {
         // only show users with fresh timestamps
@@ -171,10 +171,12 @@ async function createAllUsersAroundChannel(userCoords, myUid) {
   }
 }
 
-function createMicroDateChannel(myCoords, microDateState) {
+function createMicroDateChannel(myCoords, microDateState, myUid) {
+  const targetUid = microDateState.microDate.requestBy === myUid ?
+    microDateState.microDate.requestFor : microDateState.microDate.requestBy;
   const query = firebase.firestore()
     .collection(GEO_POINTS_COLLECTION)
-    .doc(microDateState.targetUserUid);
+    .doc(targetUid);
 
   return eventChannel((emit) => {
     const onSnapshotUpdated = (snapshot) => {

@@ -30,7 +30,7 @@ export default function* mapViewMyVisibilitySaga() {
 
     yield takeEvery([
       // 'MICRO_DATE_OUTGOING_REQUEST', // TODO: future implementation
-      'MICRO_DATE_INCOMING_START',
+      'MICRO_DATE_INCOMING_STARTED',
       'MICRO_DATE_OUTGOING_STARTED',
     ], microDateVisibilitySaga);
   } catch (error) {

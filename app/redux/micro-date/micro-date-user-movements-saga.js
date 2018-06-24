@@ -15,7 +15,7 @@ export default function* microDateUserMovementsSaga() {
     yield takeEvery('MICRO_DATE_TARGET_MOVE', microDateUserMovementsTargetMoveSaga);
     yield takeEvery([
       'MICRO_DATE_OUTGOING_STARTED',
-      'MICRO_DATE_INCOMING_START',
+      'MICRO_DATE_INCOMING_STARTED',
     ], microDateWriteFirstPastLocationOnStartSaga);
   } catch (error) {
     yield put({ type: 'MICRO_DATE_USER_MOVEMENTS_ERROR', payload: error });
