@@ -1,10 +1,13 @@
-import { call, take, put, takeLatest, select, cancel, fork } from 'redux-saga/effects';
+import { call, take, put, takeLatest, select, cancel, fork, spawn } from 'redux-saga/effects';
 import { eventChannel, buffers } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import GeoUtils from '../../utils/geo-utils';
 
 import { Actions } from '../../navigators/navigator-actions';
-import { MICRO_DATES_COLLECTION } from '../../constants';
+import {
+  MICRO_DATES_COLLECTION,
+  GEO_POINTS_COLLECTION,
+} from '../../constants';
 import { MicroDate } from '../../types';
 
 export default function* microDateOutgoingRequestsSaga() {
@@ -225,19 +228,30 @@ function* outgoingMicroDateSelfieAcceptByMeSaga(microDate: MicroDate) {
 function* outgoingMicroDateFinishedSaga() {
   const action = yield take('MICRO_DATE_OUTGOING_FINISH');
   const microDate = action.payload;
-
-  yield firebase.firestore()
-    .collection(MICRO_DATES_COLLECTION)
-    .doc(microDate.id)
-    .update({
-      [`${microDate.requestBy}_firstAlert`]: true,
-    });
+  yield spawn(writeFinishedStateFor, microDate);
   yield Actions.navigate({
     key: 'MicroDateScreen',
     routeName: 'MicroDateScreen',
     params: { microDate },
   });
   yield put({ type: 'MICRO_DATE_OUTGOING_FINISHED' });
+}
+
+function* writeFinishedStateFor(microDate) {
+  yield firebase.firestore()
+    .collection(MICRO_DATES_COLLECTION)
+    .doc(microDate.id)
+    .update({
+      [`${microDate.requestBy}_firstAlert`]: true,
+    });
+  yield firebase.firestore()
+    .collection(GEO_POINTS_COLLECTION)
+    .doc(microDate.requestBy)
+    .collection('microDates')
+    .doc(microDate.requestFor)
+    .set({
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
 }
 
 function createChannelToMicroDate(microDateId) {

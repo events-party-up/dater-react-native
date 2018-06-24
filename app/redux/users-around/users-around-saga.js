@@ -136,12 +136,14 @@ async function createAllUsersAroundChannel(userCoords, myUid) {
 
     const onPublicSnapshotUpdated = (snapShots) => {
       publicUsers = filterSnapshots(snapShots);
-      throttledEmit([...publicUsers, ...privateUsers]);
+      const combinedRusers = [...publicUsers, ...privateUsers];
+      throttledEmit(_.uniqBy(combinedRusers, (user) => user.id));
     };
 
     const onPrivateSnapshotUpdated = (snapShots) => {
       privateUsers = filterSnapshots(snapShots);
-      throttledEmit([...publicUsers, ...privateUsers]);
+      const combinedRusers = [...publicUsers, ...privateUsers];
+      throttledEmit(_.uniqBy(combinedRusers, (user) => user.id));
     };
 
     const onError = (error) => {
