@@ -76,7 +76,7 @@ class ProfileScreen extends Component<Props, State> {
     this.props.navigation.popToTop();
     this.props.navigation.goBack(null);
     this.props.dispatch({
-      type: 'AUTH_SIGNOUT',
+      type: 'AUTH_SIGNOUT_START',
     });
   }
 

@@ -14,7 +14,11 @@ import UsersAroundComponent from '../components/map/users-around-component';
 import PastLocationsPath from '../components/map/past-locations-path';
 import { Caption2 } from '../components/ui-kit/atoms/typography';
 import MicroDateStats from '../components/micro-date/micro-date-stats';
-import { MAX_VISIBLE_PAST_LOCATIONS } from '../constants';
+import {
+  MAX_VISIBLE_PAST_LOCATIONS,
+  MAP_MAX_ZOOM_LEVEL,
+  MAP_MIN_ZOOM_LEVEL,
+} from '../constants';
 import MyLocationOnNonCenteredMap from '../components/map/my-location-on-non-centered-map';
 import OnMapRightButtons from '../components/map/on-map-right-buttons';
 import MapPanelComponent from '../components/map-panel/map-panel-component';
@@ -28,6 +32,7 @@ const mapStateToProps = (state) => ({
   mapPanel: state.mapPanel,
   microDate: state.microDate,
   appState: state.appState.state,
+  usersAround: state.usersAround.users,
 });
 
 function creatMapViewProxy(mapView: MapboxGL.MapView) {
@@ -70,6 +75,7 @@ type Props = {
   mapView: MapboxGL.MapView,
   microDate: any,
   navigation: any,
+  usersAround: Array<mixed>,
 };
 
 type State = {
@@ -209,7 +215,10 @@ class MainMapViewScreen extends React.Component<Props, State> {
           // }}
           // onResponderRelease={this.onMapDragEnd}
         >
-          {this.props.location.enabled && this.props.location.coords && this.props.mapView.centered &&
+          {this.props.location.enabled &&
+            this.props.location.coords &&
+            (this.props.mapView.centered ||
+            this.props.microDate.enabled) &&
             <MyLocationOnCenteredMap
               accuracy={this.props.location.coords.accuracy}
               visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
@@ -242,8 +251,8 @@ class MainMapViewScreen extends React.Component<Props, State> {
             // zoomEnabled={false}
             rotateEnabled={!this.props.microDate.enabled}
             pitchEnabled={false}
-            minZoomLevel={9}
-            maxZoomLevel={18}
+            minZoomLevel={MAP_MIN_ZOOM_LEVEL}
+            maxZoomLevel={MAP_MAX_ZOOM_LEVEL}
           >
             {this.props.microDate.enabled &&
               <PastLocationsPath
@@ -263,8 +272,16 @@ class MainMapViewScreen extends React.Component<Props, State> {
                 limit={MAX_VISIBLE_PAST_LOCATIONS}
               />
             }
-            <UsersAroundComponent />
-            {this.props.location.coords && !this.props.mapView.centered &&
+            <UsersAroundComponent
+              usersAround={this.props.usersAround}
+              myCoords={this.props.location.coords}
+              mapViewBearingAngle={this.props.mapView.heading}
+              dispatch={this.props.dispatch}
+              isMicroDateMode={this.props.microDate.enabled}
+            />
+            {this.props.location.coords &&
+              !this.props.mapView.centered &&
+              !this.props.microDate.enabled &&
               <MyLocationOnNonCenteredMap
                 compassHeading={this.state.compassHeading}
                 moveHeadingAngle={this.props.location.moveHeadingAngle}

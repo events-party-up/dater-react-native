@@ -74,7 +74,10 @@ export default function* locationSaga() {
       // yield RNBackgroundGeolocation.getState(function (state) {
       //   console.log(state);
       // });
-      yield take('GEO_LOCATION_STOP');
+      yield take([
+        'GEO_LOCATION_STOP',
+        'AUTH_SIGNOUT_START',
+      ]);
 
       yield DaterBackgroundGeolocation.stop();
       yield cancel(task1, task2, task3, task4);

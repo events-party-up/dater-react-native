@@ -16,7 +16,7 @@ export default function* mapPanelSagaNew() {
         'MICRO_DATE_INCOMING_REQUEST',
         'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
         'MICRO_DATE_INCOMING_CANCELLED',
-        'MICRO_DATE_INCOMING_START',
+        'MICRO_DATE_INCOMING_STARTED',
         'MICRO_DATE_OUTGOING_ACCEPT',
         'MICRO_DATE_INCOMING_ACCEPT',
         'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
@@ -164,7 +164,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
           },
         });
         break;
-      case 'MICRO_DATE_INCOMING_START':
+      case 'MICRO_DATE_INCOMING_STARTED':
         if (
           mapPanelState.mode === 'selfieUploadedByTarget' ||
             mapPanelState.mode === 'selfieUploadedByMe' ||

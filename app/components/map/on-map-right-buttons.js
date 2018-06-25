@@ -8,7 +8,12 @@ import { Dispatch } from 'react-redux';
 import { GeoCoordinates } from '../../types';
 import CircleButton from '../ui-kit/atoms/circle-button';
 import { Actions } from '../../navigators/navigator-actions';
-import { MAP_PLUS_MINUS_ZOOM_INCREMENT, SCREEN_HEIGHT } from '../../constants';
+import {
+  MAP_PLUS_MINUS_ZOOM_INCREMENT,
+  SCREEN_HEIGHT,
+  MAP_MIN_ZOOM_LEVEL,
+  MAP_MAX_ZOOM_LEVEL,
+} from '../../constants';
 
 const myLocationIcon = require('../../assets/icons/my-location/48/my-location.png');
 const playIcon = require('../../assets/icons/play/play.png');
@@ -62,6 +67,9 @@ class OnMapRightButtons extends React.Component<Props, State> {
       },
     });
     this.nextZoom = this.nextZoom + MAP_PLUS_MINUS_ZOOM_INCREMENT;
+    if (this.nextZoom >= MAP_MAX_ZOOM_LEVEL) {
+      this.nextZoom = MAP_MAX_ZOOM_LEVEL;
+    }
   }
 
   zoomInLongPress = () => {
@@ -77,6 +85,9 @@ class OnMapRightButtons extends React.Component<Props, State> {
       },
     });
     this.nextZoom = this.nextZoom - MAP_PLUS_MINUS_ZOOM_INCREMENT;
+    if (this.nextZoom <= MAP_MIN_ZOOM_LEVEL) {
+      this.nextZoom = MAP_MIN_ZOOM_LEVEL;
+    }
   }
 
   zoomOutLongPress = () => {

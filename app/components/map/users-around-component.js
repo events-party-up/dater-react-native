@@ -1,25 +1,20 @@
 import * as React from 'react';
-import { connect, Dispatch } from 'react-redux';
+import { Dispatch } from 'react-redux';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
 import UserOnMapMarker from './user-on-map-marker';
 import GeoUtils from '../../utils/geo-utils';
 import { FireStoreGeoPoint } from '../../types';
 
-const mapStateToProps = (state) => ({
-  usersAround: state.usersAround.users,
-  myCoords: state.location.coords,
-  mapViewBearingAngle: state.mapView.heading,
-});
-
 type Props = {
   usersAround: Array<mixed>,
   dispatch: Dispatch,
   mapViewBearingAngle: number,
   myCoords: FireStoreGeoPoint,
+  isMicroDateMode: boolean,
 };
 
-class UsersAroundComponent extends React.Component<Props> {
+export default class UsersAroundComponent extends React.Component<Props> {
   onPressOrSelect = (targetUser) => {
     this.props.dispatch({
       type: 'USERS_AROUND_ITEM_PRESSED',
@@ -53,8 +48,10 @@ class UsersAroundComponent extends React.Component<Props> {
           title={user.name ?
             user.name.substring(0, 1).toUpperCase() :
             user.shortId && user.shortId.substring(0, 1).toUpperCase()}
+          gender={user.gender}
           heading={user.heading}
           mapViewBearingAngle={this.props.mapViewBearingAngle}
+          isMicroDateMode={this.props.isMicroDateMode}
         />
       </MapboxGL.PointAnnotation>
     ));
@@ -64,5 +61,3 @@ class UsersAroundComponent extends React.Component<Props> {
     return this.renderUsersAround();
   }
 }
-
-export default connect(mapStateToProps)(UsersAroundComponent);

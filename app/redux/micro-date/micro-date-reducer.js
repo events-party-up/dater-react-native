@@ -18,7 +18,7 @@ const types = {
   MICRO_DATE_INCOMING_ACCEPT: 'MICRO_DATE_INCOMING_ACCEPT',
 
   MICRO_DATE_OUTGOING_ACCEPT: 'MICRO_DATE_OUTGOING_ACCEPT',
-  MICRO_DATE_INCOMING_START: 'MICRO_DATE_INCOMING_START',
+  MICRO_DATE_INCOMING_STARTED: 'MICRO_DATE_INCOMING_STARTED',
   MICRO_DATE_OUTGOING_STARTED: 'MICRO_DATE_OUTGOING_STARTED',
 
   MICRO_DATE_STOP: 'MICRO_DATE_STOP',
@@ -95,7 +95,7 @@ const microDateReducer = (state = initialState, action) => {
       };
     }
     case types.MICRO_DATE_OUTGOING_STARTED:
-    case types.MICRO_DATE_INCOMING_START: {
+    case types.MICRO_DATE_INCOMING_STARTED: {
       return {
         ...state,
         targetUserUid: payload.targetUser.id,

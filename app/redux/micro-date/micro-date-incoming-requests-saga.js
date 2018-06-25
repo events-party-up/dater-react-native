@@ -1,10 +1,14 @@
-import { call, take, put, takeLatest, select, cancel, fork } from 'redux-saga/effects';
+import { call, take, put, takeLatest, select, cancel, fork, spawn } from 'redux-saga/effects';
 import { eventChannel, buffers } from 'redux-saga';
 import firebase from 'react-native-firebase';
 
 import { Actions } from '../../navigators/navigator-actions';
 import GeoUtils from '../../utils/geo-utils';
-import { MICRO_DATES_COLLECTION } from '../../constants';
+import {
+  MICRO_DATES_COLLECTION,
+  GEO_POINTS_COLLECTION,
+  GEO_POINTS_PAST_MICRO_DATES_COLLECTION,
+} from '../../constants';
 import { MicroDate } from '../../types';
 
 export default function* microDateIncomingRequestsSaga() {
@@ -159,7 +163,7 @@ function* startMicroDateSaga(microDate) {
     ...userSnap.data(),
   };
   yield put({
-    type: 'MICRO_DATE_INCOMING_START',
+    type: 'MICRO_DATE_INCOMING_STARTED',
     payload: {
       targetUser,
       myCoords,
@@ -232,19 +236,31 @@ function* incomingMicroDateSelfieAcceptByMeSaga(microDate) {
 function* incomingMicroDateFinishedSaga() {
   const action = yield take('MICRO_DATE_INCOMING_FINISH');
   const microDate = action.payload;
+  yield spawn(writeFinishedStateFor, microDate);
 
-  yield firebase.firestore()
-    .collection(MICRO_DATES_COLLECTION)
-    .doc(microDate.id)
-    .update({
-      [`${microDate.requestFor}_firstAlert`]: true,
-    });
   yield Actions.navigate({
     key: 'MicroDateScreen',
     routeName: 'MicroDateScreen',
     params: { microDate },
   });
   yield put({ type: 'MICRO_DATE_INCOMING_FINISHED' });
+}
+
+function* writeFinishedStateFor(microDate: MicroDate) {
+  yield firebase.firestore()
+    .collection(MICRO_DATES_COLLECTION)
+    .doc(microDate.id)
+    .update({
+      [`${microDate.requestFor}_firstAlert`]: true,
+    });
+  yield firebase.firestore()
+    .collection(GEO_POINTS_COLLECTION)
+    .doc(microDate.requestFor)
+    .collection(GEO_POINTS_PAST_MICRO_DATES_COLLECTION)
+    .doc(microDate.requestBy)
+    .set({
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
 }
 
 function createChannelForIncomingMicroDateRequests(uid) {

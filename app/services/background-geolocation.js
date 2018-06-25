@@ -12,7 +12,7 @@ const geoOptions = async () => {
   const uid = currentUser ? currentUser.uid : 'unknown';
 
   return {
-    reset: true,
+    // reset: true,
     useSignificantChanges: false,
     enableHighAccuracy: true,
     distanceFilter: 5,
