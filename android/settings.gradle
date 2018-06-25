@@ -45,3 +45,6 @@ project(':react-native-system-setting').projectDir = new File(rootProject.projec
 
 include ':react-native-android-settings-library'
 project(':react-native-android-settings-library').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-android-settings-library/android')
+
+include ':lottie-react-native'
+project(':lottie-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/lottie-react-native/src/android')
