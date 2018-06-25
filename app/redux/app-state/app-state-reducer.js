@@ -2,7 +2,10 @@ const types = {
   APP_STATE_ACTIVE: 'APP_STATE_ACTIVE',
   APP_STATE_INACTIVE: 'APP_STATE_INACTIVE',
   APP_STATE_BACKGROUND: 'APP_STATE_BACKGROUND',
+  APP_STATE_POOR_GPS: 'APP_STATE_POOR_GPS',
+  APP_STATE_GOOD_GPS: 'APP_STATE_GOOD_GPS',
   APP_STATE_UNKNOWN: 'APP_STATE_UNKNOWN',
+  APP_STATE_GPS_ERROR: 'APP_STATE_GPS_ERROR',
   APP_STATE_ERROR: 'APP_STATE_ERROR',
 };
 
@@ -13,6 +16,8 @@ type appStateReduxStore = {
 
 const initialState: appStateReduxStore = {
   state: 'init',
+  isGPSPoor: false,
+  gpsAccuracy: null,
   error: null,
 };
 
@@ -33,6 +38,20 @@ const appStateReducer = (state = initialState, action) => {
       return {
         ...state,
         error: payload,
+      };
+    }
+    case types.APP_STATE_POOR_GPS: {
+      return {
+        ...state,
+        isGPSPoor: true,
+        gpsAccuracy: payload,
+      };
+    }
+    case types.APP_STATE_GOOD_GPS: {
+      return {
+        ...state,
+        isGPSPoor: false,
+        gpsAccuracy: payload,
       };
     }
     default: {
