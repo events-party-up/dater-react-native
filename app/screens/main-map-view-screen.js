@@ -196,9 +196,12 @@ class MainMapViewScreen extends React.Component<Props, State> {
       <View
         style={styles.mapViewContainer}
       >
-        <BlockMapViewComponent
-          appState={this.props.appState}
-        />
+        {this.props.appState.state === 'active' &&
+          <BlockMapViewComponent
+            isGpsPoor={this.props.appState.isGpsPoor}
+            gpsAccuracy={this.props.appState.gpsAccuracy}
+          />
+        }
         {/* <FirebaseSetup /> */}
         <MapPanelComponent
           navigation={this.props.navigation}

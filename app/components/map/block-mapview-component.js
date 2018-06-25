@@ -15,10 +15,12 @@ import {
 
 type State = {
   animationProgress: any,
+  active: boolean,
 }
 
 type Props = {
-  appState: any,
+  isGpsPoor: boolean,
+  gpsAccuracy: number,
 };
 
 export default class BlockMapViewComponent extends React.Component<Props, State> {
@@ -27,15 +29,12 @@ export default class BlockMapViewComponent extends React.Component<Props, State>
     super(props);
     this.state = {
       animationProgress: new Animated.Value(0),
+      active: false,
     };
   }
 
   componentDidMount() {
-    this.cycleAnimation();
-  }
-
-  cycleAnimation() {
-    Animated.sequence([
+    this.animation = Animated.loop(Animated.sequence([
       Animated.timing(this.state.animationProgress, {
         toValue: 1,
         duration: 4000,
@@ -44,22 +43,56 @@ export default class BlockMapViewComponent extends React.Component<Props, State>
         toValue: 0,
         duration: 4000,
       }),
-    ]).start(() => {
-      this.cycleAnimation();
+    ]));
+  }
+
+  componentWillUnmount() {
+    this.animation.stop();
+    this.setInActive();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.isGpsPoor && !this.state.active) {
+      this.setActive();
+    } else if (!nextProps.isGpsPoor) {
+      this.setInActive();
+    }
+  }
+
+  setInActive() {
+    this.setState({
+      active: false,
+    });
+    this.animation.stop();
+    this.animation.reset();
+  }
+
+  setActive() {
+    this.animation.start();
+    this.setState({
+      active: true,
     });
   }
 
-  render() {
+  badGpsSignal() {
     return (
+      <React.Fragment>
+        <H2>Плохой сигнал GPS ({this.props.gpsAccuracy})...</H2>
+        <H3>Выйди на открытую местность.</H3>
+        <LottieView
+          source={require('../../assets/lottie-animations/location-search.json')} // eslint-disable-line
+          progress={this.state.animationProgress}
+          style={styles.animation}
+        />
+      </React.Fragment>
+    );
+  }
+
+  render() {
+    return this.state.active ? (
       <View style={styles.blockView}>
         <View style={styles.blockModal}>
-          <H2>Плохой сигнал GPS ({Math.floor(this.props.appState.gpsAccuracy)})</H2>
-          <H3>Выйди на открытую местность.</H3>
-          <LottieView
-            source={require('../../assets/lottie-animations/location-search.json')} // eslint-disable-line
-            progress={this.state.animationProgress}
-            style={styles.animation}
-          />
+          {this.badGpsSignal()}
           {/* <ActivityIndicator
             style={styles.acitityIndicator}
             size="large"
@@ -67,7 +100,7 @@ export default class BlockMapViewComponent extends React.Component<Props, State>
           /> */}
         </View>
       </View>
-    );
+    ) : null;
   }
 }
 
@@ -115,12 +148,9 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     top: -10,
-    // justifyContent: 'center',
-    // alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
-    // width: 250,
     height: 250,
   },
 });

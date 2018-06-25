@@ -16,7 +16,7 @@ type appStateReduxStore = {
 
 const initialState: appStateReduxStore = {
   state: 'init',
-  isGPSPoor: false,
+  isGpsPoor: false,
   gpsAccuracy: null,
   error: null,
 };
@@ -43,14 +43,14 @@ const appStateReducer = (state = initialState, action) => {
     case types.APP_STATE_POOR_GPS: {
       return {
         ...state,
-        isGPSPoor: true,
+        isGpsPoor: true,
         gpsAccuracy: payload,
       };
     }
     case types.APP_STATE_GOOD_GPS: {
       return {
         ...state,
-        isGPSPoor: false,
+        isGpsPoor: false,
         gpsAccuracy: payload,
       };
     }
