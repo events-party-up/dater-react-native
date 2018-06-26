@@ -1,4 +1,4 @@
-import { put, take, takeLeading, takeLatest, delay, race, select } from 'redux-saga/effects';
+import { put, take, takeLeading, takeEvery, delay, race, select } from 'redux-saga/effects';
 import { eventChannel, channel, buffers } from 'redux-saga';
 import { NetInfo } from 'react-native';
 import firebase from 'react-native-firebase';
@@ -12,7 +12,7 @@ export default function* networkStateSaga() {
     const networkOnlineChan = yield channel(buffers.none());
     const networkOfflineChan = yield channel(buffers.none());
 
-    yield takeLatest(networkStateChannel, updateNetworkStateSaga, networkOnlineChan, networkOfflineChan);
+    yield takeEvery(networkStateChannel, updateNetworkStateSaga, networkOnlineChan, networkOfflineChan);
     yield takeLeading(networkOfflineChan, networkOfflineSaga, networkOnlineChan);
     yield takeLeading(networkOnlineChan, networkOnlineSaga);
   } catch (error) {
@@ -22,8 +22,6 @@ export default function* networkStateSaga() {
 
 function* updateNetworkStateSaga(networkOnlineChan, networkOfflineChan, networkState) {
   try {
-    console.log('networkStateSaga: ', networkState);
-
     if (networkState.type === 'none' || networkState.type === 'unknown') {
       yield put(networkOfflineChan, networkState);
     } else {
@@ -42,23 +40,21 @@ function* networkOfflineSaga(networkOnlineChan, networkState) {
     return;
   }
 
-  const { timeout } = yield race({
-    networkOnline: take(networkOnlineChan),
+  const { networkIsOnline, timeout } = yield race({
+    networkIsOnline: take(networkOnlineChan),
     timeout: delay(ACTIVATE_NETWORK_OFFLINE_TIMEOUT),
   });
 
   if (timeout) {
     yield put({ type: 'APP_STATE_NETWORK_OFFLINE', payload: networkState });
+  } else {
+    yield put({ type: 'APP_STATE_NETWORK_ONLINE', payload: networkIsOnline });
   }
 }
 
 function* networkOnlineSaga(networkState) {
-  const networkIsOfflineInState = yield select((state) => state.appState.networkIsOffline);
-
-  if (networkIsOfflineInState) {
-    yield delay(ACTIVATE_NETWORK_ONLINE_TIMEOUT);
-    yield put({ type: 'APP_STATE_NETWORK_ONLINE', payload: networkState });
-  }
+  yield delay(ACTIVATE_NETWORK_ONLINE_TIMEOUT);
+  yield put({ type: 'APP_STATE_NETWORK_ONLINE', payload: networkState });
 }
 
 function createNetworkStateChannel() {

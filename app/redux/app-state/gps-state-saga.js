@@ -44,7 +44,7 @@ function* badGpsSaga(goodGPSChan, accuracy) {
     return;
   }
 
-  const { timeout } = yield race({
+  const { goodGPSAccuracy, timeout } = yield race({
     goodGPS: take(goodGPSChan),
     timeout: delay(ACTIVATE_POOR_GPS_TIMEOUT),
   });
@@ -53,6 +53,8 @@ function* badGpsSaga(goodGPSChan, accuracy) {
     const freshCoords = yield select((state) => state.location.coords);
     yield put({ type: 'APP_STATE_POOR_GPS', payload: freshCoords.accuracy });
     yield put({ type: 'GEO_LOCATION_FORCE_UPDATE' });
+  } else {
+    yield put({ type: 'APP_STATE_GOOD_GPS', payload: goodGPSAccuracy });
   }
 }
 

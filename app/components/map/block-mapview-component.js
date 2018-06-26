@@ -60,7 +60,7 @@ export default class BlockMapViewComponent extends React.Component<Props, State>
     if (nextProps.networkIsOffline) {
       this.activeMode = 'networkIsOffline';
       this.setActive();
-    } else if (nextProps.gpsIsPoor) {
+    } else if (nextProps.gpsIsPoor && !this.state.active) {
       this.activeMode = 'poorGps';
       this.setActive();
     } else if (!nextProps.gpsIsPoor && !nextProps.networkIsOffline) {
@@ -131,21 +131,46 @@ export default class BlockMapViewComponent extends React.Component<Props, State>
 
   badGpsSignal() {
     return (
-      <React.Fragment>
-        <H2
+      <View
+        style={{
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+        }}
+      >
+        <View
           style={{
-            marginBottom: 12,
+            width: SCREEN_WIDTH * 0.7,
           }}
         >
-          Плохой сигнал GPS ({this.props.gpsAccuracy})...
-        </H2>
-        <Body>Выйди на открытую местность.</Body>
-        <LottieView
-          source={require('../../assets/lottie-animations/location-search.json')} // eslint-disable-line
-          progress={this.state.animationProgress}
-          style={styles.poorGpsAnimation}
-        />
-      </React.Fragment>
+          <H2
+            style={{
+              marginBottom: 12,
+            }}
+          >
+            Плохой сигнал GPS
+          </H2>
+          <Body>Выйди на открытую местность. {'\n'}
+            Точность: {this.props.gpsAccuracy}м
+          </Body>
+        </View>
+        <View
+          style={{
+            position: 'absolute',
+            right: 150,
+            top: -70,
+          }}
+        >
+          <LottieView
+            source={require('../../assets/lottie-animations/location-search.json')} // eslint-disable-line
+            progress={this.state.animationProgress}
+            style={{
+              position: 'absolute',
+              height: 250,
+              width: 250,
+            }}
+          />
+        </View>
+      </View>
     );
   }
 
@@ -171,7 +196,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     top: 0,
-    // opacity: 0.7,
     position: 'absolute',
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
@@ -203,25 +227,5 @@ const styles = StyleSheet.create({
       width: 0, height: 4,
     },
     elevation: 1,
-  },
-  poorGpsAnimation: {
-    left: 0,
-    right: 0,
-    bottom: 0,
-    top: -10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    height: 250,
-  },
-  networkIsOfflineAnimation: {
-    // left: 0,
-    // right: 0,
-    // bottom: 0,
-    // top: -10,
-    // flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    height: 150,
   },
 });
