@@ -16,20 +16,25 @@ import {
 type State = {
   animationProgress: any,
   active: boolean,
+  mode: '' | 'poorGps' | 'networkIsOffline',
 }
 
 type Props = {
   gpsIsPoor: boolean,
   gpsAccuracy: number,
+  networkIsOffline: boolean,
 };
 
 export default class BlockMapViewComponent extends React.Component<Props, State> {
   animation;
+  activeMode;
+
   constructor(props) {
     super(props);
     this.state = {
       animationProgress: new Animated.Value(0),
       active: false,
+      mode: '',
     };
   }
 
@@ -52,9 +57,14 @@ export default class BlockMapViewComponent extends React.Component<Props, State>
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.gpsIsPoor && !this.state.active) {
+    if (nextProps.networkIsOffline) {
+      this.activeMode = 'networkIsOffline';
       this.setActive();
-    } else if (!nextProps.gpsIsPoor) {
+    } else if (nextProps.gpsIsPoor) {
+      this.activeMode = 'poorGps';
+      this.setActive();
+    } else if (!nextProps.gpsIsPoor && !nextProps.networkIsOffline) {
+      this.activeMode = '';
       this.setInActive();
     }
   }
@@ -62,6 +72,7 @@ export default class BlockMapViewComponent extends React.Component<Props, State>
   setInActive() {
     this.setState({
       active: false,
+      mode: this.activeMode,
     });
     this.animation.stop();
     this.animation.reset();
@@ -71,7 +82,51 @@ export default class BlockMapViewComponent extends React.Component<Props, State>
     this.animation.start();
     this.setState({
       active: true,
+      mode: this.activeMode,
     });
+  }
+
+  networkIsOffline() {
+    return (
+      <View
+        style={{
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+        }}
+      >
+        <View
+          style={{
+            width: SCREEN_WIDTH * 0.7,
+          }}
+        >
+          <H2
+            style={{
+              marginBottom: 12,
+            }}
+          >
+            Нет соединения с интернетом...
+          </H2>
+          <Body>Чтобы играть в Dater необходимо стабильное интернет подключение.</Body>
+        </View>
+        <View
+          style={{
+            position: 'absolute',
+            right: 100,
+            top: -10,
+          }}
+        >
+          <LottieView
+            source={require('../../assets/lottie-animations/no_internet.json')} // eslint-disable-line
+            progress={this.state.animationProgress}
+            style={{
+              position: 'absolute',
+              height: 150,
+              width: 150,
+              }}
+          />
+        </View>
+      </View>
+    );
   }
 
   badGpsSignal() {
@@ -88,7 +143,7 @@ export default class BlockMapViewComponent extends React.Component<Props, State>
         <LottieView
           source={require('../../assets/lottie-animations/location-search.json')} // eslint-disable-line
           progress={this.state.animationProgress}
-          style={styles.animation}
+          style={styles.poorGpsAnimation}
         />
       </React.Fragment>
     );
@@ -98,7 +153,7 @@ export default class BlockMapViewComponent extends React.Component<Props, State>
     return this.state.active ? (
       <View style={styles.blockView}>
         <View style={styles.blockModal}>
-          {this.badGpsSignal()}
+          {this.state.mode === 'networkIsOffline' ? this.networkIsOffline() : this.badGpsSignal()}
           {/* <ActivityIndicator
             style={styles.acitityIndicator}
             size="large"
@@ -149,7 +204,7 @@ const styles = StyleSheet.create({
     },
     elevation: 1,
   },
-  animation: {
+  poorGpsAnimation: {
     left: 0,
     right: 0,
     bottom: 0,
@@ -158,5 +213,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'absolute',
     height: 250,
+  },
+  networkIsOfflineAnimation: {
+    // left: 0,
+    // right: 0,
+    // bottom: 0,
+    // top: -10,
+    // flex: 1,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    height: 150,
   },
 });

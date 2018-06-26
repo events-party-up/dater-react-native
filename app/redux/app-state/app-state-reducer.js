@@ -2,12 +2,17 @@ const types = {
   APP_STATE_ACTIVE: 'APP_STATE_ACTIVE',
   APP_STATE_INACTIVE: 'APP_STATE_INACTIVE',
   APP_STATE_BACKGROUND: 'APP_STATE_BACKGROUND',
-  APP_STATE_PENDING_GPS: 'APP_STATE_PENDING_GPS',
+  APP_STATE_UNKNOWN: 'APP_STATE_UNKNOWN',
+
+  APP_STATE_NETWORK_ONLINE: 'APP_STATE_NETWORK_ONLINE',
+  APP_STATE_NETWORK_OFFLINE: 'APP_STATE_NETWORK_OFFLINE',
+
   APP_STATE_POOR_GPS: 'APP_STATE_POOR_GPS',
   APP_STATE_GOOD_GPS: 'APP_STATE_GOOD_GPS',
-  APP_STATE_UNKNOWN: 'APP_STATE_UNKNOWN',
+
   APP_STATE_GPS_ERROR: 'APP_STATE_GPS_ERROR',
   APP_STATE_ERROR: 'APP_STATE_ERROR',
+  APP_STATE_NETWORK_ERROR: 'APP_STATE_NETWORK_ERROR',
 };
 
 type appStateReduxStore = {
@@ -20,6 +25,9 @@ const initialState: appStateReduxStore = {
   gpsIsPoor: false,
   gpsAccuracy: null,
   gpsIsPending: true,
+  networkIsOffline: false,
+  networkState: null,
+  networkIsPending: true,
   error: null,
 };
 
@@ -36,12 +44,6 @@ const appStateReducer = (state = initialState, action) => {
         state: payload,
       };
     }
-    case types.APP_STATE_ERROR: {
-      return {
-        ...state,
-        error: payload,
-      };
-    }
     case types.APP_STATE_POOR_GPS: {
       return {
         ...state,
@@ -50,10 +52,20 @@ const appStateReducer = (state = initialState, action) => {
         gpsIsPending: false,
       };
     }
-    case types.APP_STATE_PENDING_GPS: {
+    case types.APP_STATE_NETWORK_OFFLINE: {
       return {
         ...state,
-        gpsIsPending: true,
+        networkIsOffline: true,
+        networkState: payload,
+        networkIsPending: false,
+      };
+    }
+    case types.APP_STATE_NETWORK_ONLINE: {
+      return {
+        ...state,
+        networkIsOffline: false,
+        networkState: payload,
+        networkIsPending: false,
       };
     }
     case types.APP_STATE_GOOD_GPS: {
@@ -62,6 +74,14 @@ const appStateReducer = (state = initialState, action) => {
         gpsIsPoor: false,
         gpsIsPending: false,
         gpsAccuracy: payload,
+      };
+    }
+    case types.APP_STATE_GPS_ERROR:
+    case types.APP_STATE_ERROR:
+    case types.APP_STATE_NETWORK_ERROR: {
+      return {
+        ...state,
+        error: payload,
       };
     }
     default: {

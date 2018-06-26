@@ -15,6 +15,7 @@ import currentUserSaga from './current-user/current-user-saga';
 import hapticFeedbackSaga from './pure-sagas/haptic-feedback-saga';
 import fcmPushSaga from './permissions/fcm-push-saga';
 import gpsStateSaga from './app-state/gps-state-saga';
+import networkStateSaga from './app-state/network-state-saga';
 
 export default function* rootSaga() {
   yield all([
@@ -34,5 +35,6 @@ export default function* rootSaga() {
     currentUserSaga(),
     hapticFeedbackSaga(),
     fcmPushSaga(),
+    networkStateSaga(),
   ]);
 }
