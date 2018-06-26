@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 
-import { H2, H3 } from '../../components/ui-kit/atoms/typography';
+import { H2, Body } from '../../components/ui-kit/atoms/typography';
 import {
   SCREEN_WIDTH,
   SCREEN_HEIGHT,
@@ -19,7 +19,7 @@ type State = {
 }
 
 type Props = {
-  isGpsPoor: boolean,
+  gpsIsPoor: boolean,
   gpsAccuracy: number,
 };
 
@@ -52,9 +52,9 @@ export default class BlockMapViewComponent extends React.Component<Props, State>
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.isGpsPoor && !this.state.active) {
+    if (nextProps.gpsIsPoor && !this.state.active) {
       this.setActive();
-    } else if (!nextProps.isGpsPoor) {
+    } else if (!nextProps.gpsIsPoor) {
       this.setInActive();
     }
   }
@@ -77,8 +77,14 @@ export default class BlockMapViewComponent extends React.Component<Props, State>
   badGpsSignal() {
     return (
       <React.Fragment>
-        <H2>Плохой сигнал GPS ({this.props.gpsAccuracy})...</H2>
-        <H3>Выйди на открытую местность.</H3>
+        <H2
+          style={{
+            marginBottom: 12,
+          }}
+        >
+          Плохой сигнал GPS ({this.props.gpsAccuracy})...
+        </H2>
+        <Body>Выйди на открытую местность.</Body>
         <LottieView
           source={require('../../assets/lottie-animations/location-search.json')} // eslint-disable-line
           progress={this.state.animationProgress}

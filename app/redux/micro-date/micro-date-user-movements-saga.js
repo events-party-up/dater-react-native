@@ -4,7 +4,7 @@ import firebase from 'react-native-firebase';
 import GeoUtils from '../../utils/geo-utils';
 import {
   MICRO_DATES_COLLECTION,
-  MINIMUM_ACCURACY_PAST_LOCATION,
+  GOOD_GPS_ACCURACY_MICRODATE_MODE,
   MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION,
   MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION,
   DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD,
@@ -66,7 +66,7 @@ export function* microDateUserMovementsMyMoveSaga(newCoords) {
     const velocity = Math.floor(distanceDelta / timeDelta); // in seconds
 
     if (velocity > MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION ||
-      newCoords.accuracy > MINIMUM_ACCURACY_PAST_LOCATION ||
+      newCoords.accuracy > GOOD_GPS_ACCURACY_MICRODATE_MODE ||
       distanceDelta < MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
       return;
     }

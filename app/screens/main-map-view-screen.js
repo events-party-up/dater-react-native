@@ -198,7 +198,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
       >
         {this.props.appState.state === 'active' &&
           <BlockMapViewComponent
-            isGpsPoor={this.props.appState.isGpsPoor}
+            gpsIsPoor={this.props.appState.gpsIsPoor}
             gpsAccuracy={this.props.appState.gpsAccuracy}
           />
         }
@@ -285,6 +285,8 @@ class MainMapViewScreen extends React.Component<Props, State> {
               !this.props.mapView.centered &&
               !this.props.microDate.enabled &&
               <MyLocationOnNonCenteredMap
+                accuracy={this.props.location.coords.accuracy}
+                visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
                 compassHeading={this.state.compassHeading}
                 moveHeadingAngle={this.props.location.moveHeadingAngle}
                 mapViewHeadingAngle={this.props.mapView.heading}

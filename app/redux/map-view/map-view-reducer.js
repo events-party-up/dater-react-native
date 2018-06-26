@@ -44,7 +44,7 @@ const types = {
 const initialState = {
   longitude: null,
   latitude: null,
-  zoom: 1,
+  zoom: 17,
   visibleRadiusInMeters: 0, // how much is map visible in meters by diagonal
   heading: 0, // how much the map is rotated compared to north
   pitch: 0,
