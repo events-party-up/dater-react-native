@@ -198,6 +198,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
       >
         {this.props.appState.state === 'active' &&
           <BlockMapViewComponent
+            networkIsOffline={this.props.appState.networkIsOffline}
             gpsIsPoor={this.props.appState.gpsIsPoor}
             gpsAccuracy={this.props.appState.gpsAccuracy}
           />

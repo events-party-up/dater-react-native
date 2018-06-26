@@ -186,6 +186,7 @@ dependencies {
     implementation "com.google.firebase:firebase-perf:15.0.0"
     implementation "com.google.firebase:firebase-storage:15.0.2"
     implementation "com.google.firebase:firebase-messaging:15.0.2"
+    implementation "com.google.firebase:firebase-database:15.0.0"
     implementation 'me.leolin:ShortcutBadger:1.1.21@aar' // <-- Add this line if you wish to use badge on Android
 
     implementation fileTree(dir: "libs", include: ["*.jar"])

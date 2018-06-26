@@ -19,7 +19,7 @@ export const MAP_MAX_ZOOM_LEVEL = 18;
 
 // Geolocation services
 export const HEADING_UPDATE_ON_DEGREE_CHANGED = 10;
-export const ACTIVATE_POOR_GPS_TIMEOUT = 5000;
+export const ACTIVATE_POOR_GPS_TIMEOUT = 10000;
 export const ACTIVATE_GOOD_GPS_TIMEOUT = 2000;
 export const GOOD_GPS_ACCURACY_GENERAL = 200;
 export const GOOD_GPS_ACCURACY_MICRODATE_MODE = 40;
