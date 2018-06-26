@@ -22,6 +22,8 @@ import {
 import MyLocationOnNonCenteredMap from '../components/map/my-location-on-non-centered-map';
 import OnMapRightButtons from '../components/map/on-map-right-buttons';
 import MapPanelComponent from '../components/map-panel/map-panel-component';
+import BlockMapViewComponent from '../components/map/block-mapview-component';
+
 // import DaterButton from '../components/ui-kit/atoms/dater-button';
 // import FirebaseSetup from '../components/firebase-setup';
 
@@ -31,7 +33,7 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
   mapPanel: state.mapPanel,
   microDate: state.microDate,
-  appState: state.appState.state,
+  appState: state.appState,
   usersAround: state.usersAround.users,
 });
 
@@ -76,6 +78,7 @@ type Props = {
   microDate: any,
   navigation: any,
   usersAround: Array<mixed>,
+  appState: any,
 };
 
 type State = {
@@ -112,7 +115,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
 
     if (
       this.props.microDate.enabled &&
-      this.props.appState === 'active'
+      this.props.appState.state === 'active'
     ) {
       this.mapView.setCamera({
         centerCoordinate: [this.props.location.coords.longitude, this.props.location.coords.latitude],
@@ -123,7 +126,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
     } else if (
       this.props.mapView.centered &&
       !this.props.microDate.enabled &&
-      this.props.appState === 'active'
+      this.props.appState.state === 'active'
     ) {
       this.mapView.setCamera({
         centerCoordinate: [this.props.location.coords.longitude, this.props.location.coords.latitude],
@@ -193,6 +196,12 @@ class MainMapViewScreen extends React.Component<Props, State> {
       <View
         style={styles.mapViewContainer}
       >
+        {this.props.appState.state === 'active' &&
+          <BlockMapViewComponent
+            gpsIsPoor={this.props.appState.gpsIsPoor}
+            gpsAccuracy={this.props.appState.gpsAccuracy}
+          />
+        }
         {/* <FirebaseSetup /> */}
         <MapPanelComponent
           navigation={this.props.navigation}
@@ -207,13 +216,6 @@ class MainMapViewScreen extends React.Component<Props, State> {
         />
         <View
           style={styles.mapViewContainer}
-          // this does not work on Android!
-          // it only works if MapView scroll is false
-          // onMoveShouldSetResponder={(event) => {
-          //   this.onMapDragStart(event);
-          //   return true;
-          // }}
-          // onResponderRelease={this.onMapDragEnd}
         >
           {this.props.location.enabled &&
             this.props.location.coords &&
@@ -283,6 +285,8 @@ class MainMapViewScreen extends React.Component<Props, State> {
               !this.props.mapView.centered &&
               !this.props.microDate.enabled &&
               <MyLocationOnNonCenteredMap
+                accuracy={this.props.location.coords.accuracy}
+                visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
                 compassHeading={this.state.compassHeading}
                 moveHeadingAngle={this.props.location.moveHeadingAngle}
                 mapViewHeadingAngle={this.props.mapView.heading}

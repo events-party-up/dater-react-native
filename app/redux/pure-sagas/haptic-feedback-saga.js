@@ -37,6 +37,7 @@ export default function* hapticFeedbackSaga() {
     'AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_TIMEOUT',
     'AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_ERROR',
     'HAPTICFEEDBACK_ERROR',
+    'APP_STATE_POOR_GPS',
   ], hapticFeedbackError);
 }
 

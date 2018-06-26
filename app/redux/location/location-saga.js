@@ -6,6 +6,7 @@ import BackgroundGeolocation from 'react-native-background-geolocation';
 import {
   USERS_AROUND_SEARCH_RADIUS_KM,
   GEO_POINTS_COLLECTION,
+  GOOD_GPS_ACCURACY_GENERAL,
 } from '../../constants';
 import { getFirestoreDocData } from '../../utils/firebase-utils';
 import { microDateUserMovementsMyMoveSaga } from '../micro-date/micro-date-user-movements-saga';
@@ -71,9 +72,7 @@ export default function* locationSaga() {
         'GEO_LOCATION_FORCE_UPDATE',
         'APP_STATE_ACTIVE',
       ], forceUpdate);
-      // yield RNBackgroundGeolocation.getState(function (state) {
-      //   console.log(state);
-      // });
+
       yield take([
         'GEO_LOCATION_STOP',
         'AUTH_SIGNOUT_START',
@@ -135,7 +134,10 @@ function* writeCoordsToFirestore(coords) {
     const uid = yield select((state) => state.auth.uid);
     const moveHeadingAngle = yield select((state) => state.location.moveHeadingAngle);
 
-    if (!uid || !coords) return;
+    // do not record poor accuracy coords
+    if (coords.accuracy > GOOD_GPS_ACCURACY_GENERAL) {
+      return;
+    }
 
     yield firebase.firestore()
       .collection(GEO_POINTS_COLLECTION)

@@ -203,6 +203,7 @@ dependencies {
     }
     implementation project(':react-native-system-setting')
     implementation project(':react-native-android-settings-library')
+    implementation project(':lottie-react-native')
 }
 
 // Run this once to be able to run the application with BUCK

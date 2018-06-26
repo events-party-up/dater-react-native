@@ -32,6 +32,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import com.airbnb.android.react.lottie.LottiePackage;
 
 // MapBox
 import com.mapbox.rctmgl.RCTMGLPackage;
@@ -75,7 +76,8 @@ public class MainApplication extends Application implements ReactApplication {
           new SystemSettingPackage(),
           new RNANAndroidSettingsLibraryPackage(),
           new RNFSPackage(),
-          new RNReactNativeHapticFeedbackPackage()
+          new RNReactNativeHapticFeedbackPackage(),
+          new LottiePackage()
         );
     }
 
