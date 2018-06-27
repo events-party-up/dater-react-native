@@ -1,11 +1,14 @@
+import { PermissionsState } from '../../types';
+
 export const types = {
   PERMISSIONS_FCM_REQUEST: 'PERMISSIONS_FCM_REQUEST',
   PERMISSIONS_FCM_GRANTED: 'PERMISSIONS_FCM_GRANTED',
-  PERMISSIONS_FCM_DENIED: 'PERMISSIONS_FCM_ENABLED',
+  PERMISSIONS_FCM_DENIED: 'PERMISSIONS_FCM_DENIED',
+  PERMISSIONS_FCM_CHECK: 'PERMISSIONS_FCM_CHECK',
   PERMISSIONS_FCM_ERROR: 'PERMISSIONS_FCM_ERROR',
 };
 
-const initialState = {
+const initialState: PermissionsState = {
   fcmGranted: false,
   fcmDenied: false,
   fcmRequesting: false,

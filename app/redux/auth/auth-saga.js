@@ -116,6 +116,7 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
         yield delay(2000); // artificial delay, to allow keyboard hiding
         yield Actions.popToTop();
         yield Actions.back();
+        yield put({ type: 'PERMISSIONS_FCM_CHECK' });
       }
     } else {
       yield delay(2000); // artificial delay, otherwise will not show in some cases, TODO: find out why
