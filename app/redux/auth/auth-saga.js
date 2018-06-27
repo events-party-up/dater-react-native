@@ -3,7 +3,7 @@ import { eventChannel } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import DeviceInfo from 'react-native-device-info';
 import { Platform, Keyboard } from 'react-native';
-import { Actions } from '../../navigators/navigator-actions';
+import { NavigatorActions } from '../../navigators/navigator-actions';
 import { CURRENT_USER_COLLECTION, GEO_POINTS_COLLECTION } from '../../constants';
 import { calculateAgeFrom } from '../../utils/date-utils';
 
@@ -87,7 +87,7 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
         .setUserId(userInFirebaseAuthState.uid);
 
       if (!currentUserProfile.gender) {
-        yield Actions.navigate({
+        yield NavigatorActions.navigate({
           key: 'GenderScreen',
           routeName: 'GenderScreen',
           params: {
@@ -95,17 +95,17 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
           },
         });
       } else if (!currentUserProfile.name) {
-        yield Actions.navigate({
+        yield NavigatorActions.navigate({
           key: 'NameScreen',
           routeName: 'NameScreen',
         });
       } else if (!currentUserProfile.birthday) {
-        yield Actions.navigate({
+        yield NavigatorActions.navigate({
           key: 'BirthdayScreen',
           routeName: 'BirthdayScreen',
         });
       } else if (!currentUserProfile.mainPhoto) {
-        yield Actions.navigate({
+        yield NavigatorActions.navigate({
           key: 'MakePhotoSelfieScreen',
           routeName: 'MakePhotoSelfieScreen',
           params: { photoType: 'profilePhoto' },
@@ -114,13 +114,13 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
         yield put({ type: 'GEO_LOCATION_START_AUTO' }); // user is fully registered, start geolocation services
         yield Keyboard.dismiss();
         yield delay(2000); // artificial delay, to allow keyboard hiding
-        yield Actions.popToTop();
-        yield Actions.back();
+        yield NavigatorActions.popToTop();
+        yield NavigatorActions.back();
         yield put({ type: 'PERMISSIONS_FCM_CHECK' });
       }
     } else {
       yield delay(2000); // artificial delay, otherwise will not show in some cases, TODO: find out why
-      yield Actions.navigate({
+      yield NavigatorActions.navigate({
         key: 'LoginScreen',
         routeName: 'LoginScreen',
       });

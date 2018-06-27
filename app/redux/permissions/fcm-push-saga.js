@@ -2,7 +2,7 @@ import { select, put, takeEvery } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 import DeviceInfo from 'react-native-device-info';
 import Permissions from 'react-native-permissions';
-import { Actions } from '../../navigators/navigator-actions';
+import { NavigatorActions } from '../../navigators/navigator-actions';
 
 import { CURRENT_USER_COLLECTION } from '../../constants';
 
@@ -56,7 +56,7 @@ function* checkFcmPushPermissionsSaga() {
   }
   yield put({ type: 'PERMISSIONS_FCM_DENIED', payload: authResult });
 
-  yield Actions.navigate({
+  yield NavigatorActions.navigate({
     key: 'PushPermissionScreen',
     routeName: 'PushPermissionScreen',
     params: {
