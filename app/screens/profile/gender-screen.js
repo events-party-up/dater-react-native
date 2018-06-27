@@ -24,7 +24,7 @@ class GenderScreen extends Component<Props> {
 
   componentWillMount() {
     this.navigationFlowType = this.props.navigation.getParam('navigationFlowType');
-    if (this.navigationFlowType !== 'register') {
+    if (this.navigationFlowType !== 'registration') {
       // TODO: make this root screen
     }
   }
@@ -42,7 +42,7 @@ class GenderScreen extends Component<Props> {
     return (
       <DaterModal
         fullscreen
-        backButton={this.navigationFlowType !== 'register'}
+        backButton={this.navigationFlowType !== 'registration'}
         backButtonPress={() => this.props.navigation.goBack()}
         style={styles.modal}
       >

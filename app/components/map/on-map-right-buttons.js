@@ -7,7 +7,7 @@ import { Dispatch } from 'react-redux';
 
 import { GeoCoordinates } from '../../types';
 import CircleButton from '../ui-kit/atoms/circle-button';
-import { Actions } from '../../navigators/navigator-actions';
+import { NavigatorActions } from '../../navigators/navigator-actions';
 import {
   MAP_PLUS_MINUS_ZOOM_INCREMENT,
   SCREEN_HEIGHT,
@@ -96,7 +96,7 @@ class OnMapRightButtons extends React.Component<Props, State> {
   }
 
   onMyProfilePress = () => {
-    Actions.navigate({
+    NavigatorActions.navigate({
       key: 'EditProfile',
       routeName: 'ProfileScreen',
       params: {

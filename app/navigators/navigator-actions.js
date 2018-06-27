@@ -31,7 +31,7 @@ const AppNavigator = (RootNavigator) => {
   );
 };
 
-const Actions = {
+const NavigatorActions = {
   navigate: (routeName, params) => {
     if (typeof (routeName) === 'string') {
       navigatorWithActionsRef
@@ -51,4 +51,4 @@ const Actions = {
   popToTop: (...params) => navigatorWithActionsRef.dispatch(NavigationActions.popToTop(...params)),
 };
 
-export { AppNavigator, Actions, navigatorWithActionsRef };
+export { AppNavigator, NavigatorActions, navigatorWithActionsRef };

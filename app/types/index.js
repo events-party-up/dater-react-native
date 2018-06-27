@@ -82,3 +82,8 @@ export type PrivateUserRecord = {
 
 export type PhotoType = 'microDateSelfie' | 'profilePhoto';
 
+export type PermissionsState = {
+  fcmGranted: boolean,
+  fcmDenied: boolean,
+  fcmRequesting: boolean,
+};

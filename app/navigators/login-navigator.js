@@ -8,6 +8,7 @@ import BirthdayScreen from '../screens/profile/birthday-screen';
 import UploadPhotoScreen from '../screens/profile/upload-photo-screen';
 import MakePhotoSelfieScreen from '../screens/make-photo-selfie-screen';
 import ProfileScreen from '../screens/profile/profile-screen';
+import PushPermissionScreen from '../screens/permissions/push-permission-screen';
 
 const LoginNavigator = StackNavigator(
   {
@@ -34,6 +35,9 @@ const LoginNavigator = StackNavigator(
     },
     MakePhotoSelfieScreen: {
       screen: MakePhotoSelfieScreen,
+    },
+    PushPermissionScreen: {
+      screen: PushPermissionScreen,
     },
     ProfileScreen: {
       screen: ProfileScreen,

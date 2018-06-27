@@ -43,7 +43,8 @@ export default class LoginScreen extends React.Component<Props> {
             <Body style={styles.subHeader}>Играй и знакомься!</Body>
             <DaterButton
               style={styles.button}
-              onPress={() => this.props.navigation.navigate({ key: 'PhoneNumberScreen', routeName: 'PhoneNumberScreen' })}
+              onPress={() =>
+                this.props.navigation.navigate({ key: 'PhoneNumberScreen', routeName: 'PhoneNumberScreen' })}
               type="secondary"
               leftIconImage={signInIcon}
             >

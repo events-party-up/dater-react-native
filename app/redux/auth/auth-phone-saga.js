@@ -4,7 +4,7 @@ import { eventChannel } from 'redux-saga';
 import { Alert } from 'react-native';
 // import { StackActions, NavigationActions } from 'react-navigation';
 
-import { Actions } from '../../navigators/navigator-actions';
+import { NavigatorActions } from '../../navigators/navigator-actions';
 import {
   SEND_SMS_TIMEOUT,
   SEND_SMS_ARTIFICIAL_UI_DELAY,
@@ -29,7 +29,7 @@ export default function* authPhoneSaga() {
       ]);
 
       if (stopAction.type === 'AUTH_SUCCESS') {
-        yield Actions.navigate({
+        yield NavigatorActions.navigate({
           key: 'GenderScreen',
           routeName: 'GenderScreen',
         });
@@ -57,7 +57,7 @@ function* authPhoneCodeSentSaga() {
 
   if (codeSentAction) {
     yield delay(SEND_SMS_ARTIFICIAL_UI_DELAY); // artificial delay, so users wait a bit for SMS to come
-    yield Actions.navigate({ key: 'SmsCodeScreen', routeName: 'SmsCodeScreen' });
+    yield NavigatorActions.navigate({ key: 'SmsCodeScreen', routeName: 'SmsCodeScreen' });
     const { verificationId } = codeSentAction.payload;
     yield takeEvery('AUTH_PHONE_NUMBER_SMS_CODE_SUBMITTED', authPhoneCodeSubmittedSaga, verificationId);
   } else {

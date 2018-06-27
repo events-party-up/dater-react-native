@@ -3,7 +3,7 @@ import { eventChannel, buffers } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import GeoUtils from '../../utils/geo-utils';
 
-import { Actions } from '../../navigators/navigator-actions';
+import { NavigatorActions } from '../../navigators/navigator-actions';
 import {
   MICRO_DATES_COLLECTION,
   GEO_POINTS_COLLECTION,
@@ -230,7 +230,7 @@ function* outgoingMicroDateFinishedSaga() {
   const action = yield take('MICRO_DATE_OUTGOING_FINISH');
   const microDate = action.payload;
   yield spawn(writeFinishedStateFor, microDate);
-  yield Actions.navigate({
+  yield NavigatorActions.navigate({
     key: 'MicroDateScreen',
     routeName: 'MicroDateScreen',
     params: { microDate },
