@@ -11,7 +11,6 @@ export default function* networkStateSaga() {
     const networkStateChannel = yield createNetworkStateChannel();
     const networkOnlineChan = yield channel(buffers.none());
     const networkOfflineChan = yield channel(buffers.none());
-
     yield takeEvery(networkStateChannel, updateNetworkStateSaga, networkOnlineChan, networkOfflineChan);
     yield takeLeading(networkOfflineChan, networkOfflineSaga, networkOnlineChan);
     yield takeLeading(networkOnlineChan, networkOnlineSaga);
@@ -46,6 +45,8 @@ function* networkOfflineSaga(networkOnlineChan, networkState) {
   });
 
   if (timeout) {
+    const isFirebaseOnline = yield checkFirebaseIsOnline(); // double check connection status
+    if (isFirebaseOnline) return;
     yield put({ type: 'APP_STATE_NETWORK_OFFLINE', payload: networkState });
   } else {
     yield put({ type: 'APP_STATE_NETWORK_ONLINE', payload: networkIsOnline });
@@ -98,3 +99,9 @@ function createNetworkStateChannel() {
     return unsubscribe;
   });
 }
+
+async function checkFirebaseIsOnline() {
+  const connectionStatus = await firebase.database().ref('.info/connected').once('value', () => { }, () => { });
+  return connectionStatus.val() === 1;
+}
+
