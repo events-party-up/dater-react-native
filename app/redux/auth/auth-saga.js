@@ -91,7 +91,7 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
           key: 'GenderScreen',
           routeName: 'GenderScreen',
           params: {
-            navigationFlowType: 'register',
+            navigationFlowType: 'registration',
           },
         });
       } else if (!currentUserProfile.name) {

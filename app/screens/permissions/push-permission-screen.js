@@ -60,6 +60,14 @@ class PushPermissionScreen extends Component<Props, State> {
     if (nextProps.permissions.fcmGranted && this.navigationFlowType !== 'registration') {
       this.props.navigation.popToTop();
       this.props.navigation.goBack(null);
+    } else if (nextProps.permissions.fcmGranted && this.navigationFlowType === 'registration') {
+      this.props.navigation.navigate({
+        key: 'ProfileScreen',
+        routeName: 'ProfileScreen',
+        params: {
+          navigationFlowType: 'registration',
+        },
+      });
     } else if (nextProps.permissions.fcmDenied && !nextProps.permissions.fcmRequesting) {
       this.setState({
         showDenied: true,
@@ -91,7 +99,7 @@ class PushPermissionScreen extends Component<Props, State> {
     return (
       <DaterModal
         fullscreen
-        backButton={this.navigationFlowType === 'register'}
+        backButton={this.navigationFlowType === 'registration'}
         backButtonPress={() => this.props.navigation.goBack()}
         style={styles.modal}
       >

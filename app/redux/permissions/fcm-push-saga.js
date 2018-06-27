@@ -60,7 +60,7 @@ function* checkFcmPushPermissionsSaga() {
     key: 'PushPermissionScreen',
     routeName: 'PushPermissionScreen',
     params: {
-      navigationFlowType: 'standalone',
+      navigationFlowType: 'mapViewModal',
     },
   });
 }
