@@ -39,11 +39,8 @@ target 'DaterReactNative' do
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
   pod 'react-native-mapbox-gl', :path => '../node_modules/@mapbox/react-native-mapbox-gl'
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
-  pod 'react-native-camera', subspecs: ['RCT', 'RN', 'FaceDetector'], path: '../node_modules/react-native-camera'
-  pod 'GoogleMobileVision/Detector', '1.1.0'
-  pod 'GoogleMobileVision/MVDataOutput', '1.1.0'
-  pod 'GoogleMobileVision/FaceDetector', '1.1.0'
-  pod'RCTSystemSetting', :path => '../node_modules/react-native-system-setting'
+  pod 'react-native-camera', subspecs: ['FaceDetector'], path: '../node_modules/react-native-camera'
+  pod 'RCTSystemSetting', :path => '../node_modules/react-native-system-setting'
   pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
   pod 'RNReactNativeHapticFeedback', :path => '../node_modules/react-native-haptic-feedback'
 

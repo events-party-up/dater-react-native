@@ -111,7 +111,7 @@ const CircleButton = (props) => {
   };
 
   const onLongPress = (event) => {
-    if (props.onPress && !props.disabled) {
+    if (props.onLongPress && !props.disabled) {
       props.onLongPress(event);
     }
   };

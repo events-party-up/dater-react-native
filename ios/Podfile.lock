@@ -161,11 +161,16 @@ PODS:
     - React
   - React (0.55.4):
     - React/Core (= 0.55.4)
-  - react-native-camera/FaceDetector (1.1.4):
+  - react-native-camera/FaceDetector (1.1.5):
+    - GoogleMobileVision/Detector (~> 1.1.0)
+    - GoogleMobileVision/FaceDetector (~> 1.1.0)
+    - GoogleMobileVision/MVDataOutput (~> 1.1.0)
     - React
-  - react-native-camera/RCT (1.1.4):
+    - react-native-camera/RCT
+    - react-native-camera/RN
+  - react-native-camera/RCT (1.1.5):
     - React
-  - react-native-camera/RN (1.1.4):
+  - react-native-camera/RN (1.1.5):
     - React
   - react-native-mapbox-gl (6.1.1):
     - React
@@ -227,16 +232,11 @@ DEPENDENCIES:
   - Firebase/Performance
   - Firebase/RemoteConfig
   - Firebase/Storage
-  - GoogleMobileVision/Detector (= 1.1.0)
-  - GoogleMobileVision/FaceDetector (= 1.1.0)
-  - GoogleMobileVision/MVDataOutput (= 1.1.0)
   - Interactable (from `../node_modules/react-native-interactable`)
   - lottie-ios (from `../node_modules/lottie-ios`)
   - lottie-react-native (from `../node_modules/lottie-react-native`)
   - RCTSystemSetting (from `../node_modules/react-native-system-setting`)
   - react-native-camera/FaceDetector (from `../node_modules/react-native-camera`)
-  - react-native-camera/RCT (from `../node_modules/react-native-camera`)
-  - react-native-camera/RN (from `../node_modules/react-native-camera`)
   - "react-native-mapbox-gl (from `../node_modules/@mapbox/react-native-mapbox-gl`)"
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - React/Core (from `../node_modules/react-native`)
@@ -364,7 +364,7 @@ SPEC CHECKSUMS:
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
   RCTSystemSetting: 67dc0e56f86c0eb005055d131b38853af5c968c4
   React: aa2040dbb6f317b95314968021bd2888816e03d5
-  react-native-camera: ab22041dcf0403d88f2ae4b9ea3ed2644e680423
+  react-native-camera: 68ad5143d2d0636236d46c7de8d2a6455ca52a36
   react-native-mapbox-gl: b42480060cdcc515dfa3d8e403fb4dd32466a1b9
   react-native-splash-screen: 8e3f866dc79bfe533baeffd0a38c33f7a7eae7f8
   ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
@@ -375,6 +375,6 @@ SPEC CHECKSUMS:
   RNReactNativeHapticFeedback: 81a9bb493a719cf71b7d4d1cebbd91a124ce5cf5
   yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: daf98c5a2ce032c712c59f68a04009fe3ec31d61
+PODFILE CHECKSUM: b51bf830a4f5defe1faf5ea30ed30b9e35c1f8f7
 
 COCOAPODS: 1.5.2

@@ -23,7 +23,7 @@
     "react-native-android-settings-library": "^1.0.5",
     "react-native-background-fetch": "^2.4.2",
     "react-native-background-geolocation": "^2.12.2",
-    "react-native-camera": "^1.1.4",
+    "react-native-camera": "git+https://github.com/react-native-community/react-native-camera.git#master",
     "react-native-device-info": "^0.21.0",
     "react-native-firebase": "^4.1.0",
     "react-native-fs": "^2.10.14",
