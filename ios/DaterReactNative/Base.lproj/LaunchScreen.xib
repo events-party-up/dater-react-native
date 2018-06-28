@@ -15,7 +15,7 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="splash-coin" translatesAutoresizingMaskIntoConstraints="NO" id="tU4-qP-L85">
+                <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="SplashScreen" translatesAutoresizingMaskIntoConstraints="NO" id="tU4-qP-L85">
                     <rect key="frame" x="120" y="176" width="240" height="128"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                 </imageView>
@@ -27,6 +27,6 @@
         </view>
     </objects>
     <resources>
-        <image name="splash-coin" width="414" height="414"/>
+        <image name="SplashScreen" width="414" height="414"/>
     </resources>
 </document>
