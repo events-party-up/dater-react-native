@@ -7,39 +7,56 @@ import {
 import DaterModal from '../../components/ui-kit/organisms/dater-modal';
 import DaterButton from '../../components/ui-kit/atoms/dater-button';
 import { H2, Body } from '../../components/ui-kit/atoms/typography';
+import { NavigationFlowType } from '../../types';
+import DeviceUtils from '../../utils/device-utils';
 
-const uploadPhotoIcon = require('../../assets/icons/upload-photo/upload-photo.png');
+// const uploadPhotoIcon = require('../../assets/icons/upload-photo/upload-photo.png');
+const photoIcon = require('../../assets/icons/photo/photo-big.png');
 
 type Props = {
   navigation: any,
 };
 
 export default class UploadPhotoScreen extends Component<Props> {
-  navigationFlowType: string;
+  navigationFlowType: NavigationFlowType;
 
   componentWillMount() {
     this.navigationFlowType = this.props.navigation.getParam('navigationFlowType');
+  }
+
+  onCameraPress = () => {
+    this.props.navigation.navigate({
+      key: 'MakePhotoSelfieScreen',
+      routeName: 'MakePhotoSelfieScreen',
+      params: { photoType: 'profilePhoto' },
+    });
   }
 
   render() {
     return (
       <DaterModal
         fullscreen
-        backButton
+        backButton={this.navigationFlowType === 'registration'}
         backButtonPress={() => this.props.navigation.goBack()}
         style={styles.modal}
       >
         <Image
-          source={uploadPhotoIcon}
+          source={photoIcon}
           style={styles.topImage}
         />
-        <H2 style={styles.header}>Загрузи фото</H2>
-        <Body style={styles.subHeader}>Выбери портрет{'\n'}хорошего качества</Body>
+        <H2 style={styles.header}>Сделай селфи</H2>
+        <Body style={styles.subHeader}>
+          Это нужно для подтверждения{'\n'}
+          твоей личности и последующего{'\n'}
+          начисления монет.{'\n'}{'\n'}
+          Фото смогут увидеть только те,{'\n'}
+          с кем ты уже встречался.{'\n'}
+        </Body>
         <DaterButton
-          onPress={() => this.props.navigation.navigate({ key: 'ProfileScreen', routeName: 'ProfileScreen' })}
+          onPress={this.onCameraPress}
           style={styles.button}
         >
-          Загрузить
+          Камера
         </DaterButton>
       </DaterModal>
     );
@@ -48,24 +65,24 @@ export default class UploadPhotoScreen extends Component<Props> {
 
 const styles = StyleSheet.create({
   modal: {
+    paddingLeft: 24,
+    paddingRight: 24,
   },
   topImage: {
     alignSelf: 'center',
-    marginTop: 128,
-    marginBottom: 16,
+    marginTop: ((DeviceUtils.isiPhoneX() || DeviceUtils.isOfiPhonePlusSize()) && 128) ||
+      (DeviceUtils.isOfiPhone6ExcludingPlusSize() && 64) || 32,
+    marginBottom: 24,
   },
   header: {
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 16,
   },
   subHeader: {
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 16,
   },
   button: {
     alignSelf: 'center',
-    position: 'absolute',
-    width: 150,
-    bottom: 32,
   },
 });

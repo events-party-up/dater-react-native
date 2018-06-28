@@ -87,3 +87,5 @@ export type PermissionsState = {
   fcmDenied: boolean,
   fcmRequesting: boolean,
 };
+
+export type NavigationFlowType = 'mapViewModal' | 'registration' | 'editProfile';

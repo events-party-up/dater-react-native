@@ -42,7 +42,7 @@ class GenderScreen extends Component<Props> {
     return (
       <DaterModal
         fullscreen
-        backButton={this.navigationFlowType !== 'registration'}
+        backButton={this.navigationFlowType === 'editProfile'}
         backButtonPress={() => this.props.navigation.goBack()}
         style={styles.modal}
       >

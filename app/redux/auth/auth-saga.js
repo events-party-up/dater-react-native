@@ -58,6 +58,7 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
           osVersion: DeviceInfo.getSystemVersion(),
           platform: Platform.OS,
           locale: DeviceInfo.getDeviceLocale(),
+          model: DeviceInfo.getModel(),
         }, { merge: true });
 
       yield put({
@@ -91,7 +92,7 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
           key: 'GenderScreen',
           routeName: 'GenderScreen',
           params: {
-            navigationFlowType: 'registration',
+            navigationFlowType: 'mapViewModal',
           },
         });
       } else if (!currentUserProfile.name) {
@@ -106,9 +107,11 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
         });
       } else if (!currentUserProfile.mainPhoto) {
         yield NavigatorActions.navigate({
-          key: 'MakePhotoSelfieScreen',
-          routeName: 'MakePhotoSelfieScreen',
-          params: { photoType: 'profilePhoto' },
+          key: 'UploadPhotoScreen',
+          routeName: 'UploadPhotoScreen',
+          params: {
+            navigationFlowType: 'mapViewModal',
+          },
         });
       } else {
         yield put({ type: 'GEO_LOCATION_START_AUTO' }); // user is fully registered, start geolocation services
