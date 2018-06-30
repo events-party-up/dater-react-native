@@ -1,7 +1,6 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import {
   View,
-  Dimensions,
   Animated,
   Platform,
 } from 'react-native';
@@ -21,6 +20,11 @@ import MapPanelUserCard from './map-panel-user-card';
 import MapPanelMakeSelfie from './map-panel-make-selfie';
 import MapPanelActiveMicroDate from './map-panel-active-micro-date';
 import MapPanelIncomingMicroDateRequest from './map-panel-incoming-micro-date-request';
+import OnMapRightButtons from '../map/on-map-right-buttons';
+import {
+  SCREEN_WIDTH,
+  SCREEN_HEIGHT,
+} from '../../constants';
 
 import { calculateAgeFrom } from '../../utils/date-utils';
 
@@ -31,8 +35,8 @@ const mapStateToProps = (state) => ({
 });
 
 const Screen = {
-  width: Dimensions.get('window').width,
-  height: Dimensions.get('window').height - 75,
+  width: SCREEN_WIDTH,
+  height: SCREEN_HEIGHT - 75,
 };
 
 type Props = {
@@ -41,15 +45,31 @@ type Props = {
   dispatch: Dispatch,
   navigation: any,
   uploadPhotos: any,
+  isAuthenticated: boolean,
+  dispatch: Dispatch,
+  locationIsEnabled: boolean,
+  microDateIsEnabled: boolean,
+  mapViewZoom: number,
+  navigation: any,
 };
 
-class MapPanelComponent extends Component<Props> {
-  _deltaY: Animated.Value;
-  panViewBottom: Animated.Value;
+type State = {
+  deltaHeight: Animated.Value
+}
+
+class MapPanelComponent extends React.Component<Props, State> {
   interactableElement: Interactable.View;
   showSnapPosition = Platform.OS === 'ios' ? Screen.height - 100 : Screen.height - 130;
   showFullScreenSnapPosition = Platform.OS === 'ios' ? 20 : 8;
   showHalfScreenSnapPosition = (Screen.height / 2) + 50;
+  closeSnapPosition = SCREEN_HEIGHT + 80;
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      deltaHeight: new Animated.Value(this.closeSnapPosition),
+    };
+  }
 
   componentDidMount() {
     this.props.dispatch({
@@ -268,30 +288,54 @@ class MapPanelComponent extends Component<Props> {
 
   render() {
     return (
-      <View
-        style={MapPanelStyles.panelContainer}
-        pointerEvents="box-none"
-      >
-        <Interactable.View
-          ref={(component) => { this.interactableElement = component; }}
-          verticalOnly
-          snapPoints={[
+      <React.Fragment>
+        <Animated.View
+          style={{
+            bottom: this.state.deltaHeight.interpolate({
+              // first value is for initial 0 value
+              inputRange: [0, 1, Screen.height - 120, this.closeSnapPosition],
+              outputRange: [32, 16 + 200, 200, 16],
+              extrapolate: 'clamp',
+              useNativeDriver: true,
+            }),
+            right: 0,
+            position: 'absolute',
+            zIndex: 1,
+          }}
+        >
+          <OnMapRightButtons
+            locationIsEnabled={this.props.locationIsEnabled}
+            mapViewZoom={this.props.mapViewZoom}
+            isAuthenticated={this.props.isAuthenticated}
+            dispatch={this.props.dispatch}
+            microDateIsEnabled={this.props.microDateIsEnabled}
+          />
+        </Animated.View>
+        <View
+          style={MapPanelStyles.panelContainer}
+          pointerEvents="box-none"
+        >
+          <Interactable.View
+            ref={(component) => { this.interactableElement = component; }}
+            verticalOnly
+            snapPoints={[
               { y: this.showSnapPosition, id: 'showStandard' },
               { y: this.showHalfScreenSnapPosition, id: 'showHalfScreen' },
               { y: this.showFullScreenSnapPosition, id: 'showFullScreen' },
-              { y: Screen.height + 80, id: 'close' }, // close map panel snap point
+              { y: this.closeSnapPosition, id: 'close' }, // close map panel snap point
             ]}
-          boundaries={{ top: -300 }}
-          initialPosition={{ y: Screen.height + 80 }}
-          animatedValueY={this._deltaY}
-          onSnap={this.onSnap}
-        >
-          <View style={MapPanelStyles.panel}>
-            <View style={MapPanelStyles.panelHandle} />
-            {this.renderCard()}
-          </View>
-        </Interactable.View>
-      </View>
+            boundaries={{ top: -300 }}
+            initialPosition={{ y: this.closeSnapPosition }}
+            animatedValueY={this.state.deltaHeight}
+            onSnap={this.onSnap}
+          >
+            <View style={MapPanelStyles.panel}>
+              <View style={MapPanelStyles.panelHandle} />
+              {this.renderCard()}
+            </View>
+          </Interactable.View>
+        </View>
+      </React.Fragment>
     );
   }
 }

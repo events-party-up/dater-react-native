@@ -5,12 +5,10 @@ import {
 } from 'react-native';
 import { Dispatch } from 'react-redux';
 
-import { GeoCoordinates } from '../../types';
 import CircleButton from '../ui-kit/atoms/circle-button';
 import { NavigatorActions } from '../../navigators/navigator-actions';
 import {
   MAP_PLUS_MINUS_ZOOM_INCREMENT,
-  SCREEN_HEIGHT,
   MAP_MIN_ZOOM_LEVEL,
   MAP_MAX_ZOOM_LEVEL,
 } from '../../constants';
@@ -24,11 +22,7 @@ const minusIcon = require('../../assets/icons/minus/minus.png');
 
 type Props = {
   dispatch: Dispatch,
-  location: {
-    coords: GeoCoordinates,
-    enabled: boolean,
-  },
-  heading: number,
+  locationIsEnabled: boolean,
   microDateIsEnabled: boolean,
   isAuthenticated: boolean,
   mapViewZoom: number,
@@ -113,15 +107,15 @@ class OnMapRightButtons extends React.Component<Props, State> {
     } else {
       this.props.dispatch({
         type: 'MAPVIEW_SHOW_MY_LOCATION_AND_CENTER_ME',
-        payload: {
-          heading: this.props.heading,
-        },
+        // payload: {
+        //   heading: this.props.heading,
+        // },
       });
     }
   }
 
   onGeoTogglePress = () => {
-    if (this.props.location.enabled) {
+    if (this.props.locationIsEnabled) {
       this.props.dispatch({
         type: 'GEO_LOCATION_STOP',
       });
@@ -134,56 +128,52 @@ class OnMapRightButtons extends React.Component<Props, State> {
 
   render() {
     return (
-      <React.Fragment>
-        <View style={styles.zoomInZoomOutContainer}>
+      <View style={styles.buttonsContainer}>
+        <CircleButton
+          style={[styles.button, {
+            opacity: 0.8,
+            marginBottom: 16,
+          }]}
+          onPressIn={this.zoomInLongPress}
+          onPressOut={this.stopTimer}
+          image={plusIcon}
+          size="medium"
+        />
+        <CircleButton
+          style={[styles.button, {
+            opacity: 0.8,
+            marginBottom: 64,
+          }]}
+          onPressIn={this.zoomOutLongPress}
+          onPressOut={this.stopTimer}
+          image={minusIcon}
+          size="medium"
+        />
+        {this.props.isAuthenticated &&
           <CircleButton
-            style={[styles.button, {
-              opacity: 0.8,
-              marginBottom: 16,
-            }]}
-            onPressIn={this.zoomInLongPress}
-            onPressOut={this.stopTimer}
-            image={plusIcon}
+            style={[styles.button, { opacity: 0.8 }]}
+            onPress={this.onMyProfilePress}
+            image={myProfileIcon}
             size="medium"
           />
-          <CircleButton
-            style={[styles.button, {
-              opacity: 0.8,
-              marginBottom: 64,
-            }]}
-            onPressIn={this.zoomOutLongPress}
-            onPressOut={this.stopTimer}
-            image={minusIcon}
-            size="medium"
-          />
-        </View>
-        <View style={styles.buttonContainer}>
-          {this.props.isAuthenticated &&
-            <CircleButton
-              style={[styles.button, { opacity: 0.8 }]}
-              onPress={this.onMyProfilePress}
-              image={myProfileIcon}
-              size="medium"
-            />
-          }
-          {!this.props.microDateIsEnabled &&
-            <CircleButton
-              style={styles.button}
-              onPress={this.onGeoTogglePress}
-              image={this.props.location.enabled ? stopIcon : playIcon}
-              size="medium"
-              disabled={!this.props.isAuthenticated}
-            />
-          }
+        }
+        {!this.props.microDateIsEnabled &&
           <CircleButton
             style={styles.button}
-            onPress={this.centerMe}
-            image={myLocationIcon}
+            onPress={this.onGeoTogglePress}
+            image={this.props.locationIsEnabled ? stopIcon : playIcon}
             size="medium"
-            disabled={!this.props.location.enabled}
+            disabled={!this.props.isAuthenticated}
           />
-        </View>
-      </React.Fragment>
+        }
+        <CircleButton
+          style={styles.button}
+          onPress={this.centerMe}
+          image={myLocationIcon}
+          size="medium"
+          disabled={!this.props.locationIsEnabled}
+        />
+      </View>
     );
   }
 }
@@ -192,36 +182,12 @@ const styles = StyleSheet.create({
   text: {
     color: 'white',
   },
-  mapButton: {
-    width: 45,
-    height: 45,
-    borderRadius: 45 / 2,
-    backgroundColor: 'rgba(255, 255, 253, 0.8)',
-    borderColor: 'gray',
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: 'black',
-    shadowRadius: 8,
-    shadowOpacity: 0,
-    opacity: 0.6,
-    margin: 5,
-  },
   button: {
     opacity: 0.6,
     margin: 4,
   },
-  zoomInZoomOutContainer: {
-    position: 'absolute',
-    top: SCREEN_HEIGHT / 3,
-    right: 10,
-    backgroundColor: 'transparent',
-    alignItems: 'center',
-    zIndex: 1,
-  },
-  buttonContainer: {
-    position: 'absolute',
-    bottom: 30,
+  buttonsContainer: {
+    flex: 1,
     right: 10,
     backgroundColor: 'transparent',
     alignItems: 'center',

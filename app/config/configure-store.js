@@ -25,6 +25,7 @@ const middleware = [sagaMiddleware];
 if (process.env.NODE_ENV === 'development') {
   middleware.push(createLogger());
   storeCreator = Reactotron.createStore;
+  console.ignoredYellowBox = ['Remote debugger'];
 } else {
   storeCreator = createStore;
   console.tron = {
