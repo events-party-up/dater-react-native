@@ -9,25 +9,18 @@ import 'moment/locale/ru';
 import { connect, Dispatch } from 'react-redux';
 
 import MapPanelStyles from './map-panel/map-panel-styles';
-
 import OnRightFloatingButtons from '../on-map-ui-interactions/on-right-floating-buttons';
 import MapPanelComponent from './map-panel/map-panel-component';
+import DeviceUtils from '../../utils/device-utils';
+import { SCREEN_HEIGHT } from '../../constants';
 
-import {
-  SCREEN_WIDTH,
-  SCREEN_HEIGHT,
-} from '../../constants';
+const STANDARD_MAP_PANEL_HEIGHT = (DeviceUtils.isiPhoneX() && 190) || (Platform.OS === 'ios' ? 175 : 205);
 
 const mapStateToProps = (state) => ({
   mapPanel: state.mapPanel,
   uploadPhotos: state.uploadPhotos,
   microDate: state.microDate,
 });
-
-const Screen = {
-  width: SCREEN_WIDTH,
-  height: SCREEN_HEIGHT - 75,
-};
 
 type Props = {
   mapPanel: any,
@@ -49,15 +42,15 @@ type State = {
 
 class OnMapInteractiveElements extends React.Component<Props, State> {
   interactableElement: Interactable.View;
-  showSnapPosition = Platform.OS === 'ios' ? Screen.height - 100 : Screen.height - 130;
-  showFullScreenSnapPosition = Platform.OS === 'ios' ? 20 : 8;
-  showHalfScreenSnapPosition = (Screen.height / 2) + 50;
-  closeSnapPosition = SCREEN_HEIGHT + 80;
+  closedMapPanelPosition = SCREEN_HEIGHT;
+  standardMapPanelPosition = SCREEN_HEIGHT - STANDARD_MAP_PANEL_HEIGHT;
+  halfScreenMapPanelPosition = SCREEN_HEIGHT / 2;
+  fullScreenMapPanelPosition = (DeviceUtils.isiPhoneX() && 32) || (Platform.OS === 'ios' ? 20 : 8);
 
   constructor(props) {
     super(props);
     this.state = {
-      deltaHeight: new Animated.Value(this.closeSnapPosition),
+      deltaHeight: new Animated.Value(this.closedMapPanelPosition),
     };
   }
 
@@ -75,11 +68,13 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
   }
 
   onSnap = (event) => {
-    if (event && event.nativeEvent && event.nativeEvent.id === 'close') {
+    if (!event || !event.nativeEvent) return;
+
+    if (event.nativeEvent.id === 'close') {
       this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_SNAPPED' });
-    } else if (event && event.nativeEvent && event.nativeEvent.id === 'showStandard') {
+    } else if (event.nativeEvent.id === 'showStandard') {
       this.props.dispatch({ type: 'UI_MAP_PANEL_SHOW_SNAPPED' });
-    } else if (event && event.nativeEvent && event.nativeEvent.id === 'showHalfScreen') {
+    } else if (event.nativeEvent.id === 'showHalfScreen') {
       this.props.dispatch({ type: 'UI_MAP_PANEL_SHOW_HALF_SCREEN_SNAPPED' });
     }
   }
@@ -90,9 +85,18 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
         <Animated.View
           style={{
             bottom: this.state.deltaHeight.interpolate({
-              // first value is for initial 0 value
-              inputRange: [0, 1, Screen.height - 120, this.closeSnapPosition],
-              outputRange: [32, 16 + 200, 200, 16],
+              inputRange: [
+                0, // for some reason this is often initial value
+                1,
+                this.closedMapPanelPosition - STANDARD_MAP_PANEL_HEIGHT,
+                this.closedMapPanelPosition,
+              ],
+              outputRange: [
+                32, // padding panel closed for 0 value
+                STANDARD_MAP_PANEL_HEIGHT + 8, // padding panel opened
+                STANDARD_MAP_PANEL_HEIGHT + 8,
+                32,
+              ],
               extrapolate: 'clamp',
               useNativeDriver: true,
             }),
@@ -117,13 +121,13 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
             ref={(component) => { this.interactableElement = component; }}
             verticalOnly
             snapPoints={[
-              { y: this.showSnapPosition, id: 'showStandard' },
-              { y: this.showHalfScreenSnapPosition, id: 'showHalfScreen' },
-              { y: this.showFullScreenSnapPosition, id: 'showFullScreen' },
-              { y: this.closeSnapPosition, id: 'close' }, // close map panel snap point
+              { y: this.standardMapPanelPosition, id: 'showStandard' },
+              { y: this.halfScreenMapPanelPosition, id: 'showHalfScreen' },
+              { y: this.fullScreenMapPanelPosition, id: 'showFullScreen' },
+              { y: this.closedMapPanelPosition, id: 'close' }, // close map panel snap point
             ]}
             boundaries={{ top: -300 }}
-            initialPosition={{ y: this.closeSnapPosition }}
+            initialPosition={{ y: this.closedMapPanelPosition }}
             animatedValueY={this.state.deltaHeight}
             onSnap={this.onSnap}
           >
