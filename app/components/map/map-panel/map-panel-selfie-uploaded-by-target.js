@@ -5,10 +5,10 @@ import {
 } from 'react-native';
 
 import MapPanelStyles from './map-panel-styles';
-import { H2, Caption2 } from '../../components/ui-kit/atoms/typography';
-import DaterButton from '../../components/ui-kit/atoms/dater-button';
-import cloudinaryUrl from '../../utils/cloudinary-utils';
-import { calculateAgeFrom } from '../../utils/date-utils';
+import { H2, Caption2 } from '../../../components/ui-kit/atoms/typography';
+import DaterButton from '../../../components/ui-kit/atoms/dater-button';
+import cloudinaryUrl from '../../../utils/cloudinary-utils';
+import { calculateAgeFrom } from '../../../utils/date-utils';
 
 type Props = {
   aspectRatio: number,

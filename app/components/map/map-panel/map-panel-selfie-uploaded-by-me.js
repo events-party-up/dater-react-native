@@ -4,9 +4,9 @@ import {
   Image,
 } from 'react-native';
 
-import { H2, Caption2 } from '../../components/ui-kit/atoms/typography';
-import cloudinaryUrl from '../../utils/cloudinary-utils';
-import { calculateAgeFrom } from '../../utils/date-utils';
+import { H2, Caption2 } from '../../../components/ui-kit/atoms/typography';
+import cloudinaryUrl from '../../../utils/cloudinary-utils';
+import { calculateAgeFrom } from '../../../utils/date-utils';
 
 type Props = {
   aspectRatio: number,

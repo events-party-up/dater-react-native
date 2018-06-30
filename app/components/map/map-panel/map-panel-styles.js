@@ -3,13 +3,12 @@ import { StyleSheet } from 'react-native';
 import {
   SCREEN_WIDTH,
   SCREEN_HEIGHT,
-} from '../../constants';
+} from '../../../constants';
 
 const Screen = {
   width: SCREEN_WIDTH,
   height: SCREEN_HEIGHT - 75,
 };
-
 
 const MapPanelStyles = StyleSheet.create({
   panelContainer: {
