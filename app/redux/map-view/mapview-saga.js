@@ -147,6 +147,8 @@ function* showMyLocation(action) {
 function* showMyLocationAndCenterMe(action) {
   try {
     const coords = yield select((state) => state.location.coords);
+    // const heading = yield select((state) => state.mapView.heading);
+
     if (!coords) return;
     yield put({ type: 'GEO_LOCATION_FORCE_UPDATE' });
     const showMyLocationMapAnimationDuration = 500;
@@ -157,6 +159,7 @@ function* showMyLocationAndCenterMe(action) {
         longitude: coords.longitude,
         [action.payload && action.payload.zoom && 'zoom']: action.payload && action.payload.zoom,
         [action.payload && action.payload.heading && 'heading']: action.payload && action.payload.heading,
+        // heading,
         duration: showMyLocationMapAnimationDuration,
       },
     });

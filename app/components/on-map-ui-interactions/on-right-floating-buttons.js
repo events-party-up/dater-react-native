@@ -26,13 +26,14 @@ type Props = {
   microDateIsEnabled: boolean,
   isAuthenticated: boolean,
   mapViewZoom: number,
+  heading: number,
 };
 
 type State = {
   number: number,
 }
 
-class OnMapRightButtons extends React.Component<Props, State> {
+class OnRightFloatingButtons extends React.Component<Props, State> {
   nextZoom; // need this to handle quick multiply touches of zoomIn/zoomOut
   timer;
 
@@ -107,9 +108,9 @@ class OnMapRightButtons extends React.Component<Props, State> {
     } else {
       this.props.dispatch({
         type: 'MAPVIEW_SHOW_MY_LOCATION_AND_CENTER_ME',
-        // payload: {
-        //   heading: this.props.heading,
-        // },
+        payload: {
+          heading: this.props.heading,
+        },
       });
     }
   }
@@ -195,4 +196,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OnMapRightButtons;
+export default OnRightFloatingButtons;

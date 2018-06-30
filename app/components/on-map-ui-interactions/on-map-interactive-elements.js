@@ -10,8 +10,8 @@ import { connect, Dispatch } from 'react-redux';
 
 import MapPanelStyles from './map-panel/map-panel-styles';
 
-import OnMapRightButtons from '../map/on-map-right-buttons';
-import MapPanelComponent from '../map/map-panel/map-panel-component';
+import OnRightFloatingButtons from '../on-map-ui-interactions/on-right-floating-buttons';
+import MapPanelComponent from './map-panel/map-panel-component';
 
 import {
   SCREEN_WIDTH,
@@ -101,7 +101,7 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
             zIndex: 1,
           }}
         >
-          <OnMapRightButtons
+          <OnRightFloatingButtons
             locationIsEnabled={this.props.locationIsEnabled}
             mapViewZoom={this.props.mapViewZoom}
             isAuthenticated={this.props.isAuthenticated}

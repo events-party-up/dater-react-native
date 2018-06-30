@@ -21,7 +21,7 @@ import {
 } from '../constants';
 import MyLocationOnNonCenteredMap from '../components/map/my-location-on-non-centered-map';
 // import OnMapRightButtons from '../components/map/on-map-right-buttons';
-import OnMapInteractiveElements from '../components/map/on-map-interactive-elements';
+import OnMapInteractiveElements from '../components/on-map-ui-interactions/on-map-interactive-elements';
 import BlockMapViewComponent from '../components/map/block-mapview-component';
 
 // import DaterButton from '../components/ui-kit/atoms/dater-button';
@@ -207,7 +207,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
         <OnMapInteractiveElements
           navigation={this.props.navigation}
           locationIsEnabled={this.props.location.enabled}
-          // heading={this.state.compassHeading || this.props.location.moveHeadingAngle}
+          heading={this.state.compassHeading || this.props.location.moveHeadingAngle}
           mapViewZoom={this.props.mapView.zoom}
           isAuthenticated={this.props.auth.isAuthenticated}
           microDateIsEnabled={this.props.microDate.enabled}
