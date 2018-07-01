@@ -208,6 +208,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
           navigation={this.props.navigation}
           locationIsEnabled={this.props.location.enabled}
           heading={this.state.compassHeading || this.props.location.moveHeadingAngle}
+          dispatch={this.props.dispatch}
           mapViewZoom={this.props.mapView.zoom}
           isAuthenticated={this.props.auth.isAuthenticated}
           microDateIsEnabled={this.props.microDate.enabled}

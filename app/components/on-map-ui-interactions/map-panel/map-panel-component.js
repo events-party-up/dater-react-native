@@ -16,8 +16,6 @@ import MapPanelMakeSelfie from './map-panel-make-selfie';
 import MapPanelActiveMicroDate from './map-panel-active-micro-date';
 import MapPanelIncomingMicroDateRequest from './map-panel-incoming-micro-date-request';
 
-import { calculateAgeFrom } from '../../../utils/date-utils';
-
 type Props = {
   mapPanel: any,
   microDate: any,
@@ -120,10 +118,8 @@ export default class MapPanelComponent extends React.Component<Props, State> {
           <View>
             <H2 style={MapPanelStyles.panelHeader}>Ожидание ответа</H2>
             <Caption2 style={MapPanelStyles.panelBody}>
-              Запрос на встречу с {this.props.mapPanel.targetUser.name} {this.props.mapPanel.targetUser.birthday &&
-                calculateAgeFrom(this.props.mapPanel.targetUser.birthday)} отправлен{' '}
+              Запрос на встречу с {this.props.mapPanel.targetUser.name} отправлен{' '}
               <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.requestTS}</Moment>.{'\n'}
-              Date ID: {this.props.mapPanel.microDate.id.substring(0, 4)}{' '}
               User ID: {this.props.mapPanel.microDate.requestFor.substring(0, 4)}
             </Caption2>
             <DaterButton
@@ -138,13 +134,11 @@ export default class MapPanelComponent extends React.Component<Props, State> {
         return (
           <View>
             <H2 style={MapPanelStyles.panelHeader}>
-              Запрос отклонен
+              Запрос отклонен :(
             </H2>
             <Caption2 style={MapPanelStyles.panelBody}>
-              {this.props.mapPanel.targetUser.name} {this.props.mapPanel.targetUser.birthday &&
-                calculateAgeFrom(this.props.mapPanel.targetUser.birthday)} отклонил запрос на встречу{' '}
+              {this.props.mapPanel.targetUser.name} отклонил запрос на встречу{' '}
               <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.declineTS}</Moment>.{'\n'}
-              Date ID: {this.props.mapPanel.microDate.id.substring(0, 4)}
             </Caption2>
             <DaterButton style={MapPanelStyles.panelButton} onPress={this.closePanel}>
               ОК
@@ -155,11 +149,10 @@ export default class MapPanelComponent extends React.Component<Props, State> {
         return (
           <View>
             <H2 style={MapPanelStyles.panelHeader}>
-              Запрос от {this.props.mapPanel.targetUser.name} {this.props.mapPanel.targetUser.birthday &&
-                calculateAgeFrom(this.props.mapPanel.targetUser.birthday)} отменен
+              Запрос от {this.props.mapPanel.targetUser.name} отменен
             </H2>
             <Caption2 style={MapPanelStyles.panelBody}>
-              Запрос {this.props.mapPanel.microDate.id.substring(0, 4)} был отменен{' '}
+              {this.props.mapPanel.targetUser.name} отменил запрос на встречу {' '}
               <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.cancelRequestTS}</Moment>.
             </Caption2>
             <DaterButton style={MapPanelStyles.panelButton} onPress={this.closePanel}>
@@ -171,11 +164,10 @@ export default class MapPanelComponent extends React.Component<Props, State> {
         return (
           <View>
             <H2 style={MapPanelStyles.panelHeader}>
-              {this.props.mapPanel.targetUser.name} {this.props.mapPanel.targetUser.birthday &&
-                calculateAgeFrom(this.props.mapPanel.targetUser.birthday)} отменил встречу
+              {this.props.mapPanel.targetUser.name} отменил встречу :(
             </H2>
             <Caption2 style={MapPanelStyles.panelBody}>
-              Встреча ({this.props.mapPanel.microDate.id.substring(0, 4)}) отменена {' '}
+              Встреча с {this.props.mapPanel.targetUser.name} отменена {' '}
               <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.stopTS}</Moment>.
             </Caption2>
             <DaterButton style={MapPanelStyles.panelButton} onPress={this.closePanel}>

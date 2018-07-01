@@ -6,7 +6,6 @@ import {
 
 import { H2, Caption2 } from '../../../components/ui-kit/atoms/typography';
 import cloudinaryUrl from '../../../utils/cloudinary-utils';
-import { calculateAgeFrom } from '../../../utils/date-utils';
 
 type Props = {
   aspectRatio: number,
@@ -63,8 +62,7 @@ export default class MapPanelSelfieUploadedByMe extends React.Component<Props> {
                   marginTop: 8,
                 }}
               >
-                Ожидаю одобрения фото от {this.props.targetUser.name} {this.props.targetUser.birthday &&
-                  calculateAgeFrom(this.props.targetUser.birthday)}.
+                Ожидаю одобрения фото от {this.props.targetUser.name}.
               </Caption2>
             </View>
           </View>

@@ -4,7 +4,8 @@ import { buffers } from 'redux-saga';
 import GeoUtils from '../../utils/geo-utils';
 
 const mapPanelReplaceDelay = 250;
-// const mapPanelHideDelay = 400;
+let mapPanelIsShowing = false;
+let mapPanelIsShown = false;
 
 export default function* mapPanelSagaNew() {
   try {
@@ -21,7 +22,6 @@ export default function* mapPanelSagaNew() {
         'MICRO_DATE_INCOMING_ACCEPT',
         'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
         'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
-        // 'MICRO_DATE_CLOSE_DISTANCE_MOVE',
         'MICRO_DATE_OUTGOING_SELFIE_DECLINED_BY_ME',
         'MICRO_DATE_INCOMING_SELFIE_DECLINED_BY_ME',
         'MICRO_DATE_INCOMING_SELFIE_DECLINED_BY_TARGET',
@@ -32,7 +32,6 @@ export default function* mapPanelSagaNew() {
         'MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_TARGET',
         'MICRO_DATE_DECLINE_SELFIE_BY_ME',
         'MICRO_DATE_UPLOAD_PHOTO_START',
-        // MICRO_DATE_INCOMING_ACCEPT when outoing selfie is declined
       ], buffers.none());
 
       const hideActions = yield actionChannel([
@@ -75,7 +74,6 @@ export default function* mapPanelSagaNew() {
 function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
   let targetUserSnap = {};
   let targetUser;
-
   try {
     const microDateState = yield select((state) => state.microDate);
     const mapPanelState = yield select((state) => state.mapPanel);
@@ -96,10 +94,10 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
       };
     }
 
-    if (mapPanelState.visible) {
+    if (mapPanelIsShown && !mapPanelIsShowing) {
       // hide pannel without any actions
-      yield call(mapPanelSnapper, { index: 3 }); // hide
-      yield call(delay, mapPanelReplaceDelay);
+      yield call(mapPanelSnapper, { index: 4 }); // hide
+      yield delay(mapPanelReplaceDelay);
     }
 
     switch (nextAction.type) {
@@ -226,7 +224,6 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
         ) {
           return;
         }
-        // console.log('here 2');
         yield put({
           type: 'UI_MAP_PANEL_SET_MODE',
           payload: {
@@ -294,18 +291,12 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
       default:
         break;
     }
-
-    // if (
-    //   mapPanelState.previousMode === mapPanelState.mode === 'selfieUploadedByTarget' ||
-    //   mapPanelState.previousMode === mapPanelState.mode === 'selfieUploadedByMe' ||
-    //   mapPanelState.previousMode === mapPanelState.mode === 'selfieUploading'
-    // ) {
-    //   return;
-    // }
-
+    mapPanelIsShowing = true;
     yield call(mapPanelSnapper, { index: 0 }); // show
     yield take('UI_MAP_PANEL_SHOW_SNAPPED');
+    mapPanelIsShowing = false;
     yield put({ type: 'UI_MAP_PANEL_SHOW_FINISHED' });
+    mapPanelIsShown = true;
   } catch (error) {
     yield put({ type: 'UI_MAP_PANEL_ERROR', payload: error });
   }
@@ -313,7 +304,8 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
 
 function* mapPanelHideActionsSaga(mapPanelSnapper, nextAction) {
   try {
-    yield call(mapPanelSnapper, { index: 3 }); // hide
+    mapPanelIsShowing = false;
+    yield call(mapPanelSnapper, { index: 4 }); // hide
     yield* showAgainIfCantHide(mapPanelSnapper);
     switch (nextAction.type) {
       case 'MAPVIEW_PRESSED':
@@ -331,24 +323,29 @@ function* showAgainIfCantHide(mapPanelSnapper) {
   const mapPanelMode = yield select((state) => state.mapPanel.mode);
 
   if (canHide === false) {
-    yield call(delay, mapPanelReplaceDelay);
+    yield delay(mapPanelReplaceDelay);
+    mapPanelIsShowing = true;
     switch (mapPanelMode) {
       case 'selfieUploadedByTarget':
         yield call(mapPanelSnapper, { index: 1 }); // show half screen
         break;
       default:
-        yield call(mapPanelSnapper, { index: 0 }); // show
+        yield call(mapPanelSnapper, { index: 3 }); // show folded
         break;
     }
     yield take([
       'UI_MAP_PANEL_SHOW_SNAPPED',
       'UI_MAP_PANEL_SHOW_HALF_SCREEN_SNAPPED',
     ]);
+    mapPanelIsShowing = false;
+    mapPanelIsShown = true;
   }
 }
 
 function* mapPanelForceHideActionsSaga(mapPanelSnapper, nextAction) {
+  mapPanelIsShowing = false;
   yield put({ type: 'UI_MAP_PANEL_HIDE_FORCE', payload: nextAction.payload });
-  yield call(mapPanelSnapper, { index: 3 }); // hide
+  yield call(mapPanelSnapper, { index: 4 }); // hide
   yield take('UI_MAP_PANEL_HIDE_SNAPPED');
+  mapPanelIsShown = false;
 }

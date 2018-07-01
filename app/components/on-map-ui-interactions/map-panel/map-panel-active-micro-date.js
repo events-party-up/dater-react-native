@@ -3,7 +3,6 @@ import { View } from 'react-native';
 
 import { H2, Caption2 } from '../../../components/ui-kit/atoms/typography';
 import DaterButton from '../../../components/ui-kit/atoms/dater-button';
-import { calculateAgeFrom } from '../../../utils/date-utils';
 import MapPanelStyles from './map-panel-styles';
 
 type Props = {
@@ -17,9 +16,8 @@ export default class MapPanelActiveMicroDate extends React.Component<Props> {
   render() {
     return (
       <View>
-        <H2 style={MapPanelStyles.panelHeader}>Встеча с{' '}
-          {this.props.targetUser.name} {this.props.targetUser.birthday &&
-            calculateAgeFrom(this.props.targetUser.birthday)}
+        <H2 style={MapPanelStyles.panelHeader}>Активна встеча с{' '}
+          {this.props.targetUser.name}
         </H2>
         <Caption2 style={MapPanelStyles.panelBody}>
           Расстояние {Math.floor(this.props.distance)} м.{' '}

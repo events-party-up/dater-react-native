@@ -60,7 +60,7 @@ const MapPanelSelfieUploading = (props) => (
               marginTop: 8,
             }}
           >
-            Ожидайте, идет загрузка фото на сервер.
+            Идет загрузка фото на сервер...
           </Caption2>
           <View style={{
             flexDirection: 'column',

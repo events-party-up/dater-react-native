@@ -46,6 +46,7 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
   standardMapPanelPosition = SCREEN_HEIGHT - STANDARD_MAP_PANEL_HEIGHT;
   halfScreenMapPanelPosition = SCREEN_HEIGHT / 2;
   fullScreenMapPanelPosition = (DeviceUtils.isiPhoneX() && 32) || (Platform.OS === 'ios' ? 20 : 8);
+  headerMapPanelPosition = this.closedMapPanelPosition - (DeviceUtils.isiPhoneX() ? 65 : 55);
 
   constructor(props) {
     super(props);
@@ -124,6 +125,7 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
               { y: this.standardMapPanelPosition, id: 'showStandard' },
               { y: this.halfScreenMapPanelPosition, id: 'showHalfScreen' },
               { y: this.fullScreenMapPanelPosition, id: 'showFullScreen' },
+              { y: this.headerMapPanelPosition, id: 'showHeader' }, // close map panel snap point
               { y: this.closedMapPanelPosition, id: 'close' }, // close map panel snap point
             ]}
             boundaries={{ top: -300 }}
@@ -137,6 +139,7 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
               mapPanel={this.props.mapPanel}
               uploadPhotos={this.props.uploadPhotos}
               microDate={this.props.microDate}
+              dispatch={this.props.dispatch}
             />
           </Interactable.View>
         </View>

@@ -8,7 +8,6 @@ import MapPanelStyles from './map-panel-styles';
 import { H2, Caption2 } from '../../../components/ui-kit/atoms/typography';
 import DaterButton from '../../../components/ui-kit/atoms/dater-button';
 import cloudinaryUrl from '../../../utils/cloudinary-utils';
-import { calculateAgeFrom } from '../../../utils/date-utils';
 
 type Props = {
   aspectRatio: number,
@@ -24,7 +23,7 @@ class MapPanelSelfieUploadedByTarget extends React.Component<Props> {
     return (
       <View>
         <H2 style={MapPanelStyles.panelHeader}>
-          Сделано фото с вами!
+          Сделано фото с тобой!
         </H2>
         <View>
           <View style={{
@@ -65,9 +64,8 @@ class MapPanelSelfieUploadedByTarget extends React.Component<Props> {
               <Caption2
                 style={MapPanelStyles.panelBody}
               >
-                Вы подтверждаете, что это фото сделано только что между вами и {' '}
-                {this.props.targetUser.name} {this.props.targetUser.birthday &&
-                  calculateAgeFrom(this.props.targetUser.birthday)}? {'\n\n'}
+                Ты подтверждаешь, что это фото сделано только что между тобой и {' '}
+                {this.props.targetUser.name}? {'\n\n'}
                 На фото должны быть видны ваши лица.
               </Caption2>
             </View>
