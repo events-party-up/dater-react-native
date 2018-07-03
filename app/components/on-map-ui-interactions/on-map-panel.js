@@ -16,6 +16,8 @@ import MapPanelAwaitingAcceptRequest from './map-panel-templates/map-panel-await
 import MapPanelRequestDeclined from './map-panel-templates/map-panel-request-declined';
 import MapPanelRequestCancelled from './map-panel-templates/map-panel-request-cancelled';
 import MapPanelMicroDateStopped from './map-panel-templates/map-panel-micro-date-stopped';
+import MapPanelRequestExpired from './map-panel-templates/map-panel-request-expired';
+import MapPanelMicroDateExpired from './map-panel-templates/map-panel-micro-date-expired';
 
 type Props = {
   mapPanel: any,
@@ -146,6 +148,22 @@ export default class OnMapPanel extends React.Component<Props, State> {
             targetUser={this.props.mapPanel.targetUser}
             onPressClose={this.closePanel}
             stopTS={this.props.mapPanel.microDate.stopTS}
+          />
+        );
+      case 'microDateRequestExpired':
+        return (
+          <MapPanelRequestExpired
+            targetUser={this.props.mapPanel.targetUser}
+            mapPanel={this.props.mapPanel}
+            onPressClose={this.closePanel}
+          />
+        );
+      case 'microDatetExpired':
+        return (
+          <MapPanelMicroDateExpired
+            targetUser={this.props.mapPanel.targetUser}
+            mapPanel={this.props.mapPanel}
+            onPressClose={this.closePanel}
           />
         );
       case 'makeSelfie':

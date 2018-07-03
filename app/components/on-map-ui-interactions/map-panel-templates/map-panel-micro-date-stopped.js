@@ -17,7 +17,7 @@ export default class MapPanelMicroDateStopped extends React.Component<Props> {
   render() {
     return (
       <View>
-        <H2 style={MapPanelStyles.panelHeader}>
+        <H2 style={MapPanelStyles.panelHeader} numberOfLines={1} >
           Встреча отменена :(
         </H2>
         <Caption2 style={MapPanelStyles.panelBody}>

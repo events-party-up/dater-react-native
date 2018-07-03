@@ -17,7 +17,7 @@ export default class MapPanelRequestDeclined extends React.Component<Props> {
   render() {
     return (
       <View>
-        <H2 style={MapPanelStyles.panelHeader}>
+        <H2 style={MapPanelStyles.panelHeader} numberOfLines={1} >
           Запрос отклонен :(
         </H2>
         <Caption2 style={MapPanelStyles.panelBody}>

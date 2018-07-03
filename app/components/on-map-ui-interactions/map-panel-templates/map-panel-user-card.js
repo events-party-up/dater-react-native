@@ -16,7 +16,7 @@ export default class MapPanelUserCard extends React.Component<Props> {
   render() {
     return (
       <View>
-        <H2 style={MapPanelStyles.panelHeader}>
+        <H2 style={MapPanelStyles.panelHeader} numberOfLines={1} >
           {this.props.mapPanel.targetUser.name} {this.props.mapPanel.targetUser.birthday &&
             calculateAgeFrom(this.props.mapPanel.targetUser.birthday)}
         </H2>

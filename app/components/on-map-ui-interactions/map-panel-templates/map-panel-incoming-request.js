@@ -19,7 +19,7 @@ export default class MapPanelIncomingRequest extends React.Component<Props> {
   render() {
     return (
       <View>
-        <H2 style={MapPanelStyles.panelHeader}>
+        <H2 style={MapPanelStyles.panelHeader} numberOfLines={1} >
           Запрос от {this.props.targetUser.name} {this.props.targetUser.birthday &&
             calculateAgeFrom(this.props.targetUser.birthday)}
         </H2>

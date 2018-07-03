@@ -19,8 +19,8 @@ export default class MapPanelActiveMicroDate extends React.Component<Props> {
   render() {
     return (
       <View>
-        <H2 style={MapPanelStyles.panelHeader}>Встреча с{' '}
-          {this.props.targetUser.name}
+        <H2 style={MapPanelStyles.panelHeader} numberOfLines={1} >
+          Встреча с {this.props.targetUser.name}
         </H2>
         <Caption2 style={MapPanelStyles.panelBody}>
           Началась{' '}

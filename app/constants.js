@@ -39,6 +39,8 @@ export const PROFILE_PHOTOS_STORAGE_PATH = 'profilePhotos';
 
 // Micro Dates
 export const DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD = 20;
+export const TIME_TO_RESPOND_TO_MICRO_DATE_REQUEST = 10 * 1000 * 60;
+export const TIME_TO_FINISH_MICRO_DATE = 90 * 1000 * 60;
 
 // Users around
 export const USERS_AROUND_PUBLIC_UPDATE_INTERVAL = 2000;

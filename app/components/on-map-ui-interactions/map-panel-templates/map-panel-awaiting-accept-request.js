@@ -17,7 +17,7 @@ export default class MapPanelAwaitingAcceptRequest extends React.Component<Props
   render() {
     return (
       <View>
-        <H2 style={MapPanelStyles.panelHeader}>Ожидание ответа</H2>
+        <H2 style={MapPanelStyles.panelHeader} numberOfLines={1} >Ожидание ответа</H2>
         <Caption2 style={MapPanelStyles.panelBody}>
           Запрос на встречу с {this.props.targetUser.name}.{'\n'}
           Отправлен{' '}

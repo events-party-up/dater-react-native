@@ -17,7 +17,7 @@ export default class MapPanelMakeSelfie extends React.Component<Props> {
   render() {
     return (
       <View>
-        <H2 style={MapPanelStyles.panelHeader}>Сделай селфи!
+        <H2 style={MapPanelStyles.panelHeader} numberOfLines={1} >Сделай селфи!
         </H2>
         {this.props.mapPanel.targetUser &&
           <Caption2 style={MapPanelStyles.panelBody}>
