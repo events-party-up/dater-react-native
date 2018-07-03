@@ -12,7 +12,7 @@ type Props = {
   onPressCancel: () => void,
 }
 
-export default class MapPanelOutgoingMicroDateAwaitingAccept extends React.Component<Props> {
+export default class MapPanelAwaitingAcceptRequest extends React.Component<Props> {
   render() {
     return (
       <View>

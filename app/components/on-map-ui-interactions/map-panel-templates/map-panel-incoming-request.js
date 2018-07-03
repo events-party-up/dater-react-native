@@ -15,7 +15,7 @@ type Props = {
   onPressAccept: () => void,
 }
 
-export default class MapPanelIncomingMicroDateRequest extends React.Component<Props> {
+export default class MapPanelIncomingRequest extends React.Component<Props> {
   render() {
     return (
       <View>

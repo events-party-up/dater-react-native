@@ -1,21 +1,21 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import 'moment/locale/ru';
-import Moment from 'react-moment';
 import { Dispatch } from 'react-redux';
 
-import MapPanelStyles from './map-panel-components/map-panel-styles';
+import MapPanelStyles from './map-panel-templates/map-panel-styles';
 
-import { H2, Caption2 } from '../ui-kit/atoms/typography';
-import DaterButton from '../ui-kit/atoms/dater-button';
-import MapPanelSelfieUploading from './map-panel-components/map-panel-selfie-uploading';
-import MapPanelSelfieUploadedByMe from './map-panel-components/map-panel-selfie-uploaded-by-me';
-import MapPanelSelfieUploadedByTarget from './map-panel-components/map-panel-selfie-uploaded-by-target';
-import MapPanelUserCard from './map-panel-components/map-panel-user-card';
-import MapPanelMakeSelfie from './map-panel-components/map-panel-make-selfie';
-import MapPanelActiveMicroDate from './map-panel-components//map-panel-active-micro-date';
-import MapPanelIncomingMicroDateRequest from './map-panel-components/map-panel-incoming-micro-date-request';
-import MapPanelOutgoingMicroDateAwaitingAccept from './map-panel-components/map-panel-outgoing-micro-date-awaiting-accept'; // eslint-disable-line
+import MapPanelSelfieUploading from './map-panel-templates/map-panel-selfie-uploading';
+import MapPanelSelfieUploadedByMe from './map-panel-templates/map-panel-selfie-uploaded-by-me';
+import MapPanelSelfieUploadedByTarget from './map-panel-templates/map-panel-selfie-uploaded-by-target';
+import MapPanelUserCard from './map-panel-templates/map-panel-user-card';
+import MapPanelMakeSelfie from './map-panel-templates/map-panel-make-selfie';
+import MapPanelActiveMicroDate from './map-panel-templates//map-panel-active-micro-date';
+import MapPanelIncomingRequest from './map-panel-templates/map-panel-incoming-request';
+import MapPanelAwaitingAcceptRequest from './map-panel-templates/map-panel-awaiting-accept-request'; // eslint-disable-line
+import MapPanelRequestDeclined from './map-panel-templates/map-panel-request-declined';
+import MapPanelRequestCancelled from './map-panel-templates/map-panel-request-cancelled';
+import MapPanelMicroDateStopped from './map-panel-templates/map-panel-micro-date-stopped';
 
 type Props = {
   mapPanel: any,
@@ -107,7 +107,7 @@ export default class OnMapPanel extends React.Component<Props, State> {
         );
       case 'incomingMicroDateRequest':
         return (
-          <MapPanelIncomingMicroDateRequest
+          <MapPanelIncomingRequest
             targetUser={this.props.mapPanel.targetUser}
             distance={this.props.mapPanel.distance}
             microDateId={this.props.mapPanel.microDateId}
@@ -118,7 +118,7 @@ export default class OnMapPanel extends React.Component<Props, State> {
         );
       case 'outgoingMicroDateAwaitingAccept':
         return (
-          <MapPanelOutgoingMicroDateAwaitingAccept
+          <MapPanelAwaitingAcceptRequest
             targetUser={this.props.mapPanel.targetUser}
             onPressCancel={this.cancelOutgoingMicroDate}
             requestTS={this.props.mapPanel.microDate.requestTS}
@@ -126,47 +126,26 @@ export default class OnMapPanel extends React.Component<Props, State> {
         );
       case 'outgoingMicroDateDeclined':
         return (
-          <View>
-            <H2 style={MapPanelStyles.panelHeader}>
-              Запрос отклонен :(
-            </H2>
-            <Caption2 style={MapPanelStyles.panelBody}>
-              {this.props.mapPanel.targetUser.name} отклонил запрос на встречу{' '}
-              <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.declineTS}</Moment>.{'\n'}
-            </Caption2>
-            <DaterButton style={MapPanelStyles.panelButton} onPress={this.closePanel}>
-              ОК
-            </DaterButton>
-          </View>
+          <MapPanelRequestDeclined
+            targetUser={this.props.mapPanel.targetUser}
+            onPressClose={this.closePanel}
+            declineTS={this.props.mapPanel.microDate.declineTS}
+          />
         );
       case 'incomingMicroDateCancelled':
         return (
-          <View>
-            <H2 style={MapPanelStyles.panelHeader}>
-              Запрос на встречу отменен :(
-            </H2>
-            <Caption2 style={MapPanelStyles.panelBody}>
-              {this.props.mapPanel.targetUser.name} отменил запрос на встречу.
-            </Caption2>
-            <DaterButton style={MapPanelStyles.panelButton} onPress={this.closePanel}>
-              ОК
-            </DaterButton>
-          </View>
+          <MapPanelRequestCancelled
+            targetUser={this.props.mapPanel.targetUser}
+            onPressClose={this.closePanel}
+          />
         );
       case 'microDateStopped':
         return (
-          <View>
-            <H2 style={MapPanelStyles.panelHeader}>
-              Встреча отменена :(
-            </H2>
-            <Caption2 style={MapPanelStyles.panelBody}>
-              {this.props.mapPanel.targetUser.name} отменил встречу {' '}
-              <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.stopTS}</Moment>.
-            </Caption2>
-            <DaterButton style={MapPanelStyles.panelButton} onPress={this.closePanel}>
-              ОК
-            </DaterButton>
-          </View>
+          <MapPanelMicroDateStopped
+            targetUser={this.props.mapPanel.targetUser}
+            onPressClose={this.closePanel}
+            stopTS={this.props.mapPanel.microDate.stopTS}
+          />
         );
       case 'makeSelfie':
         return (

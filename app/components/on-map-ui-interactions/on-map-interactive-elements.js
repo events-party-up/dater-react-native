@@ -5,10 +5,9 @@ import {
   Platform,
 } from 'react-native';
 import Interactable from 'react-native-interactable';
-import 'moment/locale/ru';
 import { connect, Dispatch } from 'react-redux';
 
-import MapPanelStyles from './map-panel-components/map-panel-styles';
+import MapPanelStyles from './map-panel-templates/map-panel-styles';
 import OnRightFloatingButtons from '../on-map-ui-interactions/on-right-floating-buttons';
 import OnMapPanel from './on-map-panel';
 import DeviceUtils from '../../utils/device-utils';
