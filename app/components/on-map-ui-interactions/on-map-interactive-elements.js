@@ -79,6 +79,9 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
     }
   }
 
+  onPressHandle = () => {
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -139,6 +142,7 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
               uploadPhotos={this.props.uploadPhotos}
               microDate={this.props.microDate}
               dispatch={this.props.dispatch}
+              onPressHandle={this.onPressHandle}
             />
           </Interactable.View>
         </View>

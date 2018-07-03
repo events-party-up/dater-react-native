@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import 'moment/locale/ru';
 import { Dispatch } from 'react-redux';
 
@@ -25,6 +25,7 @@ type Props = {
   uploadPhotos: any,
   dispatch: Dispatch,
   navigation: any,
+  onPressHandle: () => void,
 };
 
 type State = {
@@ -191,7 +192,16 @@ export default class OnMapPanel extends React.Component<Props, State> {
   render() {
     return (
       <View style={MapPanelStyles.panel}>
-        <View style={MapPanelStyles.panelHandle} />
+        <TouchableOpacity
+          style={MapPanelStyles.panelHandle}
+          onPress={this.props.onPressHandle}
+          hitSlop={{
+            top: 10,
+            bottom: 10,
+            left: 50,
+            right: 50,
+          }}
+        />
         {this.renderCard()}
       </View>
     );
