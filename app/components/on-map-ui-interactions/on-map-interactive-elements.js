@@ -8,7 +8,7 @@ import Interactable from 'react-native-interactable';
 import { connect, Dispatch } from 'react-redux';
 
 import MapPanelStyles from './map-panel-templates/map-panel-styles';
-import OnRightFloatingButtons from '../on-map-ui-interactions/on-right-floating-buttons';
+import OnMapButtons from './on-map-buttons';
 import OnMapPanel from './on-map-panel';
 import DeviceUtils from '../../utils/device-utils';
 import { SCREEN_HEIGHT } from '../../constants';
@@ -105,7 +105,7 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
             zIndex: 1,
           }}
         >
-          <OnRightFloatingButtons
+          <OnMapButtons
             locationIsEnabled={this.props.locationIsEnabled}
             mapViewZoom={this.props.mapViewZoom}
             isAuthenticated={this.props.isAuthenticated}

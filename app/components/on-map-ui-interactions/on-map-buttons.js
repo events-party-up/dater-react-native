@@ -33,7 +33,7 @@ type State = {
   number: number,
 }
 
-class OnRightFloatingButtons extends React.Component<Props, State> {
+export default class OnMapButtons extends React.Component<Props, State> {
   nextZoom; // need this to handle quick multiply touches of zoomIn/zoomOut
   timer;
 
@@ -195,5 +195,3 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
 });
-
-export default OnRightFloatingButtons;
