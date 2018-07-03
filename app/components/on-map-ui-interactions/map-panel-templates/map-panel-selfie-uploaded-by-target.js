@@ -6,7 +6,8 @@ import {
 
 import MapPanelStyles from './map-panel-styles';
 import { H2, Caption2 } from '../../../components/ui-kit/atoms/typography';
-import DaterButton from '../../../components/ui-kit/atoms/dater-button';
+import CircleButton from '../../../components/ui-kit/atoms/circle-button';
+// import DaterButton from '../../../components/ui-kit/atoms/dater-button';
 import cloudinaryUrl from '../../../utils/cloudinary-utils';
 
 type Props = {
@@ -77,7 +78,10 @@ class MapPanelSelfieUploadedByTarget extends React.Component<Props> {
             justifyContent: 'space-evenly',
           }}
         >
-          <DaterButton
+          <CircleButton type="decline" onPress={this.props.onDecline} size="medium-big" />
+          <CircleButton type="confirm" onPress={this.props.onApprove} size="medium-big" />
+
+          {/* <DaterButton
             style={[MapPanelStyles.panelButton, { width: 130 }]}
             onPress={this.props.onDecline}
           >
@@ -88,7 +92,7 @@ class MapPanelSelfieUploadedByTarget extends React.Component<Props> {
             onPress={this.props.onApprove}
           >
               Да
-          </DaterButton>
+          </DaterButton> */}
         </View>
       </View>
     );

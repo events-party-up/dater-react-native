@@ -2,8 +2,11 @@ import React from 'react';
 import { View } from 'react-native';
 
 import { H2, Caption2 } from '../../../components/ui-kit/atoms/typography';
-import DaterButton from '../../../components/ui-kit/atoms/dater-button';
+import CircleButton from '../../../components/ui-kit/atoms/circle-button';
+// import DaterButton from '../../../components/ui-kit/atoms/dater-button';
 import MapPanelStyles from './map-panel-styles';
+
+const takePhotoIcon = require('../../../assets/icons/take-photo/take-photo-white.png');
 
 type Props = {
   mapPanel: any,
@@ -36,12 +39,23 @@ export default class MapPanelMakeSelfie extends React.Component<Props> {
               Остановить
             </DaterButton>
           } */}
-          <DaterButton
+          <CircleButton
+            onPress={this.props.onPressOpenCamera}
+            // size="medium-big"
+            image={takePhotoIcon}
+            style={{
+              alignContent: 'center',
+              shadowColor: '#4F4F4F',
+              backgroundColor: '#4F4F4F',
+            }}
+          />
+
+          {/* <DaterButton
             style={[MapPanelStyles.panelButton]}
             onPress={this.props.onPressOpenCamera}
           >
             Камера
-          </DaterButton>
+          </DaterButton> */}
         </View>
       </View>
     );

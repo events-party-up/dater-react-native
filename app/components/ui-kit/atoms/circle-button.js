@@ -28,6 +28,12 @@ const CircleButton = (props) => {
       image = closeIcon;
       break;
     }
+    case 'decline': {
+      shadowColor = '#4F4F4F';
+      backgroundColor = '#EB5757';
+      image = closeIcon;
+      break;
+    }
     case 'back': {
       backgroundColor = '#fff';
       shadowColor = 'rgba(0, 0, 0, 0.21)';
@@ -66,6 +72,11 @@ const CircleButton = (props) => {
     case 'medium': {
       width = 48;
       height = 48;
+      break;
+    }
+    case 'medium-big': {
+      width = 56;
+      height = 56;
       break;
     }
     case 'large': {

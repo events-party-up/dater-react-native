@@ -2,7 +2,8 @@ import React from 'react';
 import { View } from 'react-native';
 
 import { H2, Caption2 } from '../../../components/ui-kit/atoms/typography';
-import DaterButton from '../../../components/ui-kit/atoms/dater-button';
+import CircleButton from '../../../components/ui-kit/atoms/circle-button';
+// import DaterButton from '../../../components/ui-kit/atoms/dater-button';
 import MapPanelStyles from './map-panel-styles';
 
 type Props = {
@@ -20,9 +21,11 @@ export default class MapPanelRequestCancelled extends React.Component<Props> {
         <Caption2 style={MapPanelStyles.panelBody}>
           {this.props.targetUser.name} отменил{this.props.targetUser.gender === 'female' && 'а'} запрос на встречу.
         </Caption2>
-        <DaterButton style={MapPanelStyles.panelButton} onPress={this.props.onPressClose}>
+        {/* <DaterButton style={MapPanelStyles.panelButton} onPress={this.props.onPressClose}>
           ОК
-        </DaterButton>
+        </DaterButton> */}
+        <CircleButton type="close" onPress={this.props.onPressClose} size="large" style={{ alignSelf: 'center' }} />
+
       </View>
     );
   }

@@ -208,7 +208,7 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
           {this.state.photoURI === '' && this.state.hasCameraPermission &&
             <CircleButton
               image={takePhotoIcon}
-              onPress={() => this.takePicture()}
+              onPress={this.takePicture}
               style={styles.takePhotoButton}
             />
           }

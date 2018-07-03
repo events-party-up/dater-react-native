@@ -3,9 +3,9 @@ import { View } from 'react-native';
 import Moment from 'react-moment';
 
 import { H2, Caption2 } from '../../../components/ui-kit/atoms/typography';
-import DaterButton from '../../../components/ui-kit/atoms/dater-button';
 import { calculateAgeFrom } from '../../../utils/date-utils';
 import MapPanelStyles from './map-panel-styles';
+import CircleButton from '../../../components/ui-kit/atoms/circle-button';
 
 type Props = {
   targetUser: any,
@@ -36,18 +36,20 @@ export default class MapPanelIncomingRequest extends React.Component<Props> {
             justifyContent: 'space-evenly',
           }}
         >
-          <DaterButton
+          {/* <DaterButton
             style={[MapPanelStyles.panelButton, { width: 130 }]}
             onPress={this.props.onPressDecline}
           >
             Отклонить
-          </DaterButton>
-          <DaterButton
+          </DaterButton> */}
+          {/* <DaterButton
             style={[MapPanelStyles.panelButton, { width: 130 }]}
             onPress={this.props.onPressAccept}
           >
             Принять
-          </DaterButton>
+          </DaterButton> */}
+          <CircleButton type="decline" onPress={this.props.onPressDecline} size="medium-big" />
+          <CircleButton type="confirm" onPress={this.props.onPressAccept} size="medium-big" />
         </View>
       </View>
     );
