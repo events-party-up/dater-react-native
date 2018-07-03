@@ -1,27 +1,34 @@
 import React from 'react';
 import { View } from 'react-native';
+import Moment from 'react-moment';
 
 import { H2, Caption2 } from '../../../components/ui-kit/atoms/typography';
 import DaterButton from '../../../components/ui-kit/atoms/dater-button';
+import { calculateAgeFrom } from '../../../utils/date-utils';
 import MapPanelStyles from './map-panel-styles';
 
 type Props = {
   targetUser: any,
   distance: number,
-  onPressStop: () => void,
-  onPressShowMeTarget: () => void,
+  requestTS: Date,
+  onPressDecline: () => void,
+  onPressAccept: () => void,
 }
 
-export default class MapPanelActiveMicroDate extends React.Component<Props> {
+export default class MapPanelIncomingMicroDateRequest extends React.Component<Props> {
   render() {
     return (
       <View>
-        <H2 style={MapPanelStyles.panelHeader}>Активна встеча с{' '}
-          {this.props.targetUser.name}
+        <H2 style={MapPanelStyles.panelHeader}>
+          Запрос от {this.props.targetUser.name} {this.props.targetUser.birthday &&
+            calculateAgeFrom(this.props.targetUser.birthday)}
         </H2>
         <Caption2 style={MapPanelStyles.panelBody}>
-          Расстояние {Math.floor(this.props.distance)} м.{' '}
-          User ID: {this.props.targetUser.id.substring(0, 4)}
+          Отправлен {' '}
+          <Moment locale="ru" element={Caption2} fromNow>
+            {this.props.requestTS}
+          </Moment>.{'\n'}
+          Расстояние {Math.floor(this.props.distance)} м.
         </Caption2>
         <View
           style={{
@@ -31,15 +38,15 @@ export default class MapPanelActiveMicroDate extends React.Component<Props> {
         >
           <DaterButton
             style={[MapPanelStyles.panelButton, { width: 130 }]}
-            onPress={this.props.onPressStop}
+            onPress={this.props.onPressDecline}
           >
-            Отменить
+            Отклонить
           </DaterButton>
           <DaterButton
             style={[MapPanelStyles.panelButton, { width: 130 }]}
-            onPress={this.props.onPressShowMeTarget}
+            onPress={this.props.onPressAccept}
           >
-            Найти
+            Принять
           </DaterButton>
         </View>
       </View>

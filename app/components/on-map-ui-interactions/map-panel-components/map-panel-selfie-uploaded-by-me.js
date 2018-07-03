@@ -62,7 +62,8 @@ export default class MapPanelSelfieUploadedByMe extends React.Component<Props> {
                   marginTop: 8,
                 }}
               >
-                Ожидаю одобрения фото от {this.props.targetUser.name}.
+                Попроси {this.props.targetUser.name} подтвердить ваше совместное фото{' '}
+                с {this.props.targetUser.gender === 'male' ? 'его' : 'её'} телефона.
               </Caption2>
             </View>
           </View>

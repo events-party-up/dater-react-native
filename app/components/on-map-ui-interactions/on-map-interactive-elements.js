@@ -8,9 +8,9 @@ import Interactable from 'react-native-interactable';
 import 'moment/locale/ru';
 import { connect, Dispatch } from 'react-redux';
 
-import MapPanelStyles from './map-panel/map-panel-styles';
+import MapPanelStyles from './map-panel-components/map-panel-styles';
 import OnRightFloatingButtons from '../on-map-ui-interactions/on-right-floating-buttons';
-import MapPanelComponent from './map-panel/map-panel-component';
+import OnMapPanel from './on-map-panel';
 import DeviceUtils from '../../utils/device-utils';
 import { SCREEN_HEIGHT } from '../../constants';
 
@@ -133,7 +133,7 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
             animatedValueY={this.state.deltaHeight}
             onSnap={this.onSnap}
           >
-            <MapPanelComponent
+            <OnMapPanel
               navigation={this.props.navigation}
               microDateIsEnabled={this.props.microDate.enabled}
               mapPanel={this.props.mapPanel}

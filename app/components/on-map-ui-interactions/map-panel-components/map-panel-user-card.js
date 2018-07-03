@@ -21,12 +21,11 @@ export default class MapPanelUserCard extends React.Component<Props> {
             calculateAgeFrom(this.props.mapPanel.targetUser.birthday)}
         </H2>
         <Caption2 style={MapPanelStyles.panelBody}>
-          {Math.floor(this.props.mapPanel.targetUser.distance)} метров от вас. {' '}
-          Был{' '}
+          {Math.floor(this.props.mapPanel.targetUser.distance)} метров от тебя.{'\n'}
+          Последняя активность:{' '}
           <Moment locale="ru" element={Caption2} fromNow>
             {this.props.mapPanel.targetUser.timestamp}
-          </Moment>.{'\n'}
-          User ID: ({this.props.mapPanel.targetUser.id.substring(0, 4)} )
+          </Moment>.
         </Caption2>
         <DaterButton
           style={MapPanelStyles.panelButton}

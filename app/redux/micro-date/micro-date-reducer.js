@@ -102,6 +102,7 @@ const microDateReducer = (state = initialState, action) => {
         enabled: true,
         pending: false,
         distance: payload.distance,
+        microDate: payload.microDate,
         id: payload.microDateId,
         myPreviousCoords: {
           ...payload.myCoords,
@@ -177,7 +178,10 @@ const microDateReducer = (state = initialState, action) => {
 
       return {
         ...state,
-        myPreviousCoords: payload.newCoords,
+        myPreviousCoords: {
+          ...payload.newCoords,
+          clientTS: new Date(),
+        },
         myScore,
         distance: state.targetCurrentCoords ?
           GeoUtils.distance(payload.newCoords, state.targetCurrentCoords) : state.distance,

@@ -6,7 +6,7 @@ import mapViewMyVisibilitySaga from './map-view/mapview-my-visibility-saga';
 import locationSaga from './location/location-saga';
 import authSaga from './auth/auth-saga';
 import authPhoneSaga from './auth/auth-phone-saga';
-import mapPanelSagaNew from './map-panel/map-panel-saga-new';
+import mapPanelSaga from './map-panel/map-panel-saga';
 import usersAroundSaga from './users-around/users-around-saga';
 import appStateSaga from './app-state/app-state-saga';
 import microDateSaga from './micro-date/micro-date-saga';
@@ -26,7 +26,7 @@ export default function* rootSaga() {
     authPhoneSaga(),
     compassSaga(),
     locationSaga(),
-    mapPanelSagaNew(),
+    mapPanelSaga(),
     usersAroundSaga(),
     appStateSaga(),
     gpsStateSaga(),

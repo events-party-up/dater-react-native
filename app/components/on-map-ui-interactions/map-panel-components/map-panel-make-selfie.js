@@ -14,12 +14,12 @@ export default class MapPanelMakeSelfie extends React.Component<Props> {
   render() {
     return (
       <View>
-        <H2 style={MapPanelStyles.panelHeader}>Сделайте совместное селфи!
+        <H2 style={MapPanelStyles.panelHeader}>Сделай селфи!
         </H2>
         {this.props.mapPanel.targetUser &&
           <Caption2 style={MapPanelStyles.panelBody}>
             Ты уже совсем близко к {this.props.mapPanel.targetUser.name}!{'\n'}
-            Для завершения встречи сделайте совместное селфи.
+            Чтобы завершить, сделайте совместное селфи.
           </Caption2>
         }
         <View
@@ -28,16 +28,16 @@ export default class MapPanelMakeSelfie extends React.Component<Props> {
             justifyContent: 'space-evenly',
           }}
         >
-          {this.props.stopMicroDate &&
+          {/* {this.props.stopMicroDate &&
             <DaterButton
               style={[MapPanelStyles.panelButton, { width: 130 }]}
               onPress={this.props.stopMicroDate}
             >
               Остановить
             </DaterButton>
-          }
+          } */}
           <DaterButton
-            style={[MapPanelStyles.panelButton, { width: 130 }]}
+            style={[MapPanelStyles.panelButton]}
             onPress={this.props.onPressOpenCamera}
           >
             Камера

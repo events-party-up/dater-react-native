@@ -4,17 +4,18 @@ import 'moment/locale/ru';
 import Moment from 'react-moment';
 import { Dispatch } from 'react-redux';
 
-import MapPanelStyles from './map-panel-styles';
+import MapPanelStyles from './map-panel-components/map-panel-styles';
 
-import { H2, Caption2 } from '../../../components/ui-kit/atoms/typography';
-import DaterButton from '../../../components/ui-kit/atoms/dater-button';
-import MapPanelSelfieUploading from './map-panel-selfie-uploading';
-import MapPanelSelfieUploadedByMe from './map-panel-selfie-uploaded-by-me';
-import MapPanelSelfieUploadedByTarget from './map-panel-selfie-uploaded-by-target';
-import MapPanelUserCard from './map-panel-user-card';
-import MapPanelMakeSelfie from './map-panel-make-selfie';
-import MapPanelActiveMicroDate from './map-panel-active-micro-date';
-import MapPanelIncomingMicroDateRequest from './map-panel-incoming-micro-date-request';
+import { H2, Caption2 } from '../ui-kit/atoms/typography';
+import DaterButton from '../ui-kit/atoms/dater-button';
+import MapPanelSelfieUploading from './map-panel-components/map-panel-selfie-uploading';
+import MapPanelSelfieUploadedByMe from './map-panel-components/map-panel-selfie-uploaded-by-me';
+import MapPanelSelfieUploadedByTarget from './map-panel-components/map-panel-selfie-uploaded-by-target';
+import MapPanelUserCard from './map-panel-components/map-panel-user-card';
+import MapPanelMakeSelfie from './map-panel-components/map-panel-make-selfie';
+import MapPanelActiveMicroDate from './map-panel-components//map-panel-active-micro-date';
+import MapPanelIncomingMicroDateRequest from './map-panel-components/map-panel-incoming-micro-date-request';
+import MapPanelOutgoingMicroDateAwaitingAccept from './map-panel-components/map-panel-outgoing-micro-date-awaiting-accept'; // eslint-disable-line
 
 type Props = {
   mapPanel: any,
@@ -29,7 +30,7 @@ type Props = {
 type State = {
 }
 
-export default class MapPanelComponent extends React.Component<Props, State> {
+export default class OnMapPanel extends React.Component<Props, State> {
   showMeTargetUser = () => {
     this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_WITH_BUTTON' });
     this.props.dispatch({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE' });
@@ -101,6 +102,7 @@ export default class MapPanelComponent extends React.Component<Props, State> {
             distance={this.props.mapPanel.distance}
             onPressStop={this.stopMicroDate}
             onPressShowMeTarget={this.showMeTargetUser}
+            acceptTS={this.props.mapPanel.microDate.acceptTS}
           />
         );
       case 'incomingMicroDateRequest':
@@ -111,24 +113,16 @@ export default class MapPanelComponent extends React.Component<Props, State> {
             microDateId={this.props.mapPanel.microDateId}
             onPressDecline={this.declineIncomingMicroDate}
             onPressAccept={this.acceptIncomingMicroDate}
+            requestTS={this.props.mapPanel.microDate.requestTS}
           />
         );
       case 'outgoingMicroDateAwaitingAccept':
         return (
-          <View>
-            <H2 style={MapPanelStyles.panelHeader}>Ожидание ответа</H2>
-            <Caption2 style={MapPanelStyles.panelBody}>
-              Запрос на встречу с {this.props.mapPanel.targetUser.name} отправлен{' '}
-              <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.requestTS}</Moment>.{'\n'}
-              User ID: {this.props.mapPanel.microDate.requestFor.substring(0, 4)}
-            </Caption2>
-            <DaterButton
-              style={MapPanelStyles.panelButton}
-              onPress={this.cancelOutgoingMicroDate}
-            >
-              Отменить
-            </DaterButton>
-          </View>
+          <MapPanelOutgoingMicroDateAwaitingAccept
+            targetUser={this.props.mapPanel.targetUser}
+            onPressCancel={this.cancelOutgoingMicroDate}
+            requestTS={this.props.mapPanel.microDate.requestTS}
+          />
         );
       case 'outgoingMicroDateDeclined':
         return (
@@ -149,11 +143,10 @@ export default class MapPanelComponent extends React.Component<Props, State> {
         return (
           <View>
             <H2 style={MapPanelStyles.panelHeader}>
-              Запрос от {this.props.mapPanel.targetUser.name} отменен
+              Запрос на встречу отменен :(
             </H2>
             <Caption2 style={MapPanelStyles.panelBody}>
-              {this.props.mapPanel.targetUser.name} отменил запрос на встречу {' '}
-              <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.cancelRequestTS}</Moment>.
+              {this.props.mapPanel.targetUser.name} отменил запрос на встречу.
             </Caption2>
             <DaterButton style={MapPanelStyles.panelButton} onPress={this.closePanel}>
               ОК
@@ -164,10 +157,10 @@ export default class MapPanelComponent extends React.Component<Props, State> {
         return (
           <View>
             <H2 style={MapPanelStyles.panelHeader}>
-              {this.props.mapPanel.targetUser.name} отменил встречу :(
+              Встреча отменена :(
             </H2>
             <Caption2 style={MapPanelStyles.panelBody}>
-              Встреча с {this.props.mapPanel.targetUser.name} отменена {' '}
+              {this.props.mapPanel.targetUser.name} отменил встречу {' '}
               <Moment locale="ru" element={Caption2} fromNow>{this.props.mapPanel.microDate.stopTS}</Moment>.
             </Caption2>
             <DaterButton style={MapPanelStyles.panelButton} onPress={this.closePanel}>
