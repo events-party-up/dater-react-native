@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Animated } from 'react-native';
+import { Animated, Alert } from 'react-native';
 
 import CircleButton from '../../components/ui-kit/atoms/circle-button';
 import DaterButton from '../../components/ui-kit/atoms/dater-button';
@@ -43,7 +43,15 @@ export default class OnMapPanelButtons extends React.Component<Props> {
   }
 
   stopMicroDate = () => {
-    this.props.dispatch({ type: 'MICRO_DATE_STOP' });
+    Alert.alert(
+      'Отменить встречу?',
+      'Встреча будет отменена, а весь прогресс будет потерян.',
+      [
+        { text: 'Нет', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+        { text: 'Отменить', onPress: () => this.props.dispatch({ type: 'MICRO_DATE_STOP' }) },
+      ],
+      { cancelable: false },
+    );
   }
 
   openCamera = () => {
