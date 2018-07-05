@@ -65,7 +65,7 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
       type: 'UI_MAP_PANEL_READY',
       mapPanelSnapper: (args) => this.interactableElement.snapTo(args),
     });
-    // this.state.animatedDeltaY.addListener(({ value }) => console.log(value));
+    this.state.animatedDeltaY.addListener(({ value }) => console.log(value));
   }
 
   componentWillUnmount() {
@@ -166,12 +166,14 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
         <OnMapPanelButtons
           panelButtonsAnimatedValue={this.state.animatedDeltaY.interpolate({
             inputRange: [
+              -1,
               0,
               1,
               this.state.activeMapPanelPosition,
               SCREEN_HEIGHT,
             ],
             outputRange: [
+              (DeviceUtils.isiPhoneX() && 40) || 16,
               -this.state.activeMapPanelHeight,
               (DeviceUtils.isiPhoneX() && 40) || 16,
               (DeviceUtils.isiPhoneX() && 40) || 16,
