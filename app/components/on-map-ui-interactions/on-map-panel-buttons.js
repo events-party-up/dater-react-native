@@ -5,6 +5,7 @@ import CircleButton from '../../components/ui-kit/atoms/circle-button';
 import DaterButton from '../../components/ui-kit/atoms/dater-button';
 
 const takePhotoIcon = require('../../assets/icons/take-photo/take-photo-white.png');
+const daterLogo = require('../../assets/icons/dater-logo/dater-logo.png');
 
 type Props = {
   panelButtonsAnimatedValue: typeof Animated.Value,
@@ -62,6 +63,13 @@ export default class OnMapPanelButtons extends React.Component<Props> {
         photoType: 'microDateSelfie',
         navigationFlowType: 'mapViewModal',
       },
+    });
+  }
+
+  openDaterLogo = () => {
+    this.props.navigation.navigate({
+      key: 'DaterLogoScreen',
+      routeName: 'DaterLogoScreen',
     });
   }
 
@@ -132,17 +140,29 @@ export default class OnMapPanelButtons extends React.Component<Props> {
         );
       case 'makeSelfie':
         return (
-          <CircleButton
-            size="medium-big"
-            onPress={this.openCamera}
-            // size="medium-big"
-            image={takePhotoIcon}
-            style={{
-              alignContent: 'center',
-              shadowColor: '#4F4F4F',
-              backgroundColor: '#4F4F4F',
-            }}
-          />
+          <React.Fragment>
+            <CircleButton
+              size="medium-big"
+              onPress={this.openDaterLogo}
+              image={daterLogo}
+              roundImage
+              style={{
+                alignContent: 'center',
+                shadowColor: '#4F4F4F',
+                backgroundColor: '#f06eaa',
+              }}
+            />
+            <CircleButton
+              size="medium-big"
+              onPress={this.openCamera}
+              image={takePhotoIcon}
+              style={{
+                alignContent: 'center',
+                shadowColor: '#4F4F4F',
+                backgroundColor: '#4F4F4F',
+              }}
+            />
+          </React.Fragment>
         );
       // case 'selfieUploading':
       // case 'selfieUploadedByMe':
