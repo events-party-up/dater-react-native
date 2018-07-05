@@ -20,6 +20,7 @@ type Props = {
   onPressIn: (any) => void,
   onPressOut: (any) => void,
   image: any,
+  disabled: any,
 }
 
 type State = {
@@ -54,6 +55,10 @@ export default class CircleButton extends React.Component<Props, State> {
   componentWillReceiveProps(nextProps) {
     this.setTypeProps(nextProps.type);
     this.setSizeProps(nextProps.size);
+    this.setState({
+      opacity: nextProps.disabled ? 0.5 : 1,
+      image: nextProps.image,
+    });
   }
 
   setTypeProps(type) {
