@@ -9,10 +9,10 @@ import { H2, Caption2 } from '../../../components/ui-kit/atoms/typography';
 import cloudinaryUrl from '../../../utils/cloudinary-utils';
 
 type Props = {
-  aspectRatio: number,
   cloudinaryPublicId: string,
   cloudinaryImageVersion: number,
   targetUser: any,
+  aspectRatio: number,
 }
 
 class MapPanelSelfieUploadedByTarget extends React.Component<Props> {
@@ -25,36 +25,30 @@ class MapPanelSelfieUploadedByTarget extends React.Component<Props> {
         <View>
           <View style={{
             marginBottom: 16,
-            flexDirection: 'row',
+            flexDirection: this.props.aspectRatio >= 1 ? 'column' : 'row',
           }}
           >
-            <View
+            <Image
               style={{
-                height: 112,
-                aspectRatio: this.props.aspectRatio,
+                [this.props.aspectRatio >= 1 ? 'width' : 'height']: 112,
+                alignSelf: this.props.aspectRatio >= 1 ? 'center' : 'flex-start',
+                aspectRatio: this.props.aspectRatio >= 1 ? 3 / 2 : 2 / 3,
+                borderRadius: 4,
+                marginBottom: 8,
               }}
-            >
-              <Image
-                style={{
-                  height: 112,
-                  alignSelf: 'flex-start',
-                  aspectRatio: this.props.aspectRatio,
-                  borderRadius: 4,
-                }}
-                source={{
-                  uri: cloudinaryUrl({
-                    publicId: `microDates/${this.props.cloudinaryPublicId}`,
-                    version: this.props.cloudinaryImageVersion,
-                  }, {
-                    height: 112,
-                    crop: 'scale',
-                  }),
-                }}
-              />
-            </View>
+              source={{
+                uri: cloudinaryUrl({
+                  publicId: `microDates/${this.props.cloudinaryPublicId}`,
+                  version: this.props.cloudinaryImageVersion,
+                }, {
+                    [this.props.aspectRatio >= 1 ? 'width' : 'height']: 112,
+                    crop: 'thumb',
+                    gravity: 'faces',
+                }),
+              }}
+            />
             <View style={{
-              flex: 1,
-              flexDirection: 'column',
+              flex: this.props.aspectRatio >= 1 ? 0 : 1,
               marginLeft: 16,
             }}
             >

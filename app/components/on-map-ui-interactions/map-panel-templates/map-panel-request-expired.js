@@ -13,7 +13,7 @@ export default class MapPanelRequestExpired extends React.Component<Props> {
   render() {
     return (
       <View>
-        <H2 style={MapPanelStyles.panelHeader}>
+        <H2 style={MapPanelStyles.panelHeader} numberOfLines={1} >
           Время на ответ вышло
         </H2>
         <Caption2 style={MapPanelStyles.panelBody}>

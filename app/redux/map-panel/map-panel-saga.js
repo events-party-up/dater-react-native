@@ -63,9 +63,12 @@ export default function* mapPanelSaga() {
       const task2 = yield takeLatest(hideActions, mapPanelHideActionsSaga, mapPanelSnapper);
       const task3 = yield takeLatest(forceHideActions, mapPanelForceHideActionsSaga, mapPanelSnapper);
       const task4 = yield takeLatest('UI_MAP_PANEL_HIDE_SNAPPED', showAgainIfCantHide, mapPanelSnapper);
-
+      const task5 = yield takeLatest([
+        'UI_MAP_PANEL_SHOW_SNAPPED',
+        'UI_MAP_PANEL_SHOW_HALF_SCREEN_SNAPPED',
+      ], markMapPanelShown);
       yield take('UI_MAP_PANEL_UNLOAD');
-      yield cancel(throttledActionsTask, task1, task2, task3, task4);
+      yield cancel(throttledActionsTask, task1, task2, task3, task4, task5);
     }
   } catch (error) {
     yield put({ type: 'UI_MAP_PANEL_ERROR', payload: error });
@@ -95,9 +98,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
     }
 
     yield take('UI_MAP_PANEL_SHOW_SNAPPED');
-    mapPanelIsShowing = false;
     yield put({ type: 'UI_MAP_PANEL_SHOW_FINISHED' });
-    mapPanelIsShown = true;
   } catch (error) {
     yield put({ type: 'UI_MAP_PANEL_ERROR', payload: error });
   }
@@ -189,6 +190,9 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
         mode: 'activeMicroDate',
         heightMode: 'standard',
         targetUser,
+        microDate: {
+          acceptTS: nextAction.payload.acceptTS,
+        },
         distance: GeoUtils.distance(targetUserSnap.data().geoPoint, myCoords),
       };
     case 'MICRO_DATE_INCOMING_ACCEPT':
@@ -305,8 +309,6 @@ function* showAgainIfCantHide(mapPanelSnapper) {
     yield take([
       'UI_MAP_PANEL_SHOW_SNAPPED',
     ]);
-    mapPanelIsShowing = false;
-    mapPanelIsShown = true;
   }
 }
 
@@ -316,4 +318,9 @@ function* mapPanelForceHideActionsSaga(mapPanelSnapper, nextAction) {
   yield call(mapPanelSnapper, { index: 4 }); // hide
   yield take('UI_MAP_PANEL_HIDE_SNAPPED');
   mapPanelIsShown = false;
+}
+
+function markMapPanelShown() {
+  mapPanelIsShowing = false;
+  mapPanelIsShown = true;
 }

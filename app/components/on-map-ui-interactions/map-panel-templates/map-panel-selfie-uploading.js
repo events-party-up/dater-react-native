@@ -7,78 +7,85 @@ import {
 
 import { H2, Caption2, Body } from '../../../components/ui-kit/atoms/typography';
 
-const MapPanelSelfieUploading = (props) => (
-  <View>
-    <View>
-      <View style={{
-        marginTop: 8,
-        flexDirection: 'row',
-      }}
-      >
-        <View
-          style={{
-            height: 112,
-            aspectRatio: props.aspectRatio,
-          }}
-        >
-          <ActivityIndicator
-            color="white"
-            size="large"
-            style={{
-              position: 'absolute',
-              left: 0,
-              bottom: 0,
-              top: 0,
-              right: 0,
-              zIndex: 1,
-              backgroundColor: 'rgba(107, 107, 107, 0.6)',
-            }
-            }
-          />
-          <Image
-            style={{
-              height: 112,
-              alignSelf: 'flex-start',
-              aspectRatio: props.aspectRatio,
-              borderRadius: 4,
-            }}
-            source={{ uri: props.photoURI }}
-          // source={{ uri: 'https://res.cloudinary.com/dater/image/upload/v1527447895/microDates/microDateId.jpg' }}
-          />
-        </View>
-        <View style={{
-          flex: 1,
-          flexDirection: 'column',
-          marginLeft: 16,
-        }}
-        >
-          <H2>
-            Загрузка фото
-          </H2>
-          <Caption2
-            style={{
-              marginTop: 8,
-            }}
-          >
-            Идет загрузка фото на сервер...
-          </Caption2>
+type Props = {
+  aspectRatio: number,
+  progress: number,
+  photoURI: string,
+}
+
+export default class MapPanelSelfieUploading extends React.Component<Props> {
+  render() {
+    return (
+      <View>
+        <View>
           <View style={{
-            flexDirection: 'column',
-            justifyContent: 'flex-end',
-            flex: 1,
+            marginTop: 8,
+            flexDirection: 'row',
           }}
           >
-            <Body style={{
-              alignSelf: 'flex-start',
+            <View
+              style={{
+                [this.props.aspectRatio >= 1 ? 'width' : 'height']: 112,
+                aspectRatio: this.props.aspectRatio >= 1 ? 3 / 2 : 2 / 3,
+              }}
+            >
+              <ActivityIndicator
+                color="white"
+                size="large"
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  bottom: 0,
+                  top: 0,
+                  right: 0,
+                  zIndex: 1,
+                  backgroundColor: 'rgba(107, 107, 107, 0.6)',
+                }
+                }
+              />
+              <Image
+                style={{
+                  [this.props.aspectRatio >= 1 ? 'width' : 'height']: 112,
+                  alignSelf: 'flex-start',
+                  aspectRatio: this.props.aspectRatio >= 1 ? 3 / 2 : 2 / 3,
+                  borderRadius: 4,
+                }}
+                source={{ uri: this.props.photoURI }}
+              />
+            </View>
+            <View style={{
+              flex: 1,
+              flexDirection: 'column',
+              marginLeft: 16,
             }}
             >
-              Прогресс {props.progress < 100 ? props.progress : 80}%
-            </Body>
+              <H2 numberOfLines={1}>
+                Загрузка фото
+              </H2>
+              <Caption2
+                style={{
+                  marginTop: 8,
+                }}
+              >
+                Идет загрузка фото на сервер...
+              </Caption2>
+              <View style={{
+                flexDirection: 'column',
+                justifyContent: 'flex-end',
+                flex: 1,
+              }}
+              >
+                <Body style={{
+                  alignSelf: 'flex-start',
+                }}
+                >
+                  Прогресс {this.props.progress < 100 ? this.props.progress : 80}%
+                </Body>
+              </View>
+            </View>
           </View>
         </View>
       </View>
-    </View>
-  </View>
-);
-
-export default MapPanelSelfieUploading;
+    );
+  }
+}
