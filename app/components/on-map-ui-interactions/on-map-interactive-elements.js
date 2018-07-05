@@ -146,7 +146,9 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
               { y: this.standardMapPanelPosition, id: 'showStandard' },
               { y: this.halfScreenMapPanelPosition, id: 'showHalfScreen' },
               { y: this.fullScreenMapPanelPosition, id: 'showFullScreen' },
-              { y: this.headerMapPanelPosition, id: 'showHeader' }, // close map panel snap point
+              {
+                y: this.headerMapPanelPosition, id: 'showHeader', damping: 0.7, tension: 100,
+              },
               { y: this.closedMapPanelPosition, id: 'close' }, // close map panel snap point
             ]}
             boundaries={{ top: 0 }}
