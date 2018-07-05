@@ -1,4 +1,4 @@
-import { takeEvery, select, take, put } from 'redux-saga/effects';
+import { takeEvery, select, take, put, spawn } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 
 import { GEO_POINTS_COLLECTION } from '../../constants';
@@ -44,23 +44,27 @@ function* microDateVisibilitySaga(action) {
   switch (action.type) {
     case 'MICRO_DATE_OUTGOING_REQUEST':
       yield* setMyMapVisibilityModeTo(action.payload.requestFor);
-      yield put({ type: 'MAPVIEW_MY_VISIBILITY_CHANGE', payload: action.payload.requestFor });
       break;
     default:
       yield* setMyMapVisibilityModeTo(action.payload.targetUser.id);
-      yield put({ type: 'MAPVIEW_MY_VISIBILITY_CHANGE', payload: action.payload.targetUser.id });
       break;
   }
 }
 
 function* setMyMapVisibilityModeTo(visibility) {
-  if (!firebase.auth().currentUser) return;
-  const { uid } = firebase.auth().currentUser;
-  yield firebase.firestore()
+  yield spawn(updateVisibilityModeInFirebase, visibility);
+  yield put({ type: 'MAPVIEW_MY_VISIBILITY_CHANGE', payload: visibility });
+}
+
+async function updateVisibilityModeInFirebase(visibility) {
+  const { currentUser } = firebase.auth();
+  if (!currentUser) return;
+  const { uid } = currentUser;
+
+  await firebase.firestore()
     .collection(GEO_POINTS_COLLECTION)
     .doc(uid)
     .update({
       visibility,
     });
-  yield put({ type: 'MAPVIEW_MY_VISIBILITY_CHANGE', payload: visibility });
 }
