@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View, Animated, TouchableOpacity } from 'react-native';
 import 'moment/locale/ru';
-import { Dispatch } from 'react-redux';
 
 import MapPanelStyles from './map-panel-templates/map-panel-styles';
 
@@ -22,80 +21,21 @@ import MapPanelMicroDateExpired from './map-panel-templates/map-panel-micro-date
 type Props = {
   mapPanel: any,
   microDate: any,
-  dispatch: Dispatch,
-  navigation: any,
   uploadPhotos: any,
-  dispatch: Dispatch,
-  navigation: any,
   onPressHandle: () => void,
+  panelButtonsAnimatedValue: Animated.Value,
 };
 
 type State = {
 }
 
 export default class OnMapPanel extends React.Component<Props, State> {
-  showMeTargetUser = () => {
-    this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_WITH_BUTTON' });
-    this.props.dispatch({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE' });
-  }
-
-  requestMicroDate = (targetUser) => {
-    this.props.dispatch({
-      type: 'MICRO_DATE_OUTGOING_REQUEST_INIT',
-      payload: {
-        targetUser,
-      },
-    });
-  }
-
-  cancelOutgoingMicroDate = () => {
-    this.props.dispatch({ type: 'MICRO_DATE_OUTGOING_CANCEL' });
-  }
-
-  acceptIncomingMicroDate = () => {
-    this.props.dispatch({ type: 'MICRO_DATE_INCOMING_ACCEPT_INIT' });
-  }
-
-  declineIncomingMicroDate = () => {
-    this.props.dispatch({
-      type: 'MICRO_DATE_INCOMING_DECLINE_BY_ME',
-    });
-  }
-
-  stopMicroDate = () => {
-    this.props.dispatch({ type: 'MICRO_DATE_STOP' });
-  }
-
-  openCamera = () => {
-    this.props.navigation.navigate({
-      key: 'MicroDateSelfie',
-      routeName: 'MakePhotoSelfieScreen',
-      params: {
-        photoType: 'microDateSelfie',
-        navigationFlowType: 'mapViewModal',
-      },
-    });
-  }
-
-  onSelfieDeclinedByMe = () => {
-    this.props.dispatch({ type: 'MICRO_DATE_DECLINE_SELFIE_BY_ME' });
-  }
-
-  onSelfieApprovedByMe = () => {
-    this.props.dispatch({ type: 'MICRO_DATE_APPROVE_SELFIE' });
-  }
-
-  closePanel = () => {
-    this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_WITH_BUTTON' });
-  }
-
   renderCard() {
     switch (this.props.mapPanel.mode) {
       case 'userCard':
         return (
           <MapPanelUserCard
             mapPanel={this.props.mapPanel}
-            onPress={() => this.requestMicroDate(this.props.mapPanel.targetUser)}
           />
         );
       case 'activeMicroDate':
@@ -103,8 +43,6 @@ export default class OnMapPanel extends React.Component<Props, State> {
           <MapPanelActiveMicroDate
             targetUser={this.props.mapPanel.targetUser}
             distance={this.props.mapPanel.distance}
-            onPressStop={this.stopMicroDate}
-            onPressShowMeTarget={this.showMeTargetUser}
             acceptTS={this.props.mapPanel.microDate.acceptTS}
           />
         );
@@ -114,8 +52,6 @@ export default class OnMapPanel extends React.Component<Props, State> {
             targetUser={this.props.mapPanel.targetUser}
             distance={this.props.mapPanel.distance}
             microDateId={this.props.mapPanel.microDateId}
-            onPressDecline={this.declineIncomingMicroDate}
-            onPressAccept={this.acceptIncomingMicroDate}
             requestTS={this.props.mapPanel.microDate.requestTS}
           />
         );
@@ -123,15 +59,14 @@ export default class OnMapPanel extends React.Component<Props, State> {
         return (
           <MapPanelAwaitingAcceptRequest
             targetUser={this.props.mapPanel.targetUser}
-            onPressCancel={this.cancelOutgoingMicroDate}
             requestTS={this.props.mapPanel.microDate.requestTS}
+            panelButtonsAnimatedValue={this.props.panelButtonsAnimatedValue}
           />
         );
       case 'outgoingMicroDateDeclined':
         return (
           <MapPanelRequestDeclined
             targetUser={this.props.mapPanel.targetUser}
-            onPressClose={this.closePanel}
             declineTS={this.props.mapPanel.microDate.declineTS}
           />
         );
@@ -139,14 +74,12 @@ export default class OnMapPanel extends React.Component<Props, State> {
         return (
           <MapPanelRequestCancelled
             targetUser={this.props.mapPanel.targetUser}
-            onPressClose={this.closePanel}
           />
         );
       case 'microDateStopped':
         return (
           <MapPanelMicroDateStopped
             targetUser={this.props.mapPanel.targetUser}
-            onPressClose={this.closePanel}
             stopTS={this.props.mapPanel.microDate.stopTS}
           />
         );
@@ -155,7 +88,6 @@ export default class OnMapPanel extends React.Component<Props, State> {
           <MapPanelRequestExpired
             targetUser={this.props.mapPanel.targetUser}
             mapPanel={this.props.mapPanel}
-            onPressClose={this.closePanel}
           />
         );
       case 'microDatetExpired':
@@ -163,15 +95,12 @@ export default class OnMapPanel extends React.Component<Props, State> {
           <MapPanelMicroDateExpired
             targetUser={this.props.mapPanel.targetUser}
             mapPanel={this.props.mapPanel}
-            onPressClose={this.closePanel}
           />
         );
       case 'makeSelfie':
         return (
           <MapPanelMakeSelfie
             mapPanel={this.props.mapPanel}
-            onPressOpenCamera={this.openCamera}
-            stopMicroDate={this.stopMicroDate} // TODO: remove
           />
         );
       case 'selfieUploading':
@@ -198,8 +127,6 @@ export default class OnMapPanel extends React.Component<Props, State> {
             cloudinaryPublicId={this.props.mapPanel.microDate.id}
             cloudinaryImageVersion={this.props.mapPanel.microDate.selfie.version}
             targetUser={this.props.mapPanel.targetUser}
-            onDecline={this.onSelfieDeclinedByMe}
-            onApprove={this.onSelfieApprovedByMe}
           />
         );
       default:

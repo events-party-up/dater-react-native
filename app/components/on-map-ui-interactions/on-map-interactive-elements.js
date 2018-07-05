@@ -12,8 +12,9 @@ import OnMapButtons from './on-map-buttons';
 import OnMapPanel from './on-map-panel';
 import DeviceUtils from '../../utils/device-utils';
 import { SCREEN_HEIGHT } from '../../constants';
+import OnMapPanelButtons from './on-map-panel-buttons';
 
-const STANDARD_MAP_PANEL_HEIGHT = (DeviceUtils.isiPhoneX() && 190) || (Platform.OS === 'ios' ? 175 : 205);
+const STANDARD_MAP_PANEL_HEIGHT = (DeviceUtils.isiPhoneX() && 210) || (Platform.OS === 'ios' ? 175 : 205);
 
 const mapStateToProps = (state) => ({
   mapPanel: state.mapPanel,
@@ -45,7 +46,7 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
   standardMapPanelPosition = SCREEN_HEIGHT - STANDARD_MAP_PANEL_HEIGHT;
   halfScreenMapPanelPosition = SCREEN_HEIGHT / 2;
   fullScreenMapPanelPosition = (DeviceUtils.isiPhoneX() && 32) || (Platform.OS === 'ios' ? 20 : 8);
-  headerMapPanelPosition = this.closedMapPanelPosition - (DeviceUtils.isiPhoneX() ? 65 : 55);
+  headerMapPanelPosition = this.closedMapPanelPosition - (DeviceUtils.isiPhoneX() ? 96 : 72);
 
   constructor(props) {
     super(props);
@@ -59,6 +60,7 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
       type: 'UI_MAP_PANEL_READY',
       mapPanelSnapper: (args) => this.interactableElement.snapTo(args),
     });
+    // this.state.deltaHeight.addListener(({ value }) => console.log(value));
   }
 
   componentWillUnmount() {
@@ -84,7 +86,10 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
 
   render() {
     return (
-      <React.Fragment>
+      <View
+        pointerEvents="box-none"
+        style={MapPanelStyles.panelContainer}
+      >
         <Animated.View
           style={{
             bottom: this.state.deltaHeight.interpolate({
@@ -117,8 +122,8 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
           />
         </Animated.View>
         <View
-          style={MapPanelStyles.panelContainer}
           pointerEvents="box-none"
+          style={MapPanelStyles.panelContainer}
         >
           <Interactable.View
             ref={(component) => { this.interactableElement = component; }}
@@ -136,17 +141,38 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
             onSnap={this.onSnap}
           >
             <OnMapPanel
-              navigation={this.props.navigation}
               microDateIsEnabled={this.props.microDate.enabled}
               mapPanel={this.props.mapPanel}
               uploadPhotos={this.props.uploadPhotos}
               microDate={this.props.microDate}
-              dispatch={this.props.dispatch}
               onPressHandle={this.onPressHandle}
             />
           </Interactable.View>
         </View>
-      </React.Fragment>
+        <OnMapPanelButtons
+          panelButtonsAnimatedValue={this.state.deltaHeight.interpolate({
+            inputRange: [
+              0,
+              1,
+              this.standardMapPanelPosition,
+              SCREEN_HEIGHT,
+            ],
+            outputRange: [
+              // SCREEN_HEIGHT, // padding panel closed for 0 value
+              -STANDARD_MAP_PANEL_HEIGHT,
+              (DeviceUtils.isiPhoneX() && 40) || 16,
+              (DeviceUtils.isiPhoneX() && 40) || 16,
+              // 16-72,
+              -STANDARD_MAP_PANEL_HEIGHT,
+            ],
+            extrapolate: 'clamp',
+            useNativeDriver: true,
+          })}
+          dispatch={this.props.dispatch}
+          navigation={this.props.navigation}
+          mapPanel={this.props.mapPanel}
+        />
+      </View>
     );
   }
 }

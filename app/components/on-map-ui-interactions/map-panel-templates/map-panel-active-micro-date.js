@@ -3,16 +3,12 @@ import { View } from 'react-native';
 import Moment from 'react-moment';
 
 import { H2, Caption2 } from '../../../components/ui-kit/atoms/typography';
-// import DaterButton from '../../../components/ui-kit/atoms/dater-button';
 import MapPanelStyles from './map-panel-styles';
-import CircleButton from '../../../components/ui-kit/atoms/circle-button';
 
 type Props = {
   targetUser: any,
   acceptTS: Date,
   distance: number,
-  onPressStop: () => void,
-  // onPressShowMeTarget: () => void,
 }
 
 export default class MapPanelActiveMicroDate extends React.Component<Props> {
@@ -27,27 +23,6 @@ export default class MapPanelActiveMicroDate extends React.Component<Props> {
           <Moment locale="ru" element={Caption2} fromNow>{this.props.acceptTS}</Moment>.{'\n'}
           Расстояние {Math.floor(this.props.distance)} м.
         </Caption2>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-evenly',
-          }}
-        >
-          <CircleButton type="decline" onPress={this.props.onPressStop} size="large" style={{ alignSelf: 'center' }} />
-
-          {/* <DaterButton
-            style={[MapPanelStyles.panelButton, { width: 130 }]}
-            onPress={this.props.onPressStop}
-          >
-            Отменить
-          </DaterButton>
-          <DaterButton
-            style={[MapPanelStyles.panelButton, { width: 130 }]}
-            onPress={this.props.onPressShowMeTarget}
-          >
-            Найти
-          </DaterButton> */}
-        </View>
       </View>
     );
   }

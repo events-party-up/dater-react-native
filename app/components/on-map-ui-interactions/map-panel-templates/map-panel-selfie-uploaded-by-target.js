@@ -6,8 +6,6 @@ import {
 
 import MapPanelStyles from './map-panel-styles';
 import { H2, Caption2 } from '../../../components/ui-kit/atoms/typography';
-import CircleButton from '../../../components/ui-kit/atoms/circle-button';
-// import DaterButton from '../../../components/ui-kit/atoms/dater-button';
 import cloudinaryUrl from '../../../utils/cloudinary-utils';
 
 type Props = {
@@ -15,8 +13,6 @@ type Props = {
   cloudinaryPublicId: string,
   cloudinaryImageVersion: number,
   targetUser: any,
-  onDecline: () => void,
-  onApprove: () => void,
 }
 
 class MapPanelSelfieUploadedByTarget extends React.Component<Props> {
@@ -71,28 +67,6 @@ class MapPanelSelfieUploadedByTarget extends React.Component<Props> {
               </Caption2>
             </View>
           </View>
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-evenly',
-          }}
-        >
-          <CircleButton type="decline" onPress={this.props.onDecline} size="medium-big" />
-          <CircleButton type="confirm" onPress={this.props.onApprove} size="medium-big" />
-
-          {/* <DaterButton
-            style={[MapPanelStyles.panelButton, { width: 130 }]}
-            onPress={this.props.onDecline}
-          >
-              Нет
-          </DaterButton>
-          <DaterButton
-            style={[MapPanelStyles.panelButton, { width: 130 }]}
-            onPress={this.props.onApprove}
-          >
-              Да
-          </DaterButton> */}
         </View>
       </View>
     );

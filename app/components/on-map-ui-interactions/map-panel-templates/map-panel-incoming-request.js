@@ -5,14 +5,11 @@ import Moment from 'react-moment';
 import { H2, Caption2 } from '../../../components/ui-kit/atoms/typography';
 import { calculateAgeFrom } from '../../../utils/date-utils';
 import MapPanelStyles from './map-panel-styles';
-import CircleButton from '../../../components/ui-kit/atoms/circle-button';
 
 type Props = {
   targetUser: any,
   distance: number,
   requestTS: Date,
-  onPressDecline: () => void,
-  onPressAccept: () => void,
 }
 
 export default class MapPanelIncomingRequest extends React.Component<Props> {
@@ -30,27 +27,6 @@ export default class MapPanelIncomingRequest extends React.Component<Props> {
           </Moment>.{'\n'}
           Расстояние {Math.floor(this.props.distance)} м.
         </Caption2>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-evenly',
-          }}
-        >
-          {/* <DaterButton
-            style={[MapPanelStyles.panelButton, { width: 130 }]}
-            onPress={this.props.onPressDecline}
-          >
-            Отклонить
-          </DaterButton> */}
-          {/* <DaterButton
-            style={[MapPanelStyles.panelButton, { width: 130 }]}
-            onPress={this.props.onPressAccept}
-          >
-            Принять
-          </DaterButton> */}
-          <CircleButton type="decline" onPress={this.props.onPressDecline} size="medium-big" />
-          <CircleButton type="confirm" onPress={this.props.onPressAccept} size="medium-big" />
-        </View>
       </View>
     );
   }

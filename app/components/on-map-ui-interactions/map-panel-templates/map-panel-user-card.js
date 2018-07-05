@@ -3,13 +3,11 @@ import { View } from 'react-native';
 import Moment from 'react-moment';
 
 import { H2, Caption2 } from '../../../components/ui-kit/atoms/typography';
-import DaterButton from '../../../components/ui-kit/atoms/dater-button';
 import { calculateAgeFrom } from '../../../utils/date-utils';
 import MapPanelStyles from './map-panel-styles';
 
 type Props = {
   mapPanel: any,
-  onPress: () => void,
 }
 
 export default class MapPanelUserCard extends React.Component<Props> {
@@ -27,12 +25,6 @@ export default class MapPanelUserCard extends React.Component<Props> {
             {this.props.mapPanel.targetUser.timestamp}
           </Moment>.
         </Caption2>
-        <DaterButton
-          style={MapPanelStyles.panelButton}
-          onPress={this.props.onPress}
-        >
-          Встретиться
-        </DaterButton>
       </View>
     );
   }
