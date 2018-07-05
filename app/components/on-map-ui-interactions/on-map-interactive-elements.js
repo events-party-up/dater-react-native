@@ -15,6 +15,7 @@ import { SCREEN_HEIGHT } from '../../constants';
 import OnMapPanelButtons from './on-map-panel-buttons';
 
 const STANDARD_MAP_PANEL_HEIGHT = (DeviceUtils.isiPhoneX() && 210) || (Platform.OS === 'ios' ? 175 : 205);
+const HALF_SCREEN_MAP_PANEL_HEIGHT = SCREEN_HEIGHT / 2;
 
 const mapStateToProps = (state) => ({
   mapPanel: state.mapPanel,
@@ -37,21 +38,25 @@ type Props = {
 };
 
 type State = {
-  deltaHeight: Animated.Value
+  animatedDeltaY: Animated.Value,
+  activeMapPanelHeight: number,
+  activeMapPanelPosition: number,
 }
 
 class OnMapInteractiveElements extends React.Component<Props, State> {
   interactableElement: Interactable.View;
   closedMapPanelPosition = SCREEN_HEIGHT;
   standardMapPanelPosition = SCREEN_HEIGHT - STANDARD_MAP_PANEL_HEIGHT;
-  halfScreenMapPanelPosition = SCREEN_HEIGHT / 2;
+  halfScreenMapPanelPosition = HALF_SCREEN_MAP_PANEL_HEIGHT;
   fullScreenMapPanelPosition = (DeviceUtils.isiPhoneX() && 32) || (Platform.OS === 'ios' ? 20 : 8);
   headerMapPanelPosition = this.closedMapPanelPosition - (DeviceUtils.isiPhoneX() ? 96 : 72);
 
   constructor(props) {
     super(props);
     this.state = {
-      deltaHeight: new Animated.Value(this.closedMapPanelPosition),
+      animatedDeltaY: new Animated.Value(this.closedMapPanelPosition),
+      activeMapPanelPosition: this.standardMapPanelPosition,
+      activeMapPanelHeight: STANDARD_MAP_PANEL_HEIGHT,
     };
   }
 
@@ -60,12 +65,21 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
       type: 'UI_MAP_PANEL_READY',
       mapPanelSnapper: (args) => this.interactableElement.snapTo(args),
     });
-    // this.state.deltaHeight.addListener(({ value }) => console.log(value));
+    // this.state.animatedDeltaY.addListener(({ value }) => console.log(value));
   }
 
   componentWillUnmount() {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_UNLOAD',
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      activeMapPanelPosition: (nextProps.mapPanel.heightMode === 'halfScreen' && this.halfScreenMapPanelPosition) ||
+        this.standardMapPanelPosition,
+      activeMapPanelHeight: (nextProps.mapPanel.heightMode === 'halfScreen' && HALF_SCREEN_MAP_PANEL_HEIGHT) ||
+        STANDARD_MAP_PANEL_HEIGHT,
     });
   }
 
@@ -92,7 +106,7 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
       >
         <Animated.View
           style={{
-            bottom: this.state.deltaHeight.interpolate({
+            bottom: this.state.animatedDeltaY.interpolate({
               inputRange: [
                 0, // for some reason this is often initial value
                 1,
@@ -137,7 +151,7 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
             ]}
             boundaries={{ top: -300 }}
             initialPosition={{ y: this.closedMapPanelPosition }}
-            animatedValueY={this.state.deltaHeight}
+            animatedValueY={this.state.animatedDeltaY}
             onSnap={this.onSnap}
           >
             <OnMapPanel
@@ -150,20 +164,18 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
           </Interactable.View>
         </View>
         <OnMapPanelButtons
-          panelButtonsAnimatedValue={this.state.deltaHeight.interpolate({
+          panelButtonsAnimatedValue={this.state.animatedDeltaY.interpolate({
             inputRange: [
               0,
               1,
-              this.standardMapPanelPosition,
+              this.state.activeMapPanelPosition,
               SCREEN_HEIGHT,
             ],
             outputRange: [
-              // SCREEN_HEIGHT, // padding panel closed for 0 value
-              -STANDARD_MAP_PANEL_HEIGHT,
+              -this.state.activeMapPanelHeight,
               (DeviceUtils.isiPhoneX() && 40) || 16,
               (DeviceUtils.isiPhoneX() && 40) || 16,
-              // 16-72,
-              -STANDARD_MAP_PANEL_HEIGHT,
+              -this.state.activeMapPanelHeight,
             ],
             extrapolate: 'clamp',
             useNativeDriver: true,

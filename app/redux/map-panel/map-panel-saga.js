@@ -130,12 +130,14 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
       }
       return {
         mode: 'userCard',
+        heightMode: 'standard',
         targetUser: nextAction.payload,
         canHide: true,
       };
     case 'MICRO_DATE_OUTGOING_REQUEST':
       return {
         mode: 'outgoingMicroDateAwaitingAccept',
+        heightMode: 'standard',
         canHide: false,
         targetUser,
         microDate: {
@@ -147,6 +149,7 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
     case 'MICRO_DATE_INCOMING_REQUEST':
       return {
         mode: 'incomingMicroDateRequest',
+        heightMode: 'standard',
         targetUser,
         distance: GeoUtils.distance(targetUserSnap.data().geoPoint, myCoords),
         canHide: false,
@@ -158,6 +161,7 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
     case 'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET':
       return {
         mode: 'outgoingMicroDateDeclined',
+        heightMode: 'standard',
         targetUser,
         canHide: true,
         microDate: microDateState.microDate,
@@ -165,6 +169,7 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
     case 'MICRO_DATE_INCOMING_CANCELLED':
       return {
         mode: 'incomingMicroDateCancelled',
+        heightMode: 'standard',
         targetUser,
         canHide: true,
         microDate: microDateState.microDate,
@@ -182,6 +187,7 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
       return {
         canHide: false,
         mode: 'activeMicroDate',
+        heightMode: 'standard',
         targetUser,
         distance: GeoUtils.distance(targetUserSnap.data().geoPoint, myCoords),
       };
@@ -189,6 +195,7 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
     case 'MICRO_DATE_OUTGOING_ACCEPT':
       return {
         mode: 'activeMicroDate',
+        heightMode: 'standard',
         targetUser,
         canHide: false,
         microDate: {
@@ -199,6 +206,7 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
     case 'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET':
       return {
         mode: 'microDateStopped',
+        heightMode: 'standard',
         targetUser,
         canHide: true,
         microDate: microDateState.microDate,
@@ -206,6 +214,7 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
     case 'MICRO_DATE_INCOMING_STOPPED_BY_TARGET':
       return {
         mode: 'microDateStopped',
+        heightMode: 'standard',
         targetUser,
         canHide: true,
         microDate: microDateState.microDate,
@@ -222,12 +231,14 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
       return {
         targetUser,
         mode: 'makeSelfie',
+        heightMode: 'standard',
         canHide: false,
         source: 'MICRO_DATE_CLOSE_DISTANCE_MOVE',
       };
     case 'MICRO_DATE_UPLOAD_PHOTO_START':
       return {
         mode: 'selfieUploading',
+        heightMode: 'standard',
         canHide: false,
         uploadSelfie: {
           photoURI: nextAction.payload.uri,
@@ -239,6 +250,7 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
       return {
         targetUser,
         mode: 'selfieUploadedByMe',
+        heightMode: 'standard',
         canHide: false,
         microDate: microDateState.microDate,
       };
@@ -247,6 +259,7 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
       return {
         targetUser,
         mode: 'selfieUploadedByTarget',
+        heightMode: 'halfScreen',
         canHide: false,
         microDate: microDateState.microDate,
       };
@@ -257,6 +270,7 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
     case 'MICRO_DATE_INCOMING_SELFIE_DECLINED_BY_ME':
       return {
         mode: 'makeSelfie',
+        heightMode: 'standard',
         canHide: false,
         targetUser,
       };
