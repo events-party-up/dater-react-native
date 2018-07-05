@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Animated, TouchableOpacity } from 'react-native';
+import { View, Animated } from 'react-native';
 import 'moment/locale/ru';
 
 import MapPanelStyles from './map-panel-templates/map-panel-styles';
@@ -137,7 +137,7 @@ export default class OnMapPanel extends React.Component<Props, State> {
   render() {
     return (
       <View style={MapPanelStyles.panel}>
-        <TouchableOpacity
+        <View
           style={MapPanelStyles.panelHandle}
           onPress={this.props.onPressHandle}
           hitSlop={{
