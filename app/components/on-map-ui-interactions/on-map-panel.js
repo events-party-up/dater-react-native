@@ -42,7 +42,7 @@ export default class OnMapPanel extends React.Component<Props, State> {
         return (
           <MapPanelActiveMicroDate
             targetUser={this.props.mapPanel.targetUser}
-            distance={this.props.mapPanel.distance}
+            distance={this.props.microDate.distance}
             acceptTS={this.props.mapPanel.microDate.acceptTS}
           />
         );

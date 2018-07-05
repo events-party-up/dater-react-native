@@ -151,7 +151,7 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
               },
               { y: this.closedMapPanelPosition, id: 'close' }, // close map panel snap point
             ]}
-            boundaries={{ top: 0 }}
+            boundaries={{ top: -10 }}
             initialPosition={{ y: this.closedMapPanelPosition }}
             animatedValueY={this.state.animatedDeltaY}
             onSnap={this.onSnap}
@@ -168,11 +168,15 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
         <OnMapPanelButtons
           panelButtonsAnimatedValue={this.state.animatedDeltaY.interpolate({
             inputRange: [
-              0,
+              -0.01,
+              0, // all this just to handle edge case when Interactable is set to 0 on initialization although not really being at 0!
+              0.01,
               this.state.activeMapPanelPosition,
               SCREEN_HEIGHT,
             ],
             outputRange: [
+              (DeviceUtils.isiPhoneX() && 40) || 16,
+              -this.state.activeMapPanelHeight,
               (DeviceUtils.isiPhoneX() && 40) || 16,
               (DeviceUtils.isiPhoneX() && 40) || 16,
               -this.state.activeMapPanelHeight,
