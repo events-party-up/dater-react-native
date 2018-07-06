@@ -175,7 +175,7 @@ export default class DaterButton extends React.Component<Props> {
             </View>)}
 
           <H3 buttonText color={this.buttonTextColor} align="center">
-            {this.props.children.toUpperCase()}
+            {_.upperCase(this.props.children)}
           </H3>
           {this.props.inProgress &&
             <ActivityIndicator

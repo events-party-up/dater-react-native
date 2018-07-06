@@ -54,6 +54,7 @@ export const Body = (props) => {
       allowFontScaling={false}
       numberOfLines={props.numberOfLines}
       adjustsFontSizeToFit
+      ellipsizeMode={props.ellipsizeMode}
     >
       {props.children}
     </Text>

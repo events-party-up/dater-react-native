@@ -23,8 +23,9 @@ import MyLocationOnNonCenteredMap from '../components/map/my-location-on-non-cen
 // import OnMapRightButtons from '../components/map/on-map-right-buttons';
 import OnMapInteractiveElements from '../components/on-map-ui-interactions/on-map-interactive-elements';
 import BlockMapViewComponent from '../components/map/block-mapview-component';
+import SystemNotification from '../components/ui-kit/molecules/system-notification';
 
-// import DaterButton from '../components/ui-kit/atoms/dater-button';
+import DaterButton from '../components/ui-kit/atoms/dater-button';
 // import FirebaseSetup from '../components/firebase-setup';
 
 const mapStateToProps = (state) => ({
@@ -83,6 +84,7 @@ type Props = {
 
 type State = {
   compassHeading: number,
+  messageCount: number,
 }
 
 class MainMapViewScreen extends React.Component<Props, State> {
@@ -93,12 +95,19 @@ class MainMapViewScreen extends React.Component<Props, State> {
     super(props);
     this.state = {
       compassHeading: 0,
+      messageCount: 0,
     };
   }
 
   componentWillMount() {
     this.compassListener = new NativeEventEmitter(ReactNativeHeading);
     this.compassListener.addListener('headingUpdated', this.onCompassHeadingUpdated);
+  }
+
+  toggleSystemNotification = () => {
+    this.setState({
+      messageCount: this.state.messageCount + 1,
+    });
   }
 
   componentWillUnmount() {
@@ -196,6 +205,27 @@ class MainMapViewScreen extends React.Component<Props, State> {
       <View
         style={styles.mapViewContainer}
       >
+        <SystemNotification
+          message={`Отсутствует интернет-соединение, проверьте связь (${this.state.messageCount})`}
+        />
+
+        <View style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 2,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        >
+          <DaterButton
+            style={styles.debugButtons}
+            onPress={this.toggleSystemNotification}
+          >
+            Уведомление
+          </DaterButton>
+        </View>
         {this.props.appState.state === 'active' &&
           <BlockMapViewComponent
             networkIsOffline={this.props.appState.networkIsOffline}
@@ -360,6 +390,8 @@ const styles = StyleSheet.create({
     opacity: 1,
     alignSelf: 'stretch',
     flex: 1,
+    alignContent: 'center',
+    justifyContent: 'center',
   },
   mapView: {
     flex: 1,
@@ -374,11 +406,7 @@ const styles = StyleSheet.create({
     color: 'rgba(0, 0, 0, 0.9)',
   },
   debugButtons: {
-    position: 'absolute',
     bottom: 30,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
   },
   microDateText: {
     opacity: 0.8,
