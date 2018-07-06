@@ -147,6 +147,7 @@ function* showMyLocation(action) {
 function* showMyLocationAndCenterMe(action) {
   try {
     const coords = yield select((state) => state.location.coords);
+
     if (!coords) return;
     yield put({ type: 'GEO_LOCATION_FORCE_UPDATE' });
     const showMyLocationMapAnimationDuration = 500;

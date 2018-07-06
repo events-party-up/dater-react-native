@@ -160,6 +160,7 @@ function* startMicroDateSaga(microDate) {
     payload: {
       targetUser,
       myCoords,
+      microDate,
       distance: GeoUtils.distance(userSnap.data().geoPoint, myCoords),
       microDateId: microDate.id,
     },

@@ -14,6 +14,12 @@ export default function* networkStateSaga() {
     yield takeEvery(networkStateChannel, updateNetworkStateSaga, networkOnlineChan, networkOfflineChan);
     yield takeLeading(networkOfflineChan, networkOfflineSaga, networkOnlineChan);
     yield takeLeading(networkOnlineChan, networkOnlineSaga);
+    yield takeEvery([
+      'AUTH_SUCCESS',
+    ], networkOnlineSaga, {
+      source: 'otherActions',
+      type: 'online',
+    });
   } catch (error) {
     yield put({ type: 'APP_STATE_NETWORK_ERROR', payload: error });
   }

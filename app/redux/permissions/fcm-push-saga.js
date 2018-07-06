@@ -48,13 +48,11 @@ async function clearBadgeAndNotificationsOnAppForeground() {
 }
 
 function* checkFcmPushPermissionsSaga() {
-  const authResult = yield Permissions.request('notification');
-  console.log('pushCheck: ', authResult);
-  if (authResult === 'authorized') {
-    yield put({ type: 'PERMISSIONS_FCM_REQUEST', payload: authResult });
+  const pushCheckResult = yield Permissions.check('notification');
+  if (pushCheckResult === 'authorized') {
+    yield put({ type: 'PERMISSIONS_FCM_REQUEST', payload: pushCheckResult });
     return;
   }
-  yield put({ type: 'PERMISSIONS_FCM_DENIED', payload: authResult });
 
   yield NavigatorActions.navigate({
     key: 'PushPermissionScreen',

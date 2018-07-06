@@ -2,13 +2,23 @@ import React from 'react';
 import { Text } from 'react-native';
 
 export const H1 = (props) => (
-  <Text style={[styles.h1, props.style]} allowFontScaling={false}>
+  <Text
+    style={[styles.h1, props.style]}
+    allowFontScaling={false}
+    numberOfLines={props.numberOfLines}
+    adjustsFontSizeToFit
+  >
     {props.children}
   </Text>
 );
 
 export const H2 = (props) => (
-  <Text style={[styles.h2, props.style]} allowFontScaling={false}>
+  <Text
+    style={[styles.h2, props.style]}
+    allowFontScaling={false}
+    numberOfLines={props.numberOfLines}
+    adjustsFontSizeToFit
+  >
     {props.children}
   </Text>
 );
@@ -23,7 +33,7 @@ export const H3 = (props) => {
   };
 
   return (
-    <Text style={[styleH3, props.style]} allowFontScaling={false}>
+    <Text style={[styleH3, props.style]} allowFontScaling={false} numberOfLines={props.numberOfLines}>
       {props.children}
     </Text>
   );
@@ -39,20 +49,35 @@ export const Body = (props) => {
   };
 
   return (
-    <Text style={[styleBody, props.style]} allowFontScaling={false}>
+    <Text
+      style={[styleBody, props.style]}
+      allowFontScaling={false}
+      numberOfLines={props.numberOfLines}
+      adjustsFontSizeToFit
+    >
       {props.children}
     </Text>
   );
 };
 
 export const Caption1 = (props) => (
-  <Text style={[styles.caption1, props.style]}>
+  <Text
+    style={[styles.caption1, props.style]}
+    allowFontScaling={false}
+    numberOfLines={props.numberOfLines}
+    adjustsFontSizeToFit
+  >
     {props.children.toUpperCase()}
   </Text>
 );
 
 export const Caption2 = (props) => (
-  <Text style={[styles.caption2, props.style]} allowFontScaling={false}>
+  <Text
+    style={[styles.caption2, props.style]}
+    allowFontScaling={false}
+    numberOfLines={props.numberOfLines}
+    adjustsFontSizeToFit
+  >
     {props.children}
   </Text>
 );

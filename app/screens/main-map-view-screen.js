@@ -8,7 +8,7 @@ import { connect, Dispatch } from 'react-redux';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import ReactNativeHeading from '@zsajjad/react-native-heading';
 
-import { GeoCoordinates } from '../types';
+import { GeoCoordinates, MicroDate } from '../types';
 import MyLocationOnCenteredMap from '../components/map/my-location-on-centered-map';
 import UsersAroundComponent from '../components/map/users-around-component';
 import PastLocationsPath from '../components/map/past-locations-path';
@@ -20,8 +20,8 @@ import {
   MAP_MIN_ZOOM_LEVEL,
 } from '../constants';
 import MyLocationOnNonCenteredMap from '../components/map/my-location-on-non-centered-map';
-import OnMapRightButtons from '../components/map/on-map-right-buttons';
-import MapPanelComponent from '../components/map-panel/map-panel-component';
+// import OnMapRightButtons from '../components/map/on-map-right-buttons';
+import OnMapInteractiveElements from '../components/on-map-ui-interactions/on-map-interactive-elements';
 import BlockMapViewComponent from '../components/map/block-mapview-component';
 
 // import DaterButton from '../components/ui-kit/atoms/dater-button';
@@ -75,7 +75,7 @@ type Props = {
     moveHeadingAngle: number,
   },
   mapView: MapboxGL.MapView,
-  microDate: any,
+  microDate: MicroDate,
   navigation: any,
   usersAround: Array<mixed>,
   appState: any,
@@ -204,16 +204,14 @@ class MainMapViewScreen extends React.Component<Props, State> {
           />
         }
         {/* <FirebaseSetup /> */}
-        <MapPanelComponent
+        <OnMapInteractiveElements
           navigation={this.props.navigation}
-        />
-        <OnMapRightButtons
-          location={this.props.location}
+          locationIsEnabled={this.props.location.enabled}
           heading={this.state.compassHeading || this.props.location.moveHeadingAngle}
           dispatch={this.props.dispatch}
+          mapViewZoom={this.props.mapView.zoom}
           isAuthenticated={this.props.auth.isAuthenticated}
           microDateIsEnabled={this.props.microDate.enabled}
-          mapViewZoom={this.props.mapView.zoom}
         />
         <View
           style={styles.mapViewContainer}
@@ -221,16 +219,16 @@ class MainMapViewScreen extends React.Component<Props, State> {
           {this.props.location.enabled &&
             this.props.location.coords &&
             (this.props.mapView.centered ||
-            this.props.microDate.enabled) &&
-            <MyLocationOnCenteredMap
-              accuracy={this.props.location.coords.accuracy}
-              visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
-              heading={this.state.compassHeading || this.props.location.moveHeadingAngle}
-              headingToTarget={this.props.microDate.headingToTarget}
-              microDateEnabled={this.props.microDate.enabled}
-              mapViewHeadingAngle={this.props.mapView.heading}
-              mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
-            />}
+              this.props.microDate.enabled) &&
+              <MyLocationOnCenteredMap
+                accuracy={this.props.location.coords.accuracy}
+                visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
+                heading={this.state.compassHeading || this.props.location.moveHeadingAngle}
+                headingToTarget={this.props.microDate.headingToTarget}
+                microDateEnabled={this.props.microDate.enabled}
+                mapViewHeadingAngle={this.props.mapView.heading}
+                mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
+              />}
           <MapboxGL.MapView
             // centerCoordinate={this.props.location.coords ?
             //   [this.props.location.coords.longitude, this.props.location.coords.latitude] :
@@ -300,13 +298,13 @@ class MainMapViewScreen extends React.Component<Props, State> {
           </MapboxGL.MapView>
           {
             <View style={styles.debugView} pointerEvents="none">
-              { process.env.NODE_ENV === 'development' &&
+              {process.env.NODE_ENV === 'development' &&
                 <Caption2 style={styles.debugText}>
-                GPS Точность: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
-                Курс GPS: {this.props.location.coords && Math.floor(this.props.location.coords.heading)}{'\n'}
-                Курс Компасс: {Math.floor(this.state.compassHeading)}{'\n'}
-                Курс Движения: {Math.floor(this.props.location.moveHeadingAngle)}{'\n'}
-                UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}
+                  GPS Точность: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
+                  Курс GPS: {this.props.location.coords && Math.floor(this.props.location.coords.heading)}{'\n'}
+                  Курс Компасс: {Math.floor(this.state.compassHeading)}{'\n'}
+                  Курс Движения: {Math.floor(this.props.location.moveHeadingAngle)}{'\n'}
+                  UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}
                 </Caption2>
               }
               <Caption2 style={styles.debugText}>

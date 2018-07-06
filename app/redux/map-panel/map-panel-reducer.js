@@ -10,6 +10,7 @@ export const types = {
 
 const initialState = {
   mode: null,
+  heightMode: 'standard',
   previousMode: null,
   visible: false,
   pendingShow: false,
@@ -44,14 +45,12 @@ const mapPanelReducer = (state = initialState, action) => {
         canHide: true,
         previousMode: '',
         previousState: {},
-        // mode: '',
       };
     }
     case types.UI_MAP_PANEL_HIDE_SNAPPED: {
       return {
         ...state,
         visible: false,
-        // previousMode: '',
       };
     }
     case types.UI_MAP_PANEL_ERROR: {

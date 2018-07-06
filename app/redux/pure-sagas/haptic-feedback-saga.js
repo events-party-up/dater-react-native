@@ -1,4 +1,4 @@
-import { takeLatest } from 'redux-saga/effects';
+import { takeLatest, cancel, take } from 'redux-saga/effects';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import { Vibration } from 'react-native';
 
@@ -9,36 +9,43 @@ import { Vibration } from 'react-native';
 // "notificationWarning", "notificationError"(default: "selection")
 
 export default function* hapticFeedbackSaga() {
-  yield takeLatest([
-    'USERS_AROUND_ITEM_PRESSED',
-  ], hapticFeedbackSelection);
+  while (true) {
+    yield take('APP_STATE_ACTIVE');
 
-  yield takeLatest([
-    'MICRO_DATE_INCOMING_REQUEST',
-    'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
-    'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
-    'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
-  ], hapticFeedbackVibrationOnly);
+    const task1 = yield takeLatest([
+      'USERS_AROUND_ITEM_PRESSED',
+    ], hapticFeedbackSelection);
 
-  yield takeLatest([
-    'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME',
-    'MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_ME',
-    'MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_TARGET',
-    'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_TARGET',
-    'MICRO_DATE_INCOMING_CANCELLED',
-    'MICRO_DATE_OUTGOING_ACCEPT',
-    'HAPTICFEEDBACK_HEAVY',
-  ], hapticFeedbackHeavyImpact);
+    const task2 = yield takeLatest([
+      'MICRO_DATE_INCOMING_REQUEST',
+      'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
+      'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
+      'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
+    ], hapticFeedbackVibrationOnly);
 
-  yield takeLatest([
-    'AUTH_PHONE_INVALID_NUMBER_ERROR',
-    'AUTH_PHONE_NUMBER_UNKNOWN_ERROR',
-    'AUTH_PHONE_NUMBER_SEND_SMS_TIMEOUT',
-    'AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_TIMEOUT',
-    'AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_ERROR',
-    'HAPTICFEEDBACK_ERROR',
-    'APP_STATE_POOR_GPS',
-  ], hapticFeedbackError);
+    const task3 = yield takeLatest([
+      'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME',
+      'MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_ME',
+      'MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_TARGET',
+      'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_TARGET',
+      'MICRO_DATE_INCOMING_CANCELLED',
+      'MICRO_DATE_OUTGOING_ACCEPT',
+      'HAPTICFEEDBACK_HEAVY',
+    ], hapticFeedbackHeavyImpact);
+
+    const task4 = yield takeLatest([
+      'AUTH_PHONE_INVALID_NUMBER_ERROR',
+      'AUTH_PHONE_NUMBER_UNKNOWN_ERROR',
+      'AUTH_PHONE_NUMBER_SEND_SMS_TIMEOUT',
+      'AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_TIMEOUT',
+      'AUTH_PHONE_NUMBER_SIGN_IN_WITH_CREDENTIAL_ERROR',
+      'HAPTICFEEDBACK_ERROR',
+      'APP_STATE_POOR_GPS',
+    ], hapticFeedbackError);
+
+    yield take('APP_STATE_BACKGROUND');
+    yield cancel(task1, task2, task3, task4);
+  }
 }
 
 function hapticFeedbackSelection() {

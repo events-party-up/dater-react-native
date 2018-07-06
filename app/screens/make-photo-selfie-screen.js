@@ -19,6 +19,14 @@ import IconTitleSubtitleMolecule from '../components/ui-kit/molecules/icon-title
 import DaterButton from '../components/ui-kit/atoms/dater-button';
 import { PhotoType } from '../types';
 
+const CAPTURE_PHOTO_OPTIONS = {
+  quality: 0.75,
+  base64: false,
+  mirrorImage: true,
+  width: 1400,
+  forceUpOrientation: true,
+  // orientation: 'portrait',
+};
 const takePhotoIcon = require('../assets/icons/take-photo/take-photo-white.png');
 const noCameraIcon = require('../assets/icons/no-camera/no-camera.png');
 
@@ -91,12 +99,7 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
 
   takePicture = async () => {
     if (this.camera && this.state.photoURI === '') {
-      const options = {
-        quality: 0.75,
-        base64: false,
-        mirrorImage: true,
-      };
-      const data = await this.camera.takePictureAsync(options);
+      const data = await this.camera.takePictureAsync(CAPTURE_PHOTO_OPTIONS);
       this.setState({
         photoURI: data.uri,
         ...data,
@@ -188,9 +191,9 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
             flashMode={RNCamera.Constants.FlashMode.auto}
             // onFacesDetected={this.onFacesDetected}
             // onFaceDetectionError={this.onFaceDetectionError}
-            permissionDialogTitle="Пожалуйста, разрешите доступ к камере"
+            permissionDialogTitle="Пожалуйста, разреши доступ к камере"
             permissionDialogMessage={'Доступ к камере нужен для съемки селфи ' +
-            'в конце встречи и добавления фото в ваш профиль.'}
+            'в конце встречи и добавления фото в твой профиль.'}
             notAuthorizedView={this.renderNotAuthorized()}
             onCameraReady={() => this.onCameraReady()}
             onMountError={this.onMountError}
@@ -200,15 +203,16 @@ class MakePhotoSelfieScreen extends React.Component<Props, State> {
         }
         {this.state.photoURI !== '' &&
           <Image
-            style={styles.preview}
+            style={styles.previewTakenPhoto}
             source={{ uri: this.state.photoURI }}
+            resizeMode="contain"
           />
         }
         <View style={styles.bottomButtonsContainer}>
           {this.state.photoURI === '' && this.state.hasCameraPermission &&
             <CircleButton
               image={takePhotoIcon}
-              onPress={() => this.takePicture()}
+              onPress={this.takePicture}
               style={styles.takePhotoButton}
             />
           }
@@ -268,6 +272,11 @@ const styles = StyleSheet.create({
     paddingLeft: 0,
     paddingRight: 0,
     paddingTop: 0,
+  },
+  previewTakenPhoto: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
   preview: {
     flex: 1,

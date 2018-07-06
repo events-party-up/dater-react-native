@@ -137,7 +137,7 @@ function* checkDistance(microDate, myCoords, targetCoords) {
 
   const distanceToTarget = GeoUtils.distance(myCoords, targetCoords);
 
-  if (distanceToTarget > 0 && distanceToTarget < DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD) {
+  if (distanceToTarget >= 0 && distanceToTarget < DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD) {
     yield put({
       type: 'MICRO_DATE_CLOSE_DISTANCE_MOVE',
       payload: {

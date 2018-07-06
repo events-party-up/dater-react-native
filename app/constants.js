@@ -21,8 +21,8 @@ export const MAP_MAX_ZOOM_LEVEL = 18;
 export const HEADING_UPDATE_ON_DEGREE_CHANGED = 10;
 export const ACTIVATE_POOR_GPS_TIMEOUT = 10000;
 export const ACTIVATE_GOOD_GPS_TIMEOUT = 2000;
-export const GOOD_GPS_ACCURACY_GENERAL = 500;
-export const GOOD_GPS_ACCURACY_MICRODATE_MODE = 40;
+export const GOOD_GPS_ACCURACY_GENERAL = 50000; // 500;
+export const GOOD_GPS_ACCURACY_MICRODATE_MODE = 50000; // 40;
 
 // Past locations history
 export const MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION = 20;
@@ -39,6 +39,8 @@ export const PROFILE_PHOTOS_STORAGE_PATH = 'profilePhotos';
 
 // Micro Dates
 export const DISTANCE_TO_UPLOAD_SELFIE_THRESHOLD = 20;
+export const TIME_TO_RESPOND_TO_MICRO_DATE_REQUEST = 10 * 1000 * 60;
+export const TIME_TO_FINISH_MICRO_DATE = 90 * 1000 * 60;
 
 // Users around
 export const USERS_AROUND_PUBLIC_UPDATE_INTERVAL = 2000;

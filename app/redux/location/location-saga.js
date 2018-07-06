@@ -77,7 +77,6 @@ export default function* locationSaga() {
         'GEO_LOCATION_STOP',
         'AUTH_SIGNOUT_START',
       ]);
-
       yield DaterBackgroundGeolocation.stop();
       yield cancel(task1, task2, task3, task4);
       yield locationChannel.close();
