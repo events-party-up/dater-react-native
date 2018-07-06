@@ -18,6 +18,7 @@ type Props = {
   index: number,
   icon: any,
   timeToLive: number,
+  type: 'temp' | 'permanent',
 };
 
 export default class SystemNotificationView extends React.Component<Props> {
@@ -32,17 +33,18 @@ export default class SystemNotificationView extends React.Component<Props> {
         bounciness: 15,
       },
     ).start();
-
-    setTimeout(() => {
-      Animated.spring(
-        this.topAnimated,
-        {
-          toValue: topHiddenOffset,
-          duration: 500,
-          bounciness: 15,
-        },
-      ).start();
-    }, this.props.timeToLive);
+    if (this.props.type === 'temp') {
+      setTimeout(() => {
+        Animated.spring(
+          this.topAnimated,
+          {
+            toValue: topHiddenOffset,
+            duration: 500,
+            bounciness: 15,
+          },
+        ).start();
+      }, this.props.timeToLive);
+    }
   }
 
   render() {

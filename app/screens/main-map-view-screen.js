@@ -22,7 +22,7 @@ import {
 import MyLocationOnNonCenteredMap from '../components/map/my-location-on-non-centered-map';
 // import OnMapRightButtons from '../components/map/on-map-right-buttons';
 import OnMapInteractiveElements from '../components/on-map-ui-interactions/on-map-interactive-elements';
-import BlockMapViewComponent from '../components/map/block-mapview-component';
+// import BlockMapViewComponent from '../components/map/block-mapview-component';
 import SystemNotification from '../components/ui-kit/molecules/system-notification';
 
 import DaterButton from '../components/ui-kit/atoms/dater-button';
@@ -207,6 +207,8 @@ class MainMapViewScreen extends React.Component<Props, State> {
       >
         <SystemNotification
           message={`Отсутствует интернет-соединение, проверьте связь (${this.state.messageCount})`}
+          networkIsOffline={this.props.appState.networkIsOffline}
+          gpsIsPoor={this.props.appState.gpsIsPoor}
         />
 
         <View style={{
@@ -226,13 +228,13 @@ class MainMapViewScreen extends React.Component<Props, State> {
             Уведомление
           </DaterButton>
         </View>
-        {this.props.appState.state === 'active' &&
+        {/* {this.props.appState.state === 'active' &&
           <BlockMapViewComponent
             networkIsOffline={this.props.appState.networkIsOffline}
             gpsIsPoor={this.props.appState.gpsIsPoor}
             gpsAccuracy={this.props.appState.gpsAccuracy}
           />
-        }
+        } */}
         {/* <FirebaseSetup /> */}
         <OnMapInteractiveElements
           navigation={this.props.navigation}
