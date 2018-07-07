@@ -8,7 +8,7 @@ import { connect, Dispatch } from 'react-redux';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import ReactNativeHeading from '@zsajjad/react-native-heading';
 
-import { GeoCoordinates, MicroDate } from '../types';
+import { GeoCoordinates, MicroDate, SystemNotifications } from '../types';
 import MyLocationOnCenteredMap from '../components/map/my-location-on-centered-map';
 import UsersAroundComponent from '../components/map/users-around-component';
 import PastLocationsPath from '../components/map/past-locations-path';
@@ -20,9 +20,8 @@ import {
   MAP_MIN_ZOOM_LEVEL,
 } from '../constants';
 import MyLocationOnNonCenteredMap from '../components/map/my-location-on-non-centered-map';
-// import OnMapRightButtons from '../components/map/on-map-right-buttons';
 import OnMapInteractiveElements from '../components/on-map-ui-interactions/on-map-interactive-elements';
-import BlockMapViewComponent from '../components/map/block-mapview-component';
+import SystemNotificationComponent from '../components/ui-kit/molecules/system-notification';
 
 // import DaterButton from '../components/ui-kit/atoms/dater-button';
 // import FirebaseSetup from '../components/firebase-setup';
@@ -35,6 +34,7 @@ const mapStateToProps = (state) => ({
   microDate: state.microDate,
   appState: state.appState,
   usersAround: state.usersAround.users,
+  systemNotifications: state.systemNotifications,
 });
 
 function creatMapViewProxy(mapView: MapboxGL.MapView) {
@@ -79,6 +79,7 @@ type Props = {
   navigation: any,
   usersAround: Array<mixed>,
   appState: any,
+  systemNotifications: SystemNotifications,
 };
 
 type State = {
@@ -99,6 +100,31 @@ class MainMapViewScreen extends React.Component<Props, State> {
   componentWillMount() {
     this.compassListener = new NativeEventEmitter(ReactNativeHeading);
     this.compassListener.addListener('headingUpdated', this.onCompassHeadingUpdated);
+  }
+
+  toggleBadGPS = () => {
+    this.props.dispatch({
+      type: 'APP_STATE_POOR_GPS',
+      payload: 5,
+    });
+  }
+
+  toggleGoodGPS = () => {
+    this.props.dispatch({
+      type: 'APP_STATE_GOOD_GPS',
+    });
+  }
+
+  toggleNetworkOffline = () => {
+    this.props.dispatch({
+      type: 'APP_STATE_NETWORK_OFFLINE',
+    });
+  }
+
+  toggleNetworkOnline = () => {
+    this.props.dispatch({
+      type: 'APP_STATE_NETWORK_ONLINE',
+    });
   }
 
   componentWillUnmount() {
@@ -196,14 +222,59 @@ class MainMapViewScreen extends React.Component<Props, State> {
       <View
         style={styles.mapViewContainer}
       >
-        {this.props.appState.state === 'active' &&
-          <BlockMapViewComponent
-            networkIsOffline={this.props.appState.networkIsOffline}
-            gpsIsPoor={this.props.appState.gpsIsPoor}
-            gpsAccuracy={this.props.appState.gpsAccuracy}
-          />
-        }
-        {/* <FirebaseSetup /> */}
+        <SystemNotificationComponent
+          systemNotifications={this.props.systemNotifications}
+        />
+
+        {/* <View style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 2,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        >
+          <DaterButton
+            style={styles.debugButtons}
+            onPress={() => this.props.navigation.navigate('FloatingNavigator')}
+            type="secondary"
+          >
+            Floating Screen
+          </DaterButton>
+          <DaterButton
+            style={styles.debugButtons}
+            onPress={() => this.props.navigation.navigate('UIKitNavigator')}
+          >
+            UI Kit
+          </DaterButton>
+          <DaterButton
+            style={styles.debugButtons}
+            onPress={this.toggleBadGPS}
+          >
+            BAD GPS
+          </DaterButton>
+          <DaterButton
+            style={styles.debugButtons}
+            onPress={this.toggleGoodGPS}
+          >
+            GOOD GPS
+          </DaterButton>
+          <DaterButton
+            style={styles.debugButtons}
+            onPress={this.toggleNetworkOffline}
+          >
+            OFF NETWORK
+          </DaterButton>
+          <DaterButton
+            style={styles.debugButtons}
+            onPress={this.toggleNetworkOnline}
+          >
+            ON NETWORK
+          </DaterButton>
+        </View> */}
+
         <OnMapInteractiveElements
           navigation={this.props.navigation}
           locationIsEnabled={this.props.location.enabled}
@@ -228,6 +299,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
                 microDateEnabled={this.props.microDate.enabled}
                 mapViewHeadingAngle={this.props.mapView.heading}
                 mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
+                appState={this.props.appState}
               />}
           <MapboxGL.MapView
             // centerCoordinate={this.props.location.coords ?
@@ -293,6 +365,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
                 mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
                 headingToTarget={this.props.microDate.headingToTarget}
                 microDateEnabled={this.props.microDate.enabled}
+                appState={this.props.appState}
               />
             }
           </MapboxGL.MapView>
@@ -333,21 +406,6 @@ class MainMapViewScreen extends React.Component<Props, State> {
               </Caption2>
             </View>
           }
-          {/* <View style={styles.buttons}>
-            <DaterButton
-              style={styles.button}
-              onPress={() => this.props.navigation.navigate('FloatingNavigator')}
-              type="secondary"
-            >
-              Floating Screen
-            </DaterButton>
-            <DaterButton
-              style={styles.debugButtons}
-              onPress={() => this.props.navigation.navigate('UIKitNavigator')}
-            >
-              UI Kit
-            </DaterButton>
-          </View> */}
         </View>
       </View>
     );
@@ -360,6 +418,8 @@ const styles = StyleSheet.create({
     opacity: 1,
     alignSelf: 'stretch',
     flex: 1,
+    alignContent: 'center',
+    justifyContent: 'center',
   },
   mapView: {
     flex: 1,
@@ -374,11 +434,7 @@ const styles = StyleSheet.create({
     color: 'rgba(0, 0, 0, 0.9)',
   },
   debugButtons: {
-    position: 'absolute',
     bottom: 30,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
   },
   microDateText: {
     opacity: 0.8,

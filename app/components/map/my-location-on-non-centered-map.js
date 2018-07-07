@@ -19,6 +19,7 @@ type Props = {
   microDateEnabled: boolean,
   accuracy: number,
   visibleRadiusInMeters: number,
+  appState: any,
 };
 
 class MyLocationOnNonCenteredMap extends React.Component<Props, State> {
@@ -42,6 +43,7 @@ class MyLocationOnNonCenteredMap extends React.Component<Props, State> {
           microDateEnabled={this.props.microDateEnabled}
           accuracy={this.props.accuracy}
           visibleRadiusInMeters={this.props.visibleRadiusInMeters}
+          appState={this.props.appState}
         />
       </MapboxGL.PointAnnotation>
     );

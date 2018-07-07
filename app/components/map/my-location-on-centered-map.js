@@ -4,6 +4,7 @@ import {
   View,
   Platform,
   Dimensions,
+  Animated,
 } from 'react-native';
 
 import { wrapCompassHeading } from '../../utils/geo-utils';
@@ -16,9 +17,15 @@ const ARROW_DISTANCE = 10;
 const HALO_SIZE = SIZE + HALO_RADIUS;
 const HEADING_BOX_SIZE = HALO_SIZE + ARROW_SIZE + ARROW_DISTANCE;
 const colorOfmyLocationMapMarker = '#1F8BFF'; // '#2c7cf6';
-const colorOfHalo = 'rgba(30,144,255,0.2)';
+const poorGPSMarkerColor = '#BDBDBD';
+const defaultColorOfHalo = 'rgba(30,144,255,0.2)';
+const poorGPSColorOfHalo = 'rgba(235, 87, 87, 0.4)';
 const { width, height } = Dimensions.get('window');
 const DIAGONAL = Math.sqrt((width * width) + (height * height));
+
+type State = {
+  gpsAccuracyRadius: Animated.Value,
+}
 
 type Props = {
   accuracy: number,
@@ -28,14 +35,75 @@ type Props = {
   mapViewModeIsSwitching: boolean,
   headingToTarget: number,
   microDateEnabled: boolean,
+  appState: any,
 };
 
-export default class MyLocationOnCenteredMap extends React.PureComponent<Props> {
-  render() {
-    const { accuracy } = this.props;
+export default class MyLocationOnCenteredMap extends React.PureComponent<Props, State> {
+  badGpsAnimation;
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      gpsAccuracyRadius: new Animated.Value(0),
+    };
+  }
+
+  componentWillMount() {
+    this.animateAccuracyHalo(this.props.accuracy);
+
+    this.badGpsAnimation = Animated.loop(Animated.sequence([
+      Animated.timing(this.state.gpsAccuracyRadius, {
+        toValue: 60,
+        duration: 1000,
+      }),
+      Animated.timing(this.state.gpsAccuracyRadius, {
+        toValue: 10,
+        duration: 1000,
+      }),
+      Animated.timing(this.state.gpsAccuracyRadius, {
+        toValue: 60,
+        duration: 1000,
+      }),
+      Animated.timing(this.state.gpsAccuracyRadius, {
+        toValue: 10,
+        duration: 1000,
+      }),
+      Animated.delay(3000),
+    ]));
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ((nextProps.accuracy !== this.props.accuracy ||
+        nextProps.visibleRadiusInMeters !== this.props.visibleRadiusInMeters) &&
+        !this.props.appState.gpsIsPoor) {
+      this.animateAccuracyHalo(nextProps.accuracy);
+    }
+
+    if (this.props.appState.gpsIsPoor === nextProps.appState.gpsIsPoor) return;
+    if (nextProps.appState.gpsIsPoor) {
+      this.badGpsAnimation.start();
+    } else {
+      this.badGpsAnimation.stop();
+      this.badGpsAnimation.reset();
+      this.animateAccuracyHalo(this.props.accuracy);
+    }
+  }
+
+  animateAccuracyHalo(accuracy) {
+    Animated.timing(this.state.gpsAccuracyRadius, {
+      toValue: this.getAccuracyRadius(accuracy),
+      duration: 500,
+    }).start();
+  }
+
+  getAccuracyRadius(accuracy) {
     const { visibleRadiusInMeters } = this.props;
     const pixelsPerMeter = DIAGONAL / (visibleRadiusInMeters * 2);
     const RADIUS = pixelsPerMeter * accuracy;
+    return RADIUS;
+  }
+
+  render() {
     // console.log(`Visible radius: ${visibleRadiusInMeters}, DIAGONAL: ${DIAGONAL}, pixelsPerMeter: ${pixelsPerMeter}, Radius: ${RADIUS}`);
     const rotation = (this.props.heading || 0) - (this.props.mapViewHeadingAngle || 0); // zeros protect from undefined values
     const rotate = `${rotation}deg`;
@@ -46,18 +114,22 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props> 
                wrapCompassHeading(this.props.headingToTarget)));
     const microDateMarkerColor =
       deltaMeAndTargetHeading <= MICRO_DATE_MAPMAKER_POSITIVE_THRESHOLD_ANGLE ? '#3DB770' : '#EB5757';
-    const markerColor = this.props.microDateEnabled ? microDateMarkerColor : colorOfmyLocationMapMarker;
+
+    const markerColor = (this.props.appState.gpsIsPoor && poorGPSMarkerColor) ||
+                        (this.props.microDateEnabled && microDateMarkerColor) ||
+                      colorOfmyLocationMapMarker;
+    const colorOfHalo = (this.props.appState.gpsIsPoor && poorGPSColorOfHalo) || defaultColorOfHalo;
 
     return (
       <View
         style={styles.locationContainer}
         pointerEvents="none"
       >
-        <View style={{
+        <Animated.View style={{
           backgroundColor: colorOfHalo,
-          width: RADIUS * 2,
-          height: RADIUS * 2,
-          borderRadius: Math.ceil(RADIUS),
+          width: Animated.multiply(2, this.state.gpsAccuracyRadius),
+          height: Animated.multiply(2, this.state.gpsAccuracyRadius),
+          borderRadius: this.state.gpsAccuracyRadius,
           justifyContent: 'center',
           alignItems: 'center',
           position: 'absolute',

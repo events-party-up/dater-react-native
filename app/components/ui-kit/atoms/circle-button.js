@@ -35,128 +35,6 @@ type State = {
 export default class CircleButton extends React.Component<Props, State> {
   styles;
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      opacity: this.props.disabled ? 0.5 : 1,
-      backgroundColor: '#4F4F4F',
-      shadowColor: '#4F4F4F',
-      image: this.props.image,
-      width: 64,
-      height: 64,
-    };
-  }
-
-  componentWillMount() {
-    this.setTypeProps(this.props.type);
-    this.setSizeProps(this.props.size);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setTypeProps(nextProps.type);
-    this.setSizeProps(nextProps.size);
-    this.setState({
-      opacity: nextProps.disabled ? 0.5 : 1,
-      image: nextProps.image,
-    });
-  }
-
-  setTypeProps(type) {
-    switch (type) {
-      case 'close': {
-        this.setState({
-          shadowColor: '#4F4F4F',
-          image: closeIcon,
-        });
-        break;
-      }
-      case 'decline': {
-        this.setState({
-          shadowColor: '#4F4F4F',
-          backgroundColor: '#EB5757',
-          image: closeIcon,
-        });
-        break;
-      }
-      case 'back': {
-        this.setState({
-          backgroundColor: '#fff',
-          shadowColor: 'rgba(0, 0, 0, 0.21)',
-          image: backIcon,
-        });
-        break;
-      }
-      case 'confirm': {
-        this.setState({
-          backgroundColor: 'rgba(39, 174, 96, 0.9)',
-          shadowColor: '#4F4F4F',
-          image: confirmCheckmarkIcon,
-        });
-        break;
-      }
-      default:
-        this.setState({
-          backgroundColor: '#fff',
-          shadowColor: 'rgba(0, 0, 0, 0.11)',
-          image: this.props.image, // eslint-disable-line
-        });
-        break;
-    }
-  }
-
-  setSizeProps(size) {
-    switch (size) {
-      case 'smallest': {
-        this.setState({
-          width: 16,
-          height: 16,
-        });
-        break;
-      }
-      case 'small': {
-        this.setState({
-          width: 24,
-          height: 24,
-        });
-        break;
-      }
-      case 'medium-small': {
-        this.setState({
-          width: 32,
-          height: 32,
-        });
-        break;
-      }
-      case 'medium': {
-        this.setState({
-          width: 48,
-          height: 48,
-        });
-        break;
-      }
-      case 'medium-big': {
-        this.setState({
-          width: 56,
-          height: 56,
-        });
-        break;
-      }
-      case 'large': {
-        this.setState({
-          width: 64,
-          height: 64,
-        });
-        break;
-      }
-      default:
-        this.setState({
-          width: 64,
-          height: 64,
-        });
-        break;
-    }
-  }
-
   onPress = (event) => {
     if (this.props.onPress && !this.props.disabled) {
       this.props.onPress(event);
@@ -182,16 +60,21 @@ export default class CircleButton extends React.Component<Props, State> {
   };
 
   render() {
+    const buttonProps = {
+      ...circleButtonSetPropertiesFor(this.props.type),
+      ...circleButtonGetDimensionsFor(this.props.size),
+    };
+
     this.styles = StyleSheet.create({
       buttonContainer: {
         elevation: 1,
-        backgroundColor: this.state.backgroundColor,
-        width: this.state.width,
-        height: this.state.height,
-        borderRadius: this.state.width / 2,
+        backgroundColor: buttonProps.backgroundColor,
+        width: buttonProps.width,
+        height: buttonProps.height,
+        borderRadius: buttonProps.width / 2,
         alignItems: 'center',
         justifyContent: 'center',
-        shadowColor: this.state.shadowColor,
+        shadowColor: buttonProps.shadowColor,
         shadowOpacity: 0.5,
         shadowRadius: 4,
         shadowOffset: {
@@ -201,14 +84,15 @@ export default class CircleButton extends React.Component<Props, State> {
       imageContainer: {
       },
       image: {
-        opacity: this.state.opacity,
-        borderRadius: this.props.roundImage ? this.state.width / 2 : 0,
+        opacity: this.props.disabled ? 0.5 : 1,
+        borderRadius: this.props.roundImage ? buttonProps.width / 2 : 0,
       },
     });
+
     return (
       <TouchableOpacity
         style={[this.styles.buttonContainer, this.props.style]}
-        activeOpacity={this.props.disabled ? this.state.opacity : 0.2}
+        activeOpacity={this.props.disabled ? 0.5 : 0.2}
         onPress={this.onPress}
         onLongPress={this.onLongPress}
         onPressIn={this.onPressIn}
@@ -224,10 +108,94 @@ export default class CircleButton extends React.Component<Props, State> {
         <View style={this.styles.imageContainer} >
           <Image
             style={this.styles.image}
-            source={this.state.image}
+            source={this.props.image || buttonProps.image}
           />
         </View>
       </TouchableOpacity>
     );
+  }
+}
+
+function circleButtonSetPropertiesFor(type) {
+  switch (type) {
+    case 'close': {
+      return {
+        backgroundColor: '#4F4F4F',
+        shadowColor: '#4F4F4F',
+        image: closeIcon,
+      };
+    }
+    case 'decline': {
+      return {
+        backgroundColor: '#EB5757',
+        shadowColor: '#4F4F4F',
+        image: closeIcon,
+      };
+    }
+    case 'back': {
+      return {
+        backgroundColor: '#fff',
+        shadowColor: 'rgba(0, 0, 0, 0.21)',
+        image: backIcon,
+      };
+    }
+    case 'confirm': {
+      return {
+        backgroundColor: 'rgba(39, 174, 96, 0.9)',
+        shadowColor: '#4F4F4F',
+        image: confirmCheckmarkIcon,
+      };
+    }
+    default:
+      return {
+        backgroundColor: '#fff',
+        shadowColor: 'rgba(0, 0, 0, 0.11)',
+      };
+  }
+}
+
+function circleButtonGetDimensionsFor(size) {
+  switch (size) {
+    case 'smallest': {
+      return {
+        width: 16,
+        height: 16,
+      };
+    }
+    case 'small': {
+      return {
+        width: 24,
+        height: 24,
+      };
+    }
+    case 'medium-small': {
+      return {
+        width: 32,
+        height: 32,
+      };
+    }
+    case 'medium': {
+      return {
+        width: 48,
+        height: 48,
+      };
+    }
+    case 'medium-big': {
+      return {
+        width: 56,
+        height: 56,
+      };
+    }
+    case 'large': {
+      return {
+        width: 64,
+        height: 64,
+      };
+    }
+    default:
+      return {
+        width: 64,
+        height: 64,
+      };
   }
 }

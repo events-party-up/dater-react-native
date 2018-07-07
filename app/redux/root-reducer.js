@@ -11,6 +11,7 @@ import appStateReducer from './app-state/app-state-reducer';
 import uploadPhotosReducer from './upload-photos/upload-photos-reducer';
 import currentUserReducer from './current-user/current-user-reducer';
 import permissionsReducer from './permissions/permissions-reducer';
+import systemNotificatinosReducer from './system-notifications/system-notifications-reducer';
 
 export const rootReducer = combineReducers({
   auth: authReducer,
@@ -24,6 +25,7 @@ export const rootReducer = combineReducers({
   uploadPhotos: uploadPhotosReducer,
   currentUser: currentUserReducer,
   permissions: permissionsReducer,
+  systemNotifications: systemNotificatinosReducer,
 });
 
 export default rootReducer;
