@@ -88,4 +88,14 @@ export type PermissionsState = {
   fcmRequesting: boolean,
 };
 
+export type SystemNotification = {
+  id: number,
+  collapseKey: string,
+  collapseKeyToReplace: string,
+  text: string,
+  payload: Object,
+  type: 'permanent' | 'temp',
+  icon: any,
+}
+
 export type NavigationFlowType = 'mapViewModal' | 'registration' | 'editProfile';

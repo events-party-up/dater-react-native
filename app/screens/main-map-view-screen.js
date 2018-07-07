@@ -8,7 +8,7 @@ import { connect, Dispatch } from 'react-redux';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import ReactNativeHeading from '@zsajjad/react-native-heading';
 
-import { GeoCoordinates, MicroDate } from '../types';
+import { GeoCoordinates, MicroDate, SystemNotifications } from '../types';
 import MyLocationOnCenteredMap from '../components/map/my-location-on-centered-map';
 import UsersAroundComponent from '../components/map/users-around-component';
 import PastLocationsPath from '../components/map/past-locations-path';
@@ -22,8 +22,7 @@ import {
 import MyLocationOnNonCenteredMap from '../components/map/my-location-on-non-centered-map';
 // import OnMapRightButtons from '../components/map/on-map-right-buttons';
 import OnMapInteractiveElements from '../components/on-map-ui-interactions/on-map-interactive-elements';
-// import BlockMapViewComponent from '../components/map/block-mapview-component';
-import SystemNotification from '../components/ui-kit/molecules/system-notification';
+import SystemNotificationComponent from '../components/ui-kit/molecules/system-notification';
 
 import DaterButton from '../components/ui-kit/atoms/dater-button';
 // import FirebaseSetup from '../components/firebase-setup';
@@ -36,6 +35,7 @@ const mapStateToProps = (state) => ({
   microDate: state.microDate,
   appState: state.appState,
   usersAround: state.usersAround.users,
+  systemNotifications: state.systemNotifications,
 });
 
 function creatMapViewProxy(mapView: MapboxGL.MapView) {
@@ -80,11 +80,11 @@ type Props = {
   navigation: any,
   usersAround: Array<mixed>,
   appState: any,
+  systemNotifications: SystemNotifications,
 };
 
 type State = {
   compassHeading: number,
-  messageCount: number,
 }
 
 class MainMapViewScreen extends React.Component<Props, State> {
@@ -95,7 +95,6 @@ class MainMapViewScreen extends React.Component<Props, State> {
     super(props);
     this.state = {
       compassHeading: 0,
-      messageCount: 0,
     };
   }
 
@@ -104,9 +103,28 @@ class MainMapViewScreen extends React.Component<Props, State> {
     this.compassListener.addListener('headingUpdated', this.onCompassHeadingUpdated);
   }
 
-  toggleSystemNotification = () => {
-    this.setState({
-      messageCount: this.state.messageCount + 1,
+  toggleBadGPS = () => {
+    this.props.dispatch({
+      type: 'APP_STATE_POOR_GPS',
+      payload: 5,
+    });
+  }
+
+  toggleGoodGPS = () => {
+    this.props.dispatch({
+      type: 'APP_STATE_GOOD_GPS',
+    });
+  }
+
+  toggleNetworkOffline = () => {
+    this.props.dispatch({
+      type: 'APP_STATE_NETWORK_OFFLINE',
+    });
+  }
+
+  toggleNetworkOnline = () => {
+    this.props.dispatch({
+      type: 'APP_STATE_NETWORK_ONLINE',
     });
   }
 
@@ -205,10 +223,8 @@ class MainMapViewScreen extends React.Component<Props, State> {
       <View
         style={styles.mapViewContainer}
       >
-        <SystemNotification
-          message={`Отсутствует интернет-соединение, проверьте связь (${this.state.messageCount})`}
-          networkIsOffline={this.props.appState.networkIsOffline}
-          gpsIsPoor={this.props.appState.gpsIsPoor}
+        <SystemNotificationComponent
+          systemNotifications={this.props.systemNotifications}
         />
 
         <View style={{
@@ -223,19 +239,30 @@ class MainMapViewScreen extends React.Component<Props, State> {
         >
           <DaterButton
             style={styles.debugButtons}
-            onPress={this.toggleSystemNotification}
+            onPress={this.toggleBadGPS}
           >
-            Уведомление
+            BAD GPS
+          </DaterButton>
+          <DaterButton
+            style={styles.debugButtons}
+            onPress={this.toggleGoodGPS}
+          >
+            GOOD GPS
+          </DaterButton>
+          <DaterButton
+            style={styles.debugButtons}
+            onPress={this.toggleNetworkOffline}
+          >
+            OFF NETWORK
+          </DaterButton>
+          <DaterButton
+            style={styles.debugButtons}
+            onPress={this.toggleNetworkOnline}
+          >
+            ON NETWORK
           </DaterButton>
         </View>
-        {/* {this.props.appState.state === 'active' &&
-          <BlockMapViewComponent
-            networkIsOffline={this.props.appState.networkIsOffline}
-            gpsIsPoor={this.props.appState.gpsIsPoor}
-            gpsAccuracy={this.props.appState.gpsAccuracy}
-          />
-        } */}
-        {/* <FirebaseSetup /> */}
+
         <OnMapInteractiveElements
           navigation={this.props.navigation}
           locationIsEnabled={this.props.location.enabled}

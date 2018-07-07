@@ -16,6 +16,7 @@ import hapticFeedbackSaga from './pure-sagas/haptic-feedback-saga';
 import fcmPushSaga from './permissions/fcm-push-saga';
 import gpsStateSaga from './app-state/gps-state-saga';
 import networkStateSaga from './app-state/network-state-saga';
+import systemNotificaitonsSaga from './system-notifications/system-notifications-saga';
 
 export default function* rootSaga() {
   yield all([
@@ -36,5 +37,6 @@ export default function* rootSaga() {
     hapticFeedbackSaga(),
     fcmPushSaga(),
     networkStateSaga(),
+    systemNotificaitonsSaga(),
   ]);
 }

@@ -6,18 +6,18 @@ import {
   Image,
 } from 'react-native';
 
-import { Body } from '../../../components/ui-kit/atoms/typography';
-import { SCREEN_WIDTH } from '../../../constants';
-import DeviceUtils from '../../../utils/device-utils';
+import { Body } from '../../../../components/ui-kit/atoms/typography';
+import { SCREEN_WIDTH } from '../../../../constants';
+import DeviceUtils from '../../../../utils/device-utils';
 
 const topVisibleOffset = (DeviceUtils.isiPhoneX() && 42) || 24;
 const topHiddenOffset = -150;
 
 type Props = {
-  message: string,
+  text: string,
   index: number,
   icon: any,
-  timeToLive: number,
+  TTL: number,
   type: 'temp' | 'permanent',
 };
 
@@ -43,7 +43,7 @@ export default class SystemNotificationView extends React.Component<Props> {
             bounciness: 15,
           },
         ).start();
-      }, this.props.timeToLive);
+      }, this.props.TTL);
     }
   }
 
@@ -61,7 +61,7 @@ export default class SystemNotificationView extends React.Component<Props> {
           numberOfLines={3}
           ellipsizeMode="tail"
         >
-          {this.props.message}
+          {this.props.text}
         </Body>
       </Animated.View>
     );

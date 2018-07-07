@@ -6,7 +6,6 @@ import { NavigatorActions } from '../../navigators/navigator-actions';
 
 import { CURRENT_USER_COLLECTION } from '../../constants';
 
-// TODO: store granted state in firestore & reenable in redux store
 export default function* fcmPushSaga() {
   yield takeEvery('PERMISSIONS_FCM_REQUEST', fcmPushPermissionSaga);
   yield takeEvery('APP_STATE_ACTIVE', clearBadgeAndNotificationsOnAppForeground);
