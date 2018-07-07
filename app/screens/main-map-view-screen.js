@@ -20,11 +20,10 @@ import {
   MAP_MIN_ZOOM_LEVEL,
 } from '../constants';
 import MyLocationOnNonCenteredMap from '../components/map/my-location-on-non-centered-map';
-// import OnMapRightButtons from '../components/map/on-map-right-buttons';
 import OnMapInteractiveElements from '../components/on-map-ui-interactions/on-map-interactive-elements';
 import SystemNotificationComponent from '../components/ui-kit/molecules/system-notification';
 
-import DaterButton from '../components/ui-kit/atoms/dater-button';
+// import DaterButton from '../components/ui-kit/atoms/dater-button';
 // import FirebaseSetup from '../components/firebase-setup';
 
 const mapStateToProps = (state) => ({
@@ -227,7 +226,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
           systemNotifications={this.props.systemNotifications}
         />
 
-        <View style={{
+        {/* <View style={{
           position: 'absolute',
           left: 0,
           right: 0,
@@ -237,6 +236,19 @@ class MainMapViewScreen extends React.Component<Props, State> {
           alignItems: 'center',
         }}
         >
+          <DaterButton
+            style={styles.debugButtons}
+            onPress={() => this.props.navigation.navigate('FloatingNavigator')}
+            type="secondary"
+          >
+            Floating Screen
+          </DaterButton>
+          <DaterButton
+            style={styles.debugButtons}
+            onPress={() => this.props.navigation.navigate('UIKitNavigator')}
+          >
+            UI Kit
+          </DaterButton>
           <DaterButton
             style={styles.debugButtons}
             onPress={this.toggleBadGPS}
@@ -261,7 +273,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
           >
             ON NETWORK
           </DaterButton>
-        </View>
+        </View> */}
 
         <OnMapInteractiveElements
           navigation={this.props.navigation}
@@ -392,21 +404,6 @@ class MainMapViewScreen extends React.Component<Props, State> {
               </Caption2>
             </View>
           }
-          {/* <View style={styles.buttons}>
-            <DaterButton
-              style={styles.button}
-              onPress={() => this.props.navigation.navigate('FloatingNavigator')}
-              type="secondary"
-            >
-              Floating Screen
-            </DaterButton>
-            <DaterButton
-              style={styles.debugButtons}
-              onPress={() => this.props.navigation.navigate('UIKitNavigator')}
-            >
-              UI Kit
-            </DaterButton>
-          </View> */}
         </View>
       </View>
     );
