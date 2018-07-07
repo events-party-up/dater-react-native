@@ -73,8 +73,9 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props, 
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.accuracy !== this.props.accuracy ||
-      nextProps.visibleRadiusInMeters !== this.props.visibleRadiusInMeters) {
+    if ((nextProps.accuracy !== this.props.accuracy ||
+        nextProps.visibleRadiusInMeters !== this.props.visibleRadiusInMeters) &&
+        !this.props.appState.gpsIsPoor) {
       this.animateAccuracyHalo(nextProps.accuracy);
     }
 
