@@ -149,7 +149,6 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
               {
                 y: this.headerMapPanelPosition, id: 'showHeader', damping: 0.7, tension: 200,
               },
-              { y: this.closedMapPanelPosition - 1, id: 'closeReplace' }, // close map panel snap point
               { y: this.closedMapPanelPosition, id: 'close' }, // close map panel snap point
             ]}
             boundaries={{ top: -10 }}

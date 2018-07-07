@@ -286,7 +286,7 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
 function* mapPanelHideActionsSaga(mapPanelSnapper, nextAction) {
   try {
     mapPanelIsShowing = false;
-    yield call(mapPanelSnapper, { index: 5 }); // hide
+    yield call(mapPanelSnapper, { index: 4 }); // hide
     yield* showAgainIfCantHide(mapPanelSnapper);
     switch (nextAction.type) {
       case 'MAPVIEW_PRESSED':
@@ -315,7 +315,7 @@ function* showAgainIfCantHide(mapPanelSnapper) {
 function* mapPanelForceHideActionsSaga(mapPanelSnapper, nextAction) {
   mapPanelIsShowing = false;
   yield put({ type: 'UI_MAP_PANEL_HIDE_FORCE', payload: nextAction.payload });
-  yield call(mapPanelSnapper, { index: 5 }); // hide
+  yield call(mapPanelSnapper, { index: 4 }); // hide
   yield take('UI_MAP_PANEL_HIDE_SNAPPED');
   mapPanelIsShown = false;
 }
