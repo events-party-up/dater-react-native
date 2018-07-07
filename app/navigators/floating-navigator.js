@@ -8,7 +8,7 @@ const FloatingNavigator = StackNavigator(
     },
   },
   {
-    initialRouteName: 'LoginScreen',
+    initialRouteName: 'FloatingScreen',
     headerMode: 'none',
     transitionConfig: () => ({
       containerStyle: {

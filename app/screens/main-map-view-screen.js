@@ -299,6 +299,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
                 microDateEnabled={this.props.microDate.enabled}
                 mapViewHeadingAngle={this.props.mapView.heading}
                 mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
+                appState={this.props.appState}
               />}
           <MapboxGL.MapView
             // centerCoordinate={this.props.location.coords ?
@@ -364,6 +365,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
                 mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
                 headingToTarget={this.props.microDate.headingToTarget}
                 microDateEnabled={this.props.microDate.enabled}
+                appState={this.props.appState}
               />
             }
           </MapboxGL.MapView>

@@ -69,7 +69,7 @@ const mapViewReducer = (state = initialState, action) => {
         longitude: visibleBounds[1][0],
         latitude: visibleBounds[1][1],
       };
-      const visibleRadiusInMeters = GeoUtils.distance(corner1, corner2);
+      const visibleRadiusInMeters = Math.floor(GeoUtils.distance(corner1, corner2));
 
       return {
         ...state,
