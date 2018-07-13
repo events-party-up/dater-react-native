@@ -17,6 +17,8 @@ import MapPanelRequestCancelled from './map-panel-templates/map-panel-request-ca
 import MapPanelMicroDateStopped from './map-panel-templates/map-panel-micro-date-stopped';
 import MapPanelRequestExpired from './map-panel-templates/map-panel-request-expired';
 import MapPanelMicroDateExpired from './map-panel-templates/map-panel-micro-date-expired';
+import MapPanelAreYouReady from './map-panel-templates/map-panel-are-you-ready';
+import MapPanelPendingSearch from './map-panel-templates/map-panel-pending-search';
 
 type Props = {
   mapPanel: any,
@@ -35,6 +37,18 @@ export default class OnMapPanel extends React.Component<Props, State> {
       case 'userCard':
         return (
           <MapPanelUserCard
+            mapPanel={this.props.mapPanel}
+          />
+        );
+      case 'areYouReady':
+        return (
+          <MapPanelAreYouReady
+            mapPanel={this.props.mapPanel}
+          />
+        );
+      case 'pendingSearch':
+        return (
+          <MapPanelPendingSearch
             mapPanel={this.props.mapPanel}
           />
         );

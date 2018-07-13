@@ -29,6 +29,29 @@ export default class OnMapPanelButtons extends React.Component<Props> {
     });
   }
 
+  onPressAreYouReady = () => {
+    this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_WITH_BUTTON' });
+    this.props.dispatch({ type: 'MICRO_DATE_IM_READY' });
+  }
+
+  cancelPendingSearch = () => {
+    Alert.alert(
+      'Ты уверен?',
+      'Мы уже почти нашли тебе пару для встречи!',
+      [
+        { text: 'Нет', onPress: () => {} },
+        {
+          text: 'Уверен',
+          onPress: () => {
+            this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_WITH_BUTTON' });
+            this.props.dispatch({ type: 'MICRO_DATE_PENDING_SEARCH_CANCEL' });
+          },
+        },
+      ],
+      { cancelable: true },
+    );
+  }
+
   cancelOutgoingMicroDate = () => {
     this.props.dispatch({ type: 'MICRO_DATE_OUTGOING_CANCEL' });
   }
@@ -93,6 +116,22 @@ export default class OnMapPanelButtons extends React.Component<Props> {
             onPress={() => this.requestMicroDate(this.props.mapPanel.targetUser)}
           >
             Встретиться
+          </DaterButton>
+        );
+      case 'areYouReady':
+        return (
+          <DaterButton
+            onPress={this.onPressAreYouReady}
+          >
+            Я {this.props.mapPanel.gender === 'female' ? 'готова' : 'готов'}
+          </DaterButton>
+        );
+      case 'pendingSearch':
+        return (
+          <DaterButton
+            onPress={this.cancelPendingSearch}
+          >
+            Отменить
           </DaterButton>
         );
       case 'activeMicroDate':

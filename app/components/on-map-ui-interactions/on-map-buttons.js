@@ -14,8 +14,8 @@ import {
 } from '../../constants';
 
 const myLocationIcon = require('../../assets/icons/my-location/48/my-location.png');
-const playIcon = require('../../assets/icons/play/play.png');
-const stopIcon = require('../../assets/icons/stop/stop.png');
+// const playIcon = require('../../assets/icons/play/play.png');
+// const stopIcon = require('../../assets/icons/stop/stop.png');
 const myProfileIcon = require('../../assets/icons/my-profile/my-profile.png');
 const plusIcon = require('../../assets/icons/plus/plus.png');
 const minusIcon = require('../../assets/icons/minus/minus.png');
@@ -158,7 +158,7 @@ export default class OnMapButtons extends React.Component<Props, State> {
             size="medium"
           />
         }
-        {!this.props.microDateIsEnabled &&
+        {/* {!this.props.microDateIsEnabled &&
           <CircleButton
             style={styles.button}
             onPress={this.onGeoTogglePress}
@@ -166,7 +166,7 @@ export default class OnMapButtons extends React.Component<Props, State> {
             size="medium"
             disabled={!this.props.isAuthenticated}
           />
-        }
+        } */}
         <CircleButton
           style={styles.button}
           onPress={this.centerMe}

@@ -1,7 +1,8 @@
 import { take, put, select, all, takeEvery } from 'redux-saga/effects';
-import microDateIncomingRequestsSaga from './micro-date-incoming-requests-saga';
-import microDateOutgoingRequestsSaga from './micro-date-outgoing-requests-saga';
+// import microDateIncomingRequestsSaga from './micro-date-incoming-requests-saga';
+// import microDateOutgoingRequestsSaga from './micro-date-outgoing-requests-saga';
 import microDateUserMovementsSaga from './micro-date-user-movements-saga';
+import microDateStartSaga from './micro-date-start-saga';
 
 export default function* microDateSaga() {
   try {
@@ -15,8 +16,9 @@ export default function* microDateSaga() {
     }
     yield takeEvery('UPLOAD_PHOTO_START', microDateUploadingPhoto);
     yield all([
-      microDateIncomingRequestsSaga(),
-      microDateOutgoingRequestsSaga(),
+      // microDateIncomingRequestsSaga(),
+      // microDateOutgoingRequestsSaga(),
+      microDateStartSaga(),
       microDateUserMovementsSaga(),
     ]);
   } catch (error) {

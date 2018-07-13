@@ -50,6 +50,15 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
   halfScreenMapPanelPosition = HALF_SCREEN_MAP_PANEL_HEIGHT;
   fullScreenMapPanelPosition = (DeviceUtils.isiPhoneX() && 32) || (Platform.OS === 'ios' ? 20 : 8);
   headerMapPanelPosition = this.closedMapPanelPosition - (DeviceUtils.isiPhoneX() ? 96 : 72);
+  snapPoints = [
+    { y: this.standardMapPanelPosition, id: 'showStandard' },
+    { y: this.halfScreenMapPanelPosition, id: 'showHalfScreen' },
+    { y: this.fullScreenMapPanelPosition, id: 'showFullScreen' },
+    // {
+    //   y: this.headerMapPanelPosition, id: 'showHeader', damping: 0.7, tension: 200,
+    // },
+    { y: this.closedMapPanelPosition, id: 'close' }, // close map panel snap point
+  ];
 
   constructor(props) {
     super(props);
@@ -64,6 +73,7 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
     this.props.dispatch({
       type: 'UI_MAP_PANEL_READY',
       mapPanelSnapper: (args) => this.interactableElement.snapTo(args),
+      mapPanelSetVelocity: (args) => this.interactableElement.setVelocity(args),
     });
     // this.state.animatedDeltaY.addListener(({ value }) => console.log(value));
   }
@@ -142,16 +152,10 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
           <Interactable.View
             ref={(component) => { this.interactableElement = component; }}
             verticalOnly
-            snapPoints={[
-              { y: this.standardMapPanelPosition, id: 'showStandard' },
-              { y: this.halfScreenMapPanelPosition, id: 'showHalfScreen' },
-              { y: this.fullScreenMapPanelPosition, id: 'showFullScreen' },
-              {
-                y: this.headerMapPanelPosition, id: 'showHeader', damping: 0.7, tension: 200,
-              },
-              { y: this.closedMapPanelPosition, id: 'close' }, // close map panel snap point
-            ]}
-            boundaries={{ top: -10 }}
+            snapPoints={this.snapPoints}
+            boundaries={{
+              top: -10,
+            }}
             initialPosition={{ y: this.closedMapPanelPosition }}
             animatedValueY={this.state.animatedDeltaY}
             onSnap={this.onSnap}

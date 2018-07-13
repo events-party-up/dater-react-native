@@ -38,13 +38,13 @@ export default class UsersAroundComponent extends React.Component<Props> {
         ]}
         key={user.id}
         id={user.id}
-        onSelected={() => { this.onPressOrSelect(user); }} // TOOD: refactor this, onPress uses same callback
-        onDeselected={() => { this.onDeselected(); }}
+        // onSelected={() => { this.onPressOrSelect(user); }} // TOOD: refactor this, onPress uses same callback
+        // onDeselected={() => { this.onDeselected(); }}
         // selected={false}
         anchor={{ x: 0.5, y: 1 }} // anchor so that bottom tip of the marker is at the geo point
       >
         <UserOnMapMarker
-          onPress={() => { this.onPressOrSelect(user); }}
+          // onPress={() => { this.onPressOrSelect(user); }}
           title={user.name ?
             user.name.substring(0, 1).toUpperCase() :
             user.shortId && user.shortId.substring(0, 1).toUpperCase()}

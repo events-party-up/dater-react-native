@@ -13,6 +13,9 @@ export default function* mapPanelSaga() {
       const { mapPanelSnapper } = yield take('UI_MAP_PANEL_READY');
       const showActions = yield actionChannel([
         'USERS_AROUND_ITEM_PRESSED',
+        'MICRO_DATE_ASK_ARE_YOU_READY',
+        'MICRO_DATE_IM_READY',
+        'MICRO_DATE_PENDING_SEARCH_CANCEL',
         'MICRO_DATE_OUTGOING_REQUEST',
         'MICRO_DATE_INCOMING_REQUEST',
         'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
@@ -57,6 +60,7 @@ export default function* mapPanelSaga() {
         'UI_MAP_PANEL_HIDE_WITH_BUTTON',
         'MICRO_DATE_OUTGOING_ACCEPT',
       ]);
+
       const throttledActionsTask =
         yield throttle(5000, 'MICRO_DATE_CLOSE_DISTANCE_MOVE', mapPanelShowActionsSaga, mapPanelSnapper);
       const task1 = yield takeLatest(showActions, mapPanelShowActionsSaga, mapPanelSnapper);
@@ -83,7 +87,7 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
 
     if (mapPanelIsShown && !mapPanelIsShowing) {
       // hide pannel without any actions
-      yield call(mapPanelSnapper, { index: 4 }); // hide
+      yield call(mapPanelSnapper, { index: 3 }); // hide
       yield delay(mapPanelReplaceDelay);
     }
     yield put({ type: 'UI_MAP_PANEL_SET_MODE', payload: setModePayload });
@@ -134,6 +138,20 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
         heightMode: 'standard',
         targetUser: nextAction.payload,
         canHide: true,
+      };
+    case 'MICRO_DATE_PENDING_SEARCH_CANCEL':
+    case 'MICRO_DATE_ASK_ARE_YOU_READY':
+      return {
+        mode: 'areYouReady',
+        heightMode: 'standard',
+        gender: yield select((state) => state.currentUser.gender),
+        canHide: false,
+      };
+    case 'MICRO_DATE_IM_READY':
+      return {
+        mode: 'pendingSearch',
+        heightMode: 'standard',
+        canHide: false,
       };
     case 'MICRO_DATE_OUTGOING_REQUEST':
       return {
@@ -286,7 +304,7 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
 function* mapPanelHideActionsSaga(mapPanelSnapper, nextAction) {
   try {
     mapPanelIsShowing = false;
-    yield call(mapPanelSnapper, { index: 4 }); // hide
+    yield call(mapPanelSnapper, { index: 3 }); // hide
     yield* showAgainIfCantHide(mapPanelSnapper);
     switch (nextAction.type) {
       case 'MAPVIEW_PRESSED':
@@ -305,7 +323,7 @@ function* showAgainIfCantHide(mapPanelSnapper) {
   if (canHide === false) {
     yield delay(mapPanelReplaceDelay);
     mapPanelIsShowing = true;
-    yield call(mapPanelSnapper, { index: 3 }); // show folded
+    yield call(mapPanelSnapper, { index: 0 }); // show folded
     yield take([
       'UI_MAP_PANEL_SHOW_SNAPPED',
     ]);
@@ -315,7 +333,7 @@ function* showAgainIfCantHide(mapPanelSnapper) {
 function* mapPanelForceHideActionsSaga(mapPanelSnapper, nextAction) {
   mapPanelIsShowing = false;
   yield put({ type: 'UI_MAP_PANEL_HIDE_FORCE', payload: nextAction.payload });
-  yield call(mapPanelSnapper, { index: 4 }); // hide
+  yield call(mapPanelSnapper, { index: 3 }); // hide
   yield take('UI_MAP_PANEL_HIDE_SNAPPED');
   mapPanelIsShown = false;
 }
