@@ -14,8 +14,7 @@ export default function* microDateUserMovementsSaga() {
   try {
     yield takeEvery('MICRO_DATE_TARGET_MOVE', microDateUserMovementsTargetMoveSaga);
     yield takeEvery([
-      'MICRO_DATE_OUTGOING_STARTED',
-      'MICRO_DATE_INCOMING_STARTED',
+      'MICRO_DATE_START',
     ], microDateWriteFirstPastLocationOnStartSaga);
   } catch (error) {
     yield put({ type: 'MICRO_DATE_USER_MOVEMENTS_ERROR', payload: error });
@@ -64,6 +63,7 @@ export function* microDateUserMovementsMyMoveSaga(newCoords) {
     const timeDelta = (new Date() - myPreviousCoords.clientTS) / 1000; // in seconds
     const distanceDelta = GeoUtils.distance(myPreviousCoords, newCoords);
     const velocity = Math.floor(distanceDelta / timeDelta); // in seconds
+    // console.log(`timeDelta: ${timeDelta} distanceDelta: ${distanceDelta} velocity: ${velocity}`);
 
     if (velocity > MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION ||
       newCoords.accuracy > GOOD_GPS_ACCURACY_MICRODATE_MODE ||

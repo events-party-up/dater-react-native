@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Animated } from 'react-native';
+import { View } from 'react-native';
 import 'moment/locale/ru';
 
 import MapPanelStyles from './map-panel-templates/map-panel-styles';
@@ -10,10 +10,6 @@ import MapPanelSelfieUploadedByTarget from './map-panel-templates/map-panel-self
 import MapPanelUserCard from './map-panel-templates/map-panel-user-card';
 import MapPanelMakeSelfie from './map-panel-templates/map-panel-make-selfie';
 import MapPanelActiveMicroDate from './map-panel-templates//map-panel-active-micro-date';
-import MapPanelIncomingRequest from './map-panel-templates/map-panel-incoming-request';
-import MapPanelAwaitingAcceptRequest from './map-panel-templates/map-panel-awaiting-accept-request'; // eslint-disable-line
-import MapPanelRequestDeclined from './map-panel-templates/map-panel-request-declined';
-import MapPanelRequestCancelled from './map-panel-templates/map-panel-request-cancelled';
 import MapPanelMicroDateStopped from './map-panel-templates/map-panel-micro-date-stopped';
 import MapPanelRequestExpired from './map-panel-templates/map-panel-request-expired';
 import MapPanelMicroDateExpired from './map-panel-templates/map-panel-micro-date-expired';
@@ -25,7 +21,6 @@ type Props = {
   microDate: any,
   uploadPhotos: any,
   onPressHandle: () => void,
-  panelButtonsAnimatedValue: Animated.Value,
 };
 
 type State = {
@@ -58,36 +53,6 @@ export default class OnMapPanel extends React.Component<Props, State> {
             targetUser={this.props.mapPanel.targetUser}
             distance={this.props.microDate.distance}
             acceptTS={this.props.mapPanel.microDate.acceptTS}
-          />
-        );
-      case 'incomingMicroDateRequest':
-        return (
-          <MapPanelIncomingRequest
-            targetUser={this.props.mapPanel.targetUser}
-            distance={this.props.mapPanel.distance}
-            microDateId={this.props.mapPanel.microDateId}
-            requestTS={this.props.mapPanel.microDate.requestTS}
-          />
-        );
-      case 'outgoingMicroDateAwaitingAccept':
-        return (
-          <MapPanelAwaitingAcceptRequest
-            targetUser={this.props.mapPanel.targetUser}
-            requestTS={this.props.mapPanel.microDate.requestTS}
-            panelButtonsAnimatedValue={this.props.panelButtonsAnimatedValue}
-          />
-        );
-      case 'outgoingMicroDateDeclined':
-        return (
-          <MapPanelRequestDeclined
-            targetUser={this.props.mapPanel.targetUser}
-            declineTS={this.props.mapPanel.microDate.declineTS}
-          />
-        );
-      case 'incomingMicroDateCancelled':
-        return (
-          <MapPanelRequestCancelled
-            targetUser={this.props.mapPanel.targetUser}
           />
         );
       case 'microDateStopped':

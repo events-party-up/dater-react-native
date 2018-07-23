@@ -339,7 +339,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
             {this.props.microDate.enabled &&
               <PastLocationsPath
                 lastLocation={this.props.microDate.targetCurrentCoords}
-                uid={this.props.microDate.targetUserUid}
+                uid={this.props.microDate.targetUser.uid}
                 mode="target"
                 microDateId={this.props.microDate.id}
                 limit={MAX_VISIBLE_PAST_LOCATIONS}
@@ -400,7 +400,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
                 Оппонента: {' '}
                 <MicroDateStats
                   microDateId={this.props.microDate.id}
-                  uid={this.props.microDate.targetUserUid}
+                  uid={this.props.microDate.targetUser.uid}
                   style={styles.microDateText}
                 />
               </Caption2>

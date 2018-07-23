@@ -28,7 +28,7 @@ export default class MicroDateScreen extends React.Component<Props> {
     this.microDate = this.props.navigation.getParam('microDate');
     this.finishTS = this.microDate.finishTS ? this.microDate.finishTS : new Date();
     this.microDateDuration =
-      Math.floor((this.finishTS.getTime() - this.microDate.acceptTS.getTime()) / 1000 / 60);
+      Math.floor((this.finishTS.getTime() - this.microDate.startTS.getTime()) / 1000 / 60);
     this.microDateDuration = this.microDateDuration <= 0 ? 1 : this.microDateDuration; // reset to 1 if duration is too small
   }
 
@@ -84,14 +84,14 @@ export default class MicroDateScreen extends React.Component<Props> {
           >
             <PastLocationsPath
               lastLocation={this.microDate.selfieGeoPoint}
-              uid={this.microDate.requestFor}
+              uid={this.microDate.currentUser.uid}
               mode="own"
               microDateId={this.microDate.id}
               limit={100}
             />
             <PastLocationsPath
               lastLocation={this.microDate.selfieGeoPoint}
-              uid={this.microDate.requestBy}
+              uid={this.microDate.targetUser.uid}
               mode="target"
               microDateId={this.microDate.id}
               limit={100}
@@ -125,7 +125,7 @@ export default class MicroDateScreen extends React.Component<Props> {
           >
             Встреча {this.microDate.id.substring(0, 4)} состоялась{' '}
             <Moment locale="ru" element={Body} fromNow>{this.finishTS}</Moment>{' '}
-            между {this.microDate.requestBy.substring(0, 4)} и {this.microDate.requestFor.substring(0, 4)}{' '}
+            между {this.microDate.currentUser.name} и {this.microDate.targetUser.name}{' '}
           </Body>
           <View style={{
              flexDirection: 'row',
@@ -145,7 +145,7 @@ export default class MicroDateScreen extends React.Component<Props> {
             </CardInfoItemMolecule>
             <CardInfoItemMolecule
               style={[styles.bodyText, styles.textBodyPadding]}
-              header={this.microDate.requestBy.substring(0, 4)}
+              header={this.microDate.currentUser.name}
               bodyStyle={{
                 paddingLeft: 0,
               }}
@@ -157,7 +157,7 @@ export default class MicroDateScreen extends React.Component<Props> {
             </CardInfoItemMolecule>
             <CardInfoItemMolecule
               style={[styles.bodyText, styles.textBodyPadding]}
-              header={this.microDate.requestFor.substring(0, 4)}
+              header={this.microDate.targetUser.name}
               bodyStyle={{
                 paddingLeft: 0,
               }}

@@ -103,6 +103,10 @@ export default class OnMapPanelButtons extends React.Component<Props> {
   approveSelfie = () => {
     this.props.dispatch({ type: 'MICRO_DATE_APPROVE_SELFIE' });
   }
+  closeMicroDateStopped = () => {
+    this.closePanel();
+    this.props.dispatch({ type: 'MICRO_DATE_ASK_ARE_YOU_READY' });
+  }
 
   closePanel = () => {
     this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_WITH_BUTTON' });
@@ -142,32 +146,9 @@ export default class OnMapPanelButtons extends React.Component<Props> {
             Отменить
           </DaterButton>
         );
-      case 'incomingMicroDateRequest':
-        return (
-          <React.Fragment>
-            <CircleButton type="decline" size="medium-big" onPress={this.declineIncomingMicroDate} />
-            <CircleButton type="confirm" size="medium-big" onPress={this.acceptIncomingMicroDate} />
-          </React.Fragment>
-        );
-      case 'outgoingMicroDateAwaitingAccept':
-        return (
-          <DaterButton
-            onPress={this.cancelOutgoingMicroDate}
-          >
-            Отменить
-          </DaterButton>
-        );
-      case 'outgoingMicroDateDeclined':
-        return (
-          <CircleButton type="close" onPress={this.closePanel} size="medium-big" />
-        );
-      case 'incomingMicroDateCancelled':
-        return (
-          <CircleButton type="close" onPress={this.closePanel} size="medium-big" />
-        );
       case 'microDateStopped':
         return (
-          <CircleButton type="close" onPress={this.closePanel} size="medium-big" />
+          <CircleButton type="close" onPress={this.closeMicroDateStopped} size="medium-big" />
         );
       case 'microDateRequestExpired':
         return (

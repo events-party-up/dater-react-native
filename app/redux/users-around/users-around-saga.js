@@ -41,7 +41,7 @@ export default function* usersAroundSaga() {
 
       if (isMicroDateMode) {
         const microDateState = yield select((state) => state.microDate);
-        channel = yield createMicroDateChannel(myCoords, microDateState, myUid);
+        channel = yield createMicroDateChannel(myCoords, microDateState);
         channelTask = yield takeEvery(channel, updateMicroDate);
       } else {
         channel = yield createAllUsersAroundChannel(myCoords, myUid);
@@ -54,17 +54,11 @@ export default function* usersAroundSaga() {
         'USERS_AROUND_RESTART',
         'APP_STATE_BACKGROUND', // stop if app is in background
         'GEO_LOCATION_STOPPED', // stop if location services are disabled
-        'MICRO_DATE_INCOMING_STARTED', // app mode switched to find user
-        'MICRO_DATE_OUTGOING_STARTED',
-        'MICRO_DATE_STOP',
-        'MICRO_DATE_OUTGOING_FINISHED',
-        'MICRO_DATE_INCOMING_FINISHED',
-        'MICRO_DATE_INCOMING_REMOVE',
-        'MICRO_DATE_OUTGOING_REMOVE',
-        'MICRO_DATE_INCOMING_STOPPED_BY_ME',
-        'MICRO_DATE_OUTGOING_STOPPED_BY_ME',
-        'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
-        'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
+        'MICRO_DATE_START', // app mode switched to find user
+        'MICRO_DATE_REMOVE',
+        'MICRO_DATE_STOPPED_BY_ME',
+        'MICRO_DATE_STOPPED_BY_TARGET',
+        'MICRO_DATE_FINISHED',
       ]);
 
       yield cancel(channelTask);
@@ -215,12 +209,10 @@ async function createAllUsersAroundChannel(userCoords, myUid) {
   }
 }
 
-function createMicroDateChannel(myCoords, microDateState, myUid) {
-  const targetUid = microDateState.microDate.requestBy === myUid ?
-    microDateState.microDate.requestFor : microDateState.microDate.requestBy;
+function createMicroDateChannel(myCoords, microDateState) {
   const query = firebase.firestore()
     .collection(GEO_POINTS_COLLECTION)
-    .doc(targetUid);
+    .doc(microDateState.targetUser.uid);
 
   return eventChannel((emit) => {
     const onSnapshotUpdated = (snapshot) => {
