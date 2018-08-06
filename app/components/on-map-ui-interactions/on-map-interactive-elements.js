@@ -21,6 +21,8 @@ const mapStateToProps = (state) => ({
   mapPanel: state.mapPanel,
   uploadPhotos: state.uploadPhotos,
   microDate: state.microDate,
+  usersAroundReadyToDateCount: state.usersAround.readyToDateCount,
+  usersAroundCount: state.usersAround.usersAroundCount,
 });
 
 type Props = {
@@ -35,6 +37,8 @@ type Props = {
   microDateIsEnabled: boolean,
   mapViewZoom: number,
   navigation: any,
+  usersAroundReadyToDateCount: number,
+  usersAroundCount: number,
 };
 
 type State = {
@@ -165,6 +169,8 @@ class OnMapInteractiveElements extends React.Component<Props, State> {
               mapPanel={this.props.mapPanel}
               uploadPhotos={this.props.uploadPhotos}
               microDate={this.props.microDate}
+              usersAroundReadyToDateCount={this.props.usersAroundReadyToDateCount}
+              usersAroundCount={this.props.usersAroundCount}
               onPressHandle={this.onPressHandle}
             />
           </Interactable.View>

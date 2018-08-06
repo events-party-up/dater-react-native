@@ -13,6 +13,7 @@ const initialState = {
   error: null,
   enabled: false,
   users: [],
+  readyToDateCount: 0,
 };
 
 const usersAroundReducer = (state = initialState, action) => {
@@ -21,9 +22,13 @@ const usersAroundReducer = (state = initialState, action) => {
   switch (type) {
     case types.USERS_AROUND_MICRO_DATE_UPDATED:
     case types.USERS_AROUND_UPDATED: {
+      const readyToDateCount = payload.filter(((user) => user.readyToDate === true)).length;
+
       return {
         ...state,
         users: payload,
+        usersAroundCount: payload.length,
+        readyToDateCount,
       };
     }
     case types.USERS_AROUND_STARTED: {

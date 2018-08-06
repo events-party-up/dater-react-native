@@ -6,6 +6,8 @@ import MapPanelStyles from './map-panel-styles';
 
 type Props = {
   mapPanel: string,
+  usersAroundCount: number,
+  usersAroundReadyToDateCount: number,
 }
 
 export default class MapPanelAreYouReady extends React.Component<Props> {
@@ -16,7 +18,8 @@ export default class MapPanelAreYouReady extends React.Component<Props> {
           Ты готов{this.props.mapPanel.gender === 'female' && 'а'} к встрече?
         </H2>
         <Caption2 style={MapPanelStyles.panelBody}>
-          Рядом с тобой 5 игроков готовых встретиться прямо сейчас.
+          Игроков поблизости: {this.props.usersAroundCount}{'\n'}
+          Готовых встретиться сейчас: {this.props.usersAroundReadyToDateCount}
         </Caption2>
       </View>
     );

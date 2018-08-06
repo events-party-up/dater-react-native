@@ -19,6 +19,8 @@ import MapPanelIAmReadyExpired from './map-panel-templates/map-panel-i-am-ready-
 type Props = {
   mapPanel: any,
   microDate: any,
+  usersAroundReadyToDateCount: number,
+  usersAroundCount: number,
   uploadPhotos: any,
   onPressHandle: () => void,
 };
@@ -39,6 +41,8 @@ export default class OnMapPanel extends React.Component<Props, State> {
         return (
           <MapPanelAreYouReady
             mapPanel={this.props.mapPanel}
+            usersAroundReadyToDateCount={this.props.usersAroundReadyToDateCount}
+            usersAroundCount={this.props.usersAroundCount}
           />
         );
       case 'pendingSearch':
