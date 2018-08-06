@@ -16,6 +16,7 @@ const types = {
   MICRO_DATE_FINISH: 'MICRO_DATE_FINISH',
 
   MICRO_DATE_STOP: 'MICRO_DATE_STOP',
+  MICRO_DATE_EXPIRED: 'MICRO_DATE_EXPIRED',
 
   MICRO_DATE_UPLOAD_PHOTO_START: 'MICRO_DATE_UPLOAD_PHOTO_START',
 
@@ -61,6 +62,7 @@ const microDateReducer = (state = initialState, action) => {
         headingToTarget: GeoUtils.getBearing(payload.currentUser.geoPoint, payload.targetUser.geoPoint),
       };
     }
+    case types.MICRO_DATE_ASK_ARE_YOU_READY:
     case types.MICRO_DATE_PENDING_SEARCH_CANCEL:
     case types.MICRO_DATE_IM_READY_EXPIRED:
     case types.MICRO_DATE_FINISH:
@@ -68,10 +70,11 @@ const microDateReducer = (state = initialState, action) => {
     case types.MICRO_DATE_STOPPED_BY_ME: {
       return initialState;
     }
+    case types.MICRO_DATE_EXPIRED:
     case types.MICRO_DATE_STOPPED_BY_TARGET: {
       return {
         ...state,
-        microDate: payload,
+        ...payload,
         enabled: false,
         pending: false,
         photoMode: false,
@@ -82,7 +85,7 @@ const microDateReducer = (state = initialState, action) => {
       return {
         ...state,
         photoMode: true,
-        microDate: payload,
+        ...payload,
       };
     }
     case types.MICRO_DATE_UPLOAD_PHOTO_START: {

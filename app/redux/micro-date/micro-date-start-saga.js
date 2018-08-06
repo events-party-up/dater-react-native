@@ -1,4 +1,4 @@
-import { take, put, takeEvery, select, cancel, fork, spawn, takeLatest } from 'redux-saga/effects';
+import { take, put, takeEvery, select, cancel, race, fork, spawn, takeLatest, delay } from 'redux-saga/effects';
 import { eventChannel, buffers } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import * as _ from 'lodash';
@@ -34,6 +34,7 @@ export default function* microDateStartSaga() {
       if (microDate.error) {
         throw new Error(JSON.stringify(microDate.error));
       }
+
       const task1 = yield fork(restoreMicroDateOnAppLaunchSaga);
       const task2 = yield fork(microDateStopByMeSaga, microDate);
       const task3 = yield fork(microDateSelfieDeclineByMeSaga, microDate);
@@ -44,6 +45,7 @@ export default function* microDateStartSaga() {
       const microDateUpdatesTask = yield takeLatest(microDateChannel, microDateUpdatedSaga);
 
       const stopAction = yield take([
+        'MICRO_DATE_EXPIRED',
         'MICRO_DATE_REMOVE',
         'MICRO_DATE_STOPPED_BY_TARGET',
         'MICRO_DATE_STOPPED_BY_ME',
@@ -55,7 +57,8 @@ export default function* microDateStartSaga() {
       yield cancel(microDateUpdatesTask);
       yield cancel(task1, task2, task3, task4, task5);
 
-      if (stopAction.type !== 'MICRO_DATE_STOPPED_BY_TARGET') {
+      if (stopAction.type !== 'MICRO_DATE_STOPPED_BY_TARGET' &&
+          stopAction.type !== 'MICRO_DATE_EXPIRED') {
         yield put({ type: 'MICRO_DATE_ASK_ARE_YOU_READY' });
       }
     }
@@ -103,6 +106,9 @@ function* microDateUpdatedSaga(microDate) {
       case 'FINISHED':
         yield put({ type: 'MICRO_DATE_FINISH', payload: microDate });
         break;
+      case 'EXPIRED':
+        yield put({ type: 'MICRO_DATE_EXPIRED', payload: microDate });
+        break;
       default:
         yield put({
           type: 'MICRO_DATE_UPDATED_SAGA_UNKNOWN_STATUS_ERROR',
@@ -123,10 +129,27 @@ function* startPendingSearch(myUid) {
       readyToDate: true,
       readyToDateTS: firebase.firestore.FieldValue.serverTimestamp(),
     });
+  const geoUpdateTask = yield fork(repeatedForceGeoUpdate);
   const readyToDateExpired = yield readyToDateRequestExpiredChannel(myUid);
-  yield take(readyToDateExpired);
-  yield put({ type: 'MICRO_DATE_IM_READY_EXPIRED' });
+  const { expired } = yield race({
+    expired: take(readyToDateExpired),
+    started: take('MICRO_DATE_START'),
+  });
+  if (expired) {
+    yield put({ type: 'MICRO_DATE_IM_READY_EXPIRED' });
+  }
+  yield cancel(geoUpdateTask);
   yield readyToDateExpired.close();
+}
+
+function* repeatedForceGeoUpdate() {
+  const timesToRepeat = 5;
+  const repeatInterval = 5000;
+
+  for (let i = 0; i < timesToRepeat; i += 1) {
+    yield put({ type: 'GEO_LOCATION_FORCE_UPDATE' });
+    yield delay(repeatInterval);
+  }
 }
 
 function* cancelPendingSearch(myUid) {
@@ -134,7 +157,6 @@ function* cancelPendingSearch(myUid) {
     yield take([
       'MICRO_DATE_PENDING_SEARCH_CANCEL',
       'MICRO_DATE_STOPPED_BY_ME',
-      'MICRO_DATE_STOPPED_BY_TARGET',
       'MICRO_DATE_REMOVE',
       'MICRO_DATE_FINISH',
     ]);
@@ -233,7 +255,6 @@ function createChannelForActiveMicroDate(myUid) {
     const onSnapshotUpdated = async (snapshot) => {
       if (snapshot.docs.length > 0 && snapshot.docChanges[0].type === 'added') {
         const microDate = snapshot.docs[0].data();
-
         emit(await microDatePayload(myUid, microDate));
       }
     };

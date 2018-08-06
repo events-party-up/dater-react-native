@@ -17,8 +17,8 @@ export default class MapPanelMicroDateExpired extends React.Component<Props> {
           Время на встречу вышло
         </H2>
         <Caption2 style={MapPanelStyles.panelBody}>
-          Ты и {this.props.targetUser.name} не успели встретиться в течении {' '}
-          {TIME_TO_FINISH_MICRO_DATE / 1000 / 60} минут.
+          Ты и {this.props.targetUser.name} не успели встретиться в течении{' '}
+          {TIME_TO_FINISH_MICRO_DATE / 1000 / 60} минут. Попробуйте еще раз.
         </Caption2>
       </View>
     );

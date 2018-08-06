@@ -51,7 +51,8 @@ export default class OnMapPanelButtons extends React.Component<Props> {
       { cancelable: true },
     );
   }
-  pressIAmReadyExpiredOKButton = () => {
+
+  closeAndAskAreYouReady = () => {
     this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_WITH_BUTTON' });
     this.props.dispatch({ type: 'MICRO_DATE_ASK_ARE_YOU_READY' });
   }
@@ -131,11 +132,7 @@ export default class OnMapPanelButtons extends React.Component<Props> {
         );
       case 'iAmReadyExpired':
         return (
-          <DaterButton
-            onPress={this.pressIAmReadyExpiredOKButton}
-          >
-            ОК
-          </DaterButton>
+          <CircleButton type="close" onPress={this.closeAndAskAreYouReady} size="medium-big" />
         );
       case 'activeMicroDate':
         return (
@@ -149,13 +146,9 @@ export default class OnMapPanelButtons extends React.Component<Props> {
         return (
           <CircleButton type="close" onPress={this.closeMicroDateStopped} size="medium-big" />
         );
-      case 'microDateRequestExpired':
-        return (
-          <CircleButton type="close" onPress={this.closePanel} size="medium-big" />
-        );
       case 'microDatetExpired':
         return (
-          <CircleButton type="close" onPress={this.closePanel} size="medium-big" />
+          <CircleButton type="close" onPress={this.closeAndAskAreYouReady} size="medium-big" />
         );
       case 'makeSelfie':
         return (

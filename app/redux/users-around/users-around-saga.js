@@ -58,6 +58,7 @@ export default function* usersAroundSaga() {
         'MICRO_DATE_REMOVE',
         'MICRO_DATE_STOPPED_BY_ME',
         'MICRO_DATE_STOPPED_BY_TARGET',
+        'MICRO_DATE_EXPIRED',
         'MICRO_DATE_FINISHED',
       ]);
 
