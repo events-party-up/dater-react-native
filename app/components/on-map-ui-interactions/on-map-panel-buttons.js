@@ -51,6 +51,10 @@ export default class OnMapPanelButtons extends React.Component<Props> {
       { cancelable: true },
     );
   }
+  pressIAmReadyExpiredOKButton = () => {
+    this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_WITH_BUTTON' });
+    this.props.dispatch({ type: 'MICRO_DATE_ASK_ARE_YOU_READY' });
+  }
 
   stopMicroDate = () => {
     Alert.alert(
@@ -123,6 +127,14 @@ export default class OnMapPanelButtons extends React.Component<Props> {
             onPress={this.cancelPendingSearch}
           >
             Отменить
+          </DaterButton>
+        );
+      case 'iAmReadyExpired':
+        return (
+          <DaterButton
+            onPress={this.pressIAmReadyExpiredOKButton}
+          >
+            ОК
           </DaterButton>
         );
       case 'activeMicroDate':

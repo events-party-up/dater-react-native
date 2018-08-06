@@ -115,14 +115,18 @@ function* microDateUpdatedSaga(microDate) {
   }
 }
 
-async function startPendingSearch(myUid) {
-  await firebase.firestore()
+function* startPendingSearch(myUid) {
+  yield firebase.firestore()
     .collection(GEO_POINTS_COLLECTION)
     .doc(myUid)
     .update({
       readyToDate: true,
       readyToDateTS: firebase.firestore.FieldValue.serverTimestamp(),
     });
+  const readyToDateExpired = yield readyToDateRequestExpiredChannel(myUid);
+  yield take(readyToDateExpired);
+  yield put({ type: 'MICRO_DATE_IM_READY_EXPIRED' });
+  yield readyToDateExpired.close();
 }
 
 function* cancelPendingSearch(myUid) {
@@ -336,6 +340,28 @@ function createChannelToMicroDate(myUid, microDateId) {
     };
 
     const unsubscribe = microDateQuery.onSnapshot(onSnapshotUpdated, onError);
+
+    return unsubscribe;
+  }, buffers.sliding(1));
+}
+
+function readyToDateRequestExpiredChannel(myUid) {
+  const myGeoPointRef = firebase.firestore()
+    .collection(GEO_POINTS_COLLECTION)
+    .doc(myUid);
+
+  return eventChannel((emit) => {
+    const onSnapshotUpdated = (dataSnapshot) => {
+      if (dataSnapshot.data().readyToDate === false) emit(true);
+    };
+
+    const onError = (error) => {
+      emit({
+        error,
+      });
+    };
+
+    const unsubscribe = myGeoPointRef.onSnapshot(onSnapshotUpdated, onError);
 
     return unsubscribe;
   }, buffers.sliding(1));

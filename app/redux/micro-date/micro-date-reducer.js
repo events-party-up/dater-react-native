@@ -3,6 +3,7 @@ import GeoUtils from '../../utils/geo-utils';
 const types = {
   MICRO_DATE_ASK_ARE_YOU_READY: 'MICRO_DATE_ASK_ARE_YOU_READY',
   MICRO_DATE_IM_READY: 'MICRO_DATE_IM_READY',
+  MICRO_DATE_IM_READY_EXPIRED: 'MICRO_DATE_IM_READY_EXPIRED',
   MICRO_DATE_PENDING_SEARCH_CANCEL: 'MICRO_DATE_PENDING_SEARCH_CANCEL',
 
   MICRO_DATE_START: 'MICRO_DATE_START',
@@ -60,6 +61,8 @@ const microDateReducer = (state = initialState, action) => {
         headingToTarget: GeoUtils.getBearing(payload.currentUser.geoPoint, payload.targetUser.geoPoint),
       };
     }
+    case types.MICRO_DATE_PENDING_SEARCH_CANCEL:
+    case types.MICRO_DATE_IM_READY_EXPIRED:
     case types.MICRO_DATE_FINISH:
     case types.MICRO_DATE_REMOVE:
     case types.MICRO_DATE_STOPPED_BY_ME: {

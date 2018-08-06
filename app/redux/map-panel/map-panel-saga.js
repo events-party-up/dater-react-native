@@ -22,6 +22,7 @@ export default function* mapPanelSaga() {
         'MICRO_DATE_SELFIE_UPLOADED_BY_TARGET',
         'MICRO_DATE_SELFIE_DECLINED_BY_TARGET',
         'MICRO_DATE_SELFIE_DECLINED_BY_ME',
+        'MICRO_DATE_IM_READY_EXPIRED',
       ], buffers.none());
 
       const hideActions = yield actionChannel([
@@ -116,6 +117,12 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
         mode: 'pendingSearch',
         heightMode: 'standard',
         canHide: false,
+      };
+    case 'MICRO_DATE_IM_READY_EXPIRED':
+      return {
+        mode: 'iAmReadyExpired',
+        heightMode: 'standard',
+        canHide: true,
       };
     case 'MICRO_DATE_START':
       if (
