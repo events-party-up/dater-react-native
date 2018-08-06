@@ -11,18 +11,11 @@ export default function* mapViewMyVisibilitySaga() {
     }
 
     yield takeEvery([
-      'MICRO_DATE_OUTGOING_REMOVE',
-      'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
-      'MICRO_DATE_OUTGOING_STOPPED_BY_ME',
-      'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
-      'MICRO_DATE_OUTGOING_FINISHED',
-      'MICRO_DATE_INCOMING_REMOVE',
-      'MICRO_DATE_INCOMING_DECLINED_BY_ME',
-      'MICRO_DATE_INCOMING_STOPPED_BY_ME',
-      'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
-      'MICRO_DATE_INCOMING_FINISHED',
+      'MICRO_DATE_REMOVE',
+      'MICRO_DATE_STOPPED_BY_TARGET',
+      'MICRO_DATE_STOPPED_BY_ME',
+      'MICRO_DATE_FINISH',
       'GEO_LOCATION_STARTED',
-      'MICRO_DATE_OUTGOING_CANCELLED',
     ], setMyMapVisibilityModeTo, 'public');
 
     yield takeEvery([
@@ -31,9 +24,7 @@ export default function* mapViewMyVisibilitySaga() {
     ], setMyMapVisibilityModeTo, 'private');
 
     yield takeEvery([
-      'MICRO_DATE_OUTGOING_REQUEST',
-      'MICRO_DATE_INCOMING_STARTED',
-      'MICRO_DATE_OUTGOING_STARTED',
+      'MICRO_DATE_START',
     ], microDateVisibilitySaga);
   } catch (error) {
     yield put({ type: 'MAPVIEW_MY_VISIBILITY_ERROR', payload: error });
@@ -42,11 +33,8 @@ export default function* mapViewMyVisibilitySaga() {
 
 function* microDateVisibilitySaga(action) {
   switch (action.type) {
-    case 'MICRO_DATE_OUTGOING_REQUEST':
-      yield* setMyMapVisibilityModeTo(action.payload.requestFor);
-      break;
     default:
-      yield* setMyMapVisibilityModeTo(action.payload.targetUser.id);
+      yield* setMyMapVisibilityModeTo(action.payload.targetUser.uid);
       break;
   }
 }

@@ -52,20 +52,6 @@ export default class OnMapPanelButtons extends React.Component<Props> {
     );
   }
 
-  cancelOutgoingMicroDate = () => {
-    this.props.dispatch({ type: 'MICRO_DATE_OUTGOING_CANCEL' });
-  }
-
-  acceptIncomingMicroDate = () => {
-    this.props.dispatch({ type: 'MICRO_DATE_INCOMING_ACCEPT_INIT' });
-  }
-
-  declineIncomingMicroDate = () => {
-    this.props.dispatch({
-      type: 'MICRO_DATE_INCOMING_DECLINE_BY_ME',
-    });
-  }
-
   stopMicroDate = () => {
     Alert.alert(
       'Отменить встречу?',
@@ -103,6 +89,7 @@ export default class OnMapPanelButtons extends React.Component<Props> {
   approveSelfie = () => {
     this.props.dispatch({ type: 'MICRO_DATE_APPROVE_SELFIE' });
   }
+
   closeMicroDateStopped = () => {
     this.closePanel();
     this.props.dispatch({ type: 'MICRO_DATE_ASK_ARE_YOU_READY' });
