@@ -154,11 +154,12 @@ function* repeatedForceGeoUpdate() {
 
 function* cancelPendingSearch(myUid) {
   while (true) {
-    yield take([
+    const cancelTask = yield take([
       'MICRO_DATE_PENDING_SEARCH_CANCEL',
       'MICRO_DATE_STOPPED_BY_ME',
       'MICRO_DATE_REMOVE',
       'MICRO_DATE_FINISH',
+      'MICRO_DATE_STOPPED_BY_TARGET',
     ]);
     yield firebase.firestore()
       .collection(GEO_POINTS_COLLECTION)
@@ -166,7 +167,9 @@ function* cancelPendingSearch(myUid) {
       .update({
         readyToDate: false,
       });
-    yield put({ type: 'MICRO_DATE_ASK_ARE_YOU_READY' });
+    if (cancelTask.type !== 'MICRO_DATE_STOPPED_BY_TARGET') {
+      yield put({ type: 'MICRO_DATE_ASK_ARE_YOU_READY' });
+    }
   }
 }
 
