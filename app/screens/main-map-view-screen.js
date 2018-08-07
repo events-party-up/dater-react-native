@@ -9,7 +9,6 @@ import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import ReactNativeHeading from '@zsajjad/react-native-heading';
 
 import { GeoCoordinates, MicroDate, SystemNotifications } from '../types';
-import MyLocationOnCenteredMap from '../components/map/my-location-on-centered-map';
 import UsersAroundComponent from '../components/map/users-around-component';
 import PastLocationsPath from '../components/map/past-locations-path';
 import { Caption2 } from '../components/ui-kit/atoms/typography';
@@ -19,7 +18,8 @@ import {
   MAP_MAX_ZOOM_LEVEL,
   MAP_MIN_ZOOM_LEVEL,
 } from '../constants';
-import MyLocationOnNonCenteredMap from '../components/map/my-location-on-non-centered-map';
+import MyLocationMarkerNonCentered from '../components/my-location-marker/my-location-marker-non-centered';
+import MyLocationMarkerCentered from '../components//my-location-marker/my-location-marker-centered';
 import OnMapInteractiveElements from '../components/on-map-ui-interactions/on-map-interactive-elements';
 import SystemNotificationComponent from '../components/ui-kit/molecules/system-notification';
 
@@ -292,7 +292,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
             this.props.location.coords &&
             (this.props.mapView.centered ||
               this.props.microDate.enabled) &&
-              <MyLocationOnCenteredMap
+              <MyLocationMarkerCentered
                 accuracy={this.props.location.coords.accuracy}
                 visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
                 heading={this.state.compassHeading || this.props.location.moveHeadingAngle}
@@ -357,7 +357,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
             {this.props.location.coords &&
               !this.props.mapView.centered &&
               !this.props.microDate.enabled &&
-              <MyLocationOnNonCenteredMap
+              <MyLocationMarkerNonCentered
                 accuracy={this.props.location.coords.accuracy}
                 visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
                 compassHeading={this.state.compassHeading}

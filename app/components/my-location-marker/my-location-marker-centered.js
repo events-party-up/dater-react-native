@@ -9,7 +9,8 @@ import {
 
 import { wrapCompassHeading } from '../../utils/geo-utils';
 import { MICRO_DATE_MAPMAKER_POSITIVE_THRESHOLD_ANGLE } from '../../constants';
-import MyLocationSearchIsPendingAnimation from './my-location-search-is-pending-animation';
+import SearchIsPendingAnimation from './search-is-pending-animation';
+import GpsIsPoorAnimation from './gps-is-poor-animation';
 
 const SIZE: number = 17;
 const HALO_RADIUS = 5;
@@ -20,7 +21,6 @@ const HEADING_BOX_SIZE = HALO_SIZE + ARROW_SIZE + ARROW_DISTANCE;
 const colorOfmyLocationMapMarker = '#1F8BFF'; // '#2c7cf6';
 const poorGPSMarkerColor = '#BDBDBD';
 const defaultColorOfHalo = 'rgba(30,144,255,0.2)';
-const poorGPSColorOfHalo = 'rgba(235, 87, 87, 0.4)';
 const { width, height } = Dimensions.get('window');
 const DIAGONAL = Math.sqrt((width * width) + (height * height));
 
@@ -40,7 +40,7 @@ type Props = {
   appState: any,
 };
 
-export default class MyLocationOnCenteredMap extends React.PureComponent<Props, State> {
+export default class MyLocationMarkerCentered extends React.PureComponent<Props, State> {
   badGpsAnimation;
 
   constructor(props) {
@@ -52,32 +52,6 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props, 
 
   componentWillMount() {
     this.animateAccuracyHalo(this.props.accuracy);
-
-    this.badGpsAnimation = Animated.loop(Animated.sequence([
-      Animated.timing(this.state.gpsAccuracyRadius, {
-        toValue: 60,
-        duration: 1000,
-      }),
-      Animated.timing(this.state.gpsAccuracyRadius, {
-        toValue: 10,
-        duration: 1000,
-      }),
-      Animated.timing(this.state.gpsAccuracyRadius, {
-        toValue: 60,
-        duration: 1000,
-      }),
-      Animated.timing(this.state.gpsAccuracyRadius, {
-        toValue: 10,
-        duration: 1000,
-      }),
-      Animated.delay(3000),
-    ]));
-  }
-
-  componentDidMount() {
-    if (this.props.appState.gpsIsPoor) {
-      this.badGpsAnimation.start();
-    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -85,15 +59,6 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props, 
       nextProps.visibleRadiusInMeters !== this.props.visibleRadiusInMeters) &&
       !this.props.appState.gpsIsPoor) {
       this.animateAccuracyHalo(nextProps.accuracy);
-    }
-
-    if (this.props.appState.gpsIsPoor === nextProps.appState.gpsIsPoor) return;
-    if (nextProps.appState.gpsIsPoor) {
-      this.badGpsAnimation.start();
-    } else {
-      this.badGpsAnimation.stop();
-      this.badGpsAnimation.reset();
-      this.animateAccuracyHalo(this.props.accuracy);
     }
   }
 
@@ -126,7 +91,6 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props, 
     const markerColor = (this.props.appState.gpsIsPoor && poorGPSMarkerColor) ||
       (this.props.microDateEnabled && microDateMarkerColor) ||
       colorOfmyLocationMapMarker;
-    const colorOfHalo = (this.props.appState.gpsIsPoor && poorGPSColorOfHalo) || defaultColorOfHalo;
 
     return (
       <View
@@ -135,7 +99,7 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props, 
       >
         {!this.props.searchIsPending &&
           <Animated.View style={{
-            backgroundColor: colorOfHalo,
+            backgroundColor: defaultColorOfHalo,
             width: Animated.multiply(2, this.state.gpsAccuracyRadius),
             height: Animated.multiply(2, this.state.gpsAccuracyRadius),
             borderRadius: this.state.gpsAccuracyRadius,
@@ -145,8 +109,11 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props, 
           }}
           />
         }
+        {this.props.appState.gpsIsPoor &&
+          <GpsIsPoorAnimation />
+        }
         {this.props.searchIsPending &&
-          <MyLocationSearchIsPendingAnimation />
+          <SearchIsPendingAnimation />
         }
         <View style={styles.container}>
           <View style={styles.markerHalo} />

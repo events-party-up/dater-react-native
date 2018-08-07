@@ -6,7 +6,7 @@ import { SCREEN_WIDTH } from '../../constants';
 type Props = {
 };
 
-export default class MyLocationSearchIsPendingAnimation extends React.Component<Props> {
+export default class SearchIsPendingAnimation extends React.Component<Props> {
   animationRadius1 = new Animated.Value(0);
   animationRadius2 = new Animated.Value(0);
 
