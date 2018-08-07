@@ -7,6 +7,7 @@ import {
   MICRO_DATES_COLLECTION,
   GEO_POINTS_COLLECTION,
   GEO_POINTS_PAST_MICRO_DATES_COLLECTION,
+  MAP_MAX_ZOOM_LEVEL,
 } from '../../constants';
 import { MicroDate } from '../../types';
 import { getFirestoreDocData } from '../../utils/firebase-utils';
@@ -133,6 +134,7 @@ function* startPendingSearch(myUid) {
     });
 
   const geoUpdateTask = yield fork(repeatedForceGeoUpdate);
+  const zoomMapTask = yield fork(zoomMap);
   const readyToDateExpired = yield readyToDateRequestExpiredChannel(myUid);
   const { expired } = yield race({
     expired: take(readyToDateExpired),
@@ -143,7 +145,7 @@ function* startPendingSearch(myUid) {
     yield put({ type: 'MICRO_DATE_IM_READY_EXPIRED' });
   }
 
-  yield cancel(geoUpdateTask);
+  yield cancel(geoUpdateTask, zoomMapTask);
   yield readyToDateExpired.close();
 }
 
@@ -154,6 +156,41 @@ function* repeatedForceGeoUpdate() {
   for (let i = 0; i < timesToRepeat; i += 1) {
     yield put({ type: 'GEO_LOCATION_FORCE_UPDATE' });
     yield delay(repeatInterval);
+  }
+}
+
+function* zoomMap() {
+  let zoomOut = true;
+  const zoomIncrement = 0.1;
+  const zoomInterval = 1000;
+  const maxZoomOut = 13;
+
+  while (true) {
+    const currentZoom = yield select((state) => state.mapView.zoom);
+    let newZoom;
+
+    if (zoomOut) {
+      newZoom = currentZoom - zoomIncrement;
+    } else {
+      newZoom = currentZoom + zoomIncrement;
+    }
+
+    yield put({
+      type: 'MAPVIEW_ZOOM_TO',
+      payload: {
+        zoom: newZoom,
+        duration: 2000,
+      },
+    });
+    yield delay(zoomInterval);
+
+    if (currentZoom <= maxZoomOut) {
+      zoomOut = false;
+    }
+
+    if (currentZoom >= MAP_MAX_ZOOM_LEVEL) {
+      zoomOut = true;
+    }
   }
 }
 

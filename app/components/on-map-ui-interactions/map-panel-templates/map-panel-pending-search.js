@@ -12,10 +12,10 @@ export default class MapPanelPendingSearch extends React.Component<Props> {
     return (
       <View>
         <H2 style={MapPanelStyles.panelHeader} numberOfLines={1} >
-          Идет поиск пары...
+          Поиск пары для встречи...
         </H2>
         <Caption2 style={MapPanelStyles.panelBody}>
-          Dater можно закрыть, как только пара будет найдена, ты получишь уведомление.
+          Как только пара будет найдена, начнется встреча и ты получишь уведомление.
         </Caption2>
       </View>
     );

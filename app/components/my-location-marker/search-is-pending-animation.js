@@ -15,7 +15,7 @@ export default class SearchIsPendingAnimation extends React.Component<Props> {
       this.animationRadius1,
       {
         toValue: SCREEN_WIDTH / 2,
-        duration: 2500,
+        duration: 5000,
       },
     )).start();
 
@@ -24,10 +24,10 @@ export default class SearchIsPendingAnimation extends React.Component<Props> {
         this.animationRadius2,
         {
           toValue: SCREEN_WIDTH / 2,
-          duration: 2500,
+          duration: 5000,
         },
       )).start();
-    }, 1250);
+    }, 2500);
   }
 
   render() {
