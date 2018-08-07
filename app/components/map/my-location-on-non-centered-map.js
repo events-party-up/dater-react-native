@@ -17,6 +17,7 @@ type Props = {
   mapViewModeIsSwitching: boolean,
   headingToTarget: number,
   microDateEnabled: boolean,
+  searchIsPending: boolean,
   accuracy: number,
   visibleRadiusInMeters: number,
   appState: any,
@@ -44,6 +45,7 @@ class MyLocationOnNonCenteredMap extends React.Component<Props, State> {
           accuracy={this.props.accuracy}
           visibleRadiusInMeters={this.props.visibleRadiusInMeters}
           appState={this.props.appState}
+          searchIsPending={this.props.searchIsPending}
         />
       </MapboxGL.PointAnnotation>
     );

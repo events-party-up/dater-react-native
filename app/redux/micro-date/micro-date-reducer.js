@@ -34,7 +34,7 @@ const types = {
 const initialState = {
   id: null,
   enabled: false,
-  pending: false,
+  searchIsPending: false,
   photoMode: false,
   targetCurrentCoords: null,
   targetPreviousCoords: null,
@@ -48,11 +48,17 @@ const microDateReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
+    case types.MICRO_DATE_IM_READY: {
+      return {
+        ...state,
+        searchIsPending: true,
+      };
+    }
     case types.MICRO_DATE_START: {
       return {
         ...state,
         enabled: true,
-        pending: false,
+        searchIsPending: false,
         ...payload,
         myPreviousCoords: {
           ...getGeoPoint(payload.currentUser.geoPoint),
@@ -76,7 +82,7 @@ const microDateReducer = (state = initialState, action) => {
         ...state,
         ...payload,
         enabled: false,
-        pending: false,
+        searchIsPending: false,
         photoMode: false,
       };
     }

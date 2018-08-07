@@ -152,6 +152,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
     } else if (
       this.props.mapView.centered &&
       !this.props.microDate.enabled &&
+      !this.props.microDate.searchIsPending &&
       this.props.appState.state === 'active'
     ) {
       this.mapView.setCamera({
@@ -198,9 +199,9 @@ class MainMapViewScreen extends React.Component<Props, State> {
   }
 
   onMapPressed = () => {
-    this.props.dispatch({
-      type: 'MAPVIEW_PRESSED',
-    });
+    // this.props.dispatch({
+    //   type: 'MAPVIEW_PRESSED',
+    // });
   }
 
   onMapDragStart = (event) => {
@@ -297,6 +298,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
                 heading={this.state.compassHeading || this.props.location.moveHeadingAngle}
                 headingToTarget={this.props.microDate.headingToTarget}
                 microDateEnabled={this.props.microDate.enabled}
+                searchIsPending={this.props.microDate.searchIsPending}
                 mapViewHeadingAngle={this.props.mapView.heading}
                 mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
                 appState={this.props.appState}
@@ -320,9 +322,9 @@ class MainMapViewScreen extends React.Component<Props, State> {
             styleURL="mapbox://styles/olegwn/cjggmap8l002u2rmu63wda2nk"
             onRegionDidChange={(event) => this.onRegionDidChange(event)}
             onRegionWillChange={(event) => this.onRegionWillChange(event)} // until UserInteraction in event is fixed in SDK this doesn't work as intended
-            scrollEnabled={!this.props.microDate.enabled}
-            // zoomEnabled={false}
-            rotateEnabled={!this.props.microDate.enabled}
+            scrollEnabled={!this.props.microDate.enabled && !this.props.microDate.searchIsPending}
+            zoomEnabled={!this.props.microDate.searchIsPending}
+            rotateEnabled={!this.props.microDate.enabled && !this.props.microDate.searchIsPending}
             pitchEnabled={false}
             minZoomLevel={MAP_MIN_ZOOM_LEVEL}
             maxZoomLevel={MAP_MAX_ZOOM_LEVEL}
@@ -365,6 +367,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
                 mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
                 headingToTarget={this.props.microDate.headingToTarget}
                 microDateEnabled={this.props.microDate.enabled}
+                searchIsPending={this.props.microDate.searchIsPending}
                 appState={this.props.appState}
               />
             }

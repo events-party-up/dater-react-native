@@ -9,6 +9,7 @@ import {
 
 import { wrapCompassHeading } from '../../utils/geo-utils';
 import { MICRO_DATE_MAPMAKER_POSITIVE_THRESHOLD_ANGLE } from '../../constants';
+import MyLocationSearchIsPendingAnimation from './my-location-search-is-pending-animation';
 
 const SIZE: number = 17;
 const HALO_RADIUS = 5;
@@ -35,6 +36,7 @@ type Props = {
   mapViewModeIsSwitching: boolean,
   headingToTarget: number,
   microDateEnabled: boolean,
+  searchIsPending: boolean,
   appState: any,
 };
 
@@ -72,10 +74,16 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props, 
     ]));
   }
 
+  componentDidMount() {
+    if (this.props.appState.gpsIsPoor) {
+      this.badGpsAnimation.start();
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     if ((nextProps.accuracy !== this.props.accuracy ||
-        nextProps.visibleRadiusInMeters !== this.props.visibleRadiusInMeters) &&
-        !this.props.appState.gpsIsPoor) {
+      nextProps.visibleRadiusInMeters !== this.props.visibleRadiusInMeters) &&
+      !this.props.appState.gpsIsPoor) {
       this.animateAccuracyHalo(nextProps.accuracy);
     }
 
@@ -111,13 +119,13 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props, 
     const rotateTarget = `${rotationTarget}deg`;
     const deltaMeAndTargetHeading =
       Math.abs(wrapCompassHeading(wrapCompassHeading(this.props.heading) -
-               wrapCompassHeading(this.props.headingToTarget)));
+        wrapCompassHeading(this.props.headingToTarget)));
     const microDateMarkerColor =
       deltaMeAndTargetHeading <= MICRO_DATE_MAPMAKER_POSITIVE_THRESHOLD_ANGLE ? '#3DB770' : '#EB5757';
 
     const markerColor = (this.props.appState.gpsIsPoor && poorGPSMarkerColor) ||
-                        (this.props.microDateEnabled && microDateMarkerColor) ||
-                      colorOfmyLocationMapMarker;
+      (this.props.microDateEnabled && microDateMarkerColor) ||
+      colorOfmyLocationMapMarker;
     const colorOfHalo = (this.props.appState.gpsIsPoor && poorGPSColorOfHalo) || defaultColorOfHalo;
 
     return (
@@ -125,16 +133,21 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props, 
         style={styles.locationContainer}
         pointerEvents="none"
       >
-        <Animated.View style={{
-          backgroundColor: colorOfHalo,
-          width: Animated.multiply(2, this.state.gpsAccuracyRadius),
-          height: Animated.multiply(2, this.state.gpsAccuracyRadius),
-          borderRadius: this.state.gpsAccuracyRadius,
-          justifyContent: 'center',
-          alignItems: 'center',
-          position: 'absolute',
-        }}
-        />
+        {!this.props.searchIsPending &&
+          <Animated.View style={{
+            backgroundColor: colorOfHalo,
+            width: Animated.multiply(2, this.state.gpsAccuracyRadius),
+            height: Animated.multiply(2, this.state.gpsAccuracyRadius),
+            borderRadius: this.state.gpsAccuracyRadius,
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'absolute',
+          }}
+          />
+        }
+        {this.props.searchIsPending &&
+          <MyLocationSearchIsPendingAnimation />
+        }
         <View style={styles.container}>
           <View style={styles.markerHalo} />
           {!this.props.mapViewModeIsSwitching &&
@@ -151,8 +164,8 @@ export default class MyLocationOnCenteredMap extends React.PureComponent<Props, 
             </View>
           }
           <View style={[styles.marker, {
-              backgroundColor: markerColor,
-            }]}
+            backgroundColor: markerColor,
+          }]}
           />
         </View>
       </View>

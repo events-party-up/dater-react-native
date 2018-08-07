@@ -122,6 +122,8 @@ function* microDateUpdatedSaga(microDate) {
 }
 
 function* startPendingSearch(myUid) {
+  yield put({ type: 'MAPVIEW_SHOW_MY_LOCATION_AND_CENTER_ME' });
+
   yield firebase.firestore()
     .collection(GEO_POINTS_COLLECTION)
     .doc(myUid)
@@ -129,15 +131,18 @@ function* startPendingSearch(myUid) {
       readyToDate: true,
       readyToDateTS: firebase.firestore.FieldValue.serverTimestamp(),
     });
+
   const geoUpdateTask = yield fork(repeatedForceGeoUpdate);
   const readyToDateExpired = yield readyToDateRequestExpiredChannel(myUid);
   const { expired } = yield race({
     expired: take(readyToDateExpired),
     started: take('MICRO_DATE_START'),
   });
+
   if (expired) {
     yield put({ type: 'MICRO_DATE_IM_READY_EXPIRED' });
   }
+
   yield cancel(geoUpdateTask);
   yield readyToDateExpired.close();
 }
