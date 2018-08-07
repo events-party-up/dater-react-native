@@ -14,8 +14,8 @@ export default class MyLocationSearchIsPendingAnimation extends React.Component<
     Animated.loop(Animated.timing(
       this.animationRadius1,
       {
-        toValue: SCREEN_WIDTH,
-        duration: 5000,
+        toValue: SCREEN_WIDTH / 2,
+        duration: 2500,
       },
     )).start();
 
@@ -23,11 +23,11 @@ export default class MyLocationSearchIsPendingAnimation extends React.Component<
       Animated.loop(Animated.timing(
         this.animationRadius2,
         {
-          toValue: SCREEN_WIDTH,
-          duration: 5000,
+          toValue: SCREEN_WIDTH / 2,
+          duration: 2500,
         },
       )).start();
-    }, 2500);
+    }, 1250);
   }
 
   render() {
@@ -39,7 +39,7 @@ export default class MyLocationSearchIsPendingAnimation extends React.Component<
             backgroundColor: animatedValue.interpolate({
               inputRange: [
                 0, // for some reason this is often initial value
-                SCREEN_WIDTH,
+                SCREEN_WIDTH / 2,
               ],
               outputRange: [
                 'rgba(61, 183, 112, 0.5)',
@@ -48,7 +48,7 @@ export default class MyLocationSearchIsPendingAnimation extends React.Component<
               extrapolate: 'clamp',
               useNativeDriver: true,
             }),
-            borderColor: '#3DB770',
+            borderColor: 'rgba(61, 183, 112, 0.5)',
             borderWidth: 1,
             width: Animated.multiply(2, animatedValue),
             height: Animated.multiply(2, animatedValue),
