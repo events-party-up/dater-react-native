@@ -12,7 +12,6 @@ export default function* mapPanelSaga() {
     while (true) {
       const { mapPanelSnapper } = yield take('UI_MAP_PANEL_READY');
       const showActions = yield actionChannel([
-        'USERS_AROUND_ITEM_PRESSED',
         'MICRO_DATE_ASK_ARE_YOU_READY',
         'MICRO_DATE_IM_READY',
         'MICRO_DATE_START',
@@ -28,8 +27,6 @@ export default function* mapPanelSaga() {
 
       const hideActions = yield actionChannel([
         'MAPVIEW_PRESSED',
-        'MICRO_DATE_OUTGOING_REQUEST_INIT',
-        'USERS_AROUND_ITEM_DESELECTED',
       ], buffers.none());
 
       const forceHideActions = yield actionChannel([
@@ -63,7 +60,7 @@ export default function* mapPanelSaga() {
 
 function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
   try {
-    const setModePayload = yield getMapPanelPayload(nextAction, mapPanelSnapper);
+    const setModePayload = yield getMapPanelPayload(nextAction);
 
     if (!setModePayload) return;
 
@@ -88,23 +85,12 @@ function* mapPanelShowActionsSaga(mapPanelSnapper, nextAction) {
   }
 }
 
-function* getMapPanelPayload(nextAction, mapPanelSnapper) {
+function* getMapPanelPayload(nextAction) {
   const myCoords = yield select((state) => state.location.coords);
   const mapPanelState = yield select((state) => state.mapPanel);
   const microDateState = yield select((state) => state.microDate);
 
   switch (nextAction.type) {
-    case 'USERS_AROUND_ITEM_PRESSED':
-      if (microDateState.enabled || microDateState.pending) {
-        yield call(mapPanelSnapper, { index: 0 }); // show standard
-        return null;
-      }
-      return {
-        mode: 'userCard',
-        heightMode: 'standard',
-        targetUser: nextAction.payload,
-        canHide: true,
-      };
     case 'MICRO_DATE_PENDING_SEARCH_CANCEL':
     case 'MICRO_DATE_ASK_ARE_YOU_READY':
       return {
@@ -123,14 +109,14 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
       return {
         mode: 'iAmReadyExpired',
         heightMode: 'standard',
-        canHide: true,
+        canHide: false,
       };
     case 'MICRO_DATE_EXPIRED':
       return {
         mode: 'microDatetExpired',
         heightMode: 'standard',
         targetUser: nextAction.payload.targetUser,
-        canHide: true,
+        canHide: false,
       };
     case 'MICRO_DATE_START':
       if (
@@ -156,7 +142,7 @@ function* getMapPanelPayload(nextAction, mapPanelSnapper) {
         mode: 'microDateStopped',
         heightMode: 'standard',
         targetUser: nextAction.payload.targetUser,
-        canHide: true,
+        canHide: false,
         microDate: microDateState,
       };
     case 'MICRO_DATE_CLOSE_DISTANCE_MOVE':

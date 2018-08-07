@@ -7,7 +7,6 @@ import MapPanelStyles from './map-panel-templates/map-panel-styles';
 import MapPanelSelfieUploading from './map-panel-templates/map-panel-selfie-uploading';
 import MapPanelSelfieUploadedByMe from './map-panel-templates/map-panel-selfie-uploaded-by-me';
 import MapPanelSelfieUploadedByTarget from './map-panel-templates/map-panel-selfie-uploaded-by-target';
-import MapPanelUserCard from './map-panel-templates/map-panel-user-card';
 import MapPanelMakeSelfie from './map-panel-templates/map-panel-make-selfie';
 import MapPanelActiveMicroDate from './map-panel-templates//map-panel-active-micro-date';
 import MapPanelMicroDateStopped from './map-panel-templates/map-panel-micro-date-stopped';
@@ -31,12 +30,6 @@ type State = {
 export default class OnMapPanel extends React.Component<Props, State> {
   renderCard() {
     switch (this.props.mapPanel.mode) {
-      case 'userCard':
-        return (
-          <MapPanelUserCard
-            mapPanel={this.props.mapPanel}
-          />
-        );
       case 'areYouReady':
         return (
           <MapPanelAreYouReady

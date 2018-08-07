@@ -20,15 +20,6 @@ export default class OnMapPanelButtons extends React.Component<Props> {
     this.props.dispatch({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE' });
   }
 
-  requestMicroDate = (targetUser) => {
-    this.props.dispatch({
-      type: 'MICRO_DATE_OUTGOING_REQUEST_INIT',
-      payload: {
-        targetUser,
-      },
-    });
-  }
-
   onPressAreYouReady = () => {
     this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_WITH_BUTTON' });
     this.props.dispatch({ type: 'MICRO_DATE_IM_READY' });
@@ -106,14 +97,6 @@ export default class OnMapPanelButtons extends React.Component<Props> {
 
   renderButtons() {
     switch (this.props.mapPanel.mode) {
-      case 'userCard':
-        return (
-          <DaterButton
-            onPress={() => this.requestMicroDate(this.props.mapPanel.targetUser)}
-          >
-            Встретиться
-          </DaterButton>
-        );
       case 'areYouReady':
         return (
           <DaterButton
