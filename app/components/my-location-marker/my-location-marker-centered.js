@@ -110,9 +110,11 @@ export default class MyLocationMarkerCentered extends React.PureComponent<Props,
           />
         }
         {this.props.appState.gpsIsPoor &&
+          this.props.appState.state === 'active' &&
           <GpsIsPoorAnimation />
         }
         {this.props.searchIsPending &&
+          this.props.appState.state === 'active' &&
           <SearchIsPendingAnimation />
         }
         <View style={styles.container}>

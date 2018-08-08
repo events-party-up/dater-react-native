@@ -14,22 +14,22 @@ export default function* hapticFeedbackSaga() {
 
     const task1 = yield takeLatest([
       'USERS_AROUND_ITEM_PRESSED',
+      'MAPVIEW_ZOOM_TO',
     ], hapticFeedbackSelection);
 
     const task2 = yield takeLatest([
-      'MICRO_DATE_INCOMING_REQUEST',
-      'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
-      'MICRO_DATE_OUTGOING_DECLINED_BY_TARGET',
-      'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
+      'MICRO_DATE_EXPIRED',
     ], hapticFeedbackVibrationOnly);
 
     const task3 = yield takeLatest([
-      'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_ME',
-      'MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_ME',
-      'MICRO_DATE_INCOMING_SELFIE_UPLOADED_BY_TARGET',
-      'MICRO_DATE_OUTGOING_SELFIE_UPLOADED_BY_TARGET',
-      'MICRO_DATE_INCOMING_CANCELLED',
-      'MICRO_DATE_OUTGOING_ACCEPT',
+      'MICRO_DATE_START',
+      'MICRO_DATE_SELFIE_UPLOADED_BY_TARGET',
+      'MICRO_DATE_SELFIE_DECLINED_BY_TARGET',
+      'MICRO_DATE_IM_READY_EXPIRED',
+      'MICRO_DATE_REMOVE',
+      'MICRO_DATE_STOPPED_BY_TARGET',
+      'MICRO_DATE_STOPPED_BY_ME',
+      'MICRO_DATE_FINISH',
       'HAPTICFEEDBACK_HEAVY',
     ], hapticFeedbackHeavyImpact);
 

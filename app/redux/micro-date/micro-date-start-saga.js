@@ -129,6 +129,7 @@ function* startPendingSearch(myUid) {
     .collection(GEO_POINTS_COLLECTION)
     .doc(myUid)
     .update({
+      readyToDateStatus: 'PENDING',
       readyToDate: true,
       readyToDateTS: firebase.firestore.FieldValue.serverTimestamp(),
     });
@@ -207,6 +208,7 @@ function* cancelPendingSearch(myUid) {
       .collection(GEO_POINTS_COLLECTION)
       .doc(myUid)
       .update({
+        readyToDateStatus: 'CANCELLED',
         readyToDate: false,
       });
     if (cancelTask.type !== 'MICRO_DATE_STOPPED_BY_TARGET') {
