@@ -66,7 +66,10 @@ function* startSearch(myUid) {
 
   const { expired } = yield race({
     expired: take(readyToDateExpiredChan),
-    started: take('MICRO_DATE_START'),
+    other: take([
+      'MICRO_DATE_START',
+      'MICRO_DATE_PENDING_SEARCH_CANCEL',
+    ]),
   });
 
   if (expired) {
