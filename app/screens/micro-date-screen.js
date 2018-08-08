@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollView, StyleSheet, View, Image } from 'react-native';
+import { ScrollView, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import Moment from 'react-moment';
 
@@ -106,17 +106,20 @@ export default class MicroDateScreen extends React.Component<Props> {
               selected={false}
               anchor={{ x: 0.5, y: 1 }}
             >
-              <UserOnMapMarker
-                type="microDate"
+              <TouchableOpacity
                 onPress={this.onSelfieMarkerPress}
-                photo={
-                  {
-                    // public_id: `microDates/${this.microDate.id}`,
-                    publicId: `microDates/${this.microDate.id}`,
-                    version: this.microDate.selfie.version,
+              >
+                <UserOnMapMarker
+                  type="microDate"
+                  photo={
+                    {
+                      // public_id: `microDates/${this.microDate.id}`,
+                      publicId: `microDates/${this.microDate.id}`,
+                      version: this.microDate.selfie.version,
+                    }
                   }
-                }
-              />
+                />
+              </TouchableOpacity>
             </MapboxGL.PointAnnotation>
           </MapboxGL.MapView>
           {/* <H2 style={[styles.subHeader, styles.textBodyPadding]}>Карточка встречи</H2> */}

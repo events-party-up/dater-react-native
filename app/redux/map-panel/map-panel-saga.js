@@ -147,6 +147,7 @@ function* getMapPanelPayload(nextAction) {
       };
     case 'MICRO_DATE_CLOSE_DISTANCE_MOVE':
       if (
+        mapPanelState.mode === 'selfieUploadedByTarget' ||
         mapPanelState.mode === 'makeSelfie' ||
         mapPanelState.previousMode === 'makeSelfie' ||
         microDateState.photoMode ||

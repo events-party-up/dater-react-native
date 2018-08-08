@@ -86,8 +86,8 @@ const microDateReducer = (state = initialState, action) => {
         photoMode: false,
       };
     }
-    case types.MICRO_DATE_SELFIE_UPLOADED_BY_ME:
-    case types.MICRO_DATE_UPLOADED_BY_TARGET: {
+    case types.MICRO_DATE_SELFIE_UPLOADED_BY_TARGET:
+    case types.MICRO_DATE_SELFIE_UPLOADED_BY_ME: {
       return {
         ...state,
         photoMode: true,
