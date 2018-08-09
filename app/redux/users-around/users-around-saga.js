@@ -2,6 +2,7 @@ import { put, select, take, takeEvery, cancel } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
 import * as _ from 'lodash';
+import moment from 'moment';
 
 import GeoUtils from '../../utils/geo-utils';
 
@@ -12,7 +13,7 @@ import {
   USERS_AROUND_PUBLIC_UPDATE_INTERVAL,
   USERS_AROUND_MICRODATE_UPDATE_INTERVAL,
   GEO_POINTS_PAST_MICRO_DATES_COLLECTION,
-  USERS_AROUND_NEXT_MICRODATE_TIMEOUT_MS,
+  USERS_AROUND_MIN_HOURS_SINCE_LAST_MICRO_DATE,
 } from '../../constants';
 
 const ONE_HOUR = 1000 * 60 * 60;
@@ -106,7 +107,8 @@ function* updateMicroDate(targetUser) {
 async function createAllUsersAroundChannel(userCoords, myUid) {
   let publicUsers = [];
   let privateUsers = [];
-  let usersWithRecentMicroDates = [];
+  const usersWithRecentMicroDates = [];
+  const now = new Date();
 
   const queryArea = {
     center: {
@@ -135,7 +137,7 @@ async function createAllUsersAroundChannel(userCoords, myUid) {
     .collection(GEO_POINTS_COLLECTION)
     .doc(myUid)
     .collection(GEO_POINTS_PAST_MICRO_DATES_COLLECTION)
-    .where('timestamp', '>=', new Date(new Date() - USERS_AROUND_NEXT_MICRODATE_TIMEOUT_MS));
+    .where('timestamp', '>=', moment(now).subtract(USERS_AROUND_MIN_HOURS_SINCE_LAST_MICRO_DATE, 'hours').toDate());
 
   return eventChannel((emit) => {
     const throttledEmit = _.throttle(emit, USERS_AROUND_PUBLIC_UPDATE_INTERVAL, { leading: true, trailing: true });
@@ -151,12 +153,7 @@ async function createAllUsersAroundChannel(userCoords, myUid) {
     };
 
     const onUsersWithRecentMicroDatesQueryUpdated = (snapshots) => {
-      usersWithRecentMicroDates = [];
-
-      snapshots.forEach((uidSnapshot) => {
-        usersWithRecentMicroDates.push(uidSnapshot.id);
-      });
-      // console.log('usersWithRecentMicroDates: ', usersWithRecentMicroDates);
+      snapshots.forEach((uidSnapshot) => usersWithRecentMicroDates.push(uidSnapshot.id));
       emitUsersAround(throttledEmit);
     };
 
