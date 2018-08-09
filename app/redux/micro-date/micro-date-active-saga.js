@@ -205,8 +205,6 @@ function createChannelToMicroDate(myUid, microDateId) {
 
 function* microDateUpdatedSaga(microDate) {
   try {
-    const myUid = microDate.currentUser.uid;
-
     if (microDate.error) {
       throw new Error(JSON.stringify(microDate.error));
     }
@@ -215,6 +213,8 @@ function* microDateUpdatedSaga(microDate) {
       yield put({ type: 'MICRO_DATE_REMOVE' });
       return;
     }
+
+    const myUid = microDate.currentUser.uid;
 
     switch (microDate.status) {
       case 'START':
