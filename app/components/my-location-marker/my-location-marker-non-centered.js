@@ -3,7 +3,7 @@ import React from 'react';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 
 import { GeoCoordinates } from '../../types';
-import MyLocationOnCenteredMap from './my-location-on-centered-map';
+import MyLocationMarkerCentered from './my-location-marker-centered';
 
 type State = {
   compassHeading: number,
@@ -17,12 +17,13 @@ type Props = {
   mapViewModeIsSwitching: boolean,
   headingToTarget: number,
   microDateEnabled: boolean,
+  searchIsPending: boolean,
   accuracy: number,
   visibleRadiusInMeters: number,
   appState: any,
 };
 
-class MyLocationOnNonCenteredMap extends React.Component<Props, State> {
+export default class MyLocationMarkerNonCentered extends React.Component<Props, State> {
   render() {
     return (
       <MapboxGL.PointAnnotation
@@ -35,7 +36,7 @@ class MyLocationOnNonCenteredMap extends React.Component<Props, State> {
         selected={false}
         anchor={{ x: 0.5, y: 0.5 }} // anchor so that bottom tip of the marker is at the geo point
       >
-        <MyLocationOnCenteredMap
+        <MyLocationMarkerCentered
           heading={this.props.compassHeading || this.props.moveHeadingAngle}
           mapViewHeadingAngle={this.props.mapViewHeadingAngle}
           mapViewModeIsSwitching={this.props.mapViewModeIsSwitching}
@@ -44,10 +45,9 @@ class MyLocationOnNonCenteredMap extends React.Component<Props, State> {
           accuracy={this.props.accuracy}
           visibleRadiusInMeters={this.props.visibleRadiusInMeters}
           appState={this.props.appState}
+          searchIsPending={this.props.searchIsPending}
         />
       </MapboxGL.PointAnnotation>
     );
   }
 }
-
-export default MyLocationOnNonCenteredMap;

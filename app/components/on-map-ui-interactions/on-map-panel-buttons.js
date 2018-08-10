@@ -20,27 +20,32 @@ export default class OnMapPanelButtons extends React.Component<Props> {
     this.props.dispatch({ type: 'MAPVIEW_SHOW_ME_AND_TARGET_MICRO_DATE' });
   }
 
-  requestMicroDate = (targetUser) => {
-    this.props.dispatch({
-      type: 'MICRO_DATE_OUTGOING_REQUEST_INIT',
-      payload: {
-        targetUser,
-      },
-    });
+  onPressAreYouReady = () => {
+    this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_WITH_BUTTON' });
+    this.props.dispatch({ type: 'MICRO_DATE_IM_READY' });
   }
 
-  cancelOutgoingMicroDate = () => {
-    this.props.dispatch({ type: 'MICRO_DATE_OUTGOING_CANCEL' });
+  cancelPendingSearch = () => {
+    Alert.alert(
+      'Ты уверен?',
+      'Мы уже почти нашли тебе пару для встречи!',
+      [
+        { text: 'Нет', onPress: () => {} },
+        {
+          text: 'Уверен',
+          onPress: () => {
+            this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_WITH_BUTTON' });
+            this.props.dispatch({ type: 'MICRO_DATE_PENDING_SEARCH_CANCEL' });
+          },
+        },
+      ],
+      { cancelable: true },
+    );
   }
 
-  acceptIncomingMicroDate = () => {
-    this.props.dispatch({ type: 'MICRO_DATE_INCOMING_ACCEPT_INIT' });
-  }
-
-  declineIncomingMicroDate = () => {
-    this.props.dispatch({
-      type: 'MICRO_DATE_INCOMING_DECLINE_BY_ME',
-    });
+  closeAndAskAreYouReady = () => {
+    this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_WITH_BUTTON' });
+    this.props.dispatch({ type: 'MICRO_DATE_ASK_ARE_YOU_READY' });
   }
 
   stopMicroDate = () => {
@@ -81,19 +86,36 @@ export default class OnMapPanelButtons extends React.Component<Props> {
     this.props.dispatch({ type: 'MICRO_DATE_APPROVE_SELFIE' });
   }
 
+  closeMicroDateStopped = () => {
+    this.closePanel();
+    this.props.dispatch({ type: 'MICRO_DATE_ASK_ARE_YOU_READY' });
+  }
+
   closePanel = () => {
     this.props.dispatch({ type: 'UI_MAP_PANEL_HIDE_WITH_BUTTON' });
   }
 
   renderButtons() {
     switch (this.props.mapPanel.mode) {
-      case 'userCard':
+      case 'areYouReady':
         return (
           <DaterButton
-            onPress={() => this.requestMicroDate(this.props.mapPanel.targetUser)}
+            onPress={this.onPressAreYouReady}
           >
-            Встретиться
+            Я {this.props.mapPanel.gender === 'female' ? 'готова' : 'готов'}
           </DaterButton>
+        );
+      case 'pendingSearch':
+        return (
+          <DaterButton
+            onPress={this.cancelPendingSearch}
+          >
+            Отменить
+          </DaterButton>
+        );
+      case 'iAmReadyExpired':
+        return (
+          <CircleButton type="close" onPress={this.closeAndAskAreYouReady} size="medium-big" />
         );
       case 'activeMicroDate':
         return (
@@ -103,40 +125,13 @@ export default class OnMapPanelButtons extends React.Component<Props> {
             Отменить
           </DaterButton>
         );
-      case 'incomingMicroDateRequest':
-        return (
-          <React.Fragment>
-            <CircleButton type="decline" size="medium-big" onPress={this.declineIncomingMicroDate} />
-            <CircleButton type="confirm" size="medium-big" onPress={this.acceptIncomingMicroDate} />
-          </React.Fragment>
-        );
-      case 'outgoingMicroDateAwaitingAccept':
-        return (
-          <DaterButton
-            onPress={this.cancelOutgoingMicroDate}
-          >
-            Отменить
-          </DaterButton>
-        );
-      case 'outgoingMicroDateDeclined':
-        return (
-          <CircleButton type="close" onPress={this.closePanel} size="medium-big" />
-        );
-      case 'incomingMicroDateCancelled':
-        return (
-          <CircleButton type="close" onPress={this.closePanel} size="medium-big" />
-        );
       case 'microDateStopped':
         return (
-          <CircleButton type="close" onPress={this.closePanel} size="medium-big" />
-        );
-      case 'microDateRequestExpired':
-        return (
-          <CircleButton type="close" onPress={this.closePanel} size="medium-big" />
+          <CircleButton type="close" onPress={this.closeMicroDateStopped} size="medium-big" />
         );
       case 'microDatetExpired':
         return (
-          <CircleButton type="close" onPress={this.closePanel} size="medium-big" />
+          <CircleButton type="close" onPress={this.closeAndAskAreYouReady} size="medium-big" />
         );
       case 'makeSelfie':
         return (

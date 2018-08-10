@@ -5,18 +5,17 @@ import { H2, Caption2 } from '../../../components/ui-kit/atoms/typography';
 import MapPanelStyles from './map-panel-styles';
 
 type Props = {
-  targetUser: any,
 }
 
-export default class MapPanelRequestCancelled extends React.Component<Props> {
+export default class MapPanelIAmReadyExpired extends React.Component<Props> {
   render() {
     return (
       <View>
         <H2 style={MapPanelStyles.panelHeader} numberOfLines={1} >
-          Запрос на встречу отменен :(
+          Никто не найден :(
         </H2>
         <Caption2 style={MapPanelStyles.panelBody}>
-          {this.props.targetUser.name} отменил{this.props.targetUser.gender === 'female' && 'а'} запрос на встречу.
+          Рядом с тобой никого нет. Попробуй позже или в другом месте.
         </Caption2>
       </View>
     );

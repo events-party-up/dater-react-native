@@ -9,7 +9,7 @@ import authPhoneSaga from './auth/auth-phone-saga';
 import mapPanelSaga from './map-panel/map-panel-saga';
 import usersAroundSaga from './users-around/users-around-saga';
 import appStateSaga from './app-state/app-state-saga';
-import microDateSaga from './micro-date/micro-date-saga';
+import microDateRootSaga from './micro-date/micro-date-root-saga';
 import uploadPhotosSaga from './upload-photos/upload-photos-saga';
 import currentUserSaga from './current-user/current-user-saga';
 import hapticFeedbackSaga from './pure-sagas/haptic-feedback-saga';
@@ -31,7 +31,7 @@ export default function* rootSaga() {
     usersAroundSaga(),
     appStateSaga(),
     gpsStateSaga(),
-    microDateSaga(),
+    microDateRootSaga(),
     uploadPhotosSaga(),
     currentUserSaga(),
     hapticFeedbackSaga(),

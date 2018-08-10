@@ -3,22 +3,19 @@ import { View } from 'react-native';
 
 import { H2, Caption2 } from '../../../components/ui-kit/atoms/typography';
 import MapPanelStyles from './map-panel-styles';
-import { TIME_TO_FINISH_MICRO_DATE } from '../../../constants';
 
 type Props = {
-  targetUser: any,
 }
 
-export default class MapPanelMicroDateExpired extends React.Component<Props> {
+export default class MapPanelPendingSearch extends React.Component<Props> {
   render() {
     return (
       <View>
         <H2 style={MapPanelStyles.panelHeader} numberOfLines={1} >
-          Время на встречу вышло
+          Поиск пары для встречи...
         </H2>
         <Caption2 style={MapPanelStyles.panelBody}>
-          Ты и {this.props.targetUser.name} не успели встретиться в течении{' '}
-          {TIME_TO_FINISH_MICRO_DATE / 1000 / 60} минут. Попробуйте еще раз.
+          Как только пара будет найдена, начнется встреча и ты получишь уведомление.
         </Caption2>
       </View>
     );

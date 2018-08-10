@@ -2,7 +2,6 @@ import React from 'react';
 import {
   StyleSheet,
   View,
-  TouchableOpacity,
   Image,
 } from 'react-native';
 
@@ -17,74 +16,72 @@ const HEADING_BOX_SIZE = HALO_SIZE + ARROW_SIZE + ARROW_DISTANCE;
 
 type Props = {
   title: string,
-  onPress: () => void,
   heading: number,
   mapViewBearingAngle: number,
   photo: CloudinaryPhoto,
   gender: 'male' | 'female',
+  isReadyToDate: boolean,
   isMicroDateMode: boolean,
 };
 
 class UserOnMapMarker extends React.Component<Props> {
+  markerColor = this.props.gender === 'female' ? 'rgba(240, 110, 170, 1)' : 'rgb(47, 128, 237)';
+
   render() {
     const { title } = this.props;
     const rotation = this.props.heading - this.props.mapViewBearingAngle;
     const rotate = `${rotation}deg`;
 
     return (
-      <TouchableOpacity
-        onPress={this.props.onPress}
-      >
-        <View style={styles.container}>
-          <View style={styles.outerCircle}>
-            {this.props.photo &&
-              <Image
-                style={styles.innerCircle}
-                source={{
-                    uri: cloudinaryUrl({
-                      publicId: this.props.photo.publicId,
-                      version: this.props.photo.version,
-                    }, {
-                        height: 26,
-                        width: 26,
-                        crop: 'fill',
-                        gravity: 'faces',
-                      }),
-                  }}
-              />
-            }
-            {this.props.title &&
-              <View style={[styles.innerCircle, {
-                backgroundColor: this.props.gender === 'female' ? '#BB6BD9' : '#2F80ED',
-              }]}
-              >
-                <H3 style={styles.title}>{title}</H3>
-              </View>
-            }
-          </View>
-          <View style={styles.circlePin}>
-            <View style={styles.arrowBorder} />
-            <View style={styles.arrow} />
-          </View>
-          {this.props.heading > 0 && this.props.isMicroDateMode &&
-            <View style={[styles.heading, { transform: [{ rotate }] }]}>
-              <View style={styles.headingPointer} />
+      <View style={styles.container}>
+        <View style={styles.outerCircle}>
+          {this.props.photo &&
+            <Image
+              style={styles.innerCircle}
+              source={{
+                  uri: cloudinaryUrl({
+                    publicId: this.props.photo.publicId,
+                    version: this.props.photo.version,
+                  }, {
+                      height: 26,
+                      width: 26,
+                      crop: 'fill',
+                      gravity: 'faces',
+                    }),
+                }}
+            />
+          }
+          {this.props.title &&
+            <View style={[styles.innerCircle, {
+            backgroundColor: this.props.isReadyToDate ? 'rgba(61, 183, 112, 1)' : this.markerColor,
+            }]}
+            >
+              {this.props.isMicroDateMode && <H3 style={styles.title}>{title}</H3>}
             </View>
           }
-          {/* <View style={[styles.heading, { transform: [{ rotate: '0deg' }] }]}>
-            <View style={styles.headingPointer} />
-          </View>
-          <View style={[styles.heading, { transform: [{ rotate: '90deg' }] }]}>
-            <View style={styles.headingPointer} />
-          </View>
-          <View style={[styles.heading, { transform: [{ rotate: '180deg' }] }]}>
-            <View style={styles.headingPointer} />
-          </View>
-          <View style={[styles.heading, { transform: [{ rotate: '270deg' }] }]}>
-            <View style={styles.headingPointer} />
-          </View> */}
         </View>
-      </TouchableOpacity>
+        <View style={styles.circlePin}>
+          <View style={styles.arrowBorder} />
+          <View style={styles.arrow} />
+        </View>
+        {this.props.heading > 0 && this.props.isMicroDateMode &&
+          <View style={[styles.heading, { transform: [{ rotate }] }]}>
+            <View style={styles.headingPointer} />
+          </View>
+        }
+        {/* <View style={[styles.heading, { transform: [{ rotate: '0deg' }] }]}>
+          <View style={styles.headingPointer} />
+        </View>
+        <View style={[styles.heading, { transform: [{ rotate: '90deg' }] }]}>
+          <View style={styles.headingPointer} />
+        </View>
+        <View style={[styles.heading, { transform: [{ rotate: '180deg' }] }]}>
+          <View style={styles.headingPointer} />
+        </View>
+        <View style={[styles.heading, { transform: [{ rotate: '270deg' }] }]}>
+          <View style={styles.headingPointer} />
+        </View> */}
+      </View>
     );
   }
 }

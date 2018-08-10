@@ -9,7 +9,6 @@ import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import ReactNativeHeading from '@zsajjad/react-native-heading';
 
 import { GeoCoordinates, MicroDate, SystemNotifications } from '../types';
-import MyLocationOnCenteredMap from '../components/map/my-location-on-centered-map';
 import UsersAroundComponent from '../components/map/users-around-component';
 import PastLocationsPath from '../components/map/past-locations-path';
 import { Caption2 } from '../components/ui-kit/atoms/typography';
@@ -19,7 +18,8 @@ import {
   MAP_MAX_ZOOM_LEVEL,
   MAP_MIN_ZOOM_LEVEL,
 } from '../constants';
-import MyLocationOnNonCenteredMap from '../components/map/my-location-on-non-centered-map';
+import MyLocationMarkerNonCentered from '../components/my-location-marker/my-location-marker-non-centered';
+import MyLocationMarkerCentered from '../components//my-location-marker/my-location-marker-centered';
 import OnMapInteractiveElements from '../components/on-map-ui-interactions/on-map-interactive-elements';
 import SystemNotificationComponent from '../components/ui-kit/molecules/system-notification';
 
@@ -152,6 +152,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
     } else if (
       this.props.mapView.centered &&
       !this.props.microDate.enabled &&
+      !this.props.microDate.searchIsPending &&
       this.props.appState.state === 'active'
     ) {
       this.mapView.setCamera({
@@ -198,9 +199,9 @@ class MainMapViewScreen extends React.Component<Props, State> {
   }
 
   onMapPressed = () => {
-    this.props.dispatch({
-      type: 'MAPVIEW_PRESSED',
-    });
+    // this.props.dispatch({
+    //   type: 'MAPVIEW_PRESSED',
+    // });
   }
 
   onMapDragStart = (event) => {
@@ -291,12 +292,13 @@ class MainMapViewScreen extends React.Component<Props, State> {
             this.props.location.coords &&
             (this.props.mapView.centered ||
               this.props.microDate.enabled) &&
-              <MyLocationOnCenteredMap
+              <MyLocationMarkerCentered
                 accuracy={this.props.location.coords.accuracy}
                 visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
                 heading={this.state.compassHeading || this.props.location.moveHeadingAngle}
                 headingToTarget={this.props.microDate.headingToTarget}
                 microDateEnabled={this.props.microDate.enabled}
+                searchIsPending={this.props.microDate.searchIsPending}
                 mapViewHeadingAngle={this.props.mapView.heading}
                 mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
                 appState={this.props.appState}
@@ -320,9 +322,9 @@ class MainMapViewScreen extends React.Component<Props, State> {
             styleURL="mapbox://styles/olegwn/cjggmap8l002u2rmu63wda2nk"
             onRegionDidChange={(event) => this.onRegionDidChange(event)}
             onRegionWillChange={(event) => this.onRegionWillChange(event)} // until UserInteraction in event is fixed in SDK this doesn't work as intended
-            scrollEnabled={!this.props.microDate.enabled}
-            // zoomEnabled={false}
-            rotateEnabled={!this.props.microDate.enabled}
+            scrollEnabled={!this.props.microDate.enabled && !this.props.microDate.searchIsPending}
+            zoomEnabled={!this.props.microDate.searchIsPending}
+            rotateEnabled={!this.props.microDate.enabled && !this.props.microDate.searchIsPending}
             pitchEnabled={false}
             minZoomLevel={MAP_MIN_ZOOM_LEVEL}
             maxZoomLevel={MAP_MAX_ZOOM_LEVEL}
@@ -339,7 +341,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
             {this.props.microDate.enabled &&
               <PastLocationsPath
                 lastLocation={this.props.microDate.targetCurrentCoords}
-                uid={this.props.microDate.targetUserUid}
+                uid={this.props.microDate.targetUser.uid}
                 mode="target"
                 microDateId={this.props.microDate.id}
                 limit={MAX_VISIBLE_PAST_LOCATIONS}
@@ -355,7 +357,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
             {this.props.location.coords &&
               !this.props.mapView.centered &&
               !this.props.microDate.enabled &&
-              <MyLocationOnNonCenteredMap
+              <MyLocationMarkerNonCentered
                 accuracy={this.props.location.coords.accuracy}
                 visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
                 compassHeading={this.state.compassHeading}
@@ -365,6 +367,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
                 mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
                 headingToTarget={this.props.microDate.headingToTarget}
                 microDateEnabled={this.props.microDate.enabled}
+                searchIsPending={this.props.microDate.searchIsPending}
                 appState={this.props.appState}
               />
             }
@@ -400,7 +403,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
                 Оппонента: {' '}
                 <MicroDateStats
                   microDateId={this.props.microDate.id}
-                  uid={this.props.microDate.targetUserUid}
+                  uid={this.props.microDate.targetUser.uid}
                   style={styles.microDateText}
                 />
               </Caption2>

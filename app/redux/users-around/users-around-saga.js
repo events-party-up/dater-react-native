@@ -2,6 +2,7 @@ import { put, select, take, takeEvery, cancel } from 'redux-saga/effects';
 import firebase from 'react-native-firebase';
 import { eventChannel } from 'redux-saga';
 import * as _ from 'lodash';
+import moment from 'moment';
 
 import GeoUtils from '../../utils/geo-utils';
 
@@ -12,7 +13,7 @@ import {
   USERS_AROUND_PUBLIC_UPDATE_INTERVAL,
   USERS_AROUND_MICRODATE_UPDATE_INTERVAL,
   GEO_POINTS_PAST_MICRO_DATES_COLLECTION,
-  USERS_AROUND_NEXT_MICRODATE_TIMEOUT_MS,
+  USERS_AROUND_MIN_HOURS_SINCE_LAST_MICRO_DATE,
 } from '../../constants';
 
 const ONE_HOUR = 1000 * 60 * 60;
@@ -41,7 +42,7 @@ export default function* usersAroundSaga() {
 
       if (isMicroDateMode) {
         const microDateState = yield select((state) => state.microDate);
-        channel = yield createMicroDateChannel(myCoords, microDateState, myUid);
+        channel = yield createMicroDateChannel(myCoords, microDateState);
         channelTask = yield takeEvery(channel, updateMicroDate);
       } else {
         channel = yield createAllUsersAroundChannel(myCoords, myUid);
@@ -54,17 +55,12 @@ export default function* usersAroundSaga() {
         'USERS_AROUND_RESTART',
         'APP_STATE_BACKGROUND', // stop if app is in background
         'GEO_LOCATION_STOPPED', // stop if location services are disabled
-        'MICRO_DATE_INCOMING_STARTED', // app mode switched to find user
-        'MICRO_DATE_OUTGOING_STARTED',
-        'MICRO_DATE_STOP',
-        'MICRO_DATE_OUTGOING_FINISHED',
-        'MICRO_DATE_INCOMING_FINISHED',
-        'MICRO_DATE_INCOMING_REMOVE',
-        'MICRO_DATE_OUTGOING_REMOVE',
-        'MICRO_DATE_INCOMING_STOPPED_BY_ME',
-        'MICRO_DATE_OUTGOING_STOPPED_BY_ME',
-        'MICRO_DATE_OUTGOING_STOPPED_BY_TARGET',
-        'MICRO_DATE_INCOMING_STOPPED_BY_TARGET',
+        'MICRO_DATE_START', // app mode switched to find user
+        'MICRO_DATE_REMOVE',
+        'MICRO_DATE_STOPPED_BY_ME',
+        'MICRO_DATE_STOPPED_BY_TARGET',
+        'MICRO_DATE_EXPIRED',
+        'MICRO_DATE_FINISHED',
       ]);
 
       yield cancel(channelTask);
@@ -111,7 +107,8 @@ function* updateMicroDate(targetUser) {
 async function createAllUsersAroundChannel(userCoords, myUid) {
   let publicUsers = [];
   let privateUsers = [];
-  let usersWithRecentMicroDates = [];
+  const usersWithRecentMicroDates = [];
+  const now = new Date();
 
   const queryArea = {
     center: {
@@ -140,7 +137,7 @@ async function createAllUsersAroundChannel(userCoords, myUid) {
     .collection(GEO_POINTS_COLLECTION)
     .doc(myUid)
     .collection(GEO_POINTS_PAST_MICRO_DATES_COLLECTION)
-    .where('timestamp', '>=', new Date(new Date() - USERS_AROUND_NEXT_MICRODATE_TIMEOUT_MS));
+    .where('timestamp', '>=', moment(now).subtract(USERS_AROUND_MIN_HOURS_SINCE_LAST_MICRO_DATE, 'hours').toDate());
 
   return eventChannel((emit) => {
     const throttledEmit = _.throttle(emit, USERS_AROUND_PUBLIC_UPDATE_INTERVAL, { leading: true, trailing: true });
@@ -156,12 +153,7 @@ async function createAllUsersAroundChannel(userCoords, myUid) {
     };
 
     const onUsersWithRecentMicroDatesQueryUpdated = (snapshots) => {
-      usersWithRecentMicroDates = [];
-
-      snapshots.forEach((uidSnapshot) => {
-        usersWithRecentMicroDates.push(uidSnapshot.id);
-      });
-      // console.log('usersWithRecentMicroDates: ', usersWithRecentMicroDates);
+      snapshots.forEach((uidSnapshot) => usersWithRecentMicroDates.push(uidSnapshot.id));
       emitUsersAround(throttledEmit);
     };
 
@@ -215,12 +207,10 @@ async function createAllUsersAroundChannel(userCoords, myUid) {
   }
 }
 
-function createMicroDateChannel(myCoords, microDateState, myUid) {
-  const targetUid = microDateState.microDate.requestBy === myUid ?
-    microDateState.microDate.requestFor : microDateState.microDate.requestBy;
+function createMicroDateChannel(myCoords, microDateState) {
   const query = firebase.firestore()
     .collection(GEO_POINTS_COLLECTION)
-    .doc(targetUid);
+    .doc(microDateState.targetUser.uid);
 
   return eventChannel((emit) => {
     const onSnapshotUpdated = (snapshot) => {

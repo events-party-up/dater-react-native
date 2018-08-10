@@ -89,6 +89,7 @@ export default class FullscreenPhotoScreen extends React.Component<Props, State>
               onMove={this.onMove}
             >
               <Image
+                resizeMode="contain"
                 style={styles.fullScreen}
                 source={{ uri: this.photo }}
               />
