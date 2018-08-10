@@ -52,6 +52,7 @@ export default class UsersAroundComponent extends React.Component<Props> {
           heading={user.heading}
           mapViewBearingAngle={this.props.mapViewBearingAngle}
           isMicroDateMode={this.props.isMicroDateMode}
+          isReadyToDate={user.readyToDate}
         />
       </MapboxGL.PointAnnotation>
     ));

@@ -20,10 +20,13 @@ type Props = {
   mapViewBearingAngle: number,
   photo: CloudinaryPhoto,
   gender: 'male' | 'female',
+  isReadyToDate: boolean,
   isMicroDateMode: boolean,
 };
 
 class UserOnMapMarker extends React.Component<Props> {
+  markerColor = this.props.gender === 'female' ? 'rgba(240, 110, 170, 1)' : 'rgb(47, 128, 237)';
+
   render() {
     const { title } = this.props;
     const rotation = this.props.heading - this.props.mapViewBearingAngle;
@@ -50,7 +53,7 @@ class UserOnMapMarker extends React.Component<Props> {
           }
           {this.props.title &&
             <View style={[styles.innerCircle, {
-              backgroundColor: this.props.gender === 'female' ? '#BB6BD9' : '#2F80ED',
+            backgroundColor: this.props.isReadyToDate ? 'rgba(61, 183, 112, 1)' : this.markerColor,
             }]}
             >
               {this.props.isMicroDateMode && <H3 style={styles.title}>{title}</H3>}
