@@ -8,7 +8,6 @@ import {
   GEO_POINTS_COLLECTION,
   GOOD_GPS_ACCURACY_GENERAL,
 } from '../../constants';
-import { getFirestoreDocData } from '../../utils/firebase-utils';
 import { microDateUserMovementsMyMoveSaga } from '../micro-date/micro-date-user-movements-saga';
 import GeoUtils from '../../utils/geo-utils';
 import DaterBackgroundGeolocation from '../../services/background-geolocation';
@@ -25,26 +24,13 @@ export default function* locationSaga() {
     if (!isUserAuthenticated) { // user must be authorized
       yield take('AUTH_SUCCESS');
     }
-    const uid = yield select((state) => state.auth.uid);
 
     while (true) {
-      const startAction = yield take(startActionChannel);
+      yield take(startActionChannel);
       const isAlreadyInitizlied = yield select((state) => state.location.isBackgroundGeolocationInitialized);
       if (!isAlreadyInitizlied) {
         yield DaterBackgroundGeolocation.init();
         yield put({ type: 'GEO_LOCATION_INITIALIZED' });
-      }
-
-      if (startAction.type === 'GEO_LOCATION_START_AUTO') {
-        const myGeoPoint = yield getFirestoreDocData({
-          collection: GEO_POINTS_COLLECTION,
-          doc: uid,
-        });
-
-        if (myGeoPoint.visibility === 'private') {
-          yield put({ type: 'GEO_LOCATION_TURNED_OFF_BY_USER' });
-          continue; // eslint-disable-line
-        }
       }
 
       const locationChannel = yield createLocationChannel();

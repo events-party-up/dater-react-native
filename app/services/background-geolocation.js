@@ -8,14 +8,14 @@ import { GEO_POINTS_COLLECTION } from '../constants';
 
 const geoOptions = async () => {
   const { currentUser } = firebase.auth();
-  const firebaseAuthToken = currentUser ? await currentUser.getIdToken() : null;
+  const firebaseAuthToken = String(currentUser ? await currentUser.getIdToken() : null);
   const uid = currentUser ? currentUser.uid : 'unknown';
 
   return {
-    // reset: true,
+    reset: true,
     useSignificantChanges: false,
     enableHighAccuracy: true,
-    distanceFilter: 5,
+    // distanceFilter: 10,
     // disableElasticity: true,
     desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
     // stopTimeout: 1,
@@ -36,14 +36,18 @@ const geoOptions = async () => {
       titleWhenOff: 'Нет доступа к вашей геолокации!',
     },
     // activityType: 'ACTIVITY_TYPE_OTHER_NAVIGATION',
-    heartbeatInterval: 60,
+    heartbeatInterval: 5 * 60,
     startOnBoot: true, // <-- Auto start tracking when device is powered-up.
     batchSync: false, // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
     autoSync: true, // <-- [Default: true] Set true to sync each location to server as it arrives.
-    // url: `https://dater-geolocation-console.herokuapp.com/locations/${uid}`,
+    maxRecordsToPersist: 1,
+    url: 'https://70e8f1c2.ngrok.io/dater3-dev/us-central1/api-locationUpdate',
     notificationPriority: BackgroundGeolocation.NOTIFICATION_PRIORITY_LOW,
     notificationTitle: 'Dater.com',
     notificationText: 'Dater Mode ON',
+    headers: {
+      Authorization: `Bearer ${firebaseAuthToken}`,
+    },
     params: {
       device: {
         platform: Platform.OS,
@@ -55,7 +59,6 @@ const geoOptions = async () => {
     },
     extras: {
       uid,
-      firebaseAuthToken,
     },
   };
 };
