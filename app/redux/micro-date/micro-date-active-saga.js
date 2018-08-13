@@ -42,12 +42,7 @@ export default function* microDateActiveSaga() {
         'MICRO_DATE_FINISH',
       ]);
 
-      yield DaterBackgroundGeolocation.updateHttpParams({
-        microDate: {
-          enabled: false,
-          microDateId: null,
-        },
-      });
+      yield DaterBackgroundGeolocation.setMicroDateStopped();
 
       yield put({ type: 'MICRO_DATE_SAGA_CANCEL_TASKS' });
       yield microDateChan.close();
@@ -107,12 +102,8 @@ function* restoreMicroDateStatusOnAppLaunchSaga() {
 
 function* startMicroDateSaga(microDate) {
   const myUid = yield select((state) => state.auth.uid);
-  yield DaterBackgroundGeolocation.updateHttpParams({
-    microDate: {
-      enabled: true,
-      microDateId: microDate.id,
-    },
-  });
+  yield DaterBackgroundGeolocation.setMicroDateStarted(microDate);
+
   yield put({
     type: 'MICRO_DATE_START',
     payload: {

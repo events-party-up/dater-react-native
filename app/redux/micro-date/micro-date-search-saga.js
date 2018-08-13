@@ -2,6 +2,7 @@ import { take, put, takeEvery, select, cancel, race, fork, delay } from 'redux-s
 import { eventChannel, buffers } from 'redux-saga';
 import firebase from 'react-native-firebase';
 
+import DaterBackgroundGeolocation from '../../services/background-geolocation';
 import {
   GEO_POINTS_COLLECTION,
   MAP_MAX_ZOOM_LEVEL,
@@ -59,6 +60,7 @@ function* startSearch(myUid) {
       readyToDate: true,
       readyToDateTS: firebase.firestore.FieldValue.serverTimestamp(),
     });
+  yield DaterBackgroundGeolocation.setIsReadyToDateTo(true);
 
   const geoUpdateTask = yield fork(repeatedForceGeoUpdate);
   const mapViewZoomTask = yield fork(loopedMapViewZoom);
@@ -74,6 +76,7 @@ function* startSearch(myUid) {
 
   if (expired) {
     yield put({ type: 'MICRO_DATE_IM_READY_EXPIRED' });
+    yield DaterBackgroundGeolocation.setIsReadyToDateTo(false);
   }
 
   yield cancel(geoUpdateTask, mapViewZoomTask);
@@ -140,6 +143,7 @@ function* cancelPendingSearchActions(myUid) {
       .update({
         readyToDate: false,
       });
+    yield DaterBackgroundGeolocation.setIsReadyToDateTo(false);
     if (cancelTask.type !== 'MICRO_DATE_STOPPED_BY_TARGET') {
       yield put({ type: 'MICRO_DATE_ASK_ARE_YOU_READY' });
     }
