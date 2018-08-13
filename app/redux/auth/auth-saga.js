@@ -139,7 +139,7 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
 }
 
 function* authOnIdTokenChangedSaga(newToken) {
-  yield console.log('New token: ', newToken);
+  yield console.log('New token is issues: ', newToken);
   yield DaterBackgroundGeolocation.updateAuthToken(newToken);
 }
 
