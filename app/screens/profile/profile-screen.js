@@ -61,6 +61,13 @@ class ProfileScreen extends Component<Props, State> {
     this.props.navigation.goBack(null);
   }
 
+  onConfirmButtonPress = () => {
+    this.props.dispatch({
+      type: 'GEO_LOCATION_START_MANUALLY',
+    });
+    this.onClosePress();
+  }
+
   onChangePhotoPress = () => {
     this.props.navigation.navigate({
       key: 'EditProfilePhoto',
@@ -97,7 +104,7 @@ class ProfileScreen extends Component<Props, State> {
       <DaterModal
         fullscreen
         style={styles.modal}
-        confirmButtonPress={this.onClosePress}
+        confirmButtonPress={this.onConfirmButtonPress}
         confirmButton={this.navigationFlowType !== 'mapViewModal'}
         closeButtonPress={this.onClosePress}
         closeButton={this.navigationFlowType === 'mapViewModal'}
@@ -232,7 +239,7 @@ class ProfileScreen extends Component<Props, State> {
                 alignSelf: 'center',
               }}
             >
-              Email GEOlogs
+              Email GEO-logs
             </DaterButton>
             <DaterButton
               onPress={this.onDebugGeolocation}

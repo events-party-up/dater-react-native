@@ -56,3 +56,8 @@ export const BUTTONS_ONPRESS_THROTTLE_THRESHOLD = 500;
 
 // Cloudinary
 export const CLOUDINARY_ACCOUNT_NAME = 'dater';
+
+// Api endpoints
+export const API_LOCATION_UPDATE_URL = process.env.NODE_ENV === 'development' ?
+  'https://us-central1-dater3-dev.cloudfunctions.net/api-locationUpdate' :
+  'https://us-central1-dater3-production.cloudfunctions.net/api-locationUpdate';

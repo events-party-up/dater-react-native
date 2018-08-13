@@ -72,7 +72,6 @@ type Props = {
     coords: GeoCoordinates,
     geoUpdates: number,
     pastCoords: Array<GeoCoordinates>,
-    moveHeadingAngle: number,
   },
   mapView: MapboxGL.MapView,
   microDate: MicroDate,
@@ -145,7 +144,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
     ) {
       this.mapView.setCamera({
         centerCoordinate: [this.props.location.coords.longitude, this.props.location.coords.latitude],
-        heading: this.state.compassHeading || this.props.location.moveHeadingAngle,
+        heading: this.state.compassHeading || this.props.location.coords.heading,
         duration: 500,
         mode: MapboxGL.CameraModes.Ease,
       });
@@ -157,7 +156,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
     ) {
       this.mapView.setCamera({
         centerCoordinate: [this.props.location.coords.longitude, this.props.location.coords.latitude],
-        heading: this.state.compassHeading || this.props.location.moveHeadingAngle,
+        heading: this.state.compassHeading || this.props.location.coords.heading,
         duration: 500,
         mode: MapboxGL.CameraModes.Ease,
       });
@@ -279,7 +278,6 @@ class MainMapViewScreen extends React.Component<Props, State> {
         <OnMapInteractiveElements
           navigation={this.props.navigation}
           locationIsEnabled={this.props.location.enabled}
-          heading={this.state.compassHeading || this.props.location.moveHeadingAngle}
           dispatch={this.props.dispatch}
           mapViewZoom={this.props.mapView.zoom}
           isAuthenticated={this.props.auth.isAuthenticated}
@@ -295,7 +293,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
               <MyLocationMarkerCentered
                 accuracy={this.props.location.coords.accuracy}
                 visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
-                heading={this.state.compassHeading || this.props.location.moveHeadingAngle}
+                heading={this.state.compassHeading || this.props.location.coords.heading}
                 headingToTarget={this.props.microDate.headingToTarget}
                 microDateEnabled={this.props.microDate.enabled}
                 searchIsPending={this.props.microDate.searchIsPending}
@@ -361,7 +359,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
                 accuracy={this.props.location.coords.accuracy}
                 visibleRadiusInMeters={this.props.mapView.visibleRadiusInMeters}
                 compassHeading={this.state.compassHeading}
-                moveHeadingAngle={this.props.location.moveHeadingAngle}
+                heading={this.props.location.coords.heading}
                 mapViewHeadingAngle={this.props.mapView.heading}
                 coords={this.props.location.coords}
                 mapViewModeIsSwitching={this.props.mapView.modeIsSwitching}
@@ -379,7 +377,7 @@ class MainMapViewScreen extends React.Component<Props, State> {
                   GPS Точность: {this.props.location.coords && Math.floor(this.props.location.coords.accuracy)}{'\n'}
                   Курс GPS: {this.props.location.coords && Math.floor(this.props.location.coords.heading)}{'\n'}
                   Курс Компасс: {Math.floor(this.state.compassHeading)}{'\n'}
-                  Курс Движения: {Math.floor(this.props.location.moveHeadingAngle)}{'\n'}
+                  Курс Движения: {Math.floor(this.props.location.coords && this.props.location.coords.heading)}{'\n'}
                   UID: {this.props.auth.uid && this.props.auth.uid.substring(0, 4)}
                 </Caption2>
               }

@@ -1,17 +1,22 @@
-import { put, takeEvery, call, take, delay, select } from 'redux-saga/effects';
+import { put, takeEvery, take, delay, select } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import firebase from 'react-native-firebase';
 import DeviceInfo from 'react-native-device-info';
 import { Platform, Keyboard } from 'react-native';
+
 import { NavigatorActions } from '../../navigators/navigator-actions';
 import { CURRENT_USER_COLLECTION, GEO_POINTS_COLLECTION } from '../../constants';
 import { calculateAgeFrom } from '../../utils/date-utils';
+import DaterBackgroundGeolocation from '../../services/background-geolocation';
 
 export default function* authSaga() {
   try {
     yield put({ type: 'AUTH_INIT' });
-    const authStateChannel = yield call(createAuthStateChannel);
+    const authStateChannel = yield createAuthStateChannel();
+    const authOnIdTokenChangedChannel = yield createAuthIdTokenChangedChannel();
+
     yield takeEvery(authStateChannel, authStateChangedSaga);
+    yield takeEvery(authOnIdTokenChangedChannel, authOnIdTokenChangedSaga);
     yield takeEvery('AUTH_SIGNOUT_START', authSignOutSaga);
   } catch (error) {
     yield put({ type: 'AUTH_MAINSAGA_ERROR', payload: error });
@@ -133,6 +138,11 @@ function* authStateChangedSaga(userInFirebaseAuthState) {
   }
 }
 
+function* authOnIdTokenChangedSaga(newToken) {
+  yield console.log('New token is issues: ', newToken);
+  yield DaterBackgroundGeolocation.updateAuthToken(newToken);
+}
+
 function createAuthStateChannel() {
   return eventChannel((emit) => {
     const onAuthStateChanged = (user) => {
@@ -140,6 +150,19 @@ function createAuthStateChannel() {
     };
 
     const unsubscribe = firebase.auth().onAuthStateChanged(onAuthStateChanged);
+    return unsubscribe;
+  });
+}
+
+function createAuthIdTokenChangedChannel() {
+  return eventChannel((emit) => {
+    const onAuthIdTokenChanged = async () => {
+      const { currentUser } = firebase.auth();
+      const newToken = String(currentUser ? await currentUser.getIdToken() : null);
+      emit(newToken);
+    };
+
+    const unsubscribe = firebase.auth().onIdTokenChanged(onAuthIdTokenChanged);
     return unsubscribe;
   });
 }

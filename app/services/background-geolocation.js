@@ -3,19 +3,22 @@ import firebase from 'react-native-firebase';
 import DeviceInfo from 'react-native-device-info';
 import { Platform } from 'react-native';
 
-import { GeoCoordinates } from '../types/index';
-import { GEO_POINTS_COLLECTION } from '../constants';
+import { GeoCoordinates, MicroDate } from '../types/index';
+import {
+  GEO_POINTS_COLLECTION,
+  API_LOCATION_UPDATE_URL,
+} from '../constants';
 
 const geoOptions = async () => {
   const { currentUser } = firebase.auth();
-  const firebaseAuthToken = currentUser ? await currentUser.getIdToken() : null;
+  const firebaseAuthToken = String(currentUser ? await currentUser.getIdToken(true) : null);
   const uid = currentUser ? currentUser.uid : 'unknown';
 
   return {
-    // reset: true,
+    reset: true,
     useSignificantChanges: false,
     enableHighAccuracy: true,
-    distanceFilter: 5,
+    distanceFilter: 10,
     // disableElasticity: true,
     desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
     // stopTimeout: 1,
@@ -25,7 +28,7 @@ const geoOptions = async () => {
     stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.
     enableHeadless: true, // <-- Android Headless mode
     foregroundService: false, // <-- Android, enforced to true on Android 8
-    preventSuspend: true, // iOS only
+    preventSuspend: false, // iOS only
     disableLocationAuthorizationAlert: false,
     locationAuthorizationRequest: 'Any',
     locationAuthorizationAlert: {
@@ -36,15 +39,23 @@ const geoOptions = async () => {
       titleWhenOff: 'Нет доступа к вашей геолокации!',
     },
     // activityType: 'ACTIVITY_TYPE_OTHER_NAVIGATION',
-    heartbeatInterval: 60,
+    heartbeatInterval: 5 * 60,
     startOnBoot: true, // <-- Auto start tracking when device is powered-up.
     batchSync: false, // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
     autoSync: true, // <-- [Default: true] Set true to sync each location to server as it arrives.
-    // url: `https://dater-geolocation-console.herokuapp.com/locations/${uid}`,
+    maxRecordsToPersist: 1,
+    url: API_LOCATION_UPDATE_URL,
     notificationPriority: BackgroundGeolocation.NOTIFICATION_PRIORITY_LOW,
     notificationTitle: 'Dater.com',
     notificationText: 'Dater Mode ON',
+    headers: {
+      Authorization: `Bearer ${firebaseAuthToken}`,
+    },
     params: {
+      microDate: {
+        enabled: false,
+        microDateId: null,
+      },
       device: {
         platform: Platform.OS,
         version: DeviceInfo.getSystemVersion(),
@@ -55,7 +66,6 @@ const geoOptions = async () => {
     },
     extras: {
       uid,
-      firebaseAuthToken,
     },
   };
 };
@@ -123,6 +133,58 @@ const DaterBackgroundGeolocation = {
   changePace: (value: boolean) => (
     BackgroundGeolocation.changePace(value)
   ),
+  updateHttpParams: async (options) => {
+    const GEO_OPTIONS = await geoOptions();
+    const params = { ...GEO_OPTIONS.params, ...options };
+    await BackgroundGeolocation.setConfig({
+      params,
+    });
+  },
+  updateAuthToken: async (newToken) => {
+    await BackgroundGeolocation.setConfig({
+      headers: {
+        Authorization: `Bearer ${newToken}`,
+      },
+    });
+  },
+  setConfig: async (options) => {
+    await BackgroundGeolocation.setConfig(options);
+  },
+  setIsReadyToDateTo: async (isReadyToDate: boolean) => {
+    const GEO_OPTIONS = await geoOptions();
+    await BackgroundGeolocation.setConfig({
+      preventSuspend: isReadyToDate,
+      params: {
+        isReadyToDate,
+        ...GEO_OPTIONS.params,
+      },
+    });
+  },
+  setMicroDateStarted: async (microDate: MicroDate) => {
+    const GEO_OPTIONS = await geoOptions();
+    await BackgroundGeolocation.setConfig({
+      preventSuspend: true,
+      params: {
+        microDate: {
+          enabled: true,
+          id: microDate.id,
+        },
+        ...GEO_OPTIONS.params,
+      },
+    });
+  },
+  setMicroDateStopped: async () => {
+    const GEO_OPTIONS = await geoOptions();
+    await BackgroundGeolocation.setConfig({
+      preventSuspend: false,
+      params: {
+        microDate: {
+          enabled: false,
+        },
+        ...GEO_OPTIONS.params,
+      },
+    });
+  },
   getCurrentPosition: async () => {
     const GEO_OPTIONS = await geoOptions();
     return new Promise((resolve, reject) => {

@@ -60,12 +60,9 @@ export function* microDateUserMovementsMyMoveSaga(newCoords) {
     const myUid = yield select((state) => state.auth.uid);
     const myUidDB = myUid.substring(0, 8);
 
-    const timeDelta = (new Date() - myPreviousCoords.clientTS) / 1000; // in seconds
     const distanceDelta = GeoUtils.distance(myPreviousCoords, newCoords);
-    const velocity = Math.floor(distanceDelta / timeDelta); // in seconds
-    // console.log(`timeDelta: ${timeDelta} distanceDelta: ${distanceDelta} velocity: ${velocity}`);
 
-    if (velocity > MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION ||
+    if (newCoords.speed > MAX_VELOCITY_FROM_PREVIOUS_PAST_LOCATION ||
       newCoords.accuracy > GOOD_GPS_ACCURACY_MICRODATE_MODE ||
       distanceDelta < MIN_DISTANCE_FROM_PREVIOUS_PAST_LOCATION) {
       return;
@@ -98,7 +95,7 @@ export function* microDateUserMovementsMyMoveSaga(newCoords) {
       .collection(`${myUidDB}_pastLocations`)
       .add({
         distanceDelta,
-        velocity,
+        speed: newCoords.speed,
         geoPoint: new firebase.firestore.GeoPoint(newCoords.latitude, newCoords.longitude),
         serverTS: firebase.firestore.FieldValue.serverTimestamp(),
         clientTS: new Date(),
