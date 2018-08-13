@@ -10,7 +10,7 @@ type State = {
 }
 
 type Props = {
-  moveHeadingAngle: number,
+  heading: number,
   mapViewHeadingAngle: number,
   compassHeading: number,
   coords: GeoCoordinates,
@@ -37,7 +37,7 @@ export default class MyLocationMarkerNonCentered extends React.Component<Props, 
         anchor={{ x: 0.5, y: 0.5 }} // anchor so that bottom tip of the marker is at the geo point
       >
         <MyLocationMarkerCentered
-          heading={this.props.compassHeading || this.props.moveHeadingAngle}
+          heading={this.props.compassHeading || this.props.heading}
           mapViewHeadingAngle={this.props.mapViewHeadingAngle}
           mapViewModeIsSwitching={this.props.mapViewModeIsSwitching}
           headingToTarget={this.props.headingToTarget}

@@ -8,7 +8,7 @@ import { GEO_POINTS_COLLECTION } from '../constants';
 
 const geoOptions = async () => {
   const { currentUser } = firebase.auth();
-  const firebaseAuthToken = String(currentUser ? await currentUser.getIdToken() : null);
+  const firebaseAuthToken = String(currentUser ? await currentUser.getIdToken(true) : null);
   const uid = currentUser ? currentUser.uid : 'unknown';
 
   return {
@@ -41,7 +41,7 @@ const geoOptions = async () => {
     batchSync: false, // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
     autoSync: true, // <-- [Default: true] Set true to sync each location to server as it arrives.
     maxRecordsToPersist: 1,
-    url: 'https://70e8f1c2.ngrok.io/dater3-dev/us-central1/api-locationUpdate',
+    url: 'https://3656d09d.ngrok.io/dater3-dev/us-central1/api-locationUpdate',
     notificationPriority: BackgroundGeolocation.NOTIFICATION_PRIORITY_LOW,
     notificationTitle: 'Dater.com',
     notificationText: 'Dater Mode ON',
@@ -49,6 +49,10 @@ const geoOptions = async () => {
       Authorization: `Bearer ${firebaseAuthToken}`,
     },
     params: {
+      microDate: {
+        enabled: false,
+        microDateId: null,
+      },
       device: {
         platform: Platform.OS,
         version: DeviceInfo.getSystemVersion(),
@@ -126,6 +130,23 @@ const DaterBackgroundGeolocation = {
   changePace: (value: boolean) => (
     BackgroundGeolocation.changePace(value)
   ),
+  updateHttpParams: async (options) => {
+    const GEO_OPTIONS = await geoOptions();
+    const params = { ...GEO_OPTIONS.params, ...options };
+    await BackgroundGeolocation.setConfig({
+      params,
+    });
+  },
+  updateAuthToken: async (newToken) => {
+    await BackgroundGeolocation.setConfig({
+      headers: {
+        Authorization: `Bearer ${newToken}`,
+      },
+    });
+  },
+  setConfig: async (options) => {
+    await BackgroundGeolocation.setConfig(options);
+  },
   getCurrentPosition: async () => {
     const GEO_OPTIONS = await geoOptions();
     return new Promise((resolve, reject) => {

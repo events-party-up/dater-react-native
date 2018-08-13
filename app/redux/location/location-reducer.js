@@ -1,5 +1,3 @@
-import GeoUtils from '../../utils/geo-utils';
-
 const types = {
   GEO_PERMISSION_REQUESTED: 'GEO_PERMISSION_REQUESTED',
   GEO_PERMISSION_GRANTED: 'GEO_PERMISSION_GRANTED',
@@ -31,7 +29,6 @@ const initialState = {
   starting: false,
   stopping: false,
   updating: false,
-  moveHeadingAngle: -1,
   isBackgroundGeolocationInitialized: false,
 };
 
@@ -91,7 +88,6 @@ const locationReducer = (state = initialState, action) => {
         enabled: false,
         pastCoords: [],
         coords: null,
-        moveHeadingAngle: -1,
       };
     }
     case types.GEO_LOCATION_UPDATE_CHANNEL_UNKNOWN_ERROR:
@@ -110,17 +106,10 @@ const locationReducer = (state = initialState, action) => {
       };
     }
     case types.GEO_LOCATION_UPDATED: {
-      let { moveHeadingAngle } = state;
-      // if this is not the first location update
-      if (state.coords) {
-        moveHeadingAngle = GeoUtils.getBearing(state.coords, payload);
-      }
-
       return {
         ...state,
         coords: payload,
         geoUpdates: state.geoUpdates + 1,
-        moveHeadingAngle,
       };
     }
     default: {

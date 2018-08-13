@@ -11,6 +11,7 @@ import {
 } from '../../constants';
 import { MicroDate } from '../../types';
 import { NavigatorActions } from '../../navigators/navigator-actions';
+import DaterBackgroundGeolocation from '../../services/background-geolocation';
 
 export default function* microDateActiveSaga() {
   try {
@@ -40,6 +41,13 @@ export default function* microDateActiveSaga() {
         'MICRO_DATE_STOPPED_BY_ME',
         'MICRO_DATE_FINISH',
       ]);
+
+      yield DaterBackgroundGeolocation.updateHttpParams({
+        microDate: {
+          enabled: false,
+          microDateId: null,
+        },
+      });
 
       yield put({ type: 'MICRO_DATE_SAGA_CANCEL_TASKS' });
       yield microDateChan.close();
@@ -99,6 +107,12 @@ function* restoreMicroDateStatusOnAppLaunchSaga() {
 
 function* startMicroDateSaga(microDate) {
   const myUid = yield select((state) => state.auth.uid);
+  yield DaterBackgroundGeolocation.updateHttpParams({
+    microDate: {
+      enabled: true,
+      microDateId: microDate.id,
+    },
+  });
   yield put({
     type: 'MICRO_DATE_START',
     payload: {
@@ -218,7 +232,7 @@ function* microDateUpdatedSaga(microDate) {
 
     switch (microDate.status) {
       case 'START':
-        yield put({ type: 'MICRO_DATE_START', payload: microDate });
+        yield startMicroDateSaga(microDate);
         break;
       case 'SELFIE_UPLOADED':
         if (microDate.selfie.uploadedBy !== myUid) {

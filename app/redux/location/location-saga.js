@@ -101,7 +101,7 @@ function* updateLocation(coords) {
       payload: coords,
     });
     yield fork(microDateUserMovementsMyMoveSaga, coords);
-    yield fork(writeCoordsToFirestore, coords);
+    // yield fork(writeCoordsToFirestore, coords);
   } else if (coords.error) {
     yield put({
       type: 'GEO_LOCATION_UPDATE_CHANNEL_ERROR',
